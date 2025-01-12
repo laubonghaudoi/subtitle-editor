@@ -46,6 +46,7 @@ export const mergeSubtitles = (
   const sub1 = subtitles.find((s) => s.id === id1);
   const sub2 = subtitles.find((s) => s.id === id2);
   if (!sub1 || !sub2) return subtitles;
+  if (sub1.id > sub2.id) return subtitles;
 
   const mergedSubtitle = {
     id: sub1.id,
@@ -158,6 +159,54 @@ export function splitSubtitle(
     id: sub.id + 1, // we'll reorder IDs anyway
     startTime: secondsToTime(splitSec),
     text: sub.text.slice(caretPos),
+  };
+
+  // Remove original and insert the two halves at the same position
+  const index = subtitles.findIndex((s) => s.id === id);
+  const updated = [...subtitles];
+  updated.splice(index, 1, first, second);
+
+  // Reorder IDs to keep them consecutive
+  return reorderSubtitleIds(updated);
+}
+
+export function splitSubtitleByTime(
+  subtitles: Subtitle[],
+  id: number,
+  splitTimeSec: number
+): Subtitle[] {
+  const sub = subtitles.find((s) => s.id === id);
+  if (!sub) return subtitles; // if not found, do nothing
+
+  const startSec = timeToSeconds(sub.startTime);
+  const endSec = timeToSeconds(sub.endTime);
+  // Don’t split if the clicked time is outside the region.
+  if (splitTimeSec <= startSec || splitTimeSec >= endSec) return subtitles;
+
+  const ratio = (splitTimeSec - startSec) / (endSec - startSec);
+
+  // Figure out where in the text we want to split.
+  // e.g. floor(ratio * text.length)
+  const splitIndex = Math.floor(ratio * sub.text.length);
+
+  const firstText = sub.text.slice(0, splitIndex).trim();
+  const secondText = sub.text.slice(splitIndex).trim();
+
+  // Create two new subtitles:
+  // 1) Original from startTime → splitTime
+  // 2) New from splitTime → endTime
+  const first: Subtitle = {
+    ...sub,
+    endTime: secondsToTime(splitTimeSec),
+    text: firstText || "New subtitle",
+  };
+
+  // This is an easy way to ensure a unique ID. You can do something else if you prefer.
+  const second: Subtitle = {
+    id: sub.id + 1,
+    startTime: secondsToTime(splitTimeSec),
+    endTime: sub.endTime,
+    text: secondText || "New subtitle",
   };
 
   // Remove original and insert the two halves at the same position
