@@ -292,7 +292,7 @@ export default function Home() {
                     }
                     className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-500"
                   >
-                    Start from sratch
+                    Start from scratch
                   </button>
                 </div>
               )}
