@@ -22,7 +22,6 @@
     "@radix-ui/react-tooltip": "^1.1.8",
     "@tabler/icons-react": "^3.31.0",
     "@wavesurfer/react": "^1.0.9",
-    "babel-plugin-react-compiler": "^19.0.0-beta-aeaed83-20250323",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.484.0",
@@ -42,6 +41,8 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "^19.0.0-beta-ebf51a3-20250411",
+    "eslint-plugin-react-compiler": "^19.0.0-beta-ebf51a3-20250411",
     "postcss": "^8",
     "tailwindcss": "^4.0.17",
     "typescript": "^5.8.2"
