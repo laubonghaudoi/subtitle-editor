@@ -3,7 +3,7 @@
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
 import { srtToVtt, subtitlesToSrtString } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
-import ReactPlayer from "react-player";
+import ReactPlayer from "react-player"; // Import ReactPlayerProps
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
@@ -36,13 +36,7 @@ export default function VideoPlayer({
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [vttUrl, setVttUrl] = useState("");
   const playerRef = useRef<ReactPlayer>(null);
-  const [isVideo, setIsVideo] = useState(false);
-
-  useEffect(() => {
-    if (mediaFile) {
-      setIsVideo(mediaFile.type.startsWith("video/"));
-    }
-  }, [mediaFile]);
+  const timeToRestore = useRef<number | null>(null); // Ref to store time before remount
 
   const lastPlayStateChange = useRef<number>(0);
   const DEBOUNCE_TIME = 200; // 200ms debounce
@@ -86,7 +80,13 @@ export default function VideoPlayer({
     const vttString = srtToVtt(srtString);
     const blob = new Blob([vttString], { type: "text/vtt" });
     const url = URL.createObjectURL(blob);
-    setVttUrl(url);
+
+    // Capture current time before triggering remount
+    if (playerRef.current) {
+      timeToRestore.current = playerRef.current.getCurrentTime();
+    }
+
+    setVttUrl(url); // This will trigger remount via key={vttUrl}
 
     // Clean up the object URL when the component unmounts or subtitles/media change
     return () => {
@@ -125,6 +125,7 @@ export default function VideoPlayer({
   return (
     <div className="w-full h-full flex items-center justify-center bg-black overflow-hidden">
       <ReactPlayer
+        key={vttUrl} // Add key here
         ref={playerRef}
         url={mediaUrl}
         width="100%"
@@ -139,6 +140,14 @@ export default function VideoPlayer({
         onPlay={() => onPlayPause(true)}
         onPause={() => onPlayPause(false)}
         onDuration={onDuration}
+        // Restore time using onReady after remount
+        onReady={(player) => {
+          playerRef.current = player; // Ensure ref is set
+          if (timeToRestore.current !== null) {
+            player.seekTo(timeToRestore.current, "seconds");
+            timeToRestore.current = null; // Reset after restoring
+          }
+        }}
         playing={isPlaying}
         playbackRate={playbackRate}
         config={{
