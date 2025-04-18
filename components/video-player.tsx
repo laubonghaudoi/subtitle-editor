@@ -75,6 +75,12 @@ export default function VideoPlayer({
   }, [mediaFile]);
 
   useEffect(() => {
+    // Only generate VTT URL if media is loaded
+    if (!mediaUrl) {
+      setVttUrl(""); // Clear VTT URL if no media
+      return;
+    }
+
     // 1) Convert subtitles to a fresh .vtt Blob URL
     const srtString = subtitlesToSrtString(subtitles);
     const vttString = srtToVtt(srtString);
@@ -82,37 +88,11 @@ export default function VideoPlayer({
     const url = URL.createObjectURL(blob);
     setVttUrl(url);
 
-    // 2) Force the DOM to use a fresh <track src="...">
-    const videoEl = playerRef.current?.getInternalPlayer();
-
-    // Only do this if we're in the HTML5 player (ReactPlayer returns an <HTMLVideoElement>)
-    if (videoEl && videoEl.tagName === "VIDEO") {
-      // Remove all old <track> elements
-      const existingTracks = videoEl.getElementsByTagName("track");
-      while (existingTracks.length > 0) {
-        existingTracks[0].remove();
-      }
-
-      // Create a new <track> element and append it
-      const newTrack = document.createElement("track");
-      newTrack.kind = "subtitles";
-      newTrack.label = "Subtitles";
-      newTrack.srclang = "en";
-      newTrack.src = url;
-      newTrack.default = true;
-
-      // Wait for the track to load, then show it
-      newTrack.addEventListener("load", () => {
-        newTrack.track.mode = "showing";
-      });
-
-      videoEl.appendChild(newTrack);
-    }
-
+    // Clean up the object URL when the component unmounts or subtitles/media change
     return () => {
       URL.revokeObjectURL(url);
     };
-  }, [subtitles]);
+  }, [subtitles, mediaUrl]); // Add mediaUrl dependency
 
   if (!mediaUrl) {
     return (
