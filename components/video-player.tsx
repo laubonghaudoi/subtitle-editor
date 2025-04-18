@@ -3,7 +3,7 @@
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
 import { srtToVtt, subtitlesToSrtString } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
-import ReactPlayer from "react-player"; // Import ReactPlayerProps
+import ReactPlayer from "react-player";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
