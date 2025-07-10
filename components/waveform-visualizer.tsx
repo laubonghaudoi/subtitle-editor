@@ -144,12 +144,19 @@ export default forwardRef(function WaveformVisualizer(
 
   // Load media file into wavesurfer
   useEffect(() => {
-    if (mediaFile) {
-      setIsLoading(true);
-      setMediaUrl(URL.createObjectURL(mediaFile));
-    } else {
+    if (!mediaFile) {
       setMediaUrl("");
+      return;
     }
+
+    setIsLoading(true);
+    const objectUrl = URL.createObjectURL(mediaFile);
+    setMediaUrl(objectUrl);
+
+    // Clean up the object URL when the file changes or the component unmounts
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
   }, [mediaFile]);
 
   /****************************************************************

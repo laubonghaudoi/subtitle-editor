@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const MAX_HISTORY_LENGTH = 50;
+
 interface History<T> {
   past: T[];
   present: T;
@@ -55,9 +57,9 @@ export function useUndoableState<T>(
         return currentHistory;
       }
 
-      // Add the previous present state to the past
-      const newPast = [...currentHistory.past, previousPresent];
-      // Limit history size if needed, e.g., newPast.slice(-50)
+      // Add the previous present state to the past and trim it if it grows
+      // beyond the configured limit to avoid unbounded memory usage
+      const newPast = [...currentHistory.past, previousPresent].slice(-MAX_HISTORY_LENGTH);
 
       return {
         past: newPast,
@@ -93,7 +95,8 @@ export function useUndoableState<T>(
       const { past, present, future } = currentHistory;
       const next = future[0]; // Get the next state from the future
       const newFuture = future.slice(1); // Remove the next state from the future
-      const newPast = [...past, present]; // Add the current state to the past
+      // Add the current state to the past and trim history to avoid excessive memory usage
+      const newPast = [...past, present].slice(-MAX_HISTORY_LENGTH);
 
       return {
         past: newPast,
