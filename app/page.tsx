@@ -58,7 +58,8 @@ const WaveformVisualizer = dynamic(
 );
 
 interface WaveformRef {
-  scrollToRegion: (uuid: string) => void; // Change id to uuid
+  scrollToRegion: (uuid: string) => void;
+  setWaveformTime: (time: number) => void;
 }
 
 // Define the main content component that will consume the context
@@ -414,7 +415,10 @@ function MainContent() {
               mediaFile={mediaFile}
               setMediaFile={setMediaFile}
               setMediaFileName={setMediaFileName}
-              onProgress={(time) => setPlaybackTime(time)}
+              onProgress={(time) => {
+                setPlaybackTime(time);
+                waveformRef.current?.setWaveformTime(time);
+              }}
               onPlayPause={(playing) => setIsPlaying(playing)}
               onDuration={(duration) => setDuration(duration)}
               seekTime={playbackTime}
@@ -444,7 +448,6 @@ function MainContent() {
               <WaveformVisualizer
                 ref={waveformRef}
                 mediaFile={mediaFile}
-                currentTime={playbackTime}
                 isPlaying={isPlaying}
                 onSeek={setPlaybackTime}
                 onPlayPause={setIsPlaying}

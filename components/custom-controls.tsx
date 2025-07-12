@@ -13,9 +13,84 @@ import {
 } from "@/components/ui/tooltip";
 import { secondsToTime } from "@/lib/utils";
 import { PauseIcon, PlayIcon } from "@radix-ui/react-icons";
-import { useRef, useState } from "react";
+import React, { memo, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
+
+// Memoized component for the time-sensitive parts
+const TimeDisplayAndSlider = memo(
+  ({
+    playbackTime,
+    duration,
+    onSeek,
+  }: {
+    playbackTime: number;
+    duration: number;
+    onSeek: (time: number) => void;
+  }) => {
+    const [hoverTime, setHoverTime] = useState<number | null>(null);
+    const [tooltipPosition, setTooltipPosition] = useState<number>(0);
+    const sliderRef = useRef<HTMLDivElement>(null);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (sliderRef.current) {
+        const rect = sliderRef.current.getBoundingClientRect();
+        const position = (e.clientX - rect.left) / rect.width;
+        const time = position * duration;
+        setHoverTime(time);
+        setTooltipPosition(e.clientX - 8 * rect.left);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      setHoverTime(null);
+    };
+
+    return (
+      <>
+        <div
+          ref={sliderRef}
+          className="w-full relative"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        >
+          <TooltipProvider>
+            <Tooltip open={hoverTime !== null}>
+              <TooltipTrigger asChild>
+                <Slider
+                  value={[playbackTime]}
+                  max={duration}
+                  step={0.01}
+                  onValueChange={(value) => onSeek(value[0])}
+                  className="w-full"
+                />
+              </TooltipTrigger>
+              {hoverTime !== null && (
+                <TooltipContent
+                  side="top"
+                  className="bg-white text-black py-1 px-2 text-sm rounded border-2 border-black"
+                  style={{
+                    position: "absolute",
+                    left: `${tooltipPosition}px`,
+                    transform: "translateX(-50%)",
+                    bottom: "4px",
+                  }}
+                >
+                  {secondsToTime(hoverTime)}
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <span className="text-sm w-fit">
+          {secondsToTime(playbackTime)} / {secondsToTime(duration)}
+        </span>
+      </>
+    );
+  }
+);
+
+TimeDisplayAndSlider.displayName = "TimeDisplayAndSlider";
 
 interface CustomControlsProps {
   isPlaying: boolean;
@@ -36,24 +111,6 @@ export default function CustomControls({
   playbackRate,
   onChangePlaybackRate,
 }: CustomControlsProps) {
-  const [hoverTime, setHoverTime] = useState<number | null>(null);
-  const [tooltipPosition, setTooltipPosition] = useState<number>(0);
-  const sliderRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (sliderRef.current) {
-      const rect = sliderRef.current.getBoundingClientRect();
-      const position = (e.clientX - rect.left) / rect.width;
-      const time = position * duration;
-      setHoverTime(time);
-      setTooltipPosition(e.clientX - 8 * rect.left);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setHoverTime(null);
-  };
-
   return (
     <div className="p-4 flex items-center gap-4 h-[6vh] border-t-2 border-b-2 border-black">
       <Button onClick={onPlayPause} variant="ghost">
@@ -79,43 +136,11 @@ export default function CustomControls({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <div
-        ref={sliderRef}
-        className="w-full relative"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-      >
-        <TooltipProvider>
-          <Tooltip open={hoverTime !== null}>
-            <TooltipTrigger asChild>
-              <Slider
-                value={[playbackTime]}
-                max={duration}
-                step={0.01}
-                onValueChange={(value) => onSeek(value[0])}
-                className="w-full"
-              />
-            </TooltipTrigger>
-            {hoverTime !== null && (
-              <TooltipContent
-                side="top"
-                className="bg-white text-black py-1 px-2 text-sm rounded border-2 border-black"
-                style={{
-                  position: "absolute",
-                  left: `${tooltipPosition}px`,
-                  transform: "translateX(-50%)",
-                  bottom: "4px",
-                }}
-              >
-                {secondsToTime(hoverTime)}
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-      <span className="text-sm w-fit">
-        {secondsToTime(playbackTime)} / {secondsToTime(duration)}
-      </span>
+      <TimeDisplayAndSlider
+        playbackTime={playbackTime}
+        duration={duration}
+        onSeek={onSeek}
+      />
     </div>
   );
 }
