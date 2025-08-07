@@ -286,6 +286,7 @@ export default function SubtitleItem({
                   className="w-full px-2 h-4" // Adjust height as needed
                   ref={textAreaRef} // Assign ref
                   value={editText}
+                  onClick={(e) => e.stopPropagation()}
                   onChange={(e) => setEditText(e.target.value)}
                   onBlur={() => {
                     // Only update if text actually changed to avoid unnecessary history steps
