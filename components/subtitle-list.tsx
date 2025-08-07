@@ -24,6 +24,7 @@ export default function SubtitleList({
   setEditingSubtitleUuid,
 }: SubtitleListProps) {
   const listRef = useRef<HTMLDivElement>(null);
+  const activeSubtitleRef = useRef<string | null>(null);
   // Get subtitles and merge action from context
   const { subtitles, mergeSubtitlesAction } = useSubtitleContext();
 
@@ -38,7 +39,7 @@ export default function SubtitleList({
         timeToSeconds(sub.endTime) >= currentTime
     );
 
-    if (currentSubtitle) {
+    if (currentSubtitle && currentSubtitle.uuid !== activeSubtitleRef.current) {
       // Use uuid for the element ID
       const subtitleElement = document.getElementById(
         `subtitle-${currentSubtitle.uuid}`
@@ -48,6 +49,7 @@ export default function SubtitleList({
           behavior: "smooth",
           block: "center",
         });
+        activeSubtitleRef.current = currentSubtitle.uuid;
       }
     }
   }, [currentTime, subtitles]);
