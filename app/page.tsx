@@ -1,5 +1,7 @@
 "use client"; // Ensure this is the very first line
 
+export const runtime = "edge";
+
 import CustomControls from "@/components/custom-controls";
 import FindReplace from "@/components/find-replace";
 import SubtitleList from "@/components/subtitle-list";
