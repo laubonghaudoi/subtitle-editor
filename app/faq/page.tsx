@@ -2,6 +2,8 @@ import type { Metadata } from "next"; // Import Metadata type
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+export const runtime = "edge";
+
 // Add specific metadata for the FAQ page
 export const metadata: Metadata = {
   title: "FAQ", // Will use template: "FAQ | Subtitle Editor Online"
