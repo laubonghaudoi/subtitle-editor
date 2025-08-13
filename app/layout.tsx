@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { cookies } from "next/headers";
-import { useId } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TranslationProvider } from "@/context/i18n-context";
 import { getDictionary } from "@/lib/i18n";
@@ -43,13 +42,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const googleAdsId = useId();
-  const locale = cookies().get("NEXT_LOCALE")?.value || "en";
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("NEXT_LOCALE")?.value || "en";
   const dictionary = getDictionary(locale);
   return (
     <html lang={locale === "zh-hant" ? "zh-Hant" : "en"}>
@@ -65,7 +64,7 @@ export default function RootLayout({
           strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=AW-10839665138"
         />
-        <Script id={googleAdsId} strategy="afterInteractive">
+        <Script id="google-ads" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
