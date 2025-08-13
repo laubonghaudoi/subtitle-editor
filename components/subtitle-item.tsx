@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { isValidTime, timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import { Button } from "./ui/button";
+import { useTranslation } from "@/context/i18n-context";
 import {
   Tooltip,
   TooltipContent,
@@ -48,6 +49,7 @@ export default function SubtitleItem({
     deleteSubtitleAction,
     splitSubtitleAction,
   } = useSubtitleContext();
+  const t = useTranslation();
 
   const [editingStartTimeId, setEditingStartTimeId] = useState<number | null>(
     null
@@ -87,8 +89,8 @@ export default function SubtitleItem({
   ) => {
     if (!isValidTime(newTime)) {
       toast({
-        title: "Invalid time format",
-        description: "Please use the format HH:MM:SS,MS (e.g., 00:00:20,450).",
+        title: t("invalidTimeFormat"),
+        description: t("invalidTimeFormatDesc"),
         className: "border-0 bg-orange-200 text-red-700",
       });
       setEditingId(null);
@@ -100,9 +102,8 @@ export default function SubtitleItem({
     if (isStartTime) {
       if (newTimeInSeconds > timeToSeconds(subtitle.endTime)) {
         toast({
-          title: "Invalid start time",
-          description:
-            "Start time cannot be later than the end time of the subtitle.",
+          title: t("invalidStartTime"),
+          description: t("invalidStartTimeDesc"),
           className: "border-0 bg-orange-200 text-red-700",
         });
         setEditingId(null);
@@ -111,9 +112,8 @@ export default function SubtitleItem({
     } else {
       if (newTimeInSeconds < timeToSeconds(subtitle.startTime)) {
         toast({
-          title: "Invalid end time",
-          description:
-            "End time cannot be earlier than the start time of the subtitle.",
+          title: t("invalidEndTime"),
+          description: t("invalidEndTimeDesc"),
           className: "border-0 bg-orange-200 text-red-700",
         });
         setEditingId(null);
@@ -127,14 +127,14 @@ export default function SubtitleItem({
 
   // Calculate if the add button should be disabled
   let isAddDisabled = false;
-  let addTooltipContent = "Add";
+  let addTooltipContent = t("add");
   if (!isLastItem && nextSubtitle) {
     const currentEndTimeSec = timeToSeconds(subtitle.endTime);
     const nextStartTimeSec = timeToSeconds(nextSubtitle.startTime);
     const timeDiff = nextStartTimeSec - currentEndTimeSec;
     isAddDisabled = timeDiff <= 0.001;
     if (isAddDisabled) {
-      addTooltipContent = "No room to add";
+      addTooltipContent = t("noRoomToAdd");
     }
   }
 
@@ -356,7 +356,7 @@ export default function SubtitleItem({
                 <IconTrash size={16} />
               </TooltipTrigger>
               <TooltipContent className="bg-red-600 px-2 py-1 text-sm">
-                Delete
+                {t("delete")}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -376,7 +376,7 @@ export default function SubtitleItem({
                 <IconFold size={16} />
               </TooltipTrigger>
               <TooltipContent className="bg-amber-500 px-2 py-1 text-sm">
-                Merge
+                {t("merge")}
               </TooltipContent>
             </Tooltip>
           )}

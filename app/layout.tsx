@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
+import { cookies } from "next/headers";
 import { useId } from "react";
 import { Toaster } from "@/components/ui/toaster";
+import { TranslationProvider } from "@/context/i18n-context";
+import { getDictionary } from "@/lib/i18n";
 import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,13 +49,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const googleAdsId = useId();
+  const locale = cookies().get("NEXT_LOCALE")?.value || "en";
+  const dictionary = getDictionary(locale);
   return (
-    <html lang="en">
+    <html lang={locale === "zh-hant" ? "zh-Hant" : "en"}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        <Toaster />
+        <TranslationProvider dictionary={dictionary}>
+          {children}
+          <Toaster />
+        </TranslationProvider>
         {/* Google Ads Tag */}
         <Script
           strategy="afterInteractive"

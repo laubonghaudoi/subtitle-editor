@@ -25,9 +25,11 @@ import { escapeRegExp } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import { IconReplace, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "@/context/i18n-context";
 
 export default function FindReplace() {
   const { subtitles, replaceAllSubtitlesAction } = useSubtitleContext();
+  const t = useTranslation();
 
   const [findText, setFindText] = useState("");
   const [replaceText, setReplaceText] = useState("");
@@ -233,16 +235,16 @@ export default function FindReplace() {
           className="border-black rounded-xs cursor-pointer"
         >
           <IconSearch />
-          Find / Replace
+          {t("findReplace")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[48rem]">
         <DialogHeader>
-          <DialogTitle>Find and Replace</DialogTitle>
+          <DialogTitle>{t("findAndReplace")}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <Label htmlFor="find">Find</Label>
+            <Label htmlFor="find">{t("find")}</Label>
             <Input
               id="find"
               value={findText}
@@ -268,7 +270,7 @@ export default function FindReplace() {
                 htmlFor="case-sensitive"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Case sensitive
+                {t("caseSensitive")}
               </label>
             </div>
             <div className="flex items-center space-x-2">
@@ -288,7 +290,7 @@ export default function FindReplace() {
                 htmlFor="match-full-word"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Match full word
+                {t("matchFullWord")}
               </label>
             </div>
             <div className="flex items-center space-x-2">
@@ -307,12 +309,12 @@ export default function FindReplace() {
                 htmlFor="regex-mode"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Use regex
+                {t("useRegex")}
               </label>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Label htmlFor="replace">Replace with</Label>
+            <Label htmlFor="replace">{t("replaceWith")}</Label>
             <Input
               id="replace"
               value={replaceText}
@@ -440,7 +442,7 @@ export default function FindReplace() {
                       colSpan={4}
                       className="text-center text-gray-500 py-4"
                     >
-                      No matches found
+                      {t("noMatches")}
                     </TableCell>
                   </TableRow>
                 )}
@@ -455,7 +457,7 @@ export default function FindReplace() {
             disabled={selectedSubtitles.size === 0} // Disable if nothing is selected
           >
             <IconReplace />
-            Replace
+            {t("replace")}
           </Button>
         </DialogFooter>
       </DialogContent>

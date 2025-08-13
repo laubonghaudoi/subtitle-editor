@@ -42,6 +42,7 @@ import {
 } from "@tabler/icons-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useTranslation } from "@/context/i18n-context";
 // Import useState
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -64,6 +65,7 @@ interface WaveformRef {
 
 // Define the main content component that will consume the context
 function MainContent() {
+  const t = useTranslation();
   const waveformRef = useRef<WaveformRef>(null);
   const mediaFileInputRef = useRef<HTMLInputElement>(null);
   const srtFileInputRef = useRef<HTMLInputElement>(null);
@@ -84,7 +86,7 @@ function MainContent() {
   const [pendingSrtFile, setPendingSrtFile] = useState<File | null>(null);
 
   const [mediaFile, setMediaFile] = useState<File | null>(null);
-  const [mediaFileName, setMediaFileName] = useState<string>("Load media");
+  const [mediaFileName, setMediaFileName] = useState<string>(t("loadMedia"));
 
   const [playbackTime, setPlaybackTime] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -235,17 +237,17 @@ function MainContent() {
   return (
     <div className="flex flex-col h-screen">
       <nav className="h-[6vh] border-black border-b-2 flex items-center px-12 justify-between">
-        <h1 className="text-lg font-semibold">Subtitle Editor</h1>
+        <h1 className="text-lg font-semibold">{t("navTitle")}</h1>
         <div className="flex gap-4 items-center">
           <Link
             href="/faq"
             target="_blank"
-            aria-label="Frequently Asked Questions"
+            aria-label={t("faq")}
           >
             <Button
               variant="ghost"
               className="cursor-pointer"
-              aria-label="Frequently Asked Questions"
+              aria-label={t("faq")}
             >
               <QuestionMarkCircledIcon />
             </Button>
@@ -259,12 +261,12 @@ function MainContent() {
                   disabled={!canUndoSubtitles}
                   onClick={undoSubtitles}
                   className="cursor-pointer"
-                  aria-label="Undo"
+                  aria-label={t("undo")}
                 >
                   <IconArrowBack />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Undo</TooltipContent>
+              <TooltipContent>{t("undo")}</TooltipContent>
             </Tooltip>
 
             <Tooltip>
@@ -275,12 +277,12 @@ function MainContent() {
                   disabled={!canRedoSubtitles}
                   onClick={redoSubtitles}
                   className="cursor-pointer"
-                  aria-label="Redo"
+                  aria-label={t("redo")}
                 >
                   <IconArrowForward />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Redo</TooltipContent>
+              <TooltipContent>{t("redo")}</TooltipContent>
             </Tooltip>
           </TooltipProvider>
 
@@ -332,7 +334,7 @@ function MainContent() {
               className="hover:bg-amber-500 hover:text-white bg-amber-300 text-black rounded-sm cursor-pointer"
             >
               <IconBadgeCc />
-              Load SRT
+              {t("loadSrt")}
             </Button>
           </Label>
 
@@ -342,7 +344,7 @@ function MainContent() {
             className="cursor-pointer"
           >
             <DownloadIcon />
-            Save SRT
+            {t("saveSrt")}
           </Button>
         </div>
       </nav>
@@ -372,7 +374,7 @@ function MainContent() {
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-muted-foreground rounded-sm">
                   <Label className="cursor-pointer text-xl hover:text-blue-500 underline">
-                    Load an SRT file
+                    {t("loadSrtFile")}
                     <Input
                       type="file"
                       className="hidden"
@@ -401,7 +403,7 @@ function MainContent() {
                     }
                     className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-500"
                   >
-                    Start from scratch
+                    {t("startFromScratch")}
                   </button>
                 </div>
               )}
@@ -518,15 +520,16 @@ function MainContent() {
         >
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Replace existing subtitles?</AlertDialogTitle>
+              <AlertDialogTitle>
+                {t("replaceExistingSubtitles")}
+              </AlertDialogTitle>
               <AlertDialogDescription>
-                Loading a new SRT file will replace the current subtitles. Make
-                sure you have downloaded the current SRT first.
+                {t("replaceExistingSubtitlesDesc")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel onClick={() => setPendingSrtFile(null)}>
-                Cancel
+                {t("cancel")}
               </AlertDialogCancel>
               <AlertDialogAction
                 className="bg-red-600 hover:bg-red-500"
@@ -538,7 +541,7 @@ function MainContent() {
                   setShowOverwriteDialog(false);
                 }}
               >
-                Yes
+                {t("yes")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
