@@ -102,6 +102,7 @@ function MainContent() {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [jumpDuration, setJumpDuration] = useState(5);
   // State to track which subtitle is being edited
   const [editingSubtitleUuid, setEditingSubtitleUuid] = useState<string | null>(
     null
@@ -543,6 +544,18 @@ function MainContent() {
                 playbackTime={playbackTime}
                 duration={duration}
                 onPlayPause={() => setIsPlaying(!isPlaying)}
+                onTimeJump={(seconds) =>
+                  setPlaybackTime(
+                    Math.min(
+                      duration,
+                      Math.max(0, playbackTime + seconds)
+                    )
+                  )
+                }
+                jumpDuration={jumpDuration}
+                onChangeJumpDuration={(seconds) =>
+                  setJumpDuration(Number.parseInt(seconds))
+                }
                 onSeek={(time) => setPlaybackTime(time)}
                 playbackRate={playbackRate}
                 onChangePlaybackRate={(rate) =>

@@ -1,4 +1,4 @@
-import { IconPlayerPause, IconPlayerPlay } from "@tabler/icons-react";
+import { IconPlayerPause, IconPlayerPlay, IconChevronsLeft, IconChevronsRight } from "@tabler/icons-react";
 import type React from "react";
 import { memo, useRef, useState } from "react";
 import {
@@ -109,6 +109,9 @@ interface CustomControlsProps {
   onSeek: (time: number) => void;
   playbackRate: number;
   onChangePlaybackRate: (rate: string) => void;
+  onTimeJump: (seconds: number) => void;
+  jumpDuration: number;
+  onChangeJumpDuration: (seconds: string) => void;
 }
 
 export default function CustomControls({
@@ -116,6 +119,9 @@ export default function CustomControls({
   playbackTime,
   duration,
   onPlayPause,
+  onTimeJump,
+  jumpDuration,
+  onChangeJumpDuration,
   onSeek,
   playbackRate,
   onChangePlaybackRate,
@@ -129,6 +135,37 @@ export default function CustomControls({
           <IconPlayerPlay size={20} />
         )}
       </Button>
+
+      <div className="flex items-center gap-1 border-x-1 border-gray-300 px-4">
+          <Button
+            onClick={() => onTimeJump(-jumpDuration)}
+            variant="ghost"
+            className="px-2"
+          >
+            <IconChevronsLeft />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="px-2 py-2">{jumpDuration}s</DropdownMenuTrigger>
+            <DropdownMenuContent className="border-1 border-black">
+              <DropdownMenuRadioGroup
+                value={jumpDuration.toString()}
+                onValueChange={onChangeJumpDuration}
+              >
+                <DropdownMenuRadioItem value="1">1s</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="2">2s</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="5">5s</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="10">10s</DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button
+            onClick={() => onTimeJump(jumpDuration)}
+            variant="ghost"
+            className="px-2"
+          >
+            <IconChevronsRight />
+          </Button>
+        </div>
 
       <DropdownMenu>
         <DropdownMenuTrigger className="">{playbackRate}x</DropdownMenuTrigger>
