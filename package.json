@@ -27,25 +27,25 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.523.0",
     "motion": "^12.23.5",
-    "next": "^15.4.1",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "next": "^15.5.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "react-player": "^2.16.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
-    "wavesurfer.js": "^7.9.9"
+    "wavesurfer.js": "^7.10.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.5",
-    "@tailwindcss/postcss": "^4.1.11",
-    "@types/node": "^24.0.4",
+    "@biomejs/biome": "^2.2.0",
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/node": "^24.3.0",
     "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
+    "@types/react-dom": "^19.1.7",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "eslint-plugin-react-compiler": "^19.1.0-rc.2",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11",
-    "typescript": "^5.8.3"
+    "tailwindcss": "^4.1.12",
+    "typescript": "^5.9.2"
   }
 }
