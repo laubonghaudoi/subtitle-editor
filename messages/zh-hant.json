@@ -15,9 +15,29 @@
     "or": "或",
     "startFromScratch": "從頭開始"
   },
+  "videoPlayer": {
+    "loadFile": "載入影片 / 音訊檔案",
+    "supportedFormats": "支援格式：",
+    "subtitles": "字幕"
+  },
+  "findReplace": {
+    "title": "搜尋 / 替換",
+    "dialogTitle": "搜尋並替換",
+    "find": "尋找",
+    "replaceWith": "取代為",
+    "caseSensitive": "區分大小寫",
+    "matchFullWord": "全字匹配",
+    "useRegex": "使用正規表達式",
+    "selected": "已選擇",
+    "id": "編號",
+    "original": "原始",
+    "preview": "預覽",
+    "noMatches": "找不到符合項目",
+    "replace": "取代"
+  },
   "instructions": {
     "afterLoading": "載入字幕和媒體檔案後：",
-    "editText": "點擊字幕文字或時間戳來編輯您的字幕。",
+    "editText": "點擊字幕文字或時間戳來編輯字幕。",
     "icons": "點擊圖示來新增、合併或刪除字幕。",
     "dragBorders": "拖動波形圖上的虛線邊界來改變字幕的時間戳。",
     "rememberSave": "編輯完成後，記得點擊「儲存 SRT」來保存字幕！"
@@ -35,7 +55,7 @@
   },
   "dialog": {
     "replaceTitle": "替換現有字幕？",
-    "replaceDescription": "載入新的 SRT 檔案將替換當前的字幕。請確保您已先下載當前的 SRT。",
+    "replaceDescription": "載入新的 SRT 檔案將替換當前字幕。請確保已先儲存當前 SRT。",
     "cancel": "取消",
     "yes": "是"
   },

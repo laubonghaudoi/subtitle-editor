@@ -15,6 +15,26 @@
     "or": "or",
     "startFromScratch": "Start from scratch"
   },
+  "videoPlayer": {
+    "loadFile": "Load a video / audio file",
+    "supportedFormats": "Supported formats:",
+    "subtitles": "Subtitles"
+  },
+  "findReplace": {
+    "title": "Find / Replace",
+    "dialogTitle": "Find and Replace",
+    "find": "Find",
+    "replaceWith": "Replace with",
+    "caseSensitive": "Case sensitive",
+    "matchFullWord": "Match full word",
+    "useRegex": "Use regex",
+    "selected": "selected",
+    "id": "ID",
+    "original": "Original",
+    "preview": "Preview",
+    "noMatches": "No matches found",
+    "replace": "Replace"
+  },
   "instructions": {
     "afterLoading": "After loading the subtitles and media file:",
     "editText": "Click the subtitle text or timestamps to edit your captions.",

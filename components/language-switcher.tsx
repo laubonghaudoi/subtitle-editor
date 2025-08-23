@@ -7,14 +7,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { IconLanguage } from "@tabler/icons-react";
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { IconLanguage } from "@tabler/icons-react";
 
 export default function LanguageSwitcher() {
   const locale = useLocale();
-  const pathname = usePathname();
 
   // Function to get the path for a different locale
   const getLocalizedPath = (targetLocale: string) => {
