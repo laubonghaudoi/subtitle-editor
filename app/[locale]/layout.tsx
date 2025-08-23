@@ -3,7 +3,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
-const locales = ['en', 'zh-hant'];
+const locales = ['en', 'yue'];
 
 export async function generateMetadata({
   params
@@ -16,7 +16,7 @@ export async function generateMetadata({
     notFound();
   }
 
-  const isTraditionalChinese = locale === 'zh-hant';
+  const isTraditionalChinese = locale === 'yue';
   
   return {
     title: isTraditionalChinese 
@@ -33,7 +33,7 @@ export async function generateMetadata({
         ? "使用這個免費、開源、基於網頁的編輯器輕鬆編輯、建立和對齊 SRT 字幕檔案。具有影片預覽和波形視覺化功能。無需註冊。"
         : "Edit, create, and align SRT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
       url: isTraditionalChinese 
-        ? "https://subtitle-editor.org/zh-hant"
+        ? "https://subtitle-editor.org/yue"
         : "https://subtitle-editor.org",
       locale: isTraditionalChinese ? "zh_TW" : "en_US",
     },

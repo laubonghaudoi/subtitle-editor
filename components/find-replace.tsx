@@ -24,8 +24,8 @@ import { useSubtitleContext } from "@/context/subtitle-context"; // Import conte
 import { escapeRegExp } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import { IconReplace, IconSearch } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
 import { useTranslations } from 'next-intl';
+import { useEffect, useState } from "react";
 
 export default function FindReplace() {
   const t = useTranslations();

@@ -16,11 +16,11 @@ export default function LanguageSwitcher() {
 
   // Function to get the path for a different locale
   const getLocalizedPath = (targetLocale: string) => {
-    // For the root page, we just need to switch between / and /zh-hant
+    // For the root page, we just need to switch between / and /yue
     if (targetLocale === 'en') {
       return '/';
     } else {
-      return '/zh-hant';
+      return '/yue';
     }
   };
 
@@ -42,10 +42,10 @@ export default function LanguageSwitcher() {
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link 
-            href={getLocalizedPath('zh-hant')}
-            className={locale === 'zh-hant' ? 'bg-accent' : ''}
+            href={getLocalizedPath('yue')}
+            className={locale === 'yue' ? 'bg-accent' : ''}
           >
-            繁體中文
+            粵文
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

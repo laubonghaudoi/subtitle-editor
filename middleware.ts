@@ -2,7 +2,7 @@ import createMiddleware from 'next-intl/middleware';
 
 export default createMiddleware({
   // A list of all locales that are supported
-  locales: ['en', 'zh-hant'],
+  locales: ['en', 'yue'],
 
   // Used when no locale matches
   defaultLocale: 'en',
@@ -11,7 +11,7 @@ export default createMiddleware({
   localeDetection: false,
 
   // Always use prefix except for the default locale (English)
-  // This means /en/... will redirect to /..., but /zh-hant/... stays as is
+  // This means /en/... will redirect to /..., but /yue/... stays as is
   localePrefix: 'as-needed'
 });
 

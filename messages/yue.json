@@ -8,7 +8,7 @@
   "buttons": {
     "loadMedia": "載入媒體",
     "loadSrt": "載入 SRT",
-    "saveSrt": "保存 SRT"
+    "saveSrt": "儲存 SRT"
   },
   "labels": {
     "loadSrtFile": "載入 SRT 檔案",
@@ -22,34 +22,34 @@
   },
   "findReplace": {
     "title": "搜尋 / 替換",
-    "dialogTitle": "搜尋並替換",
+    "dialogTitle": "搜尋同替換",
     "find": "尋找",
-    "replaceWith": "取代為",
-    "caseSensitive": "區分大小寫",
+    "replaceWith": "替換成",
+    "caseSensitive": "區分大細寫",
     "matchFullWord": "全字匹配",
     "useRegex": "使用正規表達式",
-    "selected": "已選擇",
+    "selected": "已揀",
     "id": "編號",
     "original": "原始",
     "preview": "預覽",
-    "noMatches": "找不到符合項目",
-    "replace": "取代"
+    "noMatches": "揾唔到匹配項",
+    "replace": "替換"
   },
   "instructions": {
-    "afterLoading": "載入字幕和媒體檔案後：",
-    "editText": "點擊字幕文字或時間戳來編輯字幕。",
-    "icons": "點擊圖示來新增、合併或刪除字幕。",
-    "dragBorders": "拖動波形圖上的虛線邊界來改變字幕的時間戳。",
-    "rememberSave": "編輯完成後，記得點擊「儲存 SRT」來保存字幕！"
+    "afterLoading": "載入字幕同媒體檔案後：",
+    "editText": "撳字幕文字或時間點嚟編輯字幕。",
+    "icons": "撳圖標嚟新增、合併或刪除字幕。",
+    "dragBorders": "拖動波形圖方框嘅虛線邊界嚟改變字幕時間。",
+    "rememberSave": "編輯完後，記得撳「儲存 SRT」嚟儲存字幕！"
   },
   "shortcuts": {
-    "title": "快捷鍵：",
-    "space": "播放/暫停影片。",
+    "title": "快捷掣：",
+    "space": "播放 / 暫停影片。",
     "tab": "編輯當前字幕文字。",
-    "arrows": "和",
-    "arrowsAction": "跳到上一個/下一個字幕。",
-    "splitSubtitle": "在游標位置分割字幕文字（編輯時）。",
-    "mergeSubtitle": "將當前字幕與前一個合併。",
+    "arrows": "同",
+    "arrowsAction": "跳到上一個 / 下一個字幕。",
+    "splitSubtitle": "（編輯嗰陣）喺光標位置將字幕文字分成兩條。",
+    "mergeSubtitle": "將當前字幕合併到前一條。",
     "undoRedo": "復原，",
     "undoRedoAction": "重做。"
   },
@@ -57,7 +57,7 @@
     "replaceTitle": "替換現有字幕？",
     "replaceDescription": "載入新的 SRT 檔案將替換當前字幕。請確保已先儲存當前 SRT。",
     "cancel": "取消",
-    "yes": "是"
+    "yes": "確定替換"
   },
   "subtitle": {
     "newSubtitle": "新字幕"
