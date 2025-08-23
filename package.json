@@ -28,6 +28,7 @@
     "lucide-react": "^0.523.0",
     "motion": "^12.23.5",
     "next": "^15.5.0",
+    "next-intl": "^4.3.5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-player": "^2.16.0",

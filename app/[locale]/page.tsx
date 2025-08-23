@@ -45,6 +45,8 @@ import Link from "next/link";
 // Import useState
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useTranslations } from 'next-intl';
+import LanguageSwitcher from '@/components/language-switcher';
 
 const VideoPlayer = dynamic(() => import("@/components/video-player"), {
   ssr: false, // Disable server-side rendering
@@ -64,6 +66,7 @@ interface WaveformRef {
 
 // Define the main content component that will consume the context
 function MainContent() {
+  const t = useTranslations();
   const waveformRef = useRef<WaveformRef>(null);
   const mediaFileInputRef = useRef<HTMLInputElement>(null);
   const srtFileInputRef = useRef<HTMLInputElement>(null);
@@ -84,7 +87,7 @@ function MainContent() {
   const [pendingSrtFile, setPendingSrtFile] = useState<File | null>(null);
 
   const [mediaFile, setMediaFile] = useState<File | null>(null);
-  const [mediaFileName, setMediaFileName] = useState<string>("Load media");
+  const [mediaFileName, setMediaFileName] = useState<string>(t('buttons.loadMedia'));
 
   const [playbackTime, setPlaybackTime] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -235,17 +238,18 @@ function MainContent() {
   return (
     <div className="flex flex-col h-screen">
       <nav className="h-[6vh] border-black border-b-2 flex items-center px-12 justify-between">
-        <h1 className="text-lg font-semibold">Subtitle Editor</h1>
+        <h1 className="text-lg font-semibold">{t('navigation.title')}</h1>
         <div className="flex gap-4 items-center">
+          <LanguageSwitcher />
           <Link
             href="/faq"
             target="_blank"
-            aria-label="Frequently Asked Questions"
+            aria-label={t('navigation.faq')}
           >
             <Button
               variant="ghost"
               className="cursor-pointer"
-              aria-label="Frequently Asked Questions"
+              aria-label={t('navigation.faq')}
             >
               <QuestionMarkCircledIcon />
             </Button>
@@ -259,12 +263,12 @@ function MainContent() {
                   disabled={!canUndoSubtitles}
                   onClick={undoSubtitles}
                   className="cursor-pointer"
-                  aria-label="Undo"
+                  aria-label={t('navigation.undo')}
                 >
                   <IconArrowBack />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Undo</TooltipContent>
+              <TooltipContent>{t('navigation.undo')}</TooltipContent>
             </Tooltip>
 
             <Tooltip>
@@ -275,12 +279,12 @@ function MainContent() {
                   disabled={!canRedoSubtitles}
                   onClick={redoSubtitles}
                   className="cursor-pointer"
-                  aria-label="Redo"
+                  aria-label={t('navigation.redo')}
                 >
                   <IconArrowForward />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Redo</TooltipContent>
+              <TooltipContent>{t('navigation.redo')}</TooltipContent>
             </Tooltip>
           </TooltipProvider>
 
@@ -332,7 +336,7 @@ function MainContent() {
               className="hover:bg-amber-500 hover:text-white bg-amber-300 text-black rounded-sm cursor-pointer"
             >
               <IconBadgeCc />
-              Load SRT
+              {t('buttons.loadSrt')}
             </Button>
           </Label>
 
@@ -342,7 +346,7 @@ function MainContent() {
             className="cursor-pointer"
           >
             <DownloadIcon />
-            Save SRT
+            {t('buttons.saveSrt')}
           </Button>
         </div>
       </nav>
@@ -372,7 +376,7 @@ function MainContent() {
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-muted-foreground rounded-sm">
                   <Label className="cursor-pointer text-xl hover:text-blue-500 underline">
-                    Load an SRT file
+                    {t('labels.loadSrtFile')}
                     <Input
                       type="file"
                       className="hidden"
@@ -384,7 +388,7 @@ function MainContent() {
                       }}
                     />
                   </Label>
-                  <p className="text-xl my-4">or</p>
+                  <p className="text-xl my-4">{t('labels.or')}</p>
                   <button
                     type="button"
                     onClick={() =>
@@ -395,13 +399,13 @@ function MainContent() {
                           id: 1,
                           startTime: "00:00:00,000",
                           endTime: "00:00:03,000",
-                          text: "New subtitle",
+                          text: t('subtitle.newSubtitle'),
                         },
                       ])
                     }
                     className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-500"
                   >
-                    Start from scratch
+                    {t('labels.startFromScratch')}
                   </button>
                 </div>
               )}
@@ -457,53 +461,48 @@ function MainContent() {
           ) : (
             <div className="grid grid-cols-2 items-left h-full text-gray-600 px-8 py-4 border-t-2 border-black">
               <div className="text-lg text-gray-600 p-2">
-                <p className="">After loading the subtitles and media file:</p>
+                <p className="">{t('instructions.afterLoading')}</p>
                 <ul className="list-disc list-inside my-2">
                   <li>
-                    Click the subtitle text or timestamps to edit your captions.
+                    {t('instructions.editText')}
                   </li>
-                  <li>Click the icons to add, merge or delete subtitles.</li>
+                  <li>{t('instructions.icons')}</li>
                   <li>
-                    Drag the dashed borders on the waveform to change the
-                    subtitles' time stamps.
+                    {t('instructions.dragBorders')}
                   </li>
 
                   <li>
-                    Remember to click "Save SRT" to save the subtitles when you
-                    finish editing!
+                    {t('instructions.rememberSave')}
                   </li>
                 </ul>
               </div>
               <div className="p-2">
                 <h2 className="text-lg inline-flex items-center">
                   <IconKeyboard className="mr-2" />
-                  Shortcuts:
+                  {t('shortcuts.title')}
                 </h2>
                 <ul className="list-disc list-inside px-2">
                   <li>
-                    <kbd>space</kbd> to play/pause the video.
+                    <kbd>space</kbd> {t('shortcuts.space')}
                   </li>
                   <li>
-                    <kbd>tab</kbd> to edit the current subtitle text.
+                    <kbd>tab</kbd> {t('shortcuts.tab')}
                   </li>
                   <li>
-                    <kbd>↑</kbd> and <kbd>↓</kbd> to jump to the previous/next
-                    subtitle.
+                    <kbd>↑</kbd> {t('shortcuts.arrows')} <kbd>↓</kbd> {t('shortcuts.arrowsAction')}
                   </li>
                   <li>
-                    <kbd>shift</kbd> + <kbd>enter</kbd> to split the subtitle
-                    text at the cursor position when editing it.
+                    <kbd>shift</kbd> + <kbd>enter</kbd> {t('shortcuts.splitSubtitle')}
                   </li>
                   <li>
-                    <kbd>shift</kbd> + <kbd>backspace</kbd> to merge the current
-                    subtitle with the previous one.
+                    <kbd>shift</kbd> + <kbd>backspace</kbd> {t('shortcuts.mergeSubtitle')}
                   </li>
                   <li>
                     <kbd>ctrl</kbd> + <kbd>z</kbd> (Windows) or{" "}
-                    <kbd>&#8984;</kbd> + <kbd>z</kbd> (Mac) to undo,{" "}
+                    <kbd>&#8984;</kbd> + <kbd>z</kbd> (Mac) {t('shortcuts.undoRedo')}{" "}
                     <kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>z</kbd> (Windows)
                     or <kbd>&#8984;</kbd> + <kbd>shift</kbd> + <kbd>z</kbd>{" "}
-                    (Mac) to redo.
+                    (Mac) {t('shortcuts.undoRedoAction')}
                   </li>
                 </ul>
               </div>
@@ -518,15 +517,14 @@ function MainContent() {
         >
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Replace existing subtitles?</AlertDialogTitle>
+              <AlertDialogTitle>{t('dialog.replaceTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                Loading a new SRT file will replace the current subtitles. Make
-                sure you have downloaded the current SRT first.
+                {t('dialog.replaceDescription')}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel onClick={() => setPendingSrtFile(null)}>
-                Cancel
+                {t('dialog.cancel')}
               </AlertDialogCancel>
               <AlertDialogAction
                 className="bg-red-600 hover:bg-red-500"
@@ -538,7 +536,7 @@ function MainContent() {
                   setShowOverwriteDialog(false);
                 }}
               >
-                Yes
+                {t('dialog.yes')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

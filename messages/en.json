@@ -1,0 +1,45 @@
+{
+  "navigation": {
+    "title": "Subtitle Editor",
+    "faq": "Frequently Asked Questions",
+    "undo": "Undo",
+    "redo": "Redo"
+  },
+  "buttons": {
+    "loadMedia": "Load media",
+    "loadSrt": "Load SRT",
+    "saveSrt": "Save SRT"
+  },
+  "labels": {
+    "loadSrtFile": "Load an SRT file",
+    "or": "or",
+    "startFromScratch": "Start from scratch"
+  },
+  "instructions": {
+    "afterLoading": "After loading the subtitles and media file:",
+    "editText": "Click the subtitle text or timestamps to edit your captions.",
+    "icons": "Click the icons to add, merge or delete subtitles.",
+    "dragBorders": "Drag the dashed borders on the waveform to change the subtitles' time stamps.",
+    "rememberSave": "Remember to click \"Save SRT\" to save the subtitles when you finish editing!"
+  },
+  "shortcuts": {
+    "title": "Shortcuts:",
+    "space": "to play/pause the video.",
+    "tab": "to edit the current subtitle text.",
+    "arrows": "and",
+    "arrowsAction": "to jump to the previous/next subtitle.",
+    "splitSubtitle": "to split the subtitle text at the cursor position when editing it.",
+    "mergeSubtitle": "to merge the current subtitle with the previous one.",
+    "undoRedo": "to undo,",
+    "undoRedoAction": "to redo."
+  },
+  "dialog": {
+    "replaceTitle": "Replace existing subtitles?",
+    "replaceDescription": "Loading a new SRT file will replace the current subtitles. Make sure you have downloaded the current SRT first.",
+    "cancel": "Cancel",
+    "yes": "Yes"
+  },
+  "subtitle": {
+    "newSubtitle": "New subtitle"
+  }
+}
