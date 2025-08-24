@@ -5,8 +5,12 @@ import { Button } from "@/components/ui/button";
 // Add specific metadata for the FAQ page
 export const metadata: Metadata = {
   title: "FAQ", // Will use template: "FAQ | Subtitle Editor Online"
-  description:
-    "Frequently asked questions about the subtitle editor, including features, comparisons, maintenance, and feedback.",
+  description: "Frequently asked questions about the subtitle editor.",
+  keywords: [
+    "subtitle editor FAQ",
+    "subtitle editor Frequently Asked Questions",
+    "Why another subtitle editor?",
+  ],
 };
 
 export default function FaqPage() {
@@ -57,12 +61,13 @@ export default function FaqPage() {
       </p>
       <ul className="list-disc mx-6 my-2">
         <li>
-          <a
+          <Link
             href="https://www.happyscribe.com/subtitle-tools/online-subtitle-editor/free"
+            target="_blank"
             className="hover:underline text-blue-600 hover:text-blue-800"
           >
             Happy Scribe
-          </a>{" "}
+          </Link>{" "}
           offers a free online subtitle editor. No account registration is
           required. Editing subtitles and previewing with the video is very
           easy. It is the closest to what I need. Unfortunately, it's missing
@@ -70,12 +75,12 @@ export default function FaqPage() {
           sourced either and we can't customize it.
         </li>
         <li>
-          <a
+          <Link
             href="https://www.nikse.dk/subtitleedit"
             className="hover:underline text-blue-600 hover:text-blue-800"
           >
             Subtitle Edit
-          </a>{" "}
+          </Link>{" "}
           is a great option and has all features I need. It supports waveform
           visualization, easy preview and editing, and even AI transcriptions.
           But it is a desktop software which requires installation, and it
@@ -83,12 +88,13 @@ export default function FaqPage() {
           subtitles.
         </li>
         <li>
-          <a
+          <Link
             href="https://aegisub.org/"
+            target="_blank"
             className="hover:underline text-blue-600 hover:text-blue-800"
           >
             Aegisub
-          </a>{" "}
+          </Link>{" "}
           is similar to Subtitle Edit. It is a desktop software suitable for
           more complex subtitle editing. Also I found waveform visualizer not
           very intuitive. (Btw these desktop softwares have 1990s-style UI which
@@ -96,19 +102,21 @@ export default function FaqPage() {
         </li>
         <li>
           Other options such as{" "}
-          <a
+          <Link
             href="https://opensubtitleed.sourceforge.net/"
+            target="_blank"
             className="hover:underline text-blue-600 hover:text-blue-800"
           >
             Open Subtitle Editor
-          </a>{" "}
+          </Link>{" "}
           or{" "}
-          <a
+          <Link
             href="https://www.movavi.com/"
+            target="_blank"
             className="hover:underline text-blue-600 hover:text-blue-800"
           >
             Movavi
-          </a>{" "}
+          </Link>{" "}
           are either too complex and feature-bloated, or are not free.
         </li>
       </ul>
@@ -131,12 +139,13 @@ export default function FaqPage() {
       </h2>
       <p>
         This app is open sourced on GitHub{" "}
-        <a
+        <Link
           href="https://github.com/laubonghaudoi/subtitle-editor"
+          target="_blank"
           className="hover:underline text-blue-600 hover:text-blue-800"
         >
           laubonghaudoi/subtitle-editor
-        </a>
+        </Link>
         . I will check issues and accept PRs regularly, but I am quite busy
         these days so I may not have time to develop new features. This is a
         community project and your contributions are always welcomed!
@@ -144,12 +153,13 @@ export default function FaqPage() {
       <h2 className="text-xl font-bold my-4">Have feedback?</h2>
       <p>
         Feel free to{" "}
-        <a
+        <Link
           href="https://github.com/laubonghaudoi/subtitle-editor/issues"
+          target="_blank"
           className="hover:underline text-blue-600 hover:text-blue-800"
         >
           open an issue on GitHub
-        </a>
+        </Link>
         . I want to keep this app as minimalistic as possible, so these features
         are non-goals and I don't plan to add them:
       </p>
@@ -162,8 +172,77 @@ export default function FaqPage() {
         <li>Complex subtitle editing such as VTT files.</li>
       </ul>
       <p>
-        If you need any of these advanced features, please use the other options
-        I listed above.
+        I discussed my reasoning for not including them in{" "}
+        <Link
+          href="https://github.com/laubonghaudoi/subtitle-editor/issues/11#issuecomment-3201949429"
+          target="_blank"
+          className="hover:underline text-blue-600 hover:text-blue-800"
+        >
+          this GitHub issue
+        </Link>
+        . If you need any of these advanced features, please use the other
+        options I listed above.
+      </p>
+
+      <h2 className="text-xl font-bold my-4">
+        I need an AI transcriber / srt generator, any recommendations?
+      </h2>
+      <p>
+        Yes I recommend generating the srt file with an AI transcriber first,
+        then editing it with this editor. That's why I listed "AI
+        transcriptions" as a non-goal above. It's much easier to just use a
+        specialized tool for that than building it into this editor. There are
+        many free srt generators available on huggingface, such as:
+      </p>
+      <ul className="list-disc mx-6 my-2">
+        <li>
+          <Link
+            href="https://huggingface.co/spaces/k2-fsa/generate-subtitles-for-videos"
+            target="_blank"
+            className="hover:underline text-blue-600 hover:text-blue-800"
+          >
+            k2-fsa/generate-subtitles-for-videos
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="https://huggingface.co/spaces/BatuhanYilmaz/Whisper-Auto-Subtitled-Video-Generator"
+            target="_blank"
+            className="hover:underline text-blue-600 hover:text-blue-800"
+          >
+            BatuhanYilmaz/Whisper-Auto-Subtitled-Video-Generator
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="https://huggingface.co/spaces/NeuralFalcon/Whisper-Turbo-Subtitle"
+            target="_blank"
+            className="hover:underline text-blue-600 hover:text-blue-800"
+          >
+            NeuralFalcon/Whisper-Turbo-Subtitle
+          </Link>
+        </li>
+      </ul>
+      <p>
+        You can also download{" "}
+        <Link
+          href="https://www.nikse.dk/subtitleedit"
+          className="hover:underline text-blue-600 hover:text-blue-800"
+        >
+          Subtitle Edit
+        </Link>{" "}
+        I mentioned above, which has built-in AI transcription capabilities.
+      </p>
+      <h2 className="text-xl font-bold my-4">
+        I want to download a YouTube video and extract the subtitles of it, how?
+      </h2>
+      <p>
+        Use <Link
+          href="https://github.com/yt-dlp/yt-dlp"
+          className="hover:underline text-blue-600 hover:text-blue-800"
+        >
+          yt-dlp
+        </Link>. It's free and the most reliable YouTube video downloader. It also supports downloading subtitles directly if they are available.
       </p>
       <Button asChild variant="secondary" className="my-8">
         <Link href="/">Back to Editor</Link>
