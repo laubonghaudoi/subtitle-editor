@@ -1,0 +1,77 @@
+{
+  "navigation": {
+    "title": "Subtitle Editor",
+    "faq": "Frequently Asked Questions",
+    "undo": "Undo",
+    "redo": "Redo"
+  },
+  "buttons": {
+    "loadMedia": "Load media",
+    "loadSrt": "Load SRT",
+    "saveSrt": "Save SRT"
+  },
+  "labels": {
+    "loadSrtFile": "Load an SRT file",
+    "or": "or",
+    "startFromScratch": "Start from scratch"
+  },
+  "videoPlayer": {
+    "loadFile": "Load a video / audio file",
+    "supportedFormats": "Supported formats:",
+    "subtitles": "Subtitles"
+  },
+  "findReplace": {
+    "title": "Find / Replace",
+    "dialogTitle": "Find and Replace",
+    "find": "Find",
+    "replaceWith": "Replace with",
+    "caseSensitive": "Case sensitive",
+    "matchFullWord": "Match full word",
+    "useRegex": "Use regex",
+    "selected": "selected",
+    "id": "ID",
+    "original": "Original",
+    "preview": "Preview",
+    "noMatches": "No matches found",
+    "replace": "Replace"
+  },
+  "instructions": {
+    "afterLoading": "After loading the subtitles and media file:",
+    "editText": "Click the subtitle text or timestamps to edit your captions.",
+    "icons": "Click the icons to add, merge or delete subtitles.",
+    "dragBorders": "Drag the dashed borders on the waveform to change the subtitles' time stamps.",
+    "rememberSave": "Remember to click \"Save SRT\" to save the subtitles when you finish editing!"
+  },
+  "shortcuts": {
+    "title": "Shortcuts:",
+    "space": "to play/pause the video.",
+    "tab": "to edit the current subtitle text.",
+    "arrows": "and",
+    "arrowsAction": "to jump to the previous/next subtitle.",
+    "splitSubtitle": "to split the subtitle text at the cursor position when editing it.",
+    "mergeSubtitle": "to merge the current subtitle with the previous one.",
+    "undoRedo": "to undo,",
+    "undoRedoAction": "to redo."
+  },
+  "dialog": {
+    "discardTitle": "Discard existing subtitles?",
+    "discardDescription": "Loading a new SRT file will discard the current subtitles. Make sure you have downloaded the current SRT first.",
+    "switchTitle": "Switch language?",
+    "switchDescription": "Changing the language will discard the current subtitles. Make sure you have downloaded the current SRT first.",
+    "cancel": "Cancel",
+    "yes": "Confirm"
+  },
+  "subtitle": {
+    "newSubtitle": "New subtitle"
+  },
+  "tooltips": {
+    "add": "Add",
+    "merge": "Merge",
+    "delete": "Delete",
+    "noRoom": "No room to add"
+  },
+  "metadata": {
+    "title": "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT Editing Tool",
+    "description": "Edit, create, and align SRT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required."
+  }
+}

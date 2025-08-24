@@ -6,6 +6,7 @@ import { useSubtitleContext } from "@/context/subtitle-context"; // Import conte
 import { srtToVtt, subtitlesToSrtString } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { useTranslations } from "next-intl";
 
 interface VideoPlayerProps {
   mediaFile: File | null;
@@ -30,6 +31,7 @@ export default function VideoPlayer({
   isPlaying,
   playbackRate,
 }: VideoPlayerProps) {
+  const t = useTranslations();
   // Get subtitles from context
   const { subtitles } = useSubtitleContext();
 
@@ -98,7 +100,7 @@ export default function VideoPlayer({
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
         <Label className="cursor-pointer text-xl hover:text-blue-500 underline">
-          Load a video / audio file
+          {t("videoPlayer.loadFile")}
           <Input
             className="hidden"
             type="file"
@@ -113,8 +115,8 @@ export default function VideoPlayer({
           />
         </Label>
         <p className="my-4 text-lg">
-          Supported formats: <code>m4a</code>, <code>mp3</code>,{" "}
-          <code>mp4</code>, <code>webm</code>, <code>ogg</code>,{" "}
+          {t("videoPlayer.supportedFormats")} <code>m4a</code>, <code>mp3</code>
+          , <code>mp4</code>, <code>webm</code>, <code>ogg</code>,{" "}
           <code>wav</code>, <code>aac</code>, <code>flac</code>,{" "}
           <code>opus</code>
         </p>
@@ -159,7 +161,7 @@ export default function VideoPlayer({
             },
             tracks: [
               {
-                label: "Subtitles",
+                label: t("videoPlayer.subtitles"),
                 kind: "subtitles",
                 src: vttUrl, // ← pass the in-memory URL to the track
                 srcLang: "unknown",

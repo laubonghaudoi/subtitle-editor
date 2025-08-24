@@ -8,7 +8,7 @@ export const parseSRT = (srtContent: string): Subtitle[] => {
   const subtitles: Subtitle[] = [];
   const blocks = srtContent.trim().split(/\n\s*\n/);
 
-  blocks.map((block) => {
+  blocks.forEach((block) => {
     const lines = block.trim().split("\n");
     if (lines.length >= 3) {
       const id = Number.parseInt(lines[0]);
@@ -105,7 +105,8 @@ export const deleteSubtitle = (
 export const addSubtitle = (
   subtitles: Subtitle[],
   beforeId: number,
-  afterId: number | null
+  afterId: number | null,
+  newSubtitleText: string = "New subtitle"
 ): Subtitle[] => {
   const beforeSub = subtitles.find((s) => s.id === beforeId);
   if (!beforeSub) return subtitles;
@@ -120,7 +121,7 @@ export const addSubtitle = (
       id: beforeSub.id + 1, // Will be reordered later
       startTime: beforeSub.endTime,
       endTime: secondsToTime(endTimeSeconds),
-      text: "New subtitle",
+      text: newSubtitleText,
     };
   } else {
     // Adding in between
@@ -131,7 +132,7 @@ export const addSubtitle = (
       id: beforeSub.id + 1, // Will be reordered later
       startTime: beforeSub.endTime,
       endTime: afterSub.startTime,
-      text: "New subtitle",
+      text: newSubtitleText,
     };
   }
 
@@ -208,7 +209,8 @@ export function splitSubtitle(
 export function splitSubtitleByTime(
   subtitles: Subtitle[],
   id: number,
-  splitTimeSec: number
+  splitTimeSec: number,
+  newSubtitleText: string = "New subtitle"
 ): Subtitle[] {
   const sub = subtitles.find((s) => s.id === id);
   if (!sub) return subtitles; // if not found, do nothing
@@ -232,7 +234,7 @@ export function splitSubtitleByTime(
   const first: Subtitle = {
     ...sub, // Includes original uuid
     endTime: secondsToTime(splitTimeSec),
-    text: firstText || "New subtitle",
+    text: firstText || newSubtitleText,
   };
 
   // 2) New from splitTime → endTime - gets a new UUID
@@ -241,7 +243,7 @@ export function splitSubtitleByTime(
     id: sub.id + 1, // Will be reordered later
     startTime: secondsToTime(splitTimeSec),
     endTime: sub.endTime,
-    text: secondText || "New subtitle",
+    text: secondText || newSubtitleText,
   };
 
   // Remove original and insert the two halves at the same position
