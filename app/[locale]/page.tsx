@@ -48,6 +48,8 @@ import { v4 as uuidv4 } from "uuid";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/language-switcher";
 
+export const runtime = 'edge';
+
 const VideoPlayer = dynamic(() => import("@/components/video-player"), {
   ssr: false, // Disable server-side rendering
 });
