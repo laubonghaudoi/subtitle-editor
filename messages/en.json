@@ -56,6 +56,8 @@
   "dialog": {
     "discardTitle": "Discard existing subtitles?",
     "discardDescription": "Loading a new SRT file will discard the current subtitles. Make sure you have downloaded the current SRT first.",
+    "switchTitle": "Switch language?",
+    "switchDescription": "Changing the language will discard the current subtitles. Make sure you have downloaded the current SRT first.",
     "cancel": "Cancel",
     "yes": "Confirm"
   },

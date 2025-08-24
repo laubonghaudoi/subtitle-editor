@@ -150,7 +150,7 @@ function MainContent() {
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (subtitles.length > 0) {
+      if (canUndoSubtitles) {
         event.preventDefault();
         // Setting returnValue is required for most modern browsers
         event.returnValue = "";
@@ -162,7 +162,7 @@ function MainContent() {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [subtitles]);
+  }, [canUndoSubtitles]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

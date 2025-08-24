@@ -56,8 +56,10 @@
   "dialog": {
     "discardTitle": "放棄當前字幕？",
     "discardDescription": "載入新嘅 SRT 檔案會放棄當前字幕。請確保已先儲存當前 SRT。",
+    "switchTitle": "轉語言？",
+    "switchDescription": "轉語言會放棄當前字幕，請確保已先下載當前 SRT。",
     "cancel": "取消",
-    "yes": "確定載入"
+    "yes": "確定"
   },
   "subtitle": {
     "newSubtitle": "新字幕"
