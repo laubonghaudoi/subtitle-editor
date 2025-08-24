@@ -523,9 +523,9 @@ function MainContent() {
         >
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{t("dialog.replaceTitle")}</AlertDialogTitle>
+              <AlertDialogTitle>{t("dialog.discardTitle")}</AlertDialogTitle>
               <AlertDialogDescription>
-                {t("dialog.replaceDescription")}
+                {t("dialog.discardDescription")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

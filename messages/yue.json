@@ -54,10 +54,10 @@
     "undoRedoAction": "做返。"
   },
   "dialog": {
-    "replaceTitle": "替換現有字幕？",
-    "replaceDescription": "載入新的 SRT 檔案將替換當前字幕。請確保已先儲存當前 SRT。",
+    "discardTitle": "放棄當前字幕？",
+    "discardDescription": "載入新嘅 SRT 檔案會放棄當前字幕。請確保已先儲存當前 SRT。",
     "cancel": "取消",
-    "yes": "確定替換"
+    "yes": "確定載入"
   },
   "subtitle": {
     "newSubtitle": "新字幕"

@@ -54,10 +54,10 @@
     "undoRedoAction": "to redo."
   },
   "dialog": {
-    "replaceTitle": "Replace existing subtitles?",
-    "replaceDescription": "Loading a new SRT file will replace the current subtitles. Make sure you have downloaded the current SRT first.",
+    "discardTitle": "Discard existing subtitles?",
+    "discardDescription": "Loading a new SRT file will discard the current subtitles. Make sure you have downloaded the current SRT first.",
     "cancel": "Cancel",
-    "yes": "Yes"
+    "yes": "Confirm"
   },
   "subtitle": {
     "newSubtitle": "New subtitle"
