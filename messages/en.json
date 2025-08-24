@@ -61,5 +61,11 @@
   },
   "subtitle": {
     "newSubtitle": "New subtitle"
+  },
+  "tooltips": {
+    "add": "Add",
+    "merge": "Merge",
+    "delete": "Delete",
+    "noRoom": "No room to add"
   }
 }

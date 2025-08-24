@@ -18,7 +18,11 @@ import { createContext, useContext } from "react";
 interface SubtitleContextType {
   subtitles: Subtitle[];
   setInitialSubtitles: (subs: Subtitle[]) => void;
-  addSubtitleAction: (beforeId: number, afterId: number | null) => void;
+  addSubtitleAction: (
+    beforeId: number,
+    afterId: number | null,
+    newSubtitleText?: string
+  ) => void;
   deleteSubtitleAction: (id: number) => void;
   mergeSubtitlesAction: (id1: number, id2: number) => void;
   splitSubtitleAction: (
@@ -69,8 +73,14 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     setSubtitlesWithHistory(subs); // Reset history when setting initial
   };
 
-  const addSubtitleAction = (beforeId: number, afterId: number | null) => {
-    setSubtitlesWithHistory((prev) => addSubtitle(prev, beforeId, afterId));
+  const addSubtitleAction = (
+    beforeId: number,
+    afterId: number | null,
+    newSubtitleText?: string
+  ) => {
+    setSubtitlesWithHistory((prev) =>
+      addSubtitle(prev, beforeId, afterId, newSubtitleText)
+    );
   };
 
   const deleteSubtitleAction = (id: number) => {

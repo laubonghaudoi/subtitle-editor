@@ -2,8 +2,8 @@
   "navigation": {
     "title": "字幕編輯器",
     "faq": "常見問題",
-    "undo": "復原",
-    "redo": "重做"
+    "undo": "撤返",
+    "redo": "做返"
   },
   "buttons": {
     "loadMedia": "載入媒體",
@@ -30,7 +30,7 @@
     "useRegex": "使用正規表達式",
     "selected": "已揀",
     "id": "編號",
-    "original": "原始",
+    "original": "當前",
     "preview": "預覽",
     "noMatches": "揾唔到匹配項",
     "replace": "替換"
@@ -48,10 +48,10 @@
     "tab": "編輯當前字幕文字。",
     "arrows": "同",
     "arrowsAction": "跳到上一條 / 下一條字幕。",
-    "splitSubtitle": "（編輯嗰陣）喺光標位置將字幕文字分成兩條。",
+    "splitSubtitle": "（編輯嗰陣）從光標位置將字幕分成兩條。",
     "mergeSubtitle": "將當前字幕合併到前一條。",
-    "undoRedo": "復原，",
-    "undoRedoAction": "重做。"
+    "undoRedo": "撤返，",
+    "undoRedoAction": "做返。"
   },
   "dialog": {
     "replaceTitle": "替換現有字幕？",
@@ -61,5 +61,11 @@
   },
   "subtitle": {
     "newSubtitle": "新字幕"
+  },
+  "tooltips": {
+    "add": "加新",
+    "merge": "合併",
+    "delete": "刪除",
+    "noRoom": "冇位再加"
   }
 }

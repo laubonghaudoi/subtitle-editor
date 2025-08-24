@@ -14,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { useTranslations } from "next-intl";
 
 interface SubtitleItemProps {
   subtitle: Subtitle;
@@ -39,6 +40,7 @@ export default function SubtitleItem({
   setPlaybackTime,
   setEditingSubtitleUuid,
 }: SubtitleItemProps) {
+  const t = useTranslations();
   const {
     updateSubtitleStartTimeAction,
     updateSubtitleEndTimeAction,
@@ -127,14 +129,14 @@ export default function SubtitleItem({
 
   // Calculate if the add button should be disabled
   let isAddDisabled = false;
-  let addTooltipContent = "Add";
+  let addTooltipContent = t("tooltips.add");
   if (!isLastItem && nextSubtitle) {
     const currentEndTimeSec = timeToSeconds(subtitle.endTime);
     const nextStartTimeSec = timeToSeconds(nextSubtitle.startTime);
     const timeDiff = nextStartTimeSec - currentEndTimeSec;
     isAddDisabled = timeDiff <= 0.001;
     if (isAddDisabled) {
-      addTooltipContent = "No room to add";
+      addTooltipContent = t("tooltips.noRoom");
     }
   }
 
@@ -356,7 +358,7 @@ export default function SubtitleItem({
                 <IconTrash size={16} />
               </TooltipTrigger>
               <TooltipContent className="bg-red-600 px-2 py-1 text-sm">
-                Delete
+                {t("tooltips.delete")}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -376,7 +378,7 @@ export default function SubtitleItem({
                 <IconFold size={16} />
               </TooltipTrigger>
               <TooltipContent className="bg-amber-500 px-2 py-1 text-sm">
-                Merge
+                {t("tooltips.merge")}
               </TooltipContent>
             </Tooltip>
           )}
@@ -389,7 +391,8 @@ export default function SubtitleItem({
                 if (!isAddDisabled) {
                   addSubtitleAction(
                     subtitle.id,
-                    !isLastItem && nextSubtitle ? nextSubtitle.id : null
+                    !isLastItem && nextSubtitle ? nextSubtitle.id : null,
+                    t("subtitle.newSubtitle")
                   );
                 }
               }}
