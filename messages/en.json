@@ -67,5 +67,9 @@
     "merge": "Merge",
     "delete": "Delete",
     "noRoom": "No room to add"
+  },
+  "metadata": {
+    "title": "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT Editing Tool",
+    "description": "Edit, create, and align SRT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required."
   }
 }

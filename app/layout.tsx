@@ -46,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const googleAdsId = useId();
-  
+
   return (
     <html lang="en">
       <body

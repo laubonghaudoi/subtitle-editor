@@ -1,55 +1,46 @@
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
-
-const locales = ['en', 'yue'];
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import { localeConfig, isValidLocale } from "@/lib/locales";
 
 export async function generateMetadata({
-  params
+  params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
   // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) {
+  if (!isValidLocale(locale)) {
     notFound();
   }
 
-  const isTraditionalChinese = locale === 'yue';
-  
+  // Get messages for this locale
+  const messages = (await import(`../../messages/${locale}.json`)).default;
+  const config = localeConfig[locale];
+
   return {
-    title: isTraditionalChinese 
-      ? "字幕編輯器 - 永久免費、開源、完全基於網頁的 SRT 字幕編輯工具"
-      : "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT Editing Tool",
-    description: isTraditionalChinese
-      ? "使用這個免費、開源、基於網頁的編輯器輕鬆編輯、建立和對齊 SRT 字幕檔案。具有影片預覽和波形視覺化功能。無需註冊。"
-      : "Edit, create, and align SRT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
+    title: messages.metadata.title,
+    description: messages.metadata.description,
     openGraph: {
-      title: isTraditionalChinese 
-        ? "字幕編輯器 - 永久免費、開源、完全基於網頁的 SRT 字幕編輯工具"
-        : "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT Editing Tool",
-      description: isTraditionalChinese
-        ? "使用這個免費、開源、基於網頁的編輯器輕鬆編輯、建立和對齊 SRT 字幕檔案。具有影片預覽和波形視覺化功能。無需註冊。"
-        : "Edit, create, and align SRT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
-      url: isTraditionalChinese 
-        ? "https://subtitle-editor.org/yue"
-        : "https://subtitle-editor.org",
-      locale: isTraditionalChinese ? "zh_TW" : "en_US",
+      title: messages.metadata.title,
+      description: messages.metadata.description,
+      url: config.url,
+      locale: config.openGraphLocale,
     },
   };
 }
 
 export default async function LocaleLayout({
   children,
-  params
+  params,
 }: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
   // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) {
+  if (!isValidLocale(locale)) {
     notFound();
   }
 
