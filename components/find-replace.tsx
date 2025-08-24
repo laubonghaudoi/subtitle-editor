@@ -24,7 +24,7 @@ import { useSubtitleContext } from "@/context/subtitle-context"; // Import conte
 import { escapeRegExp } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import { IconReplace, IconSearch } from "@tabler/icons-react";
-import { useTranslations } from 'next-intl';
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 export default function FindReplace() {
@@ -155,11 +155,7 @@ export default function FindReplace() {
     return <>{highlighted}</>;
   };
 
-  const highlightReplacements = (
-    originalText: string,
-    newText: string,
-    findRegex: RegExp
-  ) => {
+  const highlightReplacements = (newText: string) => {
     if (!findText) return newText;
 
     const replacedParts = newText.split(replaceText);
@@ -235,18 +231,17 @@ export default function FindReplace() {
           className="border-black rounded-xs cursor-pointer"
         >
           <IconSearch />
-          {t('findReplace.title')}
+          <span className="">{t("findReplace.title")}</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[48rem]">
         <DialogHeader>
-          <DialogTitle>{t('findReplace.dialogTitle')}</DialogTitle>
+          <DialogTitle>{t("findReplace.dialogTitle")}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <Label htmlFor="find">{t('findReplace.find')}</Label>
+            <Label htmlFor="find">{t("findReplace.find")}</Label>
             <Input
-              id="find"
               value={findText}
               onChange={(e) => setFindText(e.target.value)}
               className="flex-1"
@@ -255,7 +250,6 @@ export default function FindReplace() {
           <div className="flex gap-4">
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="case-sensitive"
                 checked={isCaseSensitive}
                 onCheckedChange={(checked) => {
                   // Handle the CheckedState and update isCaseSensitive
@@ -270,12 +264,11 @@ export default function FindReplace() {
                 htmlFor="case-sensitive"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                {t('findReplace.caseSensitive')}
+                {t("findReplace.caseSensitive")}
               </label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="match-full-word"
                 checked={isMatchFullWord}
                 onCheckedChange={(checked) => {
                   // Handle the CheckedState and update isCaseSensitive
@@ -290,12 +283,11 @@ export default function FindReplace() {
                 htmlFor="match-full-word"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                {t('findReplace.matchFullWord')}
+                {t("findReplace.matchFullWord")}
               </label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="regex-mode"
                 checked={isRegexMode}
                 onCheckedChange={(checked) => {
                   if (checked === "indeterminate") {
@@ -309,21 +301,21 @@ export default function FindReplace() {
                 htmlFor="regex-mode"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                {t('findReplace.useRegex')}
+                {t("findReplace.useRegex")}
               </label>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Label htmlFor="replace">{t('findReplace.replaceWith')}</Label>
+            <Label htmlFor="replace">{t("findReplace.replaceWith")}</Label>
             <Input
-              id="replace"
               value={replaceText}
               onChange={(e) => setReplaceText(e.target.value)}
               className="flex-1"
             />
           </div>
           <div className="text-sm text-gray-500">
-            {selectedSubtitles.size} / {matchedSubtitles.length} {t('findReplace.selected')}
+            {selectedSubtitles.size} / {matchedSubtitles.length}{" "}
+            {t("findReplace.selected")}
           </div>
           <div className="w-full max-h-[32rem] overflow-y-auto">
             <Table className="w-full border-collapse ">
@@ -349,13 +341,13 @@ export default function FindReplace() {
                     />
                   </TableHead>
                   <TableHead className="sticky top-0 text-black w-fit">
-                    {t('findReplace.id')}
+                    {t("findReplace.id")}
                   </TableHead>
                   <TableHead className="sticky top-0 text-black">
-                    {t('findReplace.original')}
+                    {t("findReplace.original")}
                   </TableHead>
                   <TableHead className="sticky top-0 text-black">
-                    {t('findReplace.preview')}
+                    {t("findReplace.preview")}
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -425,11 +417,7 @@ export default function FindReplace() {
                           {/* Pass the potentially null, freshly created regex */}
                           {
                             displayRegex
-                              ? highlightReplacements(
-                                  subtitle.text,
-                                  newText,
-                                  displayRegex // Use the same regex used for newText calculation
-                                )
+                              ? highlightReplacements(newText)
                               : newText /* Show calculated newText or original if regex invalid */
                           }
                         </TableCell>
@@ -442,7 +430,7 @@ export default function FindReplace() {
                       colSpan={4}
                       className="text-center text-gray-500 py-4"
                     >
-                      {t('findReplace.noMatches')}
+                      {t("findReplace.noMatches")}
                     </TableCell>
                   </TableRow>
                 )}
@@ -457,7 +445,7 @@ export default function FindReplace() {
             disabled={selectedSubtitles.size === 0} // Disable if nothing is selected
           >
             <IconReplace />
-            {t('findReplace.replace')}
+            {t("findReplace.replace")}
           </Button>
         </DialogFooter>
       </DialogContent>
