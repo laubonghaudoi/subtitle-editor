@@ -72,7 +72,7 @@ export default function LanguageSwitcher() {
             <IconLanguage />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="shadow-none p-0 rounded-xs border-neutral-800 border-1">
           {locales.map((loc) => {
             const href = getLocalizedPath(loc);
             return (
@@ -80,7 +80,7 @@ export default function LanguageSwitcher() {
                 <Link
                   href={href}
                   onClick={(e) => handleLinkClick(e, href)}
-                  className={locale === loc ? "bg-accent" : ""}
+                  className={locale === loc ? "bg-accent cursor-pointer" : "cursor-pointer"}
                 >
                   {localeConfig[loc].nativeName}
                 </Link>

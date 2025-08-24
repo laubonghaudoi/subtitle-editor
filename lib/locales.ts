@@ -1,24 +1,33 @@
-export const locales = ['en', 'yue'] as const;
+export const locales = ["de", "en", "yue"] as const;
 
-export type Locale = typeof locales[number];
+export type Locale = (typeof locales)[number];
 
-export const localeConfig: Record<Locale, {
-  name: string;
-  nativeName: string;
-  openGraphLocale: string;
-  url: string;
-}> = {
+export const localeConfig: Record<
+  Locale,
+  {
+    name: string;
+    nativeName: string;
+    openGraphLocale: string;
+    url: string;
+  }
+> = {
+  de: {
+    name: "German",
+    nativeName: "Deutsch",
+    openGraphLocale: "de",
+    url: "https://subtitle-editor.org/de",
+  },
   en: {
-    name: 'English',
-    nativeName: 'English',
-    openGraphLocale: 'en',
-    url: 'https://subtitle-editor.org',
+    name: "English",
+    nativeName: "English",
+    openGraphLocale: "en",
+    url: "https://subtitle-editor.org",
   },
   yue: {
-    name: 'Cantonese',
-    nativeName: '粵文',
-    openGraphLocale: 'yue',
-    url: 'https://subtitle-editor.org/yue',
+    name: "Cantonese",
+    nativeName: "粵文",
+    openGraphLocale: "yue",
+    url: "https://subtitle-editor.org/yue",
   },
 };
 

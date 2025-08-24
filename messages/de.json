@@ -1,0 +1,93 @@
+{
+  "navigation": {
+    "title": "Untertitel-Editor",
+    "faq": "Häufig gestellte Fragen",
+    "undo": "Rückgängig machen",
+    "redo": "Wiederholen"
+  },
+  "buttons": {
+    "loadMedia": "Medien laden",
+    "loadSrt": "SRT laden",
+    "saveSrt": "SRT speichern"
+  },
+  "labels": {
+    "loadSrtFile": "Eine SRT-Datei laden",
+    "or": "oder",
+    "startFromScratch": "Von vorne anfangen"
+  },
+  "videoPlayer": {
+    "loadFile": "Eine Video- / Audiodatei laden",
+    "supportedFormats": "Unterstützte Formate:",
+    "subtitles": "Untertitel"
+  },
+  "findReplace": {
+    "title": "Suchen / Ersetzen",
+    "dialogTitle": "Suchen und Ersetzen",
+    "find": "Suchen",
+    "replaceWith": "Ersetzen durch",
+    "caseSensitive": "Groß- und Kleinschreibung beachten",
+    "matchFullWord": "Ganzes Wort abgleichen",
+    "useRegex": "Regex verwenden",
+    "selected": "ausgewählt",
+    "id": "ID",
+    "original": "Original",
+    "preview": "Vorschau",
+    "noMatches": "Keine Übereinstimmungen gefunden",
+    "replace": "Ersetzen"
+  },
+  "instructions": {
+    "afterLoading": "Nach dem Laden der Untertitel und der Mediendatei:",
+    "editText": "Klicken Sie auf den Untertiteltext oder die Zeitstempel, um Ihre Untertitel zu bearbeiten.",
+    "icons": "Klicken Sie auf die Symbole, um Untertitel hinzuzufügen, zusammenzuführen oder zu löschen.",
+    "dragBorders": "Ziehen Sie die gestrichelten Ränder auf der Wellenform, um die Zeitstempel der Untertitel zu ändern.",
+    "rememberSave": "Denken Sie daran, auf „SRT speichern“ zu klicken, um die Untertitel zu speichern, wenn Sie mit der Bearbeitung fertig sind!"
+  },
+  "shortcuts": {
+    "title": "Tastenkombinationen:",
+    "space": "zum Abspielen/Anhalten des Videos.",
+    "tab": "um den aktuellen Untertiteltext zu bearbeiten.",
+    "arrows": "und",
+    "arrowsAction": "um zum vorherigen/nächsten Untertitel zu springen.",
+    "splitSubtitle": "um den Untertiteltext an der Cursorposition zu teilen, wenn Sie ihn bearbeiten.",
+    "mergeSubtitle": "um den aktuellen Untertitel mit dem vorherigen zusammenzuführen.",
+    "undoRedo": "um rückgängig zu machen,",
+    "undoRedoAction": "um zu wiederholen."
+  },
+  "dialog": {
+    "discardTitle": "Vorhandene Untertitel verwerfen?",
+    "discardDescription": "Das Laden einer neuen SRT-Datei verwirft die aktuellen Untertitel. Stellen Sie sicher, dass Sie die aktuelle SRT zuerst heruntergeladen haben.",
+    "switchTitle": "Sprache wechseln?",
+    "switchDescription": "Das Ändern der Sprache verwirft die aktuellen Untertitel. Stellen Sie sicher, dass Sie die aktuelle SRT zuerst heruntergeladen haben.",
+    "cancel": "Abbrechen",
+    "yes": "Bestätigen"
+  },
+  "subtitle": {
+    "newSubtitle": "Neuer Untertitel"
+  },
+  "tooltips": {
+    "add": "Hinzufügen",
+    "merge": "Zusammenführen",
+    "delete": "Löschen",
+    "noRoom": "Kein Platz zum Hinzufügen"
+  },
+  "metadata": {
+    "title": "Untertitel-Editor - Dauerhaft kostenloses, quelloffenes, vollständig webbasiertes SRT-Bearbeitungstool",
+    "description": "Bearbeiten, erstellen und richten Sie SRT-Untertitel- und Untertiteldateien einfach mit diesem kostenlosen, quelloffenen, webbasierten Editor aus. Bietet Videovorschau und Wellenformvisualisierung. Keine Anmeldung erforderlich.",
+    "keywords": [
+      "Untertitel-Editor",
+      "SRT-Editor",
+      "Untertitel-Ersteller",
+      "Untertitel-Ersteller",
+      "Untertitel-Tool",
+      "kostenloser Untertitel-Editor",
+      "Online-Untertitel-Editor",
+      "webbasierter Untertitel-Editor",
+      "Open-Source-Untertitel-Editor",
+      "Video-Untertitelung",
+      "Wellenform-Visualisierung",
+      "Untertitel-Synchronisation",
+      "SRT-Datei-Editor",
+      "Untertitel zu Video hinzufügen"
+    ]
+  }
+}
