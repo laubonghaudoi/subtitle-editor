@@ -503,10 +503,10 @@ function MainContent() {
                     {t("shortcuts.mergeSubtitle")}
                   </li>
                   <li>
-                    <kbd>ctrl</kbd> + <kbd>z</kbd> (Windows) or{" "}
+                    <kbd>ctrl</kbd> + <kbd>z</kbd> (Windows) {t("labels.or")}{" "}
                     <kbd>&#8984;</kbd> + <kbd>z</kbd> (Mac){" "}
                     {t("shortcuts.undoRedo")} <kbd>ctrl</kbd> + <kbd>shift</kbd>{" "}
-                    + <kbd>z</kbd> (Windows) or <kbd>&#8984;</kbd> +{" "}
+                    + <kbd>z</kbd> (Windows) {t("labels.or")} <kbd>&#8984;</kbd> +{" "}
                     <kbd>shift</kbd> + <kbd>z</kbd> (Mac){" "}
                     {t("shortcuts.undoRedoAction")}
                   </li>
