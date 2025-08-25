@@ -2,8 +2,8 @@
   "navigation": {
     "title": "Untertitel-Editor",
     "faq": "Häufig gestellte Fragen",
-    "undo": "Rückgängig machen",
-    "redo": "Wiederholen"
+    "undo": "Rückgängig",
+    "redo": "Wiederherstellen"
   },
   "buttons": {
     "loadMedia": "Medien laden",
@@ -13,10 +13,10 @@
   "labels": {
     "loadSrtFile": "Eine SRT-Datei laden",
     "or": "oder",
-    "startFromScratch": "Von vorne anfangen"
+    "startFromScratch": "Von Grund auf neu beginnen"
   },
   "videoPlayer": {
-    "loadFile": "Eine Video- / Audiodatei laden",
+    "loadFile": "Video- / Audiodatei laden",
     "supportedFormats": "Unterstützte Formate:",
     "subtitles": "Untertitel"
   },
@@ -25,7 +25,7 @@
     "dialogTitle": "Suchen und Ersetzen",
     "find": "Suchen",
     "replaceWith": "Ersetzen durch",
-    "caseSensitive": "Groß- und Kleinschreibung beachten",
+    "caseSensitive": "Groß- / Kleinschreibung beachten",
     "matchFullWord": "Ganzes Wort abgleichen",
     "useRegex": "Regex verwenden",
     "selected": "ausgewählt",
@@ -40,22 +40,22 @@
     "editText": "Klicken Sie auf den Untertiteltext oder die Zeitstempel, um Ihre Untertitel zu bearbeiten.",
     "icons": "Klicken Sie auf die Symbole, um Untertitel hinzuzufügen, zusammenzuführen oder zu löschen.",
     "dragBorders": "Ziehen Sie die gestrichelten Ränder auf der Wellenform, um die Zeitstempel der Untertitel zu ändern.",
-    "rememberSave": "Denken Sie daran, auf „SRT speichern“ zu klicken, um die Untertitel zu speichern, wenn Sie mit der Bearbeitung fertig sind!"
+    "rememberSave": "Denken Sie daran, auf „SRT speichern“ zu klicken, um die Untertitel nach Abschluss der Bearbeitung zu speichern!"
   },
   "shortcuts": {
     "title": "Tastenkombinationen:",
     "space": "zum Abspielen/Anhalten des Videos.",
-    "tab": "um den aktuellen Untertiteltext zu bearbeiten.",
+    "tab": "zum Bearbeiten des aktuellen Untertiteltextes.",
     "arrows": "und",
-    "arrowsAction": "um zum vorherigen/nächsten Untertitel zu springen.",
-    "splitSubtitle": "um den Untertiteltext an der Cursorposition zu teilen, wenn Sie ihn bearbeiten.",
-    "mergeSubtitle": "um den aktuellen Untertitel mit dem vorherigen zusammenzuführen.",
-    "undoRedo": "um rückgängig zu machen,",
-    "undoRedoAction": "um zu wiederholen."
+    "arrowsAction": "zum Springen zum vorherigen/nächsten Untertitel.",
+    "splitSubtitle": "zum Teilen des Untertiteltextes an der Cursorposition während der Bearbeitung",
+    "mergeSubtitle": "zum Zusammenführen des aktuellen Untertitels mit dem vorherigen",
+    "undoRedo": "zum Rückgängigmachen,",
+    "undoRedoAction": "zum Wiederherstellen"
   },
   "dialog": {
     "discardTitle": "Vorhandene Untertitel verwerfen?",
-    "discardDescription": "Das Laden einer neuen SRT-Datei verwirft die aktuellen Untertitel. Stellen Sie sicher, dass Sie die aktuelle SRT zuerst heruntergeladen haben.",
+    "discardDescription": "Durch das Laden einer neuen SRT-Datei werden die aktuellen Untertitel verworfen. Stellen Sie sicher, dass Sie die aktuelle SRT-Datei zuvor heruntergeladen haben.",
     "switchTitle": "Sprache wechseln?",
     "switchDescription": "Das Ändern der Sprache verwirft die aktuellen Untertitel. Stellen Sie sicher, dass Sie die aktuelle SRT zuerst heruntergeladen haben.",
     "cancel": "Abbrechen",
