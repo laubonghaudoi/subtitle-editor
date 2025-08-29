@@ -71,9 +71,7 @@ export default function MultiTrackWaveformClean() {
     progressColor: "#00d4ff",
     cursorColor: "#b91c1c",
     normalize: true,
-    plugins: [RegionsPlugin.create({
-      dragSelection: false, // Disable creating regions by dragging on empty space
-    })],
+    plugins: [RegionsPlugin.create()],
   });
 
   // Load audio
@@ -123,7 +121,6 @@ export default function MultiTrackWaveformClean() {
           drag: true,
           resize: true,
           minLength: 0.5, // Minimum half second
-          maxLength: null, // No maximum
         });
 
         regionMapRef.current.set(subtitle.id, subtitle.trackId);
@@ -171,7 +168,7 @@ export default function MultiTrackWaveformClean() {
       });
 
       // Handle region updates to maintain track positioning
-      regionsPlugin.on('region-update-end', (region: Region) => {
+      regionsPlugin.on('region-updated', (region: Region) => {
         const trackId = regionMapRef.current.get(region.id);
         if (!trackId) return;
 
