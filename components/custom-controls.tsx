@@ -1,4 +1,4 @@
-import { PauseIcon, PlayIcon } from "@radix-ui/react-icons";
+import { IconPlayerPause, IconPlayerPlay } from "@tabler/icons-react";
 import type React from "react";
 import { memo, useRef, useState } from "react";
 import {
@@ -119,9 +119,13 @@ export default function CustomControls({
   onChangePlaybackRate,
 }: CustomControlsProps) {
   return (
-    <div className="p-4 flex items-center gap-4 h-[6vh] border-t-2 border-b-2 border-black">
-      <Button onClick={onPlayPause} variant="ghost">
-        {isPlaying ? <PauseIcon /> : <PlayIcon />}
+    <div className="p-4 flex items-center gap-4 h-[5vh] border-t-2 border-b-2 border-black">
+      <Button onClick={onPlayPause} variant="ghost" className="cursor-pointer">
+        {isPlaying ? (
+          <IconPlayerPause size={20} />
+        ) : (
+          <IconPlayerPlay size={20} />
+        )}
       </Button>
 
       <DropdownMenu>

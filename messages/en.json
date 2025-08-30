@@ -90,5 +90,10 @@
       "SRT file editor",
       "add subtitles to video"
     ]
+  },
+  "skipLinks": {
+    "toMain": "Skip to main content",
+    "toSubtitles": "Skip to subtitles",
+    "toVideo": "Skip to video"
   }
 }

@@ -89,5 +89,10 @@
       "SRT-Datei-Editor",
       "Untertitel zu Video hinzufügen"
     ]
+  },
+  "skipLinks": {
+    "toMain": "Zum Hauptinhalt springen",
+    "toSubtitles": "Zu Untertiteln springen",
+    "toVideo": "Zum Video springen"
   }
 }

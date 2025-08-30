@@ -88,5 +88,10 @@
       "SRT 文件編輯",
       "影片字幕製作"
     ]
+  },
+  "skipLinks": {
+    "toMain": "跳至主要內容",
+    "toSubtitles": "跳至字幕",
+    "toVideo": "跳至影片"
   }
 }

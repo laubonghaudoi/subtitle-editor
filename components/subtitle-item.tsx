@@ -1,6 +1,6 @@
 import { IconFold, IconPlus, IconTrash } from "@tabler/icons-react";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
@@ -29,7 +29,7 @@ interface SubtitleItemProps {
   setEditingSubtitleUuid: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export default function SubtitleItem({
+const SubtitleItem = memo(function SubtitleItem({
   subtitle,
   nextSubtitle,
   isLastItem,
@@ -416,4 +416,6 @@ export default function SubtitleItem({
       </TooltipProvider>
     </motion.div>
   );
-}
+});
+
+export default SubtitleItem;

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { useId } from "react";
 import { Toaster } from "@/components/ui/toaster";
+import WebVitalsReporter from "@/components/web-vitals-reporter";
 import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,6 +55,7 @@ export default function RootLayout({
       >
         {children}
         <Toaster />
+        <WebVitalsReporter />
         {/* Google Ads Tag */}
         <Script
           strategy="afterInteractive"

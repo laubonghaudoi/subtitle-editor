@@ -159,7 +159,7 @@ export default forwardRef(function WaveformVisualizer(
   const regionPlugin = RegionsPlugin.create();
 
   // biome-ignore lint/suspicious/noExplicitAny: Override the avoidOverlapping method, this method is a private method in the RegionPlugin
-  (regionPlugin as any).avoidOverlapping = (region: Region) => {
+  (regionPlugin as any).avoidOverlapping = (_region: Region) => {
     // do nothing
   };
 
@@ -411,14 +411,14 @@ export default forwardRef(function WaveformVisualizer(
 
     // 1) Remove existing regions and clear references
     const regions = regionsPlugin.getRegions();
-    regions.map((region) => {
+    regions.forEach((region) => {
       region.remove();
     });
     regionsPlugin.clearRegions();
     subtitleToRegionMap.current.clear();
 
     // 2) Add them back in fresh
-    subtitles.map((subtitle) => {
+    subtitles.forEach((subtitle) => {
       const start = timeToSeconds(subtitle.startTime);
       const end = timeToSeconds(subtitle.endTime);
 
@@ -630,7 +630,7 @@ export default forwardRef(function WaveformVisualizer(
   // Update subtitle text requires only updating the target region content
   useEffect(() => {
     if (!wavesurfer) return;
-    subtitles.map((subtitle) => {
+    subtitles.forEach((subtitle) => {
       // Get region by UUID
       const region = subtitleToRegionMap.current.get(subtitle.uuid);
       if (region?.element) {

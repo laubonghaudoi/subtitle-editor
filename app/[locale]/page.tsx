@@ -30,25 +30,24 @@ import {
 import { parseSRT } from "@/lib/subtitleOperations"; // Keep only parseSRT
 import { timeToSeconds } from "@/lib/utils"; // Use the original timeToSeconds
 import {
-  DownloadIcon,
-  QuestionMarkCircledIcon,
-  VideoIcon,
-} from "@radix-ui/react-icons";
-import {
   IconArrowBack,
   IconArrowForward,
   IconBadgeCc,
+  IconDownload,
   IconKeyboard,
+  IconMovie,
+  IconQuestionMark,
 } from "@tabler/icons-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 // Import useState
+import LanguageSwitcher from "@/components/language-switcher";
+import SkipLinks from "@/components/skip-links";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useTranslations } from "next-intl";
-import LanguageSwitcher from "@/components/language-switcher";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 const VideoPlayer = dynamic(() => import("@/components/video-player"), {
   ssr: false, // Disable server-side rendering
@@ -241,6 +240,7 @@ function MainContent() {
 
   return (
     <div className="flex flex-col h-screen">
+      <SkipLinks />
       <nav className="h-[6vh] border-black border-b-2 flex items-center px-12 justify-between">
         <div className="flex items-center">
           <h1 className="text-lg font-semibold mx-4">
@@ -254,7 +254,7 @@ function MainContent() {
               className="cursor-pointer"
               aria-label={t("navigation.faq")}
             >
-              <QuestionMarkCircledIcon />
+              <IconQuestionMark size={20} />
             </Button>
           </Link>
         </div>
@@ -320,7 +320,7 @@ function MainContent() {
               }}
               className="bg-cyan-300 hover:bg-cyan-500 hover:text-white text-black rounded-sm cursor-pointer"
             >
-              <VideoIcon />
+              <IconMovie size={20} />
               <span className="max-w-36 flex-1 overflow-hidden whitespace-nowrap text-ellipsis text-left">
                 {mediaFileName}
               </span>
@@ -353,7 +353,7 @@ function MainContent() {
             disabled={subtitles.length === 0}
             className="cursor-pointer"
           >
-            <DownloadIcon />
+            <IconDownload size={20} />
             <span>{t("buttons.saveSrt")}</span>
           </Button>
         </div>
@@ -441,7 +441,7 @@ function MainContent() {
         </div>
 
         {/* Bottom section - Waveform */}
-        <div className="h-[20vh]">
+        <div className="h-[21vh]">
           {/* Custom Controls */}
 
           {mediaFile ? (
@@ -506,8 +506,8 @@ function MainContent() {
                     <kbd>ctrl</kbd> + <kbd>z</kbd> (Windows) {t("labels.or")}{" "}
                     <kbd>&#8984;</kbd> + <kbd>z</kbd> (Mac){" "}
                     {t("shortcuts.undoRedo")} <kbd>ctrl</kbd> + <kbd>shift</kbd>{" "}
-                    + <kbd>z</kbd> (Windows) {t("labels.or")} <kbd>&#8984;</kbd> +{" "}
-                    <kbd>shift</kbd> + <kbd>z</kbd> (Mac){" "}
+                    + <kbd>z</kbd> (Windows) {t("labels.or")} <kbd>&#8984;</kbd>{" "}
+                    + <kbd>shift</kbd> + <kbd>z</kbd> (Mac){" "}
                     {t("shortcuts.undoRedoAction")}
                   </li>
                 </ul>
