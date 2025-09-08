@@ -17,6 +17,7 @@ import RegionsPlugin, {
 import Timeline from "wavesurfer.js/dist/plugins/timeline.esm.js";
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
 import { secondsToTime, timeToSeconds } from "@/lib/utils";
+import type { Subtitle } from "@/types/subtitle";
 
 const HANDLE_COLOR = "#f59e0b";
 const REGION_COLOR = "#fcd34d40";
@@ -399,6 +400,9 @@ export default forwardRef(function WaveformVisualizer(
    * And we only need to re-render the target region box.
    * */
 
+  // Track which subtitle was just dragged to avoid re-rendering it
+  const lastDraggedSubtitleId = useRef<string | null>(null);
+
   // Initialize all regions from subtitles
   const initRegions = () => {
     if (!wavesurfer || wavesurfer.getDuration() === 0) return;
@@ -447,11 +451,57 @@ export default forwardRef(function WaveformVisualizer(
     });
   };
 
+  // Track previous subtitles to detect what kind of change occurred
+  const prevSubtitlesRef = useRef<Subtitle[]>([]);
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: Avoid infinite rendering regions - We need to re-run when subtitles change.
   useEffect(() => {
     if (!wavesurfer || isLoading || !wavesurfer.getDuration()) return;
-    // When subtitles change, update the regions
-    initRegions();
+
+    const prevSubtitles = prevSubtitlesRef.current;
+
+    // Check if this is just a time update from dragging
+    const isOnlyTimeUpdate =
+      prevSubtitles.length === subtitles.length &&
+      lastDraggedSubtitleId.current &&
+      subtitles.every((sub, idx) => {
+        const prev = prevSubtitles[idx];
+        if (!prev) return false;
+
+        // If this is the dragged subtitle, only check non-time properties
+        if (sub.uuid === lastDraggedSubtitleId.current) {
+          return (
+            sub.id === prev.id &&
+            sub.text === prev.text &&
+            sub.uuid === prev.uuid
+          );
+        }
+
+        // For other subtitles, they should be completely unchanged
+        return (
+          sub.id === prev.id &&
+          sub.text === prev.text &&
+          sub.startTime === prev.startTime &&
+          sub.endTime === prev.endTime &&
+          sub.uuid === prev.uuid
+        );
+      });
+
+    if (!isOnlyTimeUpdate) {
+      // Major change - reinitialize all regions
+      initRegions();
+    }
+
+    // Update the ref for next comparison
+    prevSubtitlesRef.current = subtitles;
+
+    // Clear the dragged flag after processing
+    if (isOnlyTimeUpdate) {
+      // Small delay to ensure the update effect below doesn't re-render the dragged region
+      setTimeout(() => {
+        lastDraggedSubtitleId.current = null;
+      }, 10);
+    }
   }, [subtitles, wavesurfer, isLoading]);
 
   // If subtitle time stamps change, update the regions
@@ -595,6 +645,9 @@ export default forwardRef(function WaveformVisualizer(
         styleRegionHandles(region);
       }
 
+      // Mark this subtitle as being dragged to avoid re-rendering it
+      lastDraggedSubtitleId.current = subtitleUuid;
+
       // Call context action with the SRT ID
       updateSubtitleTimeAction(
         subtitleId, // Pass the SRT ID
@@ -630,11 +683,46 @@ export default forwardRef(function WaveformVisualizer(
   // Update subtitle text requires only updating the target region content
   useEffect(() => {
     if (!wavesurfer) return;
+
+    const regionsPlugin = wavesurfer
+      .getActivePlugins()
+      .find((p) => p instanceof RegionsPlugin) as RegionsPlugin;
+    if (!regionsPlugin) return;
+
     subtitles.forEach((subtitle) => {
+      // Skip the region that was just dragged to avoid double-rendering
+      if (subtitle.uuid === lastDraggedSubtitleId.current) {
+        return;
+      }
+
       // Get region by UUID
-      const region = subtitleToRegionMap.current.get(subtitle.uuid);
-      if (region?.element) {
-        // Update region's start and end times if they differ
+      let region = subtitleToRegionMap.current.get(subtitle.uuid);
+
+      // If region doesn't exist, create it (edge case handling)
+      if (!region) {
+        const start = timeToSeconds(subtitle.startTime);
+        const end = timeToSeconds(subtitle.endTime);
+        const content = getContentHtml(
+          subtitle.startTime,
+          subtitle.text,
+          subtitle.endTime
+        );
+
+        region = regionsPlugin.addRegion({
+          id: subtitle.uuid,
+          start,
+          end,
+          content,
+          color: REGION_COLOR,
+          drag: true,
+          resize: true,
+          minLength: 0.1,
+        });
+
+        styleRegionHandles(region);
+        subtitleToRegionMap.current.set(subtitle.uuid, region);
+      } else if (region.element) {
+        // Update existing region
         const newStart = timeToSeconds(subtitle.startTime);
         const newEnd = timeToSeconds(subtitle.endTime);
 
@@ -658,6 +746,15 @@ export default forwardRef(function WaveformVisualizer(
         styleRegionHandles(region);
       }
     });
+
+    // Clean up regions that no longer have corresponding subtitles
+    const subtitleUuids = new Set(subtitles.map((s) => s.uuid));
+    for (const [uuid, region] of subtitleToRegionMap.current.entries()) {
+      if (!subtitleUuids.has(uuid)) {
+        region.remove();
+        subtitleToRegionMap.current.delete(uuid);
+      }
+    }
   }, [subtitles, wavesurfer]);
 
   return (
