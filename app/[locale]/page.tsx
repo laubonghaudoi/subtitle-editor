@@ -2,6 +2,9 @@
 
 import CustomControls from "@/components/custom-controls";
 import FindReplace from "@/components/find-replace";
+import LanguageSwitcher from "@/components/language-switcher";
+import LoadSrt from "@/components/load-srt";
+import SkipLinks from "@/components/skip-links";
 import SubtitleList from "@/components/subtitle-list";
 import {
   AlertDialog,
@@ -16,34 +19,30 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-// VideoPlayer is now dynamically imported below
 import {
   SubtitleProvider,
   useSubtitleContext,
-} from "@/context/subtitle-context"; // Import context
-import { parseSRT } from "@/lib/subtitleOperations"; // Keep only parseSRT
-import { timeToSeconds } from "@/lib/utils"; // Use the original timeToSeconds
+} from "@/context/subtitle-context";
+import { parseSRT } from "@/lib/subtitleOperations";
+import { timeToSeconds } from "@/lib/utils";
 import {
   IconArrowBack,
   IconArrowForward,
-  IconBadgeCc,
   IconDownload,
   IconKeyboard,
   IconMovie,
   IconQuestionMark,
 } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-// Import useState
-import LanguageSwitcher from "@/components/language-switcher";
-import SkipLinks from "@/components/skip-links";
-import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -70,9 +69,11 @@ function MainContent() {
   const t = useTranslations();
   const waveformRef = useRef<WaveformRef>(null);
   const mediaFileInputRef = useRef<HTMLInputElement>(null);
-  const srtFileInputRef = useRef<HTMLInputElement>(null);
   // Get subtitle state and actions from context
   const {
+    tracks,
+    activeTrackId,
+    setActiveTrackId,
     subtitles,
     setInitialSubtitles, // Use this instead of setSubtitlesWithHistory
     undoSubtitles,
@@ -84,6 +85,8 @@ function MainContent() {
 
   // Keep page-specific state here
   const [srtFileName, setSrtFileName] = useState<string>("subtitles.srt");
+  // The overwrite dialog is not fully implemented with multi-track yet.
+  // We'll keep the state for now and address it in a future step.
   const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
   const [pendingSrtFile, setPendingSrtFile] = useState<File | null>(null);
 
@@ -91,7 +94,6 @@ function MainContent() {
   const [mediaFileName, setMediaFileName] = useState<string>(
     t("buttons.loadMedia")
   );
-
   const [playbackTime, setPlaybackTime] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
@@ -106,21 +108,10 @@ function MainContent() {
     const text = await file.text();
     const parsedSubtitles = parseSRT(text);
     // Use the context action to set initial subtitles
-    setInitialSubtitles(parsedSubtitles);
-  };
-
-  const handleSrtFileSelect = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (subtitles.length > 0) {
-      setPendingSrtFile(file);
-      setShowOverwriteDialog(true);
-    } else {
-      await handleFileUpload(file);
-    }
+    setInitialSubtitles(
+      parsedSubtitles,
+      t("subtitle.newTrackName", { number: 1 })
+    );
   };
 
   const downloadSRT = () => {
@@ -297,6 +288,8 @@ function MainContent() {
           {/* FindReplace will get subtitles & actions from context */}
           <FindReplace />
 
+          <LoadSrt />
+
           <Label className="cursor-pointer">
             <Input
               ref={mediaFileInputRef}
@@ -326,27 +319,6 @@ function MainContent() {
               </span>
             </Button>
           </Label>
-          <Label className="cursor-pointer">
-            <Input
-              ref={srtFileInputRef}
-              type="file"
-              className="hidden"
-              accept=".srt"
-              onChange={handleSrtFileSelect}
-            />
-            <Button
-              variant="secondary"
-              onClick={() => {
-                srtFileInputRef.current?.click();
-              }}
-              className="hover:bg-amber-500 hover:text-white bg-amber-300 text-black rounded-sm cursor-pointer"
-            >
-              <IconBadgeCc />
-              <span className="leading-none truncate">
-                {t("buttons.loadSrt")}
-              </span>
-            </Button>
-          </Label>
 
           <Button
             onClick={downloadSRT}
@@ -366,21 +338,43 @@ function MainContent() {
           {/* Left panel - Subtitle list */}
           <div className="w-1/2">
             <div className="h-full">
-              {subtitles.length > 0 ? (
-                // SubtitleList will get subtitles & actions from context
-                <SubtitleList
-                  // Pass only non-subtitle state/props
-                  currentTime={playbackTime}
-                  onScrollToRegion={(uuid) => {
-                    if (waveformRef.current) {
-                      waveformRef.current.scrollToRegion(uuid);
-                    }
-                  }}
-                  setIsPlaying={setIsPlaying}
-                  setPlaybackTime={setPlaybackTime}
-                  editingSubtitleUuid={editingSubtitleUuid}
-                  setEditingSubtitleUuid={setEditingSubtitleUuid}
-                />
+              {tracks.length > 0 && activeTrackId ? (
+                <Tabs
+                  value={activeTrackId}
+                  onValueChange={setActiveTrackId}
+                  className="h-full flex flex-col"
+                >
+                  {tracks.length > 1 && (
+                    <TabsList className="bg-white gap-4 border-b-1 border-dashed border-black rounded-none">
+                      {tracks.map((track) => (
+                        <TabsTrigger key={track.id} value={track.id}>
+                          {track.name}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                  )}
+                  {tracks.map((track) => (
+                    <TabsContent
+                      key={track.id}
+                      value={track.id}
+                      className="flex-grow overflow-y-auto m-0"
+                    >
+                      <SubtitleList
+                        // Pass only non-subtitle state/props
+                        currentTime={playbackTime}
+                        onScrollToRegion={(uuid) => {
+                          if (waveformRef.current) {
+                            waveformRef.current.scrollToRegion(uuid);
+                          }
+                        }}
+                        setIsPlaying={setIsPlaying}
+                        setPlaybackTime={setPlaybackTime}
+                        editingSubtitleUuid={editingSubtitleUuid}
+                        setEditingSubtitleUuid={setEditingSubtitleUuid}
+                      />
+                    </TabsContent>
+                  ))}
+                </Tabs>
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-muted-foreground rounded-sm">
                   <Label className="cursor-pointer text-xl hover:text-blue-500 underline">
@@ -401,15 +395,18 @@ function MainContent() {
                     variant="link"
                     onClick={() =>
                       // Use the context action for starting from scratch
-                      setInitialSubtitles([
-                        {
-                          uuid: uuidv4(), // Assign UUID
-                          id: 1,
-                          startTime: "00:00:00,000",
-                          endTime: "00:00:03,000",
-                          text: t("subtitle.newSubtitle"),
-                        },
-                      ])
+                      setInitialSubtitles(
+                        [
+                          {
+                            uuid: uuidv4(), // Assign UUID
+                            id: 1,
+                            startTime: "00:00:00,000",
+                            endTime: "00:00:03,000",
+                            text: t("subtitle.newSubtitle"),
+                          },
+                        ],
+                        t("subtitle.newTrackName", { number: 1 })
+                      )
                     }
                     className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-500"
                   >

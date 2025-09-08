@@ -6,9 +6,13 @@
     "redo": "Redo"
   },
   "buttons": {
-    "loadMedia": "Load media",
+    "loadMedia": "Load Media",
     "loadSrt": "Load SRT",
-    "saveSrt": "Save SRT"
+    "saveSrt": "Save SRT",
+    "loadSrtFile": "Load SRT File",
+    "newTrack": "Create New Track",
+    "reloadSrt": "Reload SRT",
+    "fromScratch": "From Scratch"
   },
   "labels": {
     "loadSrtFile": "Load an SRT file",
@@ -54,15 +58,22 @@
     "undoRedoAction": "to redo."
   },
   "dialog": {
-    "discardTitle": "Discard existing subtitles?",
-    "discardDescription": "Loading a new SRT file will discard the current subtitles. Make sure you have downloaded the current SRT first.",
+    "discardTitle": "Discard changes?",
+    "discardDescription": "You have unsaved changes. Are you sure you want to discard them by loading a new SRT file?",
     "switchTitle": "Switch language?",
     "switchDescription": "Changing the language will discard the current subtitles. Make sure you have downloaded the current SRT first.",
     "cancel": "Cancel",
-    "yes": "Confirm"
+    "yes": "Yes, discard",
+    "srtTitle": "Manage Subtitle Tracks",
+    "srtDescription": "You can load an existing SRT file into a new track or create a new, empty track to start from scratch.",
+    "deleteTrackTitle": "Delete this track?",
+    "deleteTrackDescription": "This action cannot be undone. This will permanently delete the track and all its subtitles.",
+    "delete": "Delete"
   },
   "subtitle": {
-    "newSubtitle": "New subtitle"
+    "newSubtitle": "New subtitle",
+    "subtitleCount": "{count, plural, =1 {# subtitle} other {# subtitles}}",
+    "newTrackName": "Track {number}"
   },
   "tooltips": {
     "add": "Add",

@@ -1,9 +1,15 @@
 import { AnimatePresence } from "motion/react";
 import { useEffect, useRef } from "react"; // Remove useCallback import
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
+import { parseSRT } from "@/lib/subtitleOperations";
 import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import SubtitleItem from "./subtitle-item";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { v4 as uuidv4 } from "uuid";
+import { useTranslations } from "next-intl";
 
 // Remove subtitle-related props
 interface SubtitleListProps {
@@ -23,10 +29,39 @@ export default function SubtitleList({
   editingSubtitleUuid,
   setEditingSubtitleUuid,
 }: SubtitleListProps) {
+  const t = useTranslations();
   const listRef = useRef<HTMLDivElement>(null);
   const activeSubtitleRef = useRef<string | null>(null);
-  // Get subtitles and merge action from context
-  const { subtitles, mergeSubtitlesAction } = useSubtitleContext();
+  // Get subtitles and actions from context
+  const {
+    subtitles,
+    mergeSubtitlesAction,
+    loadSubtitlesIntoTrack,
+    activeTrackId,
+  } = useSubtitleContext();
+
+  const handleSrtFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file || !activeTrackId) return;
+
+    const newSubtitles = parseSRT(await file.text());
+    loadSubtitlesIntoTrack(activeTrackId, newSubtitles);
+  };
+
+  const handleStartFromScratch = () => {
+    if (!activeTrackId) return;
+    loadSubtitlesIntoTrack(activeTrackId, [
+      {
+        uuid: uuidv4(),
+        id: 1,
+        startTime: "00:00:00,000",
+        endTime: "00:00:03,000",
+        text: t("subtitle.newSubtitle"),
+      },
+    ]);
+  };
 
   // Scroll to the current subtitle based on playback time
   useEffect(() => {
@@ -150,6 +185,30 @@ export default function SubtitleList({
     };
     // Effect depends on the values used inside handleKeyDown
   }, [subtitles, currentTime, setPlaybackTime, mergeSubtitlesAction]); // Add mergeSubtitlesAction dependency
+
+  if (subtitles.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-muted-foreground rounded-sm">
+        <Label className="cursor-pointer text-xl hover:text-blue-500 underline">
+          <span>{t("labels.loadSrtFile")}</span>
+          <Input
+            type="file"
+            className="hidden"
+            accept=".srt"
+            onChange={handleSrtFileSelect}
+          />
+        </Label>
+        <p className="text-xl my-4">{t("labels.or")}</p>
+        <Button
+          variant="link"
+          onClick={handleStartFromScratch}
+          className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-500"
+        >
+          {t("labels.startFromScratch")}
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div ref={listRef} className="h-full overflow-y-scroll">

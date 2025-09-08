@@ -8,7 +8,11 @@
   "buttons": {
     "loadMedia": "Medien laden",
     "loadSrt": "SRT laden",
-    "saveSrt": "SRT speichern"
+    "saveSrt": "SRT speichern",
+    "loadSrtFile": "SRT-Datei laden",
+    "newTrack": "Neue Spur erstellen",
+    "reloadSrt": "SRT neu laden",
+    "fromScratch": "Von Grund auf neu"
   },
   "labels": {
     "loadSrtFile": "Eine SRT-Datei laden",
@@ -54,15 +58,22 @@
     "undoRedoAction": "zum Wiederherstellen"
   },
   "dialog": {
-    "discardTitle": "Vorhandene Untertitel verwerfen?",
-    "discardDescription": "Durch das Laden einer neuen SRT-Datei werden die aktuellen Untertitel verworfen. Stellen Sie sicher, dass Sie die aktuelle SRT-Datei zuvor heruntergeladen haben.",
+    "discardTitle": "Änderungen verwerfen?",
+    "discardDescription": "Sie haben nicht gespeicherte Änderungen. Sind Sie sicher, dass Sie sie verwerfen und eine neue SRT-Datei laden möchten?",
     "switchTitle": "Sprache wechseln?",
     "switchDescription": "Das Ändern der Sprache verwirft die aktuellen Untertitel. Stellen Sie sicher, dass Sie die aktuelle SRT zuerst heruntergeladen haben.",
     "cancel": "Abbrechen",
-    "yes": "Bestätigen"
+    "yes": "Ja, verwerfen",
+    "srtTitle": "Untertitelspuren verwalten",
+    "srtDescription": "Sie können eine vorhandene SRT-Datei in eine neue Spur laden oder eine neue, leere Spur erstellen, um von vorne zu beginnen.",
+    "deleteTrackTitle": "Diese Spur löschen?",
+    "deleteTrackDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch werden die Spur und alle ihre Untertitel dauerhaft gelöscht.",
+    "delete": "Löschen"
   },
   "subtitle": {
-    "newSubtitle": "Neuer Untertitel"
+    "newSubtitle": "Neuer Untertitel",
+    "subtitleCount": "{count, plural, =1 {# Untertitel} other {# Untertitel}}",
+    "newTrackName": "Spur {number}"
   },
   "tooltips": {
     "add": "Hinzufügen",
