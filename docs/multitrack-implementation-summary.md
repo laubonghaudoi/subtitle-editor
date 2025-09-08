@@ -52,41 +52,45 @@ region.element.style.height = `${trackHeight}px`;
 
 ## Production Implementation Checklist
 
-### Phase 1: Data Model
-- [ ] Extend `Subtitle` type to include `trackId`
-- [ ] Create `SubtitleTrack` type with id, name, language, color, visible
-- [ ] Update subtitle context to support tracks
-- [ ] Add track management actions (add, remove, toggle visibility)
+### Phase 1: Data Model & Context
+- [ ] **Data Model**:
+    - [ ] Extend `Subtitle` type to include `trackId`.
+    - [ ] Create `SubtitleTrack` type with `id`, `name`, `language`, `color`, and subtitles array: `Subtitle[]`.
+- [ ] **Context API**:
+    - [ ] Update `SubtitleContext` to manage an array of `SubtitleTrack`.
+    - [ ] Add `activeTrackId` to the context to track the currently selected tab.
+    - [ ] Add track management actions: `addTrack`, `removeTrack`, `setActiveTrack`.
 
-### Phase 2: UI Components
-- [ ] Create track selector component
-- [ ] Update subtitle list to group by track
-- [ ] Add active track indicator
-- [ ] Implement track color picker
+### Phase 2: UI Components - Left Panel
+- [ ] **Tabbed Interface**:
+    - [ ] In the left panel, wrap the `SubtitleList` with the `Tabs` component from `components/ui/tabs.tsx`.
+    - [ ] Create a `TabsList` where each `TabsTrigger` represents a `SubtitleTrack`. The trigger should show the track name.
+    - [ ] Add a "+" button to the `TabsList` to create a new track.
+- [ ] **Content**:
+    - [ ] Use `TabsContent` to render the `SubtitleList` for the active track.
+    - [ ] Each `TabsContent` will contain one `SubtitleList` component, corresponding to one track.
+- [ ] **Load SRT Dialog**:
+    - [ ] When the main "Load SRT" button is clicked, open a `Dialog` component.
+    - [ ] The dialog should give two options:
+        1.  "Load SRT file into a new track".
+        2.  "Create a new, empty track".
+    - [ ] If the user chooses to load a file, it should create a new track and populate it with the parsed subtitles.
 
 ### Phase 3: Waveform Integration
-- [ ] Modify `WaveformVisualizer` to support multi-track regions
-- [ ] Update region creation logic with track positioning
-- [ ] Handle region drag/resize with track constraints
-- [ ] Update collision detection to be track-aware
+- [ ] Modify `WaveformVisualizer` to render regions from all `SubtitleTrack` objects.
+- [ ] Use the `color` property from each track to style its corresponding regions on the waveform.
+- [ ] Ensure regions from the `activeTrackId` are visually distinct (e.g., higher z-index, brighter border).
+- [ ] Update region creation logic and collision detection to be track-aware.
 
 ### Phase 4: Import/Export
-- [ ] Design multi-track SRT format (e.g., with [TRACK: Language] tags)
-- [ ] Update parseSRT to handle track information
-- [ ] Implement export with track metadata
-- [ ] Support importing multiple SRT files to different tracks
+- [ ] Design multi-track SRT format (e.g., with `[TRACK: Language]` tags) or consider exporting as a zip of SRT files.
+- [ ] Update `parseSRT` to handle track information if using a custom format.
+- [ ] Implement export functionality that saves all tracks.
 
-### Phase 5: User Experience
-- [ ] Add keyboard shortcuts for track switching (Alt+1, Alt+2, etc.)
-- [ ] Implement drag between tracks (with Shift modifier)
-- [ ] Add "Convert to Multi-track" option for existing projects
-- [ ] Create help documentation
-
-### Phase 6: Testing & Polish
-- [ ] Test with various audio lengths
-- [ ] Ensure mobile responsiveness
-- [ ] Performance testing with 4 tracks
-- [ ] Accessibility improvements
+### Phase 5: User Experience & Testing
+- [ ] Add keyboard shortcuts for track switching (e.g., Alt+1, Alt+2).
+- [ ] Ensure mobile responsiveness of the new tabbed layout.
+- [ ] Performance testing with the maximum of 4 tracks.
 
 ## Benefits of This Approach
 
