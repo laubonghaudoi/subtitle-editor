@@ -12,7 +12,7 @@ import {
 } from "@/lib/subtitleOperations";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
 import type { ReactNode } from "react";
-import { createContext, useContext, useState, useMemo } from "react";
+import { createContext, useContext, useState, useMemo, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 // Define the shape of the context value
@@ -80,6 +80,18 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     canUndoSubtitles,
     canRedoSubtitles,
   ] = useUndoableState<Subtitle[]>([]);
+
+  // CRITICAL FIX: This effect synchronizes the undo/redo state
+  // with the currently active track.
+  useEffect(() => {
+    const activeTrack = tracks.find(track => track.id === activeTrackId);
+    if (activeTrack) {
+      // We use the raw `setSubtitlesWithHistory` here to update the
+      // history state without creating a new undo point.
+      setSubtitlesWithHistory(activeTrack.subtitles);
+    }
+  }, [activeTrackId, tracks, setSubtitlesWithHistory]);
+
 
   const addTrack = (name: string, subtitles: Subtitle[] = []) => {
     if (tracks.length >= 4) {

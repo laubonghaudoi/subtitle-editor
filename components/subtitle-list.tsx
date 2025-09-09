@@ -37,6 +37,7 @@ export default function SubtitleList({
     subtitles,
     mergeSubtitlesAction,
     loadSubtitlesIntoTrack,
+    renameTrack,
     activeTrackId,
   } = useSubtitleContext();
 
@@ -48,6 +49,7 @@ export default function SubtitleList({
 
     const newSubtitles = parseSRT(await file.text());
     loadSubtitlesIntoTrack(activeTrackId, newSubtitles);
+    renameTrack(activeTrackId, file.name.replace(".srt", ""));
   };
 
   const handleStartFromScratch = () => {

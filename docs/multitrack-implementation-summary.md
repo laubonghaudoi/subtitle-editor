@@ -32,15 +32,9 @@ A proof-of-concept that demonstrates multiple subtitle tracks (different languag
 ## Technical Implementation
 
 ### Core Approach
-We override the default wavesurfer.js RegionsPlugin behavior by manually positioning regions vertically based on their track assignment.
+We will override the default `wavesurfer.js` RegionsPlugin behavior by manually positioning regions vertically based on their track assignment. This approach was validated in the POC component.
 
-```javascript
-// Key positioning logic
-const yOffset = trackIndex * trackHeight;
-region.element.style.position = 'absolute';
-region.element.style.top = `${yOffset}px`;
-region.element.style.height = `${trackHeight}px`;
-```
+**Reference POC**: See `components/multitrack-waveform-clean.tsx` for a working example of this implementation.
 
 ### Key Technical Decisions:
 
@@ -53,37 +47,39 @@ region.element.style.height = `${trackHeight}px`;
 ## Production Implementation Checklist
 
 ### Phase 1: Data Model & Context
-- [ ] **Data Model**:
+- [ ] **Data Model (`types/subtitle.ts`)**:
     - [ ] Extend `Subtitle` type to include `trackId`.
-    - [ ] Create `SubtitleTrack` type with `id`, `name`, `language`, `color`, and subtitles array: `Subtitle[]`.
-- [ ] **Context API**:
+    - [ ] Create `SubtitleTrack` type with `id`, `name`, and a `subtitles: Subtitle[]` array.
+- [ ] **Context API (`context/subtitle-context.tsx`)**:
     - [ ] Update `SubtitleContext` to manage an array of `SubtitleTrack`.
     - [ ] Add `activeTrackId` to the context to track the currently selected tab.
-    - [ ] Add track management actions: `addTrack`, `removeTrack`, `setActiveTrack`.
+    - [ ] Add track management actions: `addTrack`, `removeTrack`, `renameTrack`, `deleteTrack`, `loadSubtitlesIntoTrack`.
+    - [ ] Implement a `useEffect` to synchronize the undo/redo history with the `activeTrackId`.
 
 ### Phase 2: UI Components - Left Panel
-- [ ] **Tabbed Interface**:
+- [ ] **Tabbed Interface (`app/[locale]/page.tsx`)**:
     - [ ] In the left panel, wrap the `SubtitleList` with the `Tabs` component from `components/ui/tabs.tsx`.
-    - [ ] Create a `TabsList` where each `TabsTrigger` represents a `SubtitleTrack`. The trigger should show the track name.
-    - [ ] Add a "+" button to the `TabsList` to create a new track.
-- [ ] **Content**:
-    - [ ] Use `TabsContent` to render the `SubtitleList` for the active track.
-    - [ ] Each `TabsContent` will contain one `SubtitleList` component, corresponding to one track.
-- [ ] **Load SRT Dialog**:
-    - [ ] When the main "Load SRT" button is clicked, open a `Dialog` component.
-    - [ ] The dialog should give two options:
-        1.  "Load SRT file into a new track".
-        2.  "Create a new, empty track".
-    - [ ] If the user chooses to load a file, it should create a new track and populate it with the parsed subtitles.
+    - [ ] Conditionally render the `TabsList` only when `tracks.length > 1`.
+    - [ ] Use `TabsContent` to render a `SubtitleList` for each track.
+- [ ] **Load SRT Dialog (`components/load-srt.tsx`)**:
+    - [ ] Create a dialog to manage tracks.
+    - [ ] Include an editable list of tracks with options to "Load SRT", "Reload SRT", and "Start from Scratch".
+    - [ ] Include a button to delete a track with an `AlertDialog` for confirmation.
+    - [ ] Automatically rename a track when an SRT file is loaded into it.
+- [ ] **Empty Track UI (`components/subtitle-list.tsx`)**:
+    - [ ] When a track has no subtitles, display prompts to "Load SRT File" or "Start from Scratch".
 
 ### Phase 3: Waveform Integration
-- [ ] Modify `WaveformVisualizer` to render regions from all `SubtitleTrack` objects.
-- [ ] Use the `color` property from each track to style its corresponding regions on the waveform.
-- [ ] Ensure regions from the `activeTrackId` are visually distinct (e.g., higher z-index, brighter border).
-- [ ] Update region creation logic and collision detection to be track-aware.
+- [ ] **Modify `WaveformVisualizer` (`components/waveform-visualizer.tsx`)**:
+    - [ ] Render regions from all *visible* `SubtitleTrack` objects.
+    - [ ] The **active track** should use the established yellow color scheme and custom arrow-shaped handles (see existing `styleRegionHandles` function).
+    - [ ] Non-active tracks should use different, more subdued colors and standard resize handles.
+    - [ ] **Clicking a region** on any track should automatically call `setActiveTrackId` to switch the active tab.
+    - [ ] **Dragging or resizing a region** should update the correct subtitle's `startTime` and `endTime` in the correct `SubtitleTrack` object via `updateSubtitleTimeAction`.
+    - [ ] Ensure collision detection (the logic in `handleRegionUpdate`) is scoped per-track.
 
 ### Phase 4: Import/Export
-- [ ] Design multi-track SRT format (e.g., with `[TRACK: Language]` tags) or consider exporting as a zip of SRT files.
+- [ ] Design multi-track SRT format (e.g., with `[TRACK: Name]` tags) or consider exporting as a zip of separate SRT files.
 - [ ] Update `parseSRT` to handle track information if using a custom format.
 - [ ] Implement export functionality that saves all tracks.
 

@@ -110,7 +110,7 @@ function MainContent() {
     // Use the context action to set initial subtitles
     setInitialSubtitles(
       parsedSubtitles,
-      t("subtitle.newTrackName", { number: 1 })
+      file.name.replace(".srt", "")
     );
   };
 
@@ -346,14 +346,18 @@ function MainContent() {
                 >
                   {tracks.length > 1 && (
                     <TabsList className="bg-white gap-4 border-b-1 border-dashed border-black rounded-none">
-                      {tracks.map((track) => (
-                        <TabsTrigger key={track.id} value={track.id}>
+                      {tracks.map(track => (
+                        <TabsTrigger
+                          key={track.id}
+                          value={track.id}
+                          className="data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
+                        >
                           {track.name}
                         </TabsTrigger>
                       ))}
                     </TabsList>
                   )}
-                  {tracks.map((track) => (
+                  {tracks.map(track => (
                     <TabsContent
                       key={track.id}
                       value={track.id}
