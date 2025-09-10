@@ -661,7 +661,10 @@ export default forwardRef(function WaveformVisualizer(
             ),
           });
 
-          styleRegionHandles(region);
+          // Get the correct handle color for this track
+          const trackIndex = tracks.findIndex(t => t.id === currentTrack.id);
+          const handleColor = TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
+          styleRegionHandles(region, handleColor);
         }
         return; // Exit without updating subtitle timing
       }
@@ -709,7 +712,10 @@ export default forwardRef(function WaveformVisualizer(
           ),
         });
 
-        styleRegionHandles(region);
+        // Get the correct handle color for this track
+        const trackIndex = tracks.findIndex(t => t.id === currentTrack.id);
+        const handleColor = TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
+        styleRegionHandles(region, handleColor);
       }
 
       // Mark this subtitle as being dragged to avoid re-rendering it
@@ -718,6 +724,21 @@ export default forwardRef(function WaveformVisualizer(
       // If we're dragging a region from a different track, switch to that track first
       if (currentTrack.id !== activeTrackId) {
         setActiveTrackId(currentTrack.id);
+        // If we switched tracks, delay both auto-scroll and playback time update
+        if (onRegionClick) {
+          setTimeout(() => {
+            onRegionClick(subtitleUuid);
+            // Update playback time after track switch is complete
+            onSeek(newStartTime);
+          }, 150); // Same delay as in handleRegionClick
+        }
+      } else {
+        // Same track, trigger auto-scroll and update playback time immediately
+        if (onRegionClick) {
+          onRegionClick(subtitleUuid);
+        }
+        // Update playback time to the start of the dragged region to trigger highlighting
+        onSeek(newStartTime);
       }
 
       // Call context action with the UUID to update the correct subtitle in the correct track
@@ -735,11 +756,17 @@ export default forwardRef(function WaveformVisualizer(
         // Switch to the correct track if it's different
         if (regionData.trackId !== activeTrackId) {
           setActiveTrackId(regionData.trackId);
-        }
-
-        // Always call the scroll callback - the parent will handle timing
-        if (onRegionClick) {
-          onRegionClick(region.id);
+          // If we switched tracks, use a reliable timeout to ensure track switch completes
+          if (onRegionClick) {
+            setTimeout(() => {
+              onRegionClick(region.id);
+            }, 150); // Reliable delay to ensure track switch and re-render complete
+          }
+        } else {
+          // Same track, call immediately
+          if (onRegionClick) {
+            onRegionClick(region.id);
+          }
         }
       }
     };

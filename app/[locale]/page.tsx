@@ -232,16 +232,36 @@ function MainContent() {
     // Dependencies include the undo/redo functions and their possibility flags
   }, [undoSubtitles, redoSubtitles, canUndoSubtitles, canRedoSubtitles]);
 
-  // Effect to handle pending scroll-to-subtitle after track switch
+  // Effect to handle pending scroll-to-subtitle
   useEffect(() => {
     if (pendingScrollToUuid && subtitleListRef.current) {
-      // Use a small delay to ensure the track switch has completed and subtitles are rendered
-      const timeoutId = setTimeout(() => {
-        subtitleListRef.current?.scrollToSubtitle(pendingScrollToUuid);
-        setPendingScrollToUuid(null);
-      }, 150);
+      // Function to attempt scroll with retry logic
+      const attemptScroll = (retries = 0) => {
+        const subtitleElement = document.getElementById(`subtitle-${pendingScrollToUuid}`);
+        if (subtitleElement) {
+          // Element found, use requestAnimationFrame to ensure layout has settled
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              subtitleElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+              });
+              // The subtitle will be highlighted naturally by the existing playback time logic
+              setPendingScrollToUuid(null);
+            });
+          });
+        } else if (retries < 10) {
+          // Element not found yet, retry after a short delay
+          setTimeout(() => attemptScroll(retries + 1), 50);
+        } else {
+          // Max retries reached, give up
+          console.warn('Could not find subtitle element after retries:', pendingScrollToUuid);
+          setPendingScrollToUuid(null);
+        }
+      };
 
-      return () => clearTimeout(timeoutId);
+      // Start the retry process
+      attemptScroll();
     }
   }, [pendingScrollToUuid]);
 
