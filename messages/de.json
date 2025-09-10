@@ -11,6 +11,7 @@
     "saveSrt": "SRT speichern",
     "loadSrtFile": "SRT-Datei laden",
     "newTrack": "Neue Spur erstellen",
+    "maxTracksReached": "Sie können maximal 4 Spuren hinzufügen",
     "reloadSrt": "SRT neu laden",
     "fromScratch": "Von Grund auf neu"
   },

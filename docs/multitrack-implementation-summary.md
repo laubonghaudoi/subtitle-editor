@@ -75,15 +75,27 @@ We will override the default `wavesurfer.js` RegionsPlugin behavior by manually 
 - [ ] **Empty Track UI (`components/subtitle-list.tsx`)**:
   - [ ] When a track has no subtitles, display prompts to "Load SRT File" or "Start from Scratch".
 
-### Phase 3: Waveform Integration
+### Phase 3: Waveform Integration ✅ COMPLETED
 
-- [ ] **Modify `WaveformVisualizer` (`components/waveform-visualizer.tsx`)**:
-  - [ ] Render regions from all _visible_ `SubtitleTrack` objects.
-  - [ ] The **active track** should use the established yellow color scheme and custom arrow-shaped handles (see existing `styleRegionHandles` function).
-  - [ ] Non-active tracks should use different, more subdued colors and standard resize handles.
-  - [ ] **Clicking a region** on any track should automatically call `setActiveTrackId` to switch the active tab.
-  - [ ] **Dragging or resizing a region** should update the correct subtitle's `startTime` and `endTime` in the correct `SubtitleTrack` object via `updateSubtitleTimeAction`.
-  - [ ] Ensure collision detection (the logic in `handleRegionUpdate`) is scoped per-track.
+- [x] **Modify `WaveformVisualizer` (`components/waveform-visualizer.tsx`)**:
+  - [x] Render regions from all _visible_ `SubtitleTrack` objects.
+  - [x] The **active track** uses the established yellow color scheme and custom arrow-shaped handles.
+  - [x] Non-active tracks use different, more subdued colors (blue, green, pink) with track-specific handle colors.
+  - [x] **Clicking a region** on any track automatically calls `setActiveTrackId` to switch the active tab.
+  - [x] **Dragging or resizing a region** updates the correct subtitle's `startTime` and `endTime` in the correct `SubtitleTrack` object via `updateSubtitleTimeByUuidAction`.
+  - [x] Collision detection (the logic in `handleRegionUpdate`) is scoped per-track.
+  - [x] **Auto-scroll and highlighting**: Both clicking and dragging regions automatically scroll to the corresponding subtitle and highlight it with cyan background.
+  - [x] **Track switching with timing**: Proper delays ensure track switches complete before auto-scroll and highlighting occur.
+
+#### Phase 3 Implementation Summary
+
+- **Multi-track region rendering**: All tracks display their regions simultaneously with distinct colors
+- **Track-specific styling**: Each track has its own color scheme and handle colors
+- **Seamless track switching**: Clicking/dragging regions from different tracks automatically switches the active tab
+- **Real-time synchronization**: Region changes immediately update the corresponding subtitle data
+- **Enhanced UX**: Auto-scroll and highlighting provide immediate visual feedback
+- **Robust timing**: Proper delays prevent race conditions during track switches
+- **Per-track collision detection**: Region overlap prevention works correctly within each track
 
 ### Phase 4: Import/Export
 

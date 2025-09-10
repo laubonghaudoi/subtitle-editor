@@ -11,6 +11,7 @@
     "saveSrt": "儲存 SRT",
     "loadSrtFile": "載入 SRT 檔案",
     "newTrack": "開新字幕軌",
+    "maxTracksReached": "最多可以加 4 條字幕軌",
     "reloadSrt": "重新載入 SRT",
     "fromScratch": "由頭開始"
   },

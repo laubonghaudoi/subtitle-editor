@@ -190,8 +190,10 @@ export default function LoadSrt() {
             disabled={tracks.length >= 4}
             className="mt-4 cursor-pointer"
           >
-            <IconPlus />
-            {t("buttons.newTrack")}
+            {tracks.length < 4 && <IconPlus />}
+            {tracks.length >= 4
+              ? t("buttons.maxTracksReached")
+              : t("buttons.newTrack")}
           </Button>
         </div>
       </DialogContent>
