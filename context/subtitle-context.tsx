@@ -43,6 +43,11 @@ interface SubtitleContextType {
     newStartTime: string,
     newEndTime: string
   ) => void;
+  updateSubtitleTimeByUuidAction: (
+    uuid: string,
+    newStartTime: string,
+    newEndTime: string
+  ) => void;
   updateSubtitleStartTimeAction: (id: number, newTime: string) => void;
   updateSubtitleEndTimeAction: (id: number, newTime: string) => void;
   replaceAllSubtitlesAction: (newSubtitles: Subtitle[]) => void; // For Find/Replace
@@ -226,6 +231,24 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     );
   };
 
+  // Update subtitle time by UUID across all tracks
+  const updateSubtitleTimeByUuidAction = (
+    uuid: string,
+    newStartTime: string,
+    newEndTime: string
+  ) => {
+    setTracks(prevTracks =>
+      prevTracks.map(track => ({
+        ...track,
+        subtitles: track.subtitles.map(sub =>
+          sub.uuid === uuid
+            ? { ...sub, startTime: newStartTime, endTime: newEndTime }
+            : sub
+        )
+      }))
+    );
+  };
+
   // Individual time updates for SubtitleItem inputs
   const updateSubtitleStartTimeAction = (id: number, newTime: string) => {
     handleTrackedStateChange(updateSubtitleStartTime(id, newTime)(_subtitles));
@@ -264,6 +287,7 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     splitSubtitleAction,
     updateSubtitleTextAction,
     updateSubtitleTimeAction,
+    updateSubtitleTimeByUuidAction,
     updateSubtitleStartTimeAction,
     updateSubtitleEndTimeAction,
     replaceAllSubtitlesAction,

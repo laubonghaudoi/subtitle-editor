@@ -5,7 +5,7 @@ import FindReplace from "@/components/find-replace";
 import LanguageSwitcher from "@/components/language-switcher";
 import LoadSrt from "@/components/load-srt";
 import SkipLinks from "@/components/skip-links";
-import SubtitleList from "@/components/subtitle-list";
+import SubtitleList, { type SubtitleListRef } from "@/components/subtitle-list";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -68,6 +68,7 @@ interface WaveformRef {
 function MainContent() {
   const t = useTranslations();
   const waveformRef = useRef<WaveformRef>(null);
+  const subtitleListRef = useRef<SubtitleListRef>(null);
   const mediaFileInputRef = useRef<HTMLInputElement>(null);
   // Get subtitle state and actions from context
   const {
@@ -103,15 +104,17 @@ function MainContent() {
     null
   );
 
+  // State to track pending scroll-to-region after track switch
+  const [pendingScrollToUuid, setPendingScrollToUuid] = useState<string | null>(
+    null
+  );
+
   const handleFileUpload = async (file: File) => {
     setSrtFileName(file.name);
     const text = await file.text();
     const parsedSubtitles = parseSRT(text);
     // Use the context action to set initial subtitles
-    setInitialSubtitles(
-      parsedSubtitles,
-      file.name.replace(".srt", "")
-    );
+    setInitialSubtitles(parsedSubtitles, file.name.replace(".srt", ""));
   };
 
   const downloadSRT = () => {
@@ -228,6 +231,19 @@ function MainContent() {
     };
     // Dependencies include the undo/redo functions and their possibility flags
   }, [undoSubtitles, redoSubtitles, canUndoSubtitles, canRedoSubtitles]);
+
+  // Effect to handle pending scroll-to-subtitle after track switch
+  useEffect(() => {
+    if (pendingScrollToUuid && subtitleListRef.current) {
+      // Use a small delay to ensure the track switch has completed and subtitles are rendered
+      const timeoutId = setTimeout(() => {
+        subtitleListRef.current?.scrollToSubtitle(pendingScrollToUuid);
+        setPendingScrollToUuid(null);
+      }, 150);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [pendingScrollToUuid]);
 
   return (
     <div className="flex flex-col h-screen">
@@ -346,7 +362,7 @@ function MainContent() {
                 >
                   {tracks.length > 1 && (
                     <TabsList className="bg-white gap-4 border-b-1 border-dashed border-black rounded-none">
-                      {tracks.map(track => (
+                      {tracks.map((track) => (
                         <TabsTrigger
                           key={track.id}
                           value={track.id}
@@ -357,13 +373,14 @@ function MainContent() {
                       ))}
                     </TabsList>
                   )}
-                  {tracks.map(track => (
+                  {tracks.map((track) => (
                     <TabsContent
                       key={track.id}
                       value={track.id}
                       className="flex-grow overflow-y-auto m-0"
                     >
                       <SubtitleList
+                        ref={subtitleListRef}
                         // Pass only non-subtitle state/props
                         currentTime={playbackTime}
                         onScrollToRegion={(uuid) => {
@@ -464,6 +481,10 @@ function MainContent() {
                 isPlaying={isPlaying}
                 onSeek={setPlaybackTime}
                 onPlayPause={setIsPlaying}
+                onRegionClick={(uuid) => {
+                  // Set pending scroll to be handled after track switch completes
+                  setPendingScrollToUuid(uuid);
+                }}
                 // Subtitle action props removed (will use context)
               />
             </>

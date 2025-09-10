@@ -1,5 +1,5 @@
 import { AnimatePresence } from "motion/react";
-import { useEffect, useRef } from "react"; // Remove useCallback import
+import { useEffect, useRef, forwardRef, useImperativeHandle } from "react"; // Remove useCallback import
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
 import { parseSRT } from "@/lib/subtitleOperations";
 import { timeToSeconds } from "@/lib/utils";
@@ -21,14 +21,19 @@ interface SubtitleListProps {
   setEditingSubtitleUuid: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export default function SubtitleList({
+// Define the ref interface for SubtitleList
+export interface SubtitleListRef {
+  scrollToSubtitle: (uuid: string) => void;
+}
+
+const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(({
   currentTime = 0,
   onScrollToRegion,
   setIsPlaying,
   setPlaybackTime,
   editingSubtitleUuid,
   setEditingSubtitleUuid,
-}: SubtitleListProps) {
+}, ref) => {
   const t = useTranslations();
   const listRef = useRef<HTMLDivElement>(null);
   const activeSubtitleRef = useRef<string | null>(null);
@@ -40,6 +45,19 @@ export default function SubtitleList({
     renameTrack,
     activeTrackId,
   } = useSubtitleContext();
+
+  // Expose scrollToSubtitle method via ref
+  useImperativeHandle(ref, () => ({
+    scrollToSubtitle: (uuid: string) => {
+      const subtitleElement = document.getElementById(`subtitle-${uuid}`);
+      if (subtitleElement && listRef.current) {
+        subtitleElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }
+    },
+  }));
 
   const handleSrtFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -237,4 +255,8 @@ export default function SubtitleList({
       </AnimatePresence>
     </div>
   );
-}
+});
+
+SubtitleList.displayName = 'SubtitleList';
+
+export default SubtitleList;
