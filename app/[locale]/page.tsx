@@ -108,6 +108,8 @@ function MainContent() {
   const [pendingScrollToUuid, setPendingScrollToUuid] = useState<string | null>(
     null
   );
+  // Whether the pending scroll should be instant (used for cross-track clicks)
+  const [pendingScrollInstant, setPendingScrollInstant] = useState<boolean>(false);
 
   const handleFileUpload = async (file: File) => {
     setSrtFileName(file.name);
@@ -242,12 +244,22 @@ function MainContent() {
           // Element found, use requestAnimationFrame to ensure layout has settled
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-              subtitleElement.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
+              const ok = subtitleListRef.current?.scrollToSubtitle(pendingScrollToUuid, {
+                instant: pendingScrollInstant,
+                center: true,
+                focus: pendingScrollInstant,
               });
-              // The subtitle will be highlighted naturally by the existing playback time logic
-              setPendingScrollToUuid(null);
+              if (ok) {
+                // The subtitle will be highlighted naturally by the existing playback time logic
+                setPendingScrollToUuid(null);
+                setPendingScrollInstant(false);
+              } else if (retries < 10) {
+                setTimeout(() => attemptScroll(retries + 1), 50);
+              } else {
+                console.warn('Could not center subtitle after retries:', pendingScrollToUuid);
+                setPendingScrollToUuid(null);
+                setPendingScrollInstant(false);
+              }
             });
           });
         } else if (retries < 10) {
@@ -257,13 +269,14 @@ function MainContent() {
           // Max retries reached, give up
           console.warn('Could not find subtitle element after retries:', pendingScrollToUuid);
           setPendingScrollToUuid(null);
+          setPendingScrollInstant(false);
         }
       };
 
       // Start the retry process
       attemptScroll();
     }
-  }, [pendingScrollToUuid]);
+  }, [pendingScrollToUuid, pendingScrollInstant]);
 
   return (
     <div className="flex flex-col h-screen">
@@ -400,7 +413,7 @@ function MainContent() {
                       className="flex-grow overflow-y-auto m-0"
                     >
                       <SubtitleList
-                        ref={subtitleListRef}
+                        ref={activeTrackId === track.id ? subtitleListRef : undefined}
                         // Pass only non-subtitle state/props
                         currentTime={playbackTime}
                         onScrollToRegion={(uuid) => {
@@ -501,9 +514,11 @@ function MainContent() {
                 isPlaying={isPlaying}
                 onSeek={setPlaybackTime}
                 onPlayPause={setIsPlaying}
-                onRegionClick={(uuid) => {
+                onRegionClick={(uuid, opts) => {
                   // Set pending scroll to be handled after track switch completes
                   setPendingScrollToUuid(uuid);
+                  // If cross-track, use instant scroll and focus; otherwise keep smooth animation
+                  setPendingScrollInstant(Boolean(opts?.crossTrack));
                 }}
                 // Subtitle action props removed (will use context)
               />

@@ -69,7 +69,8 @@
     "srtDescription": "可以任意命名字幕軌，",
     "deleteTrackTitle": "刪除呢條字幕軌？",
     "deleteTrackDescription": "呢個操作冇得還原。呢個操作會永久刪除呢條字幕軌同佢所有嘅字幕。",
-    "delete": "刪除"
+    "delete": "刪除",
+    "done": "完成"
   },
   "subtitle": {
     "newSubtitle": "新字幕",

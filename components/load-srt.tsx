@@ -19,6 +19,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,7 +58,6 @@ export default function LoadSrt() {
     const newSubtitles = parseSRT(await file.text());
     loadSubtitlesIntoTrack(trackId, newSubtitles);
     renameTrack(trackId, file.name.replace(".srt", ""));
-    setIsSrtDialogOpen(false);
   };
 
   const handleStartFromScratch = (trackId: string) => {
@@ -69,7 +70,6 @@ export default function LoadSrt() {
         text: t("subtitle.newSubtitle"),
       },
     ]);
-    setIsSrtDialogOpen(false);
   };
 
   return (
@@ -83,7 +83,7 @@ export default function LoadSrt() {
           <span className="leading-none truncate">{t("buttons.loadSrt")}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[48rem]">
+      <DialogContent className="sm:max-w-[48rem]" hideClose>
         <DialogHeader>
           <DialogTitle>{t("dialog.srtTitle")}</DialogTitle>
           <DialogDescription>{t("dialog.srtDescription")}</DialogDescription>
@@ -196,6 +196,11 @@ export default function LoadSrt() {
               : t("buttons.newTrack")}
           </Button>
         </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button className="cursor-pointer">{t("dialog.done")}</Button>
+          </DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

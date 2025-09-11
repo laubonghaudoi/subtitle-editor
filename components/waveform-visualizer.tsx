@@ -87,20 +87,23 @@ const styleRegionHandles = (
       border-left: 2px dashed ${handleColor};
       width: 4px;
     `;
-    // Create a child <span> to act as the arrow
-    const arrowEl = document.createElement("span");
-    arrowEl.style.cssText = `
-      position: absolute;
-      top: 50%;
-      left: -0.5rem;
-      transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-top: 1rem solid transparent;
-      border-bottom: 1rem solid transparent;
-      border-right: 0.5rem solid ${handleColor};
-    `;
-    leftHandleDiv.appendChild(arrowEl);
+    // Add arrow only once
+    if (!leftHandleDiv.querySelector('[data-arrow="left"]')) {
+      const arrowEl = document.createElement("span");
+      arrowEl.setAttribute("data-arrow", "left");
+      arrowEl.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: -0.5rem;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-top: 1rem solid transparent;
+        border-bottom: 1rem solid transparent;
+        border-right: 0.5rem solid ${handleColor};
+      `;
+      leftHandleDiv.appendChild(arrowEl);
+    }
   }
 
   const rightHandleDiv = region.element.querySelector(
@@ -111,19 +114,22 @@ const styleRegionHandles = (
       border-right: 2px dashed ${handleColor};
       width: 4px;
     `;
-    const arrowEl = document.createElement("span");
-    arrowEl.style.cssText = `
-      position: absolute;
-      top: 50%;
-      right: -0.5rem;
-      transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-top: 1rem solid transparent;
-      border-bottom: 1rem solid transparent;
-      border-left: 0.5rem solid ${handleColor};
-    `;
-    rightHandleDiv.appendChild(arrowEl);
+    if (!rightHandleDiv.querySelector('[data-arrow="right"]')) {
+      const arrowEl = document.createElement("span");
+      arrowEl.setAttribute("data-arrow", "right");
+      arrowEl.style.cssText = `
+        position: absolute;
+        top: 50%;
+        right: -0.5rem;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-top: 1rem solid transparent;
+        border-bottom: 1rem solid transparent;
+        border-left: 0.5rem solid ${handleColor};
+      `;
+      rightHandleDiv.appendChild(arrowEl);
+    }
   }
 };
 
@@ -132,7 +138,7 @@ interface WaveformVisualizerProps {
   isPlaying: boolean;
   onSeek: (time: number) => void;
   onPlayPause: (playing: boolean) => void;
-  onRegionClick?: (uuid: string) => void;
+  onRegionClick?: (uuid: string, opts?: { crossTrack?: boolean }) => void;
 }
 
 export default forwardRef(function WaveformVisualizer(
@@ -165,6 +171,9 @@ export default forwardRef(function WaveformVisualizer(
   const subtitleToRegionMap = useRef<
     Map<string, { region: Region; trackId: string }>
   >(new Map());
+
+  // Track drag state to avoid repeated scroll triggers mid-drag
+  // Dragging regions should not trigger auto scroll/tab switching
 
   // Load media file into wavesurfer
   useEffect(() => {
@@ -502,63 +511,7 @@ export default forwardRef(function WaveformVisualizer(
     });
   };
 
-  // Track previous tracks to detect what kind of change occurred
-  const prevTracksRef = useRef<SubtitleTrack[]>([]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Avoid infinite rendering regions - We need to re-run when tracks change.
-  useEffect(() => {
-    if (!wavesurfer || isLoading || !wavesurfer.getDuration()) return;
-
-    const prevTracks = prevTracksRef.current;
-
-    // Check if this is just a time update from dragging
-    const isOnlyTimeUpdate =
-      prevTracks.length === tracks.length &&
-      lastDraggedSubtitleId.current &&
-      tracks.every((track, trackIdx) => {
-        const prevTrack = prevTracks[trackIdx];
-        if (!prevTrack || track.id !== prevTrack.id) return false;
-
-        return track.subtitles.every((sub, subIdx) => {
-          const prev = prevTrack.subtitles[subIdx];
-          if (!prev) return false;
-
-          // If this is the dragged subtitle, only check non-time properties
-          if (sub.uuid === lastDraggedSubtitleId.current) {
-            return (
-              sub.id === prev.id &&
-              sub.text === prev.text &&
-              sub.uuid === prev.uuid
-            );
-          }
-
-          // For other subtitles, they should be completely unchanged
-          return (
-            sub.id === prev.id &&
-            sub.text === prev.text &&
-            sub.startTime === prev.startTime &&
-            sub.endTime === prev.endTime &&
-            sub.uuid === prev.uuid
-          );
-        });
-      });
-
-    if (!isOnlyTimeUpdate) {
-      // Major change - reinitialize all regions
-      initRegions();
-    }
-
-    // Update the ref for next comparison
-    prevTracksRef.current = tracks;
-
-    // Clear the dragged flag after processing
-    if (isOnlyTimeUpdate) {
-      // Small delay to ensure the update effect below doesn't re-render the dragged region
-      setTimeout(() => {
-        lastDraggedSubtitleId.current = null;
-      }, 10);
-    }
-  }, [tracks, wavesurfer, isLoading]);
+  // Re-init is handled via the update effect below; no separate prevTracks diffing needed
 
   // If subtitle time stamps change, update the regions
   // biome-ignore lint/correctness/useExhaustiveDependencies: For unknown reasons, if I include `onPlayPause` in the dependencies, the regions are not rendered at all.
@@ -721,25 +674,7 @@ export default forwardRef(function WaveformVisualizer(
       // Mark this subtitle as being dragged to avoid re-rendering it
       lastDraggedSubtitleId.current = subtitleUuid;
 
-      // If we're dragging a region from a different track, switch to that track first
-      if (currentTrack.id !== activeTrackId) {
-        setActiveTrackId(currentTrack.id);
-        // If we switched tracks, delay both auto-scroll and playback time update
-        if (onRegionClick) {
-          setTimeout(() => {
-            onRegionClick(subtitleUuid);
-            // Update playback time after track switch is complete
-            onSeek(newStartTime);
-          }, 150); // Same delay as in handleRegionClick
-        }
-      } else {
-        // Same track, trigger auto-scroll and update playback time immediately
-        if (onRegionClick) {
-          onRegionClick(subtitleUuid);
-        }
-        // Update playback time to the start of the dragged region to trigger highlighting
-        onSeek(newStartTime);
-      }
+      // Do not auto switch tabs or scroll during drag; only update times
 
       // Call context action with the UUID to update the correct subtitle in the correct track
       updateSubtitleTimeByUuidAction(
@@ -759,13 +694,13 @@ export default forwardRef(function WaveformVisualizer(
           // If we switched tracks, use a reliable timeout to ensure track switch completes
           if (onRegionClick) {
             setTimeout(() => {
-              onRegionClick(region.id);
+              onRegionClick(region.id, { crossTrack: true });
             }, 150); // Reliable delay to ensure track switch and re-render complete
           }
         } else {
           // Same track, call immediately
           if (onRegionClick) {
-            onRegionClick(region.id);
+            onRegionClick(region.id, { crossTrack: false });
           }
         }
       }
@@ -785,6 +720,12 @@ export default forwardRef(function WaveformVisualizer(
       regionsPlugin.on("region-clicked", handleRegionClick);
     }
 
+    // Clear the drag-skip flag when pointer is released
+    const handlePointerUp = () => {
+      lastDraggedSubtitleId.current = null;
+    };
+    window.addEventListener("pointerup", handlePointerUp);
+
     return () => {
       // Cleanup
       wavesurfer.un("ready", handleReady);
@@ -794,6 +735,7 @@ export default forwardRef(function WaveformVisualizer(
         regionsPlugin.un("region-updated", handleRegionUpdate);
         regionsPlugin.un("region-clicked", handleRegionClick);
       }
+      window.removeEventListener("pointerup", handlePointerUp);
     };
   }, [wavesurfer, tracks, activeTrackId, setActiveTrackId, updateSubtitleTimeByUuidAction]); // Depend on context action
 
@@ -884,6 +826,16 @@ export default forwardRef(function WaveformVisualizer(
           const handleColor =
             TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
           styleRegionHandles(region, handleColor);
+
+          // Update vertical positioning based on current track index and total tracks
+          const el = region.element as HTMLElement | null;
+          if (el) {
+            const trackHeight = 100 / tracks.length;
+            const trackTop = trackIndex * trackHeight;
+            el.style.top = `${trackTop}%`;
+            el.style.height = `${trackHeight}%`;
+            el.style.position = "absolute";
+          }
         }
       });
     });

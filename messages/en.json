@@ -66,10 +66,11 @@
     "cancel": "Cancel",
     "yes": "Yes, discard",
     "srtTitle": "Manage Subtitle Tracks",
-    "srtDescription": "You can load a .srt file or create a new track from scratch.",
+    "srtDescription": "You can add 4 tracks at most. You can load a .srt file or create a new track from scratch.",
     "deleteTrackTitle": "Delete this track?",
     "deleteTrackDescription": "This action cannot be undone. This will permanently delete the track and all its subtitles.",
-    "delete": "Delete"
+    "delete": "Delete",
+    "done": "Done"
   },
   "subtitle": {
     "newSubtitle": "New subtitle",

@@ -69,7 +69,8 @@
     "srtDescription": "Sie können eine vorhandene SRT-Datei in eine neue Spur laden oder eine neue, leere Spur erstellen, um von vorne zu beginnen.",
     "deleteTrackTitle": "Diese Spur löschen?",
     "deleteTrackDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch werden die Spur und alle ihre Untertitel dauerhaft gelöscht.",
-    "delete": "Löschen"
+    "delete": "Löschen",
+    "done": "Fertig"
   },
   "subtitle": {
     "newSubtitle": "Neuer Untertitel",

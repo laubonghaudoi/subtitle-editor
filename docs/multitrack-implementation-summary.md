@@ -81,17 +81,17 @@ We will override the default `wavesurfer.js` RegionsPlugin behavior by manually 
   - [x] Render regions from all _visible_ `SubtitleTrack` objects.
   - [x] The **active track** uses the established yellow color scheme and custom arrow-shaped handles.
   - [x] Non-active tracks use different, more subdued colors (blue, green, pink) with track-specific handle colors.
-  - [x] **Clicking a region** on any track automatically calls `setActiveTrackId` to switch the active tab.
-  - [x] **Dragging or resizing a region** updates the correct subtitle's `startTime` and `endTime` in the correct `SubtitleTrack` object via `updateSubtitleTimeByUuidAction`.
+- [x] **Clicking a region** on any track automatically calls `setActiveTrackId` to switch the active tab.
+- [x] **Dragging or resizing a region** updates the correct subtitle's `startTime` and `endTime` in the correct `SubtitleTrack` object via `updateSubtitleTimeByUuidAction` (no auto scroll/tab switch during drag).
   - [x] Collision detection (the logic in `handleRegionUpdate`) is scoped per-track.
-  - [x] **Auto-scroll and highlighting**: Both clicking and dragging regions automatically scroll to the corresponding subtitle and highlight it with cyan background.
-  - [x] **Track switching with timing**: Proper delays ensure track switches complete before auto-scroll and highlighting occur.
+- [x] **Auto-scroll and highlighting**: Clicking a region scrolls to and highlights the corresponding subtitle; dragging does not auto-scroll by design.
+- [x] **Track switching with timing**: Proper delays ensure track switches complete before auto-scroll and highlighting occur for clicks.
 
 #### Phase 3 Implementation Summary
 
 - **Multi-track region rendering**: All tracks display their regions simultaneously with distinct colors
 - **Track-specific styling**: Each track has its own color scheme and handle colors
-- **Seamless track switching**: Clicking/dragging regions from different tracks automatically switches the active tab
+- **Seamless track switching**: Clicking regions from different tracks automatically switches the active tab (dragging does not auto-switch by design)
 - **Real-time synchronization**: Region changes immediately update the corresponding subtitle data
 - **Enhanced UX**: Auto-scroll and highlighting provide immediate visual feedback
 - **Robust timing**: Proper delays prevent race conditions during track switches

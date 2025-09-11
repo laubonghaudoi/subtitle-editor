@@ -23,7 +23,10 @@ interface SubtitleListProps {
 
 // Define the ref interface for SubtitleList
 export interface SubtitleListRef {
-  scrollToSubtitle: (uuid: string) => void;
+  scrollToSubtitle: (
+    uuid: string,
+    opts?: { instant?: boolean; center?: boolean; focus?: boolean }
+  ) => boolean;
 }
 
 const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(({
@@ -48,14 +51,60 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(({
 
   // Expose scrollToSubtitle method via ref
   useImperativeHandle(ref, () => ({
-    scrollToSubtitle: (uuid: string) => {
+    scrollToSubtitle: (
+      uuid: string,
+      opts?: { instant?: boolean; center?: boolean; focus?: boolean }
+    ) => {
       const subtitleElement = document.getElementById(`subtitle-${uuid}`);
-      if (subtitleElement && listRef.current) {
-        subtitleElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-        });
+      const container = listRef.current;
+      if (!subtitleElement || !container) return false;
+
+      // Ensure we are scrolling the correct container
+      if (!container.contains(subtitleElement)) return false;
+
+      const behavior: ScrollBehavior = opts?.instant ? 'auto' : 'smooth';
+      const center = opts?.center !== false; // default to true
+
+      const centerElement = () => {
+        const cRect = container.getBoundingClientRect();
+        const iRect = subtitleElement.getBoundingClientRect();
+        // Compute item top relative to container scroll space
+        const itemTop = container.scrollTop + (iRect.top - cRect.top);
+        const targetTop = itemTop - (container.clientHeight - iRect.height) / 2;
+        container.scrollTo({ top: Math.max(0, targetTop), behavior });
+      };
+
+      if (center) {
+        centerElement();
+      } else {
+        subtitleElement.scrollIntoView({ behavior, block: 'nearest' });
       }
+
+      if (opts?.focus) {
+        (subtitleElement as HTMLElement).focus({ preventScroll: true });
+      }
+
+      // Safety re-center pass after layout settles (handles animated content)
+      // Run only for instant jumps where timing is tight (cross-track)
+      if (opts?.instant) {
+        setTimeout(() => {
+          if (!listRef.current) return;
+          const stillThere = document.getElementById(`subtitle-${uuid}`);
+          if (!stillThere || !listRef.current.contains(stillThere)) return;
+          const cRect2 = listRef.current.getBoundingClientRect();
+          const iRect2 = stillThere.getBoundingClientRect();
+          const centerY = cRect2.top + listRef.current.clientHeight / 2;
+          const itemCenterY = iRect2.top + iRect2.height / 2;
+          const offBy = Math.abs(itemCenterY - centerY);
+          if (offBy > 4) {
+            const itemTop2 = listRef.current.scrollTop + (iRect2.top - cRect2.top);
+            const targetTop2 = itemTop2 - (listRef.current.clientHeight - iRect2.height) / 2;
+            listRef.current.scrollTo({ top: Math.max(0, targetTop2), behavior: 'auto' });
+          }
+        }, 100);
+      }
+
+      return true;
     },
   }));
 
@@ -91,7 +140,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(({
     const currentSubtitle = subtitles.find(
       (sub) =>
         timeToSeconds(sub.startTime) <= currentTime &&
-        timeToSeconds(sub.endTime) >= currentTime
+        timeToSeconds(sub.endTime) > currentTime // strict end bound to avoid boundary ambiguity
     );
 
     if (currentSubtitle && currentSubtitle.uuid !== activeSubtitleRef.current) {
@@ -99,11 +148,17 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(({
       const subtitleElement = document.getElementById(
         `subtitle-${currentSubtitle.uuid}`
       );
-      if (subtitleElement) {
-        subtitleElement.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
+      const container = listRef.current;
+      if (subtitleElement && container && container.contains(subtitleElement)) {
+        // If it's already near centered, skip extra scroll to avoid fighting cross-track jump
+        const cRect = container.getBoundingClientRect();
+        const iRect = subtitleElement.getBoundingClientRect();
+        const centerY = cRect.top + container.clientHeight / 2;
+        const itemCenterY = iRect.top + iRect.height / 2;
+        const offBy = Math.abs(itemCenterY - centerY);
+        if (offBy > 4) {
+          subtitleElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
         activeSubtitleRef.current = currentSubtitle.uuid;
       }
     }
