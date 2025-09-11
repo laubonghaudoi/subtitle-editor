@@ -70,7 +70,8 @@
     "deleteTrackTitle": "Delete this track?",
     "deleteTrackDescription": "This action cannot be undone. This will permanently delete the track and all its subtitles.",
     "delete": "Delete",
-    "done": "Done"
+    "done": "Done",
+    "showTrackLabels": "Show track labels in the waveform visualizer"
   },
   "subtitle": {
     "newSubtitle": "New subtitle",

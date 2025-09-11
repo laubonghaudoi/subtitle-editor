@@ -162,10 +162,14 @@ export default forwardRef(function WaveformVisualizer(
     activeTrackId,
     setActiveTrackId,
     updateSubtitleTimeByUuidAction,
+    showTrackLabels,
   } = useSubtitleContext();
 
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  // Metrics to align track labels with actual regions area
+  const [labelsOffsetTop, setLabelsOffsetTop] = useState(0);
+  const [labelsAreaHeight, setLabelsAreaHeight] = useState(0);
 
   // Use UUID as the key for the map, store both region and track info
   const subtitleToRegionMap = useRef<
@@ -509,9 +513,52 @@ export default forwardRef(function WaveformVisualizer(
         });
       });
     });
+    // After creating regions, measure label overlay area
+    requestAnimationFrame(measureLabelsOverlay);
   };
 
-  // Re-init is handled via the update effect below; no separate prevTracks diffing needed
+  const measureLabelsOverlay = () => {
+    const container = containerRef.current;
+    if (!container) return;
+    const containerRect = container.getBoundingClientRect();
+
+    let laneHeight = 0;
+    let topOfFirstLanePx: number | null = null;
+
+    // Derive lane height and the absolute top of lane 0 using any region element
+    subtitleToRegionMap.current.forEach(({ region, trackId }) => {
+      if (!region.element) return;
+      const el = region.element as HTMLElement;
+      const rect = el.getBoundingClientRect();
+      if (rect.height > 0) {
+        laneHeight = rect.height; // all lanes share height
+        const idx = tracks.findIndex((t) => t.id === trackId);
+        const laneTopForThis = rect.top - containerRect.top;
+        const top0 = laneTopForThis - idx * laneHeight;
+        topOfFirstLanePx = topOfFirstLanePx === null ? top0 : Math.min(topOfFirstLanePx, top0);
+      }
+    });
+
+    if (!laneHeight || topOfFirstLanePx === null) {
+      setLabelsOffsetTop(0);
+      setLabelsAreaHeight(0);
+      return;
+    }
+
+    setLabelsOffsetTop(Math.max(0, topOfFirstLanePx));
+    setLabelsAreaHeight(Math.max(0, laneHeight * Math.max(1, tracks.length)));
+  };
+
+  // Full re-init when the number of tracks changes (robust lane resizing)
+  const prevTrackCountRef = useRef<number>(tracks.length);
+  useEffect(() => {
+    if (!wavesurfer) return;
+    const current = tracks.length;
+    if (prevTrackCountRef.current !== current) {
+      initRegions();
+      prevTrackCountRef.current = current;
+    }
+  }, [tracks.length, wavesurfer]);
 
   // If subtitle time stamps change, update the regions
   // biome-ignore lint/correctness/useExhaustiveDependencies: For unknown reasons, if I include `onPlayPause` in the dependencies, the regions are not rendered at all.
@@ -523,6 +570,7 @@ export default forwardRef(function WaveformVisualizer(
       // Build regions once initially
       initRegions();
       wavesurfer.setMuted(true);
+      requestAnimationFrame(measureLabelsOverlay);
     };
 
     // If the user clicks "play" on the waveform, ensure it's muted and sync with parent
@@ -682,6 +730,7 @@ export default forwardRef(function WaveformVisualizer(
         newStartTimeFormatted,
         newEndTimeFormatted
       );
+      requestAnimationFrame(measureLabelsOverlay);
     };
 
     // Handle region clicks to switch active track and focus subtitle
@@ -739,9 +788,30 @@ export default forwardRef(function WaveformVisualizer(
     };
   }, [wavesurfer, tracks, activeTrackId, setActiveTrackId, updateSubtitleTimeByUuidAction]); // Depend on context action
 
+  // Re-measure label overlay when labels are toggled or track count changes
+  useEffect(() => {
+    requestAnimationFrame(measureLabelsOverlay);
+  }, [showTrackLabels, tracks.length]);
+
+  // Re-measure on window resize
+  useEffect(() => {
+    const onResize = () => requestAnimationFrame(measureLabelsOverlay);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   // Update subtitle text requires only updating the target region content
   useEffect(() => {
     if (!wavesurfer) return;
+    // Avoid creating/updating regions until media is loaded and duration is known
+    const duration = (() => {
+      try {
+        return wavesurfer.getDuration();
+      } catch {
+        return 0;
+      }
+    })();
+    if (!duration || duration === 0) return;
 
     const regionsPlugin = wavesurfer
       .getActivePlugins()
@@ -854,11 +924,30 @@ export default forwardRef(function WaveformVisualizer(
         subtitleToRegionMap.current.delete(uuid);
       }
     }
+
+    // After creating/updating/cleaning regions, re-measure label overlay
+    requestAnimationFrame(measureLabelsOverlay);
   }, [tracks, wavesurfer]);
 
   return (
     <div className="relative w-full h-full border-black">
       <div ref={containerRef} className="w-full h-full" />
+      {showTrackLabels && tracks.length > 0 && labelsAreaHeight > 0 && (
+        <div
+          className="absolute left-0 right-0 pointer-events-none"
+          style={{ top: `${labelsOffsetTop}px`, height: `${labelsAreaHeight}px`, zIndex: 10 }}
+        >
+          {tracks.map((track, idx) => (
+            <div
+              key={track.id}
+              className="absolute left-2 bg-neutral-500 text-white px-2 py-0.5 rounded text-xs font-semibold"
+              style={{ top: `${((idx + 0.5) * 100) / tracks.length}%`, transform: "translateY(-50%)" }}
+            >
+              {track.name}
+            </div>
+          ))}
+        </div>
+      )}
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white/50">
           {/* Added subtle background */}

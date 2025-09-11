@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useSubtitleContext } from "@/context/subtitle-context";
 import { parseSRT } from "@/lib/subtitleOperations";
 import {
@@ -34,18 +35,21 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useState, useId } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export default function LoadSrt() {
   const t = useTranslations();
   const [isSrtDialogOpen, setIsSrtDialogOpen] = useState(false);
+  const showTrackLabelsId = useId();
   const {
     tracks,
     addTrack,
     renameTrack,
     deleteTrack,
     loadSubtitlesIntoTrack,
+    showTrackLabels,
+    setShowTrackLabels,
   } = useSubtitleContext();
 
   const handleSrtFileSelect = async (
@@ -89,15 +93,15 @@ export default function LoadSrt() {
           <DialogDescription>{t("dialog.srtDescription")}</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {tracks.map(track => (
+          {tracks.map((track) => (
             <div
               key={track.id}
               className="grid grid-cols-12 items-center gap-2"
             >
               <Input
                 value={track.name}
-                onChange={e => renameTrack(track.id, e.target.value)}
-                className="col-span-6"
+                onChange={(e) => renameTrack(track.id, e.target.value)}
+                className="col-span-6 border-neutral-500 rounded-sm"
               />
               <div className="col-span-5 grid grid-cols-2 gap-2">
                 {track.subtitles.length > 0 ? (
@@ -107,7 +111,7 @@ export default function LoadSrt() {
                         count: track.subtitles.length,
                       })}
                     </Label>
-                    <Button asChild variant="outline" className="w-full">
+                    <Button asChild variant="secondary" className="w-full">
                       <Label className="cursor-pointer">
                         <IconFile />
                         {t("buttons.reloadSrt")}
@@ -115,14 +119,14 @@ export default function LoadSrt() {
                           type="file"
                           className="hidden"
                           accept=".srt"
-                          onChange={e => handleSrtFileSelect(e, track.id)}
+                          onChange={(e) => handleSrtFileSelect(e, track.id)}
                         />
                       </Label>
                     </Button>
                   </>
                 ) : (
                   <>
-                    <Button asChild variant="outline" className="w-full">
+                    <Button asChild variant="secondary" className="w-full">
                       <Label className="cursor-pointer">
                         <IconFile />
                         {t("buttons.loadSrtFile")}
@@ -130,12 +134,12 @@ export default function LoadSrt() {
                           type="file"
                           className="hidden"
                           accept=".srt"
-                          onChange={e => handleSrtFileSelect(e, track.id)}
+                          onChange={(e) => handleSrtFileSelect(e, track.id)}
                         />
                       </Label>
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       className="w-full cursor-pointer"
                       onClick={() => handleStartFromScratch(track.id)}
                     >
@@ -166,7 +170,9 @@ export default function LoadSrt() {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>{t("dialog.cancel")}</AlertDialogCancel>
+                      <AlertDialogCancel>
+                        {t("dialog.cancel")}
+                      </AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => deleteTrack(track.id)}
                         className="bg-red-700 hover:bg-red-500 cursor-pointer"
@@ -188,7 +194,7 @@ export default function LoadSrt() {
               )
             }
             disabled={tracks.length >= 4}
-            className="mt-4 cursor-pointer"
+            className="mt-4 cursor-pointer border-black border-dashed hover:border-2 hover:bg-transparent disabled:border-none"
           >
             {tracks.length < 4 && <IconPlus />}
             {tracks.length >= 4
@@ -196,7 +202,17 @@ export default function LoadSrt() {
               : t("buttons.newTrack")}
           </Button>
         </div>
-        <DialogFooter>
+        <DialogFooter className="">
+          <div className="flex justify-between items-center gap-2 mr-auto">
+            <Checkbox
+              id={showTrackLabelsId}
+              checked={showTrackLabels}
+              onCheckedChange={(v) => setShowTrackLabels(Boolean(v))}
+            />
+            <Label htmlFor={showTrackLabelsId} className="cursor-pointer">
+              {t("dialog.showTrackLabels")}
+            </Label>
+          </div>
           <DialogClose asChild>
             <Button className="cursor-pointer">{t("dialog.done")}</Button>
           </DialogClose>

@@ -70,7 +70,8 @@
     "deleteTrackTitle": "Diese Spur löschen?",
     "deleteTrackDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch werden die Spur und alle ihre Untertitel dauerhaft gelöscht.",
     "delete": "Löschen",
-    "done": "Fertig"
+    "done": "Fertig",
+    "showTrackLabels": "Spurbezeichnungen im Wellenform-Visualizer anzeigen"
   },
   "subtitle": {
     "newSubtitle": "Neuer Untertitel",

@@ -20,6 +20,8 @@ interface SubtitleContextType {
   tracks: SubtitleTrack[];
   activeTrackId: string | null;
   setActiveTrackId: (id: string | null) => void;
+  showTrackLabels: boolean;
+  setShowTrackLabels: (value: boolean) => void;
   addTrack: (name: string, subtitles?: Subtitle[]) => string;
   loadSubtitlesIntoTrack: (trackId: string, subtitles: Subtitle[]) => void;
   renameTrack: (trackId: string, newName: string) => void;
@@ -74,6 +76,7 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
 }) => {
   const [tracks, setTracks] = useState<SubtitleTrack[]>([]);
   const [activeTrackId, setActiveTrackId] = useState<string | null>(null);
+  const [showTrackLabels, setShowTrackLabels] = useState<boolean>(false);
 
   // Note: We are keeping a separate undo/redo history for now.
   // A more robust solution would involve a single history for all tracks.
@@ -276,6 +279,8 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     tracks,
     activeTrackId,
     setActiveTrackId,
+    showTrackLabels,
+    setShowTrackLabels,
     addTrack,
     loadSubtitlesIntoTrack,
     renameTrack,
