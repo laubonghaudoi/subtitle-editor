@@ -181,6 +181,46 @@ function MainContent() {
     // Dependencies now include subtitles and playbackTime for finding the current subtitle
   }, [isPlaying, subtitles, playbackTime]); // Removed setEditingSubtitleUuid
 
+  // Track switching shortcuts: Alt + 1..4
+  useEffect(() => {
+    const handleTrackSwitch = (event: KeyboardEvent) => {
+      // Ignore when typing in inputs/textareas/contenteditable
+      const activeEl = document.activeElement as HTMLElement | null;
+      if (
+        activeEl &&
+        (activeEl.tagName === "INPUT" ||
+          activeEl.tagName === "TEXTAREA" ||
+          activeEl.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (!event.altKey || event.shiftKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+
+      // Support both event.key ('1'..'4') and event.code ('Digit1'..'Digit4')
+      let index = -1;
+      if (event.code.startsWith("Digit")) {
+        const n = Number.parseInt(event.code.replace("Digit", ""), 10);
+        if (n >= 1 && n <= 4) index = n - 1;
+      } else if (event.key >= "1" && event.key <= "4") {
+        index = Number.parseInt(event.key, 10) - 1;
+      }
+
+      if (index >= 0 && index < tracks.length) {
+        event.preventDefault();
+        const targetTrack = tracks[index];
+        if (targetTrack && targetTrack.id !== activeTrackId) {
+          setActiveTrackId(targetTrack.id);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleTrackSwitch);
+    return () => window.removeEventListener("keydown", handleTrackSwitch);
+  }, [tracks, activeTrackId, setActiveTrackId]);
+
   // Effect for Undo/Redo keyboard shortcuts
   useEffect(() => {
     const handleUndoRedo = (event: KeyboardEvent) => {
@@ -381,7 +421,7 @@ function MainContent() {
                         <TabsTrigger
                           key={track.id}
                           value={track.id}
-                          className="data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
+                          className="flex-shrink-0 data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
                         >
                           {track.name}
                         </TabsTrigger>
@@ -544,6 +584,9 @@ function MainContent() {
                   <li>
                     <kbd>shift</kbd> + <kbd>backspace</kbd>{" "}
                     {t("shortcuts.mergeSubtitle")}
+                  </li>
+                  <li>
+                    <kbd>alt</kbd> + <kbd>1</kbd>–<kbd>4</kbd> {t("shortcuts.switchTrack")}
                   </li>
                   <li>
                     <kbd>ctrl</kbd> + <kbd>z</kbd> (Windows) {t("labels.or")}{" "}

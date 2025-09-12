@@ -97,15 +97,34 @@ We will override the default `wavesurfer.js` RegionsPlugin behavior by manually 
 - **Robust timing**: Proper delays prevent race conditions during track switches
 - **Per-track collision detection**: Region overlap prevention works correctly within each track
 
-### Phase 4: Import/Export
+### Phase 4: Import/Export ✅ COMPLETED
 
-- [ ] Reuse the original save srt button, that button will now open a dialogue, and it allows us to choose which track to download.
+- [x] **Save SRT Dialog (`components/save-srt.tsx`)**:
+  - [x] Created separate component following `load-srt.tsx` pattern
+  - [x] Reused the original save srt button functionality
+  - [x] Dialog allows choosing which track to download
+  - [x] **Smart UX**: Single track downloads directly (no dialog), multiple tracks show selection dialog
+  - [x] Updated all translation keys from "export" to "save" terminology
+  - [x] Integrated seamlessly with existing multi-track context
 
-### Phase 5: User Experience & Testing
+#### Phase 4 Implementation Summary
 
-- [ ] Add keyboard shortcuts for track switching (e.g., Alt+1, Alt+2).
-- [ ] Ensure mobile responsiveness of the new tabbed layout.
-- [ ] Performance testing with the maximum of 4 tracks.
+- **Streamlined UX**: Single track users get instant download, multi-track users get track selection
+- **Consistent terminology**: All "export" references changed to "save" across codebase and translations
+- **Modular design**: Reusable component that can be imported anywhere
+- **Smart behavior**: Automatically detects track count and adjusts UX accordingly
+
+### Phase 5: User Experience & Testing ✅ COMPLETED
+
+- [x] Add keyboard shortcuts for track switching (Alt+1 to Alt+4).
+- [x] Ensure mobile responsiveness of the new tabbed layout.
+- [x] Performance testing with the maximum of 4 tracks.
+
+#### Phase 5 Implementation Summary
+
+- Keyboard: Alt+1–4 switches active track (ignores inputs/textareas, supports Option on macOS).
+- Tabs: Tab list is horizontally scrollable on small screens; triggers don’t shrink.
+- Tests: Added a lightweight performance sanity test for handling 4 tracks (`tests/performance-multitrack.test.ts`).
 
 ## Benefits of This Approach
 
