@@ -56,7 +56,7 @@
     "arrowsAction": "跳到上一條 / 下一條字幕。",
     "splitSubtitle": "（編輯嗰陣）從光標位置將字幕分成兩條。",
     "mergeSubtitle": "將當前字幕合併到前一條。",
-    "switchTrack": "切換字幕軌。",
+    "switchTrack": "切換字幕軌，如果你有幾條字幕軌。",
     "undoRedo": "撤返，",
     "undoRedoAction": "做返。"
   },

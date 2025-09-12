@@ -56,7 +56,7 @@
     "arrowsAction": "to jump to the previous/next subtitle.",
     "splitSubtitle": "to split the subtitle text at the cursor position when editing it.",
     "mergeSubtitle": "to merge the current subtitle with the previous one.",
-    "switchTrack": "to switch tracks.",
+    "switchTrack": "to switch subtitle tracks if you have multiple tracks.",
     "undoRedo": "to undo,",
     "undoRedoAction": "to redo."
   },

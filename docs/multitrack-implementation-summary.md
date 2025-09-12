@@ -38,7 +38,7 @@ A proof-of-concept that demonstrates multiple subtitle tracks (different languag
 
 We will override the default `wavesurfer.js` RegionsPlugin behavior by manually positioning regions vertically based on their track assignment. This approach was validated in the POC component.
 
-**Reference POC**: See `components/multitrack-waveform-clean.tsx` for a working example of this implementation.
+Note: The early POC component has been removed after productionization.
 
 ### Key Technical Decisions:
 
