@@ -12,19 +12,19 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useSubtitleContext } from "@/context/subtitle-context";
 import { parseSRT } from "@/lib/subtitleOperations";
 import {
@@ -35,7 +35,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
-import { useState, useId } from "react";
+import { useEffect, useId, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export default function LoadSrt() {
@@ -75,6 +75,14 @@ export default function LoadSrt() {
       },
     ]);
   };
+
+  // Auto-create first track when dialog opens and there are none
+  useEffect(() => {
+    if (isSrtDialogOpen && tracks.length === 0) {
+      addTrack(t("subtitle.newTrackName", { number: 1 }));
+    }
+    // Depend on length only to avoid re-adding due to other track updates
+  }, [isSrtDialogOpen, tracks.length, addTrack, t]);
 
   return (
     <Dialog open={isSrtDialogOpen} onOpenChange={setIsSrtDialogOpen}>
@@ -155,7 +163,7 @@ export default function LoadSrt() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-red-500 hover:bg-red-700 hover:text-white cursor-pointer"
+                      className="text-red-500 hover:bg-red-700 hover:text-white bg-red-100 cursor-pointer"
                     >
                       <IconTrash />
                     </Button>
