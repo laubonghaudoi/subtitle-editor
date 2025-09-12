@@ -1,6 +1,7 @@
 "use client"; // Ensure this is the very first line
 
 import CustomControls from "@/components/custom-controls";
+import SaveSrt from "@/components/save-srt";
 import FindReplace from "@/components/find-replace";
 import LanguageSwitcher from "@/components/language-switcher";
 import LoadSrt from "@/components/load-srt";
@@ -35,7 +36,6 @@ import { timeToSeconds } from "@/lib/utils";
 import {
   IconArrowBack,
   IconArrowForward,
-  IconDownload,
   IconKeyboard,
   IconMovie,
   IconQuestionMark,
@@ -85,7 +85,6 @@ function MainContent() {
   } = useSubtitleContext();
 
   // Keep page-specific state here
-  const [srtFileName, setSrtFileName] = useState<string>("subtitles.srt");
   // The overwrite dialog is not fully implemented with multi-track yet.
   // We'll keep the state for now and address it in a future step.
   const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
@@ -109,35 +108,14 @@ function MainContent() {
     null
   );
   // Whether the pending scroll should be instant (used for cross-track clicks)
-  const [pendingScrollInstant, setPendingScrollInstant] = useState<boolean>(false);
+  const [pendingScrollInstant, setPendingScrollInstant] =
+    useState<boolean>(false);
 
   const handleFileUpload = async (file: File) => {
-    setSrtFileName(file.name);
     const text = await file.text();
     const parsedSubtitles = parseSRT(text);
     // Use the context action to set initial subtitles
     setInitialSubtitles(parsedSubtitles, file.name.replace(".srt", ""));
-  };
-
-  const downloadSRT = () => {
-    if (subtitles.length === 0) return;
-
-    const srtContent = subtitles
-      .sort((a, b) => a.id - b.id)
-      .map((subtitle) => {
-        return `${subtitle.id}\n${subtitle.startTime} --> ${subtitle.endTime}\n${subtitle.text}\n`;
-      })
-      .join("\n");
-
-    const blob = new Blob([srtContent], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = srtFileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   // --- Old Subtitle Modification Callbacks Removed ---
@@ -239,16 +217,21 @@ function MainContent() {
     if (pendingScrollToUuid && subtitleListRef.current) {
       // Function to attempt scroll with retry logic
       const attemptScroll = (retries = 0) => {
-        const subtitleElement = document.getElementById(`subtitle-${pendingScrollToUuid}`);
+        const subtitleElement = document.getElementById(
+          `subtitle-${pendingScrollToUuid}`
+        );
         if (subtitleElement) {
           // Element found, use requestAnimationFrame to ensure layout has settled
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-              const ok = subtitleListRef.current?.scrollToSubtitle(pendingScrollToUuid, {
-                instant: pendingScrollInstant,
-                center: true,
-                focus: pendingScrollInstant,
-              });
+              const ok = subtitleListRef.current?.scrollToSubtitle(
+                pendingScrollToUuid,
+                {
+                  instant: pendingScrollInstant,
+                  center: true,
+                  focus: pendingScrollInstant,
+                }
+              );
               if (ok) {
                 // The subtitle will be highlighted naturally by the existing playback time logic
                 setPendingScrollToUuid(null);
@@ -256,7 +239,10 @@ function MainContent() {
               } else if (retries < 10) {
                 setTimeout(() => attemptScroll(retries + 1), 50);
               } else {
-                console.warn('Could not center subtitle after retries:', pendingScrollToUuid);
+                console.warn(
+                  "Could not center subtitle after retries:",
+                  pendingScrollToUuid
+                );
                 setPendingScrollToUuid(null);
                 setPendingScrollInstant(false);
               }
@@ -267,7 +253,10 @@ function MainContent() {
           setTimeout(() => attemptScroll(retries + 1), 50);
         } else {
           // Max retries reached, give up
-          console.warn('Could not find subtitle element after retries:', pendingScrollToUuid);
+          console.warn(
+            "Could not find subtitle element after retries:",
+            pendingScrollToUuid
+          );
           setPendingScrollToUuid(null);
           setPendingScrollInstant(false);
         }
@@ -369,14 +358,7 @@ function MainContent() {
             </Button>
           </Label>
 
-          <Button
-            onClick={downloadSRT}
-            disabled={subtitles.length === 0}
-            className="cursor-pointer"
-          >
-            <IconDownload size={20} />
-            <span>{t("buttons.saveSrt")}</span>
-          </Button>
+          <SaveSrt />
         </div>
       </nav>
 
@@ -413,7 +395,11 @@ function MainContent() {
                       className="flex-grow overflow-y-auto m-0"
                     >
                       <SubtitleList
-                        ref={activeTrackId === track.id ? subtitleListRef : undefined}
+                        ref={
+                          activeTrackId === track.id
+                            ? subtitleListRef
+                            : undefined
+                        }
                         // Pass only non-subtitle state/props
                         currentTime={playbackTime}
                         onScrollToRegion={(uuid) => {

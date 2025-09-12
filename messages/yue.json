@@ -13,7 +13,8 @@
     "newTrack": "開新字幕軌",
     "maxTracksReached": "最多可以加 4 條字幕軌",
     "reloadSrt": "重新載入 SRT",
-    "fromScratch": "由頭開始"
+    "fromScratch": "由頭開始",
+    "download": "下載"
   },
   "labels": {
     "loadSrtFile": "載入 SRT 檔案",
@@ -67,6 +68,8 @@
     "yes": "係，放棄",
     "srtTitle": "載入字幕軌",
     "srtDescription": "可以任意命名字幕軌，",
+    "saveTitle": "儲存字幕軌",
+    "saveDescription": "揀一條字幕軌下載",
     "deleteTrackTitle": "刪除呢條字幕軌？",
     "deleteTrackDescription": "呢個操作冇得還原。呢個操作會永久刪除呢條字幕軌同佢所有嘅字幕。",
     "delete": "刪除",

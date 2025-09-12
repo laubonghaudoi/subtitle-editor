@@ -99,9 +99,7 @@ We will override the default `wavesurfer.js` RegionsPlugin behavior by manually 
 
 ### Phase 4: Import/Export
 
-- [ ] Design multi-track SRT format (e.g., with `[TRACK: Name]` tags) or consider exporting as a zip of separate SRT files.
-- [ ] Update `parseSRT` to handle track information if using a custom format.
-- [ ] Implement export functionality that saves all tracks.
+- [ ] Reuse the original save srt button, that button will now open a dialogue, and it allows us to choose which track to download.
 
 ### Phase 5: User Experience & Testing
 

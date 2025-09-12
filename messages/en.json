@@ -10,10 +10,11 @@
     "loadSrt": "Load SRT",
     "saveSrt": "Save SRT",
     "loadSrtFile": "Load SRT File",
-    "newTrack": "Create New Track",
+    "newTrack": "Add New Track",
     "maxTracksReached": "You can add maximally 4 tracks",
     "reloadSrt": "Reload SRT",
-    "fromScratch": "From Scratch"
+    "fromScratch": "From Scratch",
+    "download": "Download"
   },
   "labels": {
     "loadSrtFile": "Load an SRT file",
@@ -67,6 +68,8 @@
     "yes": "Yes, discard",
     "srtTitle": "Manage Subtitle Tracks",
     "srtDescription": "You can add 4 tracks at most. You can load a .srt file or create a new track from scratch.",
+    "saveTitle": "Save Subtitle Track",
+    "saveDescription": "Choose a track to download as an .srt file.",
     "deleteTrackTitle": "Delete this track?",
     "deleteTrackDescription": "This action cannot be undone. This will permanently delete the track and all its subtitles.",
     "delete": "Delete",
