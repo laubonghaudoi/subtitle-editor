@@ -140,23 +140,20 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
   };
 
   const deleteTrack = (trackId: string) => {
-    setTracks(prevTracks => prevTracks.filter(track => track.id !== trackId));
-    // If the deleted track was the active one, we need to select a new active track
-    if (trackId === activeTrackId) {
-      setTracks(prevTracks => {
-        const remainingTracks = prevTracks.filter(track => track.id !== trackId);
-        // If there are any tracks left, make the first one active
+    setTracks(prevTracks => {
+      const remainingTracks = prevTracks.filter(track => track.id !== trackId);
+      // If the deleted track was the active one, pick a new active track
+      if (trackId === activeTrackId) {
         if (remainingTracks.length > 0) {
           setActiveTrackId(remainingTracks[0].id);
           setSubtitlesWithHistory(remainingTracks[0].subtitles);
         } else {
-          // If no tracks are left, clear the active track and history
           setActiveTrackId(null);
           setSubtitlesWithHistory([]);
         }
-        return remainingTracks;
-      });
-    }
+      }
+      return remainingTracks;
+    });
   };
 
   const renameTrack = (trackId: string, newName: string) => {

@@ -7,7 +7,7 @@ export default function BottomInstructions() {
   const t = useTranslations();
 
   return (
-    <div className="grid grid-cols-2 items-left h-full text-gray-600 px-8 py-4 border-t-2 border-black">
+    <div className="grid grid-cols-2 items-start h-full text-gray-600 px-8 py-4 border-t-2 border-black">
       <div className="text-lg text-gray-600 p-2">
         <p className="">{t("instructions.afterLoading")}</p>
         <ul className="list-disc list-inside my-2">

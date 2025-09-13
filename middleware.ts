@@ -17,6 +17,6 @@ export default createMiddleware({
 });
 
 export const config = {
-  // Match only internationalized pathnames, but exclude FAQ page, multitrack-waveform POC, and other static assets
-  matcher: ['/((?!_next|api|faq|multitrack-waveform|.*\\..*).*)']
+  // Match only internationalized pathnames, but exclude FAQ page and other static assets
+  matcher: ['/((?!_next|api|faq|.*\\..*).*)']
 };
