@@ -19,7 +19,7 @@
   "labels": {
     "loadSrtFile": "Eine SRT-Datei laden",
     "or": "oder",
-    "startFromScratch": "Neu anfangen"
+    "startFromScratch": "Von vorne beginnen"
   },
   "videoPlayer": {
     "loadFile": "Video- / Audiodatei laden",
