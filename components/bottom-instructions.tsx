@@ -41,7 +41,7 @@ export default function BottomInstructions() {
             {t("shortcuts.mergeSubtitle")}
           </li>
           <li>
-            <kbd>alt</kbd> + <kbd>1</kbd>–<kbd>4</kbd>{" "}
+            <kbd>alt</kbd> (Windows) / <kbd>option</kbd> (Mac) + <kbd>1</kbd>–<kbd>4</kbd>{" "}
             {t("shortcuts.switchTrack")}
           </li>
           <li>
