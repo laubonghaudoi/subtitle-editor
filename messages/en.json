@@ -7,17 +7,17 @@
   },
   "buttons": {
     "loadMedia": "Load Media",
-    "loadSrt": "Load SRT",
-    "saveSrt": "Save SRT",
-    "loadSrtFile": "Load SRT File",
+    "loadSrt": "Load .srt/.vtt",
+    "saveSrt": "Save .srt/.vtt",
+    "loadSrtFile": "Load .srt/.vtt File",
     "newTrack": "Add New Track",
     "maxTracksReached": "You can add maximally 4 tracks",
-    "reloadSrt": "Reload SRT",
+    "reloadSrt": "Reload .srt/.vtt",
     "fromScratch": "From Scratch",
     "download": "Download"
   },
   "labels": {
-    "loadSrtFile": "Load an SRT file",
+    "loadSrtFile": "Load a .srt/.vtt file",
     "or": "or",
     "startFromScratch": "Start from scratch"
   },
@@ -46,7 +46,7 @@
     "editText": "Click the subtitle text or timestamps to edit your captions.",
     "icons": "Click the icons to add, merge or delete subtitles.",
     "dragBorders": "Drag the dashed borders on the waveform to change the subtitles' time stamps.",
-    "rememberSave": "Remember to click \"Save SRT\" to save the subtitles when you finish editing!"
+    "rememberSave": "Remember to click \"Save\" to download as .srt/.vtt when you finish editing!"
   },
   "shortcuts": {
     "title": "Shortcuts",
@@ -70,7 +70,7 @@
     "srtTitle": "Manage Subtitle Tracks",
     "srtDescription": "You can add 4 tracks at most. You can rename the tracks.",
     "saveTitle": "Save Subtitle Track",
-    "saveDescription": "Choose a track to download as an .srt file.",
+    "saveDescription": "Choose a track to download as .srt or .vtt.",
     "deleteTrackTitle": "Delete this track?",
     "deleteTrackDescription": "This action cannot be undone. This will permanently delete the track and all its subtitles.",
     "delete": "Delete",

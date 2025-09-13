@@ -32,7 +32,7 @@ import {
   SubtitleProvider,
   useSubtitleContext,
 } from "@/context/subtitle-context";
-import { parseSRT } from "@/lib/subtitleOperations";
+import { parseSRT, parseVTT } from "@/lib/subtitleOperations";
 import { timeToSeconds } from "@/lib/utils";
 import {
   IconArrowBack,
@@ -113,9 +113,11 @@ function MainContent() {
 
   const handleFileUpload = async (file: File) => {
     const text = await file.text();
-    const parsedSubtitles = parseSRT(text);
+    const firstLine = text.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
+    const isVtt = file.name.toLowerCase().endsWith(".vtt") || /^WEBVTT( |$)/.test(firstLine);
+    const parsedSubtitles = isVtt ? parseVTT(text) : parseSRT(text);
     // Use the context action to set initial subtitles
-    setInitialSubtitles(parsedSubtitles, file.name.replace(".srt", ""));
+    setInitialSubtitles(parsedSubtitles, file.name.replace(/\.(srt|vtt)$/i, ""));
   };
 
   // --- Old Subtitle Modification Callbacks Removed ---
@@ -462,7 +464,7 @@ function MainContent() {
                     <Input
                       type="file"
                       className="hidden"
-                      accept=".srt"
+                      accept=".srt,.vtt"
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;

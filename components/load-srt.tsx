@@ -26,7 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSubtitleContext } from "@/context/subtitle-context";
-import { parseSRT } from "@/lib/subtitleOperations";
+import { parseSRT, parseVTT } from "@/lib/subtitleOperations";
 import {
   IconBadgeCc,
   IconFile,
@@ -36,11 +36,13 @@ import {
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
 
 export default function LoadSrt() {
   const t = useTranslations();
   const [isSrtDialogOpen, setIsSrtDialogOpen] = useState(false);
+  const { toast } = useToast();
   const showTrackLabelsId = useId();
   const {
     tracks,
@@ -59,9 +61,30 @@ export default function LoadSrt() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const newSubtitles = parseSRT(await file.text());
-    loadSubtitlesIntoTrack(trackId, newSubtitles);
-    renameTrack(trackId, file.name.replace(".srt", ""));
+    try {
+      const raw = await file.text();
+      const lower = file.name.toLowerCase();
+      const firstLine = raw.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
+      const isVtt = lower.endsWith(".vtt") || /^WEBVTT( |$)/.test(firstLine);
+      const newSubtitles = isVtt ? parseVTT(raw) : parseSRT(raw);
+      if (newSubtitles.length === 0) {
+        toast({
+          title: "Invalid subtitle file",
+          description: "No valid cues were found.",
+          variant: "destructive" as any,
+        });
+        return;
+      }
+      loadSubtitlesIntoTrack(trackId, newSubtitles);
+      const safeName = file.name.replace(/\.(srt|vtt)$/i, "");
+      renameTrack(trackId, safeName);
+    } catch (err: any) {
+      toast({
+        title: "Failed to load subtitles",
+        description: String(err?.message || err) || "Unknown error",
+        variant: "destructive" as any,
+      });
+    }
   };
 
   const handleStartFromScratch = (trackId: string) => {
@@ -126,7 +149,7 @@ export default function LoadSrt() {
                         <Input
                           type="file"
                           className="hidden"
-                          accept=".srt"
+                          accept=".srt,.vtt"
                           onChange={(e) => handleSrtFileSelect(e, track.id)}
                         />
                       </Label>
@@ -141,7 +164,7 @@ export default function LoadSrt() {
                         <Input
                           type="file"
                           className="hidden"
-                          accept=".srt"
+                          accept=".srt,.vtt"
                           onChange={(e) => handleSrtFileSelect(e, track.id)}
                         />
                       </Label>

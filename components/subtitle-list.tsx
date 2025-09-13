@@ -1,7 +1,7 @@
 import { AnimatePresence } from "motion/react";
 import { useEffect, useRef, forwardRef, useImperativeHandle } from "react"; // Remove useCallback import
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
-import { parseSRT } from "@/lib/subtitleOperations";
+import { parseSRT, parseVTT } from "@/lib/subtitleOperations";
 import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import SubtitleItem from "./subtitle-item";
@@ -124,9 +124,14 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       const file = event.target.files?.[0];
       if (!file || !activeTrackId) return;
 
-      const newSubtitles = parseSRT(await file.text());
+      const raw = await file.text();
+      const lower = file.name.toLowerCase();
+      const firstLine = raw.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
+      const isVtt = lower.endsWith(".vtt") || /^WEBVTT( |$)/.test(firstLine);
+      const newSubtitles = isVtt ? parseVTT(raw) : parseSRT(raw);
       loadSubtitlesIntoTrack(activeTrackId, newSubtitles);
-      renameTrack(activeTrackId, file.name.replace(".srt", ""));
+      const safe = file.name.replace(/\.(srt|vtt)$/i, "");
+      renameTrack(activeTrackId, safe);
     };
 
     const handleStartFromScratch = () => {
@@ -289,7 +294,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
             <Input
               type="file"
               className="hidden"
-              accept=".srt"
+              accept=".srt,.vtt"
               onChange={handleSrtFileSelect}
             />
           </Label>

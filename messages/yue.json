@@ -7,17 +7,17 @@
   },
   "buttons": {
     "loadMedia": "載入媒體",
-    "loadSrt": "載入 SRT",
-    "saveSrt": "儲存 SRT",
-    "loadSrtFile": "載入 SRT 檔案",
+    "loadSrt": "載入 .srt/.vtt",
+    "saveSrt": "儲存 .srt/.vtt",
+    "loadSrtFile": "載入 .srt/.vtt 檔案",
     "newTrack": "開新字幕軌",
     "maxTracksReached": "最多可以加 4 條字幕軌",
-    "reloadSrt": "重新載入 SRT",
+    "reloadSrt": "重新載入 .srt/.vtt",
     "fromScratch": "由頭開始",
     "download": "下載"
   },
   "labels": {
-    "loadSrtFile": "載入 SRT 檔案",
+    "loadSrtFile": "載入 .srt/.vtt 檔案",
     "or": "或",
     "startFromScratch": "從頭開始"
   },
@@ -46,7 +46,7 @@
     "editText": "撳字幕文字或時間點嚟編輯字幕。",
     "icons": "撳圖標嚟新增、合併或刪除字幕。",
     "dragBorders": "拖動波形圖方框嘅虛線邊界嚟改變字幕時間。",
-    "rememberSave": "編輯完後，記得撳「儲存 SRT」嚟儲存字幕！"
+    "rememberSave": "編輯完後，記得撳「儲存」，揀 .srt/.vtt 格式嚟下載字幕！"
   },
   "shortcuts": {
     "title": "快捷掣",
@@ -70,7 +70,7 @@
     "srtTitle": "載入字幕軌",
     "srtDescription": "最多加 4 條字幕軌，可以任意命名。",
     "saveTitle": "儲存字幕軌",
-    "saveDescription": "揀一條字幕軌下載",
+    "saveDescription": "揀一條字幕軌下載成 .srt 或 .vtt。",
     "deleteTrackTitle": "刪除呢條字幕軌？",
     "deleteTrackDescription": "呢個操作冇得還原。呢個操作會永久刪除呢條字幕軌同佢所有嘅字幕。",
     "delete": "刪除",

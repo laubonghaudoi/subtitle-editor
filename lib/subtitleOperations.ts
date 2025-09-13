@@ -34,6 +34,116 @@ export const parseSRT = (srtContent: string): Subtitle[] => {
   return subtitles;
 };
 
+/**
+ * Parse a WebVTT file into internal Subtitle[] format.
+ * - Preserves inline cue text (including tags) verbatim.
+ * - Ignores NOTE/STYLE/REGION blocks.
+ * - Ignores cue settings after the arrow.
+ * - Supports MM:SS.mmm and HH:MM:SS.mmm (normalizes to HH:MM:SS,mmm internally).
+ */
+export const parseVTT = (vttContent: string): Subtitle[] => {
+  const content = vttContent.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
+  const lines = content.split("\n");
+
+  // Validate/skip header. First non-empty line should start with WEBVTT
+  let idx = 0;
+  while (idx < lines.length && lines[idx].trim() === "") idx++;
+  if (idx < lines.length && !/^WEBVTT( |$)/.test(lines[idx].trim())) {
+    // If a .vtt extension is expected, callers may treat this as an error.
+    // Here we continue best-effort to parse cues.
+  } else if (idx < lines.length) {
+    idx++;
+  }
+
+  const subtitles: Subtitle[] = [];
+  let cueId: string | null = null;
+  let idCounter = 1;
+
+  const isBlockStart = (line: string) => /^(NOTE|STYLE|REGION)\b/.test(line);
+  const isTimeLine = (line: string) =>
+    /^(\d{2}:)?\d{2}:\d{2}\.\d{3}\s+-->\s+(\d{2}:)?\d{2}:\d{2}\.\d{3}(?:\s+.*)?$/.test(
+      line
+    );
+
+  const normalizeVttTimeToSrt = (t: string): string => {
+    // Ensure HH:MM:SS.mmm; prefix hours when using MM:SS.mmm
+    const parts = t.split(" --> ");
+    const [rawStart, rawEndWithSettings] = [parts[0], parts[1] || ""];
+    const rawEnd = rawEndWithSettings.split(/\s+/)[0];
+    const fix = (s: string) => (s.match(/^\d{2}:\d{2}\.\d{3}$/) ? `00:${s}` : s);
+    const start = fix(rawStart).replace(".", ",");
+    const end = fix(rawEnd).replace(".", ",");
+    return `${start} --> ${end}`;
+  };
+
+  while (idx < lines.length) {
+    let line = lines[idx];
+    if (line.trim() === "") {
+      idx++;
+      continue;
+    }
+    // Skip NOTE/STYLE/REGION blocks
+    if (isBlockStart(line.trim())) {
+      // Consume until blank line
+      idx++;
+      while (idx < lines.length && lines[idx].trim() !== "") idx++;
+      continue;
+    }
+    cueId = null;
+    // Optional identifier line: next non-empty line that is NOT a time line
+    if (idx < lines.length && !isTimeLine(lines[idx].trim())) {
+      const maybeId = lines[idx].trim();
+      // If the following line is a time line, treat this line as cue id
+      if (idx + 1 < lines.length && isTimeLine(lines[idx + 1].trim())) {
+        cueId = maybeId;
+        idx++;
+      }
+    }
+    if (idx >= lines.length || !isTimeLine(lines[idx].trim())) {
+      // Not a valid cue; skip until blank
+      while (idx < lines.length && lines[idx].trim() !== "") idx++;
+      continue;
+    }
+    const timeLine = lines[idx].trim();
+    const srtTimeline = normalizeVttTimeToSrt(timeLine);
+    const m = srtTimeline.match(
+      /(\d{2}:\d{2}:\d{2},\d{3})\s+-->\s+(\d{2}:\d{2}:\d{2},\d{3})/
+    );
+    if (!m) {
+      // Skip malformed time line
+      while (idx < lines.length && lines[idx].trim() !== "") idx++;
+      continue;
+    }
+    const [, startTime, endTime] = m;
+    idx++;
+
+    // Collect cue text lines until blank line or EOF
+    const textLines: string[] = [];
+    while (idx < lines.length && lines[idx].trim() !== "") {
+      textLines.push(lines[idx]);
+      idx++;
+    }
+
+    const text = textLines.join("\n");
+    // Validate time logic: skip if end <= start
+    const startSec = timeToSeconds(startTime);
+    const endSec = timeToSeconds(endTime);
+    if (!Number.isFinite(startSec) || !Number.isFinite(endSec) || endSec <= startSec) {
+      continue;
+    }
+
+    subtitles.push({
+      uuid: uuidv4(),
+      id: idCounter++,
+      startTime,
+      endTime,
+      text,
+    });
+  }
+
+  return subtitles;
+};
+
 export const reorderSubtitleIds = (subtitles: Subtitle[]): Subtitle[] => {
   let nextId = 1;
   return subtitles.map((subtitle) => {

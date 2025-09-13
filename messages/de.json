@@ -7,17 +7,17 @@
   },
   "buttons": {
     "loadMedia": "Medien laden",
-    "loadSrt": "SRT laden",
-    "saveSrt": "SRT speichern",
-    "loadSrtFile": "SRT-Datei laden",
+    "loadSrt": "SRT/VTT laden",
+    "saveSrt": "SRT/VTT speichern",
+    "loadSrtFile": "SRT/VTT-Datei laden",
     "newTrack": "Neue Spur erstellen",
     "maxTracksReached": "Sie können maximal 4 Spuren hinzufügen",
-    "reloadSrt": "SRT neu laden",
+    "reloadSrt": "SRT/VTT neu laden",
     "fromScratch": "Neu anfangen",
     "download": "Herunterladen"
   },
   "labels": {
-    "loadSrtFile": "Eine SRT-Datei laden",
+    "loadSrtFile": "Eine SRT/VTT-Datei laden",
     "or": "oder",
     "startFromScratch": "Von vorne beginnen"
   },
@@ -46,7 +46,7 @@
     "editText": "Klicken Sie auf den Untertiteltext oder die Zeitstempel, um Ihre Untertitel zu bearbeiten.",
     "icons": "Klicken Sie auf die Symbole, um Untertitel hinzuzufügen, zusammenzuführen oder zu löschen.",
     "dragBorders": "Ziehen Sie die gestrichelten Ränder auf der Wellenform, um die Zeitstempel der Untertitel zu ändern.",
-    "rememberSave": "Denken Sie daran, auf „SRT speichern“ zu klicken, um die Untertitel nach Abschluss der Bearbeitung zu speichern!"
+    "rememberSave": "Denken Sie daran, auf „Speichern“ zu klicken, um die Untertitel als .srt oder .vtt herunterzuladen!"
   },
   "shortcuts": {
     "title": "Tastenkombinationen",
@@ -70,7 +70,7 @@
     "srtTitle": "Untertitelspuren verwalten",
     "srtDescription": "Sie können maximal 4 Spuren hinzufügen. Sie können die Untertitelspur umbenennen.",
     "saveTitle": "Untertitelspur speichern",
-    "saveDescription": "Wählen Sie eine Spur, um sie als .srt-Datei herunterzuladen.",
+    "saveDescription": "Wählen Sie eine Spur, um sie als .srt oder .vtt herunterzuladen.",
     "deleteTrackTitle": "Diese Spur löschen?",
     "deleteTrackDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch werden die Spur und alle ihre Untertitel dauerhaft gelöscht.",
     "delete": "Löschen",
