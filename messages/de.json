@@ -13,13 +13,13 @@
     "newTrack": "Neue Spur erstellen",
     "maxTracksReached": "Sie können maximal 4 Spuren hinzufügen",
     "reloadSrt": "SRT neu laden",
-    "fromScratch": "Von Grund auf neu",
+    "fromScratch": "Neu anfangen",
     "download": "Herunterladen"
   },
   "labels": {
     "loadSrtFile": "Eine SRT-Datei laden",
     "or": "oder",
-    "startFromScratch": "Von Grund auf neu beginnen"
+    "startFromScratch": "Neu anfangen"
   },
   "videoPlayer": {
     "loadFile": "Video- / Audiodatei laden",
@@ -68,7 +68,7 @@
     "cancel": "Abbrechen",
     "yes": "Ja, verwerfen",
     "srtTitle": "Untertitelspuren verwalten",
-    "srtDescription": "Sie können eine vorhandene SRT-Datei in eine neue Spur laden oder eine neue, leere Spur erstellen, um von vorne zu beginnen.",
+    "srtDescription": "Sie können maximal 4 Spuren hinzufügen. Sie können die Untertitelspur umbenennen.",
     "saveTitle": "Untertitelspur speichern",
     "saveDescription": "Wählen Sie eine Spur, um sie als .srt-Datei herunterzuladen.",
     "deleteTrackTitle": "Diese Spur löschen?",

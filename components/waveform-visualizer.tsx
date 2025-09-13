@@ -56,7 +56,7 @@ const getContentHtml = (
                 flex-wrap:wrap; 
                 padding-left: 1rem; 
                 padding-right: 1rem; 
-                padding-top: 0.5rem; 
+                padding-top: 0.3rem; 
                 color: #525252;">
       <em>${startTime}</em>
       <em>${endTime}</em>

@@ -68,7 +68,7 @@
     "cancel": "Cancel",
     "yes": "Yes, discard",
     "srtTitle": "Manage Subtitle Tracks",
-    "srtDescription": "You can add 4 tracks at most. You can load a .srt file or create a new track from scratch.",
+    "srtDescription": "You can add 4 tracks at most. You can rename the tracks.",
     "saveTitle": "Save Subtitle Track",
     "saveDescription": "Choose a track to download as an .srt file.",
     "deleteTrackTitle": "Delete this track?",
