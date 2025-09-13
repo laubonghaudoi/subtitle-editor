@@ -25,15 +25,15 @@ const HANDLE_COLOR = "#ef4444";
 const TRACK_COLORS = [
   "#fcd34d40", // Yellow (active track)
   "#3b82f640", // Blue
+  "#ec489940", // Red
   "#84cc1640", // Green
-  "#ec489940", // Pink
 ];
 
 const TRACK_HANDLE_COLORS = [
   "#f59e0b", // Yellow (active track)
   "#3b82f6", // Blue
+  "#ec4899", // Red
   "#22c55e", // Green
-  "#ec4899", // Pink
 ];
 
 const getContentHtml = (
@@ -535,7 +535,8 @@ export default forwardRef(function WaveformVisualizer(
         const idx = tracks.findIndex((t) => t.id === trackId);
         const laneTopForThis = rect.top - containerRect.top;
         const top0 = laneTopForThis - idx * laneHeight;
-        topOfFirstLanePx = topOfFirstLanePx === null ? top0 : Math.min(topOfFirstLanePx, top0);
+        topOfFirstLanePx =
+          topOfFirstLanePx === null ? top0 : Math.min(topOfFirstLanePx, top0);
       }
     });
 
@@ -663,8 +664,9 @@ export default forwardRef(function WaveformVisualizer(
           });
 
           // Get the correct handle color for this track
-          const trackIndex = tracks.findIndex(t => t.id === currentTrack.id);
-          const handleColor = TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
+          const trackIndex = tracks.findIndex((t) => t.id === currentTrack.id);
+          const handleColor =
+            TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
           styleRegionHandles(region, handleColor);
         }
         return; // Exit without updating subtitle timing
@@ -714,8 +716,9 @@ export default forwardRef(function WaveformVisualizer(
         });
 
         // Get the correct handle color for this track
-        const trackIndex = tracks.findIndex(t => t.id === currentTrack.id);
-        const handleColor = TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
+        const trackIndex = tracks.findIndex((t) => t.id === currentTrack.id);
+        const handleColor =
+          TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
         styleRegionHandles(region, handleColor);
       }
 
@@ -935,13 +938,20 @@ export default forwardRef(function WaveformVisualizer(
       {showTrackLabels && tracks.length > 0 && labelsAreaHeight > 0 && (
         <div
           className="absolute left-0 right-0 pointer-events-none"
-          style={{ top: `${labelsOffsetTop}px`, height: `${labelsAreaHeight}px`, zIndex: 10 }}
+          style={{
+            top: `${labelsOffsetTop}px`,
+            height: `${labelsAreaHeight}px`,
+            zIndex: 10,
+          }}
         >
           {tracks.map((track, idx) => (
             <div
               key={track.id}
               className="absolute left-2 bg-neutral-500 text-white px-2 py-0.5 rounded text-xs font-semibold"
-              style={{ top: `${((idx + 0.5) * 100) / tracks.length}%`, transform: "translateY(-50%)" }}
+              style={{
+                top: `${((idx + 0.5) * 100) / tracks.length}%`,
+                transform: "translateY(-50%)",
+              }}
             >
               {track.name}
             </div>

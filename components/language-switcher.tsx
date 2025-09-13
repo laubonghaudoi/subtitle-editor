@@ -80,7 +80,11 @@ export default function LanguageSwitcher() {
                 <Link
                   href={href}
                   onClick={(e) => handleLinkClick(e, href)}
-                  className={locale === loc ? "bg-accent cursor-pointer" : "cursor-pointer"}
+                  className={
+                    locale === loc
+                      ? "bg-accent cursor-pointer"
+                      : "cursor-pointer"
+                  }
                 >
                   {localeConfig[loc].nativeName}
                 </Link>
@@ -99,7 +103,10 @@ export default function LanguageSwitcher() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleCancelNavigation} className="cursor-pointer">
+            <AlertDialogCancel
+              onClick={handleCancelNavigation}
+              className="cursor-pointer"
+            >
               {t("dialog.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction

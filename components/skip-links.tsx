@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 
 export default function SkipLinks() {
   const t = useTranslations();
-  
+
   return (
     <div className="sr-only focus-within:not-sr-only">
       <a
