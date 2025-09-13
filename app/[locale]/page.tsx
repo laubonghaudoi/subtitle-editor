@@ -1,8 +1,13 @@
 "use client"; // Ensure this is the very first line
 
+import BottomInstructions from "@/components/bottom-instructions";
 import CustomControls from "@/components/custom-controls";
 import FindReplace from "@/components/find-replace";
-import SubtitleList from "@/components/subtitle-list";
+import LanguageSwitcher from "@/components/language-switcher";
+import LoadSrt from "@/components/load-srt";
+import SaveSrt from "@/components/save-srt";
+import SkipLinks from "@/components/skip-links";
+import SubtitleList, { type SubtitleListRef } from "@/components/subtitle-list";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,34 +21,28 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-// VideoPlayer is now dynamically imported below
 import {
   SubtitleProvider,
   useSubtitleContext,
-} from "@/context/subtitle-context"; // Import context
-import { parseSRT } from "@/lib/subtitleOperations"; // Keep only parseSRT
-import { timeToSeconds } from "@/lib/utils"; // Use the original timeToSeconds
+} from "@/context/subtitle-context";
+import { parseSRT } from "@/lib/subtitleOperations";
+import { timeToSeconds } from "@/lib/utils";
 import {
   IconArrowBack,
   IconArrowForward,
-  IconBadgeCc,
-  IconDownload,
-  IconKeyboard,
   IconMovie,
   IconQuestionMark,
 } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-// Import useState
-import LanguageSwitcher from "@/components/language-switcher";
-import SkipLinks from "@/components/skip-links";
-import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -69,10 +68,13 @@ interface WaveformRef {
 function MainContent() {
   const t = useTranslations();
   const waveformRef = useRef<WaveformRef>(null);
+  const subtitleListRef = useRef<SubtitleListRef>(null);
   const mediaFileInputRef = useRef<HTMLInputElement>(null);
-  const srtFileInputRef = useRef<HTMLInputElement>(null);
   // Get subtitle state and actions from context
   const {
+    tracks,
+    activeTrackId,
+    setActiveTrackId,
     subtitles,
     setInitialSubtitles, // Use this instead of setSubtitlesWithHistory
     undoSubtitles,
@@ -83,7 +85,8 @@ function MainContent() {
   } = useSubtitleContext();
 
   // Keep page-specific state here
-  const [srtFileName, setSrtFileName] = useState<string>("subtitles.srt");
+  // The overwrite dialog is not fully implemented with multi-track yet.
+  // We'll keep the state for now and address it in a future step.
   const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
   const [pendingSrtFile, setPendingSrtFile] = useState<File | null>(null);
 
@@ -91,7 +94,6 @@ function MainContent() {
   const [mediaFileName, setMediaFileName] = useState<string>(
     t("buttons.loadMedia")
   );
-
   const [playbackTime, setPlaybackTime] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(0);
@@ -101,47 +103,19 @@ function MainContent() {
     null
   );
 
+  // State to track pending scroll-to-region after track switch
+  const [pendingScrollToUuid, setPendingScrollToUuid] = useState<string | null>(
+    null
+  );
+  // Whether the pending scroll should be instant (used for cross-track clicks)
+  const [pendingScrollInstant, setPendingScrollInstant] =
+    useState<boolean>(false);
+
   const handleFileUpload = async (file: File) => {
-    setSrtFileName(file.name);
     const text = await file.text();
     const parsedSubtitles = parseSRT(text);
     // Use the context action to set initial subtitles
-    setInitialSubtitles(parsedSubtitles);
-  };
-
-  const handleSrtFileSelect = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (subtitles.length > 0) {
-      setPendingSrtFile(file);
-      setShowOverwriteDialog(true);
-    } else {
-      await handleFileUpload(file);
-    }
-  };
-
-  const downloadSRT = () => {
-    if (subtitles.length === 0) return;
-
-    const srtContent = subtitles
-      .sort((a, b) => a.id - b.id)
-      .map((subtitle) => {
-        return `${subtitle.id}\n${subtitle.startTime} --> ${subtitle.endTime}\n${subtitle.text}\n`;
-      })
-      .join("\n");
-
-    const blob = new Blob([srtContent], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = srtFileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    setInitialSubtitles(parsedSubtitles, file.name.replace(".srt", ""));
   };
 
   // --- Old Subtitle Modification Callbacks Removed ---
@@ -207,6 +181,46 @@ function MainContent() {
     // Dependencies now include subtitles and playbackTime for finding the current subtitle
   }, [isPlaying, subtitles, playbackTime]); // Removed setEditingSubtitleUuid
 
+  // Track switching shortcuts: Alt + 1..4
+  useEffect(() => {
+    const handleTrackSwitch = (event: KeyboardEvent) => {
+      // Ignore when typing in inputs/textareas/contenteditable
+      const activeEl = document.activeElement as HTMLElement | null;
+      if (
+        activeEl &&
+        (activeEl.tagName === "INPUT" ||
+          activeEl.tagName === "TEXTAREA" ||
+          activeEl.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (!event.altKey || event.shiftKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+
+      // Support both event.key ('1'..'4') and event.code ('Digit1'..'Digit4')
+      let index = -1;
+      if (event.code.startsWith("Digit")) {
+        const n = Number.parseInt(event.code.replace("Digit", ""), 10);
+        if (n >= 1 && n <= 4) index = n - 1;
+      } else if (event.key >= "1" && event.key <= "4") {
+        index = Number.parseInt(event.key, 10) - 1;
+      }
+
+      if (index >= 0 && index < tracks.length) {
+        event.preventDefault();
+        const targetTrack = tracks[index];
+        if (targetTrack && targetTrack.id !== activeTrackId) {
+          setActiveTrackId(targetTrack.id);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleTrackSwitch);
+    return () => window.removeEventListener("keydown", handleTrackSwitch);
+  }, [tracks, activeTrackId, setActiveTrackId]);
+
   // Effect for Undo/Redo keyboard shortcuts
   useEffect(() => {
     const handleUndoRedo = (event: KeyboardEvent) => {
@@ -237,6 +251,61 @@ function MainContent() {
     };
     // Dependencies include the undo/redo functions and their possibility flags
   }, [undoSubtitles, redoSubtitles, canUndoSubtitles, canRedoSubtitles]);
+
+  // Effect to handle pending scroll-to-subtitle
+  useEffect(() => {
+    if (pendingScrollToUuid && subtitleListRef.current) {
+      // Function to attempt scroll with retry logic
+      const attemptScroll = (retries = 0) => {
+        const subtitleElement = document.getElementById(
+          `subtitle-${pendingScrollToUuid}`
+        );
+        if (subtitleElement) {
+          // Element found, use requestAnimationFrame to ensure layout has settled
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              const ok = subtitleListRef.current?.scrollToSubtitle(
+                pendingScrollToUuid,
+                {
+                  instant: pendingScrollInstant,
+                  center: true,
+                  focus: pendingScrollInstant,
+                }
+              );
+              if (ok) {
+                // The subtitle will be highlighted naturally by the existing playback time logic
+                setPendingScrollToUuid(null);
+                setPendingScrollInstant(false);
+              } else if (retries < 10) {
+                setTimeout(() => attemptScroll(retries + 1), 50);
+              } else {
+                console.warn(
+                  "Could not center subtitle after retries:",
+                  pendingScrollToUuid
+                );
+                setPendingScrollToUuid(null);
+                setPendingScrollInstant(false);
+              }
+            });
+          });
+        } else if (retries < 10) {
+          // Element not found yet, retry after a short delay
+          setTimeout(() => attemptScroll(retries + 1), 50);
+        } else {
+          // Max retries reached, give up
+          console.warn(
+            "Could not find subtitle element after retries:",
+            pendingScrollToUuid
+          );
+          setPendingScrollToUuid(null);
+          setPendingScrollInstant(false);
+        }
+      };
+
+      // Start the retry process
+      attemptScroll();
+    }
+  }, [pendingScrollToUuid, pendingScrollInstant]);
 
   return (
     <div className="flex flex-col h-screen">
@@ -297,6 +366,8 @@ function MainContent() {
           {/* FindReplace will get subtitles & actions from context */}
           <FindReplace />
 
+          <LoadSrt />
+
           <Label className="cursor-pointer">
             <Input
               ref={mediaFileInputRef}
@@ -326,36 +397,8 @@ function MainContent() {
               </span>
             </Button>
           </Label>
-          <Label className="cursor-pointer">
-            <Input
-              ref={srtFileInputRef}
-              type="file"
-              className="hidden"
-              accept=".srt"
-              onChange={handleSrtFileSelect}
-            />
-            <Button
-              variant="secondary"
-              onClick={() => {
-                srtFileInputRef.current?.click();
-              }}
-              className="hover:bg-amber-500 hover:text-white bg-amber-300 text-black rounded-sm cursor-pointer"
-            >
-              <IconBadgeCc />
-              <span className="leading-none truncate">
-                {t("buttons.loadSrt")}
-              </span>
-            </Button>
-          </Label>
 
-          <Button
-            onClick={downloadSRT}
-            disabled={subtitles.length === 0}
-            className="cursor-pointer"
-          >
-            <IconDownload size={20} />
-            <span>{t("buttons.saveSrt")}</span>
-          </Button>
+          <SaveSrt />
         </div>
       </nav>
 
@@ -366,21 +409,52 @@ function MainContent() {
           {/* Left panel - Subtitle list */}
           <div className="w-1/2">
             <div className="h-full">
-              {subtitles.length > 0 ? (
-                // SubtitleList will get subtitles & actions from context
-                <SubtitleList
-                  // Pass only non-subtitle state/props
-                  currentTime={playbackTime}
-                  onScrollToRegion={(uuid) => {
-                    if (waveformRef.current) {
-                      waveformRef.current.scrollToRegion(uuid);
-                    }
-                  }}
-                  setIsPlaying={setIsPlaying}
-                  setPlaybackTime={setPlaybackTime}
-                  editingSubtitleUuid={editingSubtitleUuid}
-                  setEditingSubtitleUuid={setEditingSubtitleUuid}
-                />
+              {tracks.length > 0 && activeTrackId ? (
+                <Tabs
+                  value={activeTrackId}
+                  onValueChange={setActiveTrackId}
+                  className="h-full flex flex-col"
+                >
+                  {tracks.length > 1 && (
+                    <TabsList className="bg-white gap-4 border-b-1 border-dashed border-black rounded-none">
+                      {tracks.map((track) => (
+                        <TabsTrigger
+                          key={track.id}
+                          value={track.id}
+                          className="flex-shrink-0 data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
+                        >
+                          {track.name}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                  )}
+                  {tracks.map((track) => (
+                    <TabsContent
+                      key={track.id}
+                      value={track.id}
+                      className="flex-grow overflow-y-auto m-0"
+                    >
+                      <SubtitleList
+                        ref={
+                          activeTrackId === track.id
+                            ? subtitleListRef
+                            : undefined
+                        }
+                        // Pass only non-subtitle state/props
+                        currentTime={playbackTime}
+                        onScrollToRegion={(uuid) => {
+                          if (waveformRef.current) {
+                            waveformRef.current.scrollToRegion(uuid);
+                          }
+                        }}
+                        setIsPlaying={setIsPlaying}
+                        setPlaybackTime={setPlaybackTime}
+                        editingSubtitleUuid={editingSubtitleUuid}
+                        setEditingSubtitleUuid={setEditingSubtitleUuid}
+                      />
+                    </TabsContent>
+                  ))}
+                </Tabs>
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-muted-foreground rounded-sm">
                   <Label className="cursor-pointer text-xl hover:text-blue-500 underline">
@@ -401,15 +475,18 @@ function MainContent() {
                     variant="link"
                     onClick={() =>
                       // Use the context action for starting from scratch
-                      setInitialSubtitles([
-                        {
-                          uuid: uuidv4(), // Assign UUID
-                          id: 1,
-                          startTime: "00:00:00,000",
-                          endTime: "00:00:03,000",
-                          text: t("subtitle.newSubtitle"),
-                        },
-                      ])
+                      setInitialSubtitles(
+                        [
+                          {
+                            uuid: uuidv4(), // Assign UUID
+                            id: 1,
+                            startTime: "00:00:00,000",
+                            endTime: "00:00:03,000",
+                            text: t("subtitle.newSubtitle"),
+                          },
+                        ],
+                        t("subtitle.newTrackName", { number: 1 })
+                      )
                     }
                     className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-500"
                   >
@@ -463,56 +540,17 @@ function MainContent() {
                 isPlaying={isPlaying}
                 onSeek={setPlaybackTime}
                 onPlayPause={setIsPlaying}
+                onRegionClick={(uuid, opts) => {
+                  // Set pending scroll to be handled after track switch completes
+                  setPendingScrollToUuid(uuid);
+                  // If cross-track, use instant scroll and focus; otherwise keep smooth animation
+                  setPendingScrollInstant(Boolean(opts?.crossTrack));
+                }}
                 // Subtitle action props removed (will use context)
               />
             </>
           ) : (
-            <div className="grid grid-cols-2 items-left h-full text-gray-600 px-8 py-4 border-t-2 border-black">
-              <div className="text-lg text-gray-600 p-2">
-                <p className="">{t("instructions.afterLoading")}</p>
-                <ul className="list-disc list-inside my-2">
-                  <li>{t("instructions.editText")}</li>
-                  <li>{t("instructions.icons")}</li>
-                  <li>{t("instructions.dragBorders")}</li>
-
-                  <li>{t("instructions.rememberSave")}</li>
-                </ul>
-              </div>
-              <div className="p-2">
-                <h2 className="text-lg inline-flex items-center">
-                  <IconKeyboard className="mr-2" />
-                  {t("shortcuts.title")}
-                </h2>
-                <ul className="list-disc list-inside px-2">
-                  <li>
-                    <kbd>space</kbd> {t("shortcuts.space")}
-                  </li>
-                  <li>
-                    <kbd>tab</kbd> {t("shortcuts.tab")}
-                  </li>
-                  <li>
-                    <kbd>↑</kbd> {t("shortcuts.arrows")} <kbd>↓</kbd>{" "}
-                    {t("shortcuts.arrowsAction")}
-                  </li>
-                  <li>
-                    <kbd>shift</kbd> + <kbd>enter</kbd>{" "}
-                    {t("shortcuts.splitSubtitle")}
-                  </li>
-                  <li>
-                    <kbd>shift</kbd> + <kbd>backspace</kbd>{" "}
-                    {t("shortcuts.mergeSubtitle")}
-                  </li>
-                  <li>
-                    <kbd>ctrl</kbd> + <kbd>z</kbd> (Windows) {t("labels.or")}{" "}
-                    <kbd>&#8984;</kbd> + <kbd>z</kbd> (Mac){" "}
-                    {t("shortcuts.undoRedo")} <kbd>ctrl</kbd> + <kbd>shift</kbd>{" "}
-                    + <kbd>z</kbd> (Windows) {t("labels.or")} <kbd>&#8984;</kbd>{" "}
-                    + <kbd>shift</kbd> + <kbd>z</kbd> (Mac){" "}
-                    {t("shortcuts.undoRedoAction")}
-                  </li>
-                </ul>
-              </div>
-            </div>
+            <BottomInstructions />
           )}
         </div>
 

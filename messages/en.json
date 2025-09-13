@@ -6,9 +6,15 @@
     "redo": "Redo"
   },
   "buttons": {
-    "loadMedia": "Load media",
+    "loadMedia": "Load Media",
     "loadSrt": "Load SRT",
-    "saveSrt": "Save SRT"
+    "saveSrt": "Save SRT",
+    "loadSrtFile": "Load SRT File",
+    "newTrack": "Add New Track",
+    "maxTracksReached": "You can add maximally 4 tracks",
+    "reloadSrt": "Reload SRT",
+    "fromScratch": "From Scratch",
+    "download": "Download"
   },
   "labels": {
     "loadSrtFile": "Load an SRT file",
@@ -43,26 +49,38 @@
     "rememberSave": "Remember to click \"Save SRT\" to save the subtitles when you finish editing!"
   },
   "shortcuts": {
-    "title": "Shortcuts:",
+    "title": "Shortcuts",
     "space": "to play/pause the video.",
     "tab": "to edit the current subtitle text.",
     "arrows": "and",
     "arrowsAction": "to jump to the previous/next subtitle.",
     "splitSubtitle": "to split the subtitle text at the cursor position when editing it.",
     "mergeSubtitle": "to merge the current subtitle with the previous one.",
+    "switchTrack": "to switch subtitle tracks if you have multiple tracks.",
     "undoRedo": "to undo,",
     "undoRedoAction": "to redo."
   },
   "dialog": {
-    "discardTitle": "Discard existing subtitles?",
-    "discardDescription": "Loading a new SRT file will discard the current subtitles. Make sure you have downloaded the current SRT first.",
+    "discardTitle": "Discard changes?",
+    "discardDescription": "You have unsaved changes. Are you sure you want to discard them by loading a new SRT file?",
     "switchTitle": "Switch language?",
     "switchDescription": "Changing the language will discard the current subtitles. Make sure you have downloaded the current SRT first.",
     "cancel": "Cancel",
-    "yes": "Confirm"
+    "yes": "Yes, discard",
+    "srtTitle": "Manage Subtitle Tracks",
+    "srtDescription": "You can add 4 tracks at most. You can rename the tracks.",
+    "saveTitle": "Save Subtitle Track",
+    "saveDescription": "Choose a track to download as an .srt file.",
+    "deleteTrackTitle": "Delete this track?",
+    "deleteTrackDescription": "This action cannot be undone. This will permanently delete the track and all its subtitles.",
+    "delete": "Delete",
+    "done": "Done",
+    "showTrackLabels": "Show track labels in the waveform visualizer"
   },
   "subtitle": {
-    "newSubtitle": "New subtitle"
+    "newSubtitle": "New subtitle",
+    "subtitleCount": "{count, plural, =1 {# subtitle} other {# subtitles}}",
+    "newTrackName": "Track {number}"
   },
   "tooltips": {
     "add": "Add",

@@ -152,6 +152,7 @@ const SubtitleItem = memo(function SubtitleItem({
         {/* biome-ignore lint/a11y/noStaticElementInteractions: Interactive div */}
         <div
           id={`subtitle-${subtitle.uuid}`}
+          tabIndex={-1}
           onClick={() => onScrollToRegion(subtitle.uuid)}
           onFocus={() => {
             setPlaybackTime(timeToSeconds(subtitle.startTime));

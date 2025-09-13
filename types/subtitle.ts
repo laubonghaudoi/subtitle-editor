@@ -6,4 +6,11 @@ export interface Subtitle {
   startTime: string;
   endTime: string;
   text: string;
+  trackId?: string; // To associate subtitle with a track
+}
+
+export interface SubtitleTrack {
+  id: string; // Unique identifier for the track
+  name: string; // User-facing name (e.g., "English")
+  subtitles: Subtitle[];
 }

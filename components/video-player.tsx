@@ -36,7 +36,7 @@ export default function VideoPlayer({
   const { subtitles } = useSubtitleContext();
 
   const [mediaUrl, setMediaUrl] = useState<string>("");
-  const [vttUrl, setVttUrl] = useState("");
+  const [vttUrl, setVttUrl] = useState<string | null>(null);
   const playerRef = useRef<ReactPlayer>(null);
   const timeToRestore = useRef<number | null>(null); // Ref to store time before remount
 
@@ -63,17 +63,19 @@ export default function VideoPlayer({
   }, [isPlaying]);
 
   useEffect(() => {
-    if (mediaFile) {
-      setMediaUrl(URL.createObjectURL(mediaFile));
-    } else {
+    if (!mediaFile) {
       setMediaUrl("");
+      return;
     }
+    const url = URL.createObjectURL(mediaFile);
+    setMediaUrl(url);
+    return () => URL.revokeObjectURL(url);
   }, [mediaFile]);
 
   useEffect(() => {
     // Only generate VTT URL if media is loaded
     if (!mediaUrl) {
-      setVttUrl(""); // Clear VTT URL if no media
+      setVttUrl(null); // Clear VTT URL if no media
       return;
     }
 
@@ -109,7 +111,6 @@ export default function VideoPlayer({
               const file = e.target.files?.[0];
               if (!file) return;
               setMediaFile(file);
-              setMediaUrl(URL.createObjectURL(file));
               setMediaFileName(file.name);
             }}
           />
@@ -127,7 +128,7 @@ export default function VideoPlayer({
   return (
     <div className="w-full h-full flex items-center justify-center bg-black overflow-hidden">
       <ReactPlayer
-        key={vttUrl} // Add key here
+        key={vttUrl ?? "no-subs"} // Remount when subtitle URL changes
         ref={playerRef}
         url={mediaUrl}
         width="100%"
@@ -159,15 +160,17 @@ export default function VideoPlayer({
               controlsList: "nodownload",
               playsInline: true,
             },
-            tracks: [
-              {
-                label: t("videoPlayer.subtitles"),
-                kind: "subtitles",
-                src: vttUrl, // ← pass the in-memory URL to the track
-                srcLang: "unknown",
-                default: true,
-              },
-            ],
+            tracks: vttUrl
+              ? [
+                  {
+                    label: t("videoPlayer.subtitles"),
+                    kind: "subtitles",
+                    src: vttUrl, // in-memory URL to the track
+                    srcLang: "unknown",
+                    default: true,
+                  },
+                ]
+              : [],
           },
         }}
       />

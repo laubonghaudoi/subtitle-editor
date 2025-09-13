@@ -8,12 +8,18 @@
   "buttons": {
     "loadMedia": "Medien laden",
     "loadSrt": "SRT laden",
-    "saveSrt": "SRT speichern"
+    "saveSrt": "SRT speichern",
+    "loadSrtFile": "SRT-Datei laden",
+    "newTrack": "Neue Spur erstellen",
+    "maxTracksReached": "Sie können maximal 4 Spuren hinzufügen",
+    "reloadSrt": "SRT neu laden",
+    "fromScratch": "Neu anfangen",
+    "download": "Herunterladen"
   },
   "labels": {
     "loadSrtFile": "Eine SRT-Datei laden",
     "or": "oder",
-    "startFromScratch": "Von Grund auf neu beginnen"
+    "startFromScratch": "Von vorne beginnen"
   },
   "videoPlayer": {
     "loadFile": "Video- / Audiodatei laden",
@@ -43,26 +49,38 @@
     "rememberSave": "Denken Sie daran, auf „SRT speichern“ zu klicken, um die Untertitel nach Abschluss der Bearbeitung zu speichern!"
   },
   "shortcuts": {
-    "title": "Tastenkombinationen:",
+    "title": "Tastenkombinationen",
     "space": "zum Abspielen/Anhalten des Videos.",
     "tab": "zum Bearbeiten des aktuellen Untertiteltextes.",
     "arrows": "und",
     "arrowsAction": "zum Springen zum vorherigen/nächsten Untertitel.",
     "splitSubtitle": "zum Teilen des Untertiteltextes an der Cursorposition während der Bearbeitung",
     "mergeSubtitle": "zum Zusammenführen des aktuellen Untertitels mit dem vorherigen",
+    "switchTrack": "um zwischen Spuren zu wechseln.",
     "undoRedo": "zum Rückgängigmachen,",
     "undoRedoAction": "zum Wiederherstellen"
   },
   "dialog": {
-    "discardTitle": "Vorhandene Untertitel verwerfen?",
-    "discardDescription": "Durch das Laden einer neuen SRT-Datei werden die aktuellen Untertitel verworfen. Stellen Sie sicher, dass Sie die aktuelle SRT-Datei zuvor heruntergeladen haben.",
+    "discardTitle": "Änderungen verwerfen?",
+    "discardDescription": "Sie haben nicht gespeicherte Änderungen. Sind Sie sicher, dass Sie sie verwerfen und eine neue SRT-Datei laden möchten?",
     "switchTitle": "Sprache wechseln?",
     "switchDescription": "Das Ändern der Sprache verwirft die aktuellen Untertitel. Stellen Sie sicher, dass Sie die aktuelle SRT zuerst heruntergeladen haben.",
     "cancel": "Abbrechen",
-    "yes": "Bestätigen"
+    "yes": "Ja, verwerfen",
+    "srtTitle": "Untertitelspuren verwalten",
+    "srtDescription": "Sie können maximal 4 Spuren hinzufügen. Sie können die Untertitelspur umbenennen.",
+    "saveTitle": "Untertitelspur speichern",
+    "saveDescription": "Wählen Sie eine Spur, um sie als .srt-Datei herunterzuladen.",
+    "deleteTrackTitle": "Diese Spur löschen?",
+    "deleteTrackDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch werden die Spur und alle ihre Untertitel dauerhaft gelöscht.",
+    "delete": "Löschen",
+    "done": "Fertig",
+    "showTrackLabels": "Spurbezeichnungen im Wellenform-Visualizer anzeigen"
   },
   "subtitle": {
-    "newSubtitle": "Neuer Untertitel"
+    "newSubtitle": "Neuer Untertitel",
+    "subtitleCount": "{count, plural, =1 {# Untertitel} other {# Untertitel}}",
+    "newTrackName": "Spur {number}"
   },
   "tooltips": {
     "add": "Hinzufügen",
