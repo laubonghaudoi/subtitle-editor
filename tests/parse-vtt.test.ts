@@ -26,7 +26,8 @@ test('parseVTT handles MM:SS.mmm timestamps in styled-sample-2.vtt', () => {
   const subs = parseVTT(raw);
   assert.ok(subs.length >= 5);
   // First cue uses MM:SS.mmm and should normalize to HH:MM:SS,mmm
-  const first = subs.find(s => s.id === 1)!;
+  const first = subs.find(s => s.id === 1);
+  assert.ok(first, 'Expected to find subtitle with id 1');
   assert.equal(first.startTime, '00:00:00,000');
   assert.equal(first.endTime, '00:00:02,000');
   assert.ok(first.text.includes('<i>English</i>'));
