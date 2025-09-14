@@ -431,8 +431,8 @@ function MainContent() {
                   className="h-full flex flex-col"
                 >
                   {tracks.length > 1 && (
-                    <div className="w-full max-w-full flex justify-center overflow-x-auto border-b-1 border-dashed border-black h-fit">
-                      <TabsList className="bg-white gap-4 rounded-none w-max flex-nowrap h-fit">
+                    <div className="w-full max-w-full flex justify-center overflow-x-auto border-b-1 border-dashed border-black">
+                      <TabsList className="bg-white gap-4 rounded-none w-max flex-nowrap h-full">
                         {tracks.map((track) => (
                           <TabsTrigger
                             key={track.id}
