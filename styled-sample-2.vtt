@@ -1,0 +1,17 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.000
+<lang en-US>This is <i>English</i> text.</lang>
+2
+00:00:02.300 --> 00:00:05.000
+<v Bob>I'm Bob, speaking here.</v>
+3
+01:02:03.456 --> 01:02:06.000
+<c.green>Hour-range cue with class</c.green>
+4
+00:00:05.100 --> 00:00:07.000
+<i>Nested <b>bold</b> inside italic</i>
+5
+00:00:07.100 --> 00:00:09.200
+Text with angle brackets that are not tags: <notatag> literally.

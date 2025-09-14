@@ -7,14 +7,16 @@
   },
   "buttons": {
     "loadMedia": "Load Media",
-    "loadSrt": "Load .srt/.vtt",
-    "saveSrt": "Save .srt/.vtt",
-    "loadSrtFile": "Load .srt/.vtt File",
+    "loadSrt": "Load Subtitles",
+    "saveSrt": "Save",
+    "loadSrtFile": "Load .srt / .vtt file",
     "newTrack": "Add New Track",
     "maxTracksReached": "You can add maximally 4 tracks",
-    "reloadSrt": "Reload .srt/.vtt",
+    "reloadSrt": "Reload .srt / .vtt file",
     "fromScratch": "From Scratch",
-    "download": "Download"
+    "download": "Download",
+    "downloadAsSrt": "SRT  .srt",
+    "downloadAsVtt": "WebVTT .vtt"
   },
   "labels": {
     "loadSrtFile": "Load a .srt/.vtt file",
@@ -29,6 +31,7 @@
   "findReplace": {
     "title": "Find / Replace",
     "dialogTitle": "Find and Replace",
+    "scopeNote": "Only searches within the current subtitle track.",
     "find": "Find",
     "replaceWith": "Replace with",
     "caseSensitive": "Case sensitive",
@@ -69,8 +72,8 @@
     "yes": "Yes, discard",
     "srtTitle": "Manage Subtitle Tracks",
     "srtDescription": "You can add 4 tracks at most. You can rename the tracks.",
-    "saveTitle": "Save Subtitle Track",
-    "saveDescription": "Choose a track to download as .srt or .vtt.",
+    "saveTitle": "Choose format",
+    "saveDescription": "Choose a track to download as .srt or .vtt format.",
     "deleteTrackTitle": "Delete this track?",
     "deleteTrackDescription": "This action cannot be undone. This will permanently delete the track and all its subtitles.",
     "delete": "Delete",

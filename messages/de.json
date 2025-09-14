@@ -14,7 +14,9 @@
     "maxTracksReached": "Sie können maximal 4 Spuren hinzufügen",
     "reloadSrt": "SRT/VTT neu laden",
     "fromScratch": "Neu anfangen",
-    "download": "Herunterladen"
+    "download": "Herunterladen",
+    "downloadAsSrt": "Als SRT herunterladen",
+    "downloadAsVtt": "Als VTT herunterladen"
   },
   "labels": {
     "loadSrtFile": "Eine SRT/VTT-Datei laden",
@@ -29,6 +31,7 @@
   "findReplace": {
     "title": "Suchen / Ersetzen",
     "dialogTitle": "Suchen und Ersetzen",
+    "scopeNote": "Sucht nur innerhalb der aktuellen Untertitelspur.",
     "find": "Suchen",
     "replaceWith": "Ersetzen durch",
     "caseSensitive": "Groß- / Kleinschreibung beachten",

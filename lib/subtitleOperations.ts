@@ -144,6 +144,60 @@ export const parseVTT = (vttContent: string): Subtitle[] => {
   return subtitles;
 };
 
+/**
+ * Extract the VTT header line and any prologue blocks (NOTE/STYLE/REGION)
+ * that appear before the first cue. This enables round‑tripping top comments
+ * and styling when exporting back to VTT.
+ */
+export function extractVttPrologue(vttContent: string): {
+  header: string;
+  prologue: string[];
+} {
+  const content = vttContent.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
+  const lines = content.split("\n");
+  let idx = 0;
+  while (idx < lines.length && lines[idx].trim() === "") idx++;
+  let header = "WEBVTT";
+  if (idx < lines.length && /^WEBVTT( |$)/.test(lines[idx])) {
+    header = lines[idx].trim();
+    idx++;
+  }
+
+  const prologue: string[] = [];
+  const isBlockStart = (line: string) => /^(NOTE|STYLE|REGION)\b/.test(line);
+  const isTimeLine = (line: string) =>
+    /^(\d{2}:)?\d{2}:\d{2}\.\d{3}\s+-->\s+(\d{2}:)?\d{2}:\d{2}\.\d{3}(?:\s+.*)?$/.test(
+      line
+    );
+
+  while (idx < lines.length) {
+    const cur = lines[idx];
+    const t = cur.trim();
+    if (t === "") {
+      idx++;
+      continue;
+    }
+    if (isBlockStart(t)) {
+      const blockLines: string[] = [cur];
+      idx++;
+      while (idx < lines.length && lines[idx].trim() !== "") {
+        blockLines.push(lines[idx]);
+        idx++;
+      }
+      prologue.push(blockLines.join("\n"));
+      continue;
+    }
+    // If we see a time line or any other non-prologue content, stop.
+    if (isTimeLine(t)) break;
+    // If it's a cue identifier line, next line might be time – break to avoid consuming cues
+    if (idx + 1 < lines.length && isTimeLine(lines[idx + 1].trim())) break;
+    // Otherwise, this is unknown text before cues; stop to avoid data loss
+    break;
+  }
+
+  return { header, prologue };
+}
+
 export const reorderSubtitleIds = (subtitles: Subtitle[]): Subtitle[] => {
   let nextId = 1;
   return subtitles.map((subtitle) => {

@@ -1,0 +1,30 @@
+WEBVTT - Styled Sample 2
+
+NOTE
+This is a comment block
+spanning multiple lines.
+
+STYLE
+::cue(c.green) { color: green; }
+::cue(c.bg_black) { background: black; color: white; }
+
+0
+00:00.000 --> 00:02.000 position:20% line:90%
+<lang en-US>This is <i>English</i> text.</lang>
+
+id-voice
+00:02.300 --> 00:05.000
+<v Bob>I'm Bob, speaking here.</v>
+
+id-hours
+01:02:03.456 --> 01:02:06.000 align:end size:40%
+<c.green>Hour-range cue with class</c.green>
+
+id-nested
+00:05.100 --> 00:07.000
+<i>Nested <b>bold</b> inside italic</i>
+
+id-escape
+00:07.100 --> 00:09.200
+Text with angle brackets that are not tags: <notatag> literally.
+

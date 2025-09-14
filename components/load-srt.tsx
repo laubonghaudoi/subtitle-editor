@@ -26,7 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSubtitleContext } from "@/context/subtitle-context";
-import { parseSRT, parseVTT } from "@/lib/subtitleOperations";
+import { parseSRT, parseVTT, extractVttPrologue } from "@/lib/subtitleOperations";
 import {
   IconBadgeCc,
   IconFile,
@@ -67,6 +67,7 @@ export default function LoadSrt() {
       const firstLine = raw.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
       const isVtt = lower.endsWith(".vtt") || /^WEBVTT( |$)/.test(firstLine);
       const newSubtitles = isVtt ? parseVTT(raw) : parseSRT(raw);
+      const meta = isVtt ? extractVttPrologue(raw) : undefined;
       if (newSubtitles.length === 0) {
         toast({
           title: "Invalid subtitle file",
@@ -75,7 +76,11 @@ export default function LoadSrt() {
         });
         return;
       }
-      loadSubtitlesIntoTrack(trackId, newSubtitles);
+      loadSubtitlesIntoTrack(
+        trackId,
+        newSubtitles,
+        meta ? { vttHeader: meta.header, vttPrologue: meta.prologue } : undefined
+      );
       const safeName = file.name.replace(/\.(srt|vtt)$/i, "");
       renameTrack(trackId, safeName);
     } catch (err: any) {
@@ -132,9 +137,9 @@ export default function LoadSrt() {
               <Input
                 value={track.name}
                 onChange={(e) => renameTrack(track.id, e.target.value)}
-                className="col-span-6 border-neutral-500 rounded-sm"
+                className="col-span-5 border-neutral-500 rounded-sm"
               />
-              <div className="col-span-5 grid grid-cols-2 gap-2">
+              <div className="col-span-6 grid grid-cols-2 gap-2">
                 {track.subtitles.length > 0 ? (
                   <>
                     <Label className="w-full p-0 flex items-center justify-center">

@@ -14,7 +14,9 @@
     "maxTracksReached": "最多可以加 4 條字幕軌",
     "reloadSrt": "重新載入 .srt/.vtt",
     "fromScratch": "由頭開始",
-    "download": "下載"
+    "download": "下載",
+    "downloadAsSrt": "下載 SRT",
+    "downloadAsVtt": "下載 VTT"
   },
   "labels": {
     "loadSrtFile": "載入 .srt/.vtt 檔案",
@@ -29,6 +31,7 @@
   "findReplace": {
     "title": "搜尋 / 替換",
     "dialogTitle": "搜尋同替換",
+    "scopeNote": "只會喺當前字幕軌入面搜尋。",
     "find": "尋找",
     "replaceWith": "替換成",
     "caseSensitive": "區分大細寫",

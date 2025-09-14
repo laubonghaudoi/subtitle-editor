@@ -330,7 +330,7 @@ const SubtitleItem = memo(function SubtitleItem({
               ) : (
                 <button
                   type="button"
-                  className="w-full text-left text-lg cursor-pointer"
+                  className="w-full text-left text-lg cursor-pointer whitespace-pre-wrap break-words"
                   tabIndex={0}
                   onClick={() => {
                     setEditingSubtitleUuid(subtitle.uuid);

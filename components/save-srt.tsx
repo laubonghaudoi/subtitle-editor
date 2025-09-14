@@ -10,24 +10,25 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSubtitleContext } from "@/context/subtitle-context";
+import { buildSrtContent, buildVttContent } from "@/lib/format";
 import { IconDownload } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { buildSrtContent, buildVttContent } from "@/lib/format";
 
 export default function SaveSrt() {
   const t = useTranslations();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
-  const [format, setFormat] = useState<"srt" | "vtt">("srt");
   const { tracks } = useSubtitleContext();
 
-  const downloadTrackById = (trackId: string) => {
+  const downloadTrackById = (trackId: string, format: "srt" | "vtt") => {
     const track = tracks.find((t) => t.id === trackId);
     if (!track || track.subtitles.length === 0) return;
     const content =
       format === "vtt"
-        ? buildVttContent(track.subtitles)
+        ? buildVttContent(track.subtitles, {
+            header: track.vttHeader,
+            prologue: track.vttPrologue,
+          })
         : buildSrtContent(track.subtitles);
     const mime = format === "vtt" ? "text/vtt" : "text/plain";
     const blob = new Blob([content], { type: mime });
@@ -86,14 +87,6 @@ export default function SaveSrt() {
           <DialogTitle>{t("dialog.saveTitle")}</DialogTitle>
           <DialogDescription>{t("dialog.saveDescription")}</DialogDescription>
         </DialogHeader>
-        <div className="mb-3">
-          <Tabs value={format} onValueChange={(v) => setFormat(v as any)}>
-            <TabsList>
-              <TabsTrigger value="srt">SRT</TabsTrigger>
-              <TabsTrigger value="vtt">VTT</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
         <div className="grid gap-3 py-2">
           {tracks.map((track) => (
             <div key={track.id} className="flex items-center justify-between">
@@ -105,15 +98,26 @@ export default function SaveSrt() {
                   })}
                 </span>
               </div>
-              <Button
-                variant="default"
-                disabled={track.subtitles.length === 0}
-                onClick={() => downloadTrackById(track.id)}
-                className="cursor-pointer"
-              >
-                <IconDownload size={18} />
-                <span className="ml-1">{t("buttons.download")}</span>
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="default"
+                  disabled={track.subtitles.length === 0}
+                  onClick={() => downloadTrackById(track.id, "srt")}
+                  className="cursor-pointer"
+                >
+                  <IconDownload size={18} />
+                  <span className="ml-1">{t("buttons.downloadAsSrt")}</span>
+                </Button>
+                <Button
+                  variant="default"
+                  disabled={track.subtitles.length === 0}
+                  onClick={() => downloadTrackById(track.id, "vtt")}
+                  className="cursor-pointer"
+                >
+                  <IconDownload size={18} />
+                  <span className="ml-1">{t("buttons.downloadAsVtt")}</span>
+                </Button>
+              </div>
             </div>
           ))}
         </div>

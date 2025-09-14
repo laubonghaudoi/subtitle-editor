@@ -32,7 +32,7 @@ import {
   SubtitleProvider,
   useSubtitleContext,
 } from "@/context/subtitle-context";
-import { parseSRT, parseVTT } from "@/lib/subtitleOperations";
+import { parseSRT, parseVTT, extractVttPrologue } from "@/lib/subtitleOperations";
 import { timeToSeconds } from "@/lib/utils";
 import {
   IconArrowBack,
@@ -116,8 +116,14 @@ function MainContent() {
     const firstLine = text.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
     const isVtt = file.name.toLowerCase().endsWith(".vtt") || /^WEBVTT( |$)/.test(firstLine);
     const parsedSubtitles = isVtt ? parseVTT(text) : parseSRT(text);
+    // Preserve VTT prologue blocks (NOTE/STYLE/REGION) when loading VTT
+    const meta = isVtt ? extractVttPrologue(text) : undefined;
     // Use the context action to set initial subtitles
-    setInitialSubtitles(parsedSubtitles, file.name.replace(/\.(srt|vtt)$/i, ""));
+    setInitialSubtitles(
+      parsedSubtitles,
+      file.name.replace(/\.(srt|vtt)$/i, ""),
+      meta ? { vttHeader: meta.header, vttPrologue: meta.prologue } : undefined
+    );
   };
 
   // --- Old Subtitle Modification Callbacks Removed ---
@@ -418,17 +424,19 @@ function MainContent() {
                   className="h-full flex flex-col"
                 >
                   {tracks.length > 1 && (
-                    <TabsList className="bg-white gap-4 border-b-1 border-dashed border-black rounded-none">
-                      {tracks.map((track) => (
-                        <TabsTrigger
-                          key={track.id}
-                          value={track.id}
-                          className="flex-shrink-0 data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
-                        >
-                          {track.name}
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
+                    <div className="w-full max-w-full overflow-x-auto">
+                      <TabsList className="bg-white gap-4 border-b-1 border-dashed border-black rounded-none w-max flex-nowrap">
+                        {tracks.map((track) => (
+                          <TabsTrigger
+                            key={track.id}
+                            value={track.id}
+                            className="flex-shrink-0 data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
+                          >
+                            {track.name}
+                          </TabsTrigger>
+                        ))}
+                      </TabsList>
+                    </div>
                   )}
                   {tracks.map((track) => (
                     <TabsContent
@@ -520,7 +528,7 @@ function MainContent() {
         </div>
 
         {/* Bottom section - Waveform */}
-        <div className="h-[21vh]">
+        <div className="h-[22vh]">
           {/* Custom Controls */}
 
           {mediaFile ? (
