@@ -59,11 +59,15 @@ export const parseVTT = (vttContent: string): Subtitle[] => {
   let cueId: string | null = null;
   let idCounter = 1;
 
+  /**
+   * Matches a WebVTT timeline line, e.g. "00:01:02.345 --> 00:01:05.678" or "01:02.345 --> 01:05.678",
+   * with optional hours and optional cue settings after the arrow.
+   */
+  const VTT_TIMELINE_REGEX = /^(\d{2}:)?\d{2}:\d{2}\.\d{3}\s+-->\s+(\d{2}:)?\d{2}:\d{2}\.\d{3}(?:\s+.*)?$/;
+
   const isBlockStart = (line: string) => /^(NOTE|STYLE|REGION)\b/.test(line);
   const isTimeLine = (line: string) =>
-    /^(\d{2}:)?\d{2}:\d{2}\.\d{3}\s+-->\s+(\d{2}:)?\d{2}:\d{2}\.\d{3}(?:\s+.*)?$/.test(
-      line
-    );
+    VTT_TIMELINE_REGEX.test(line);
 
   const normalizeVttTimeToSrt = (t: string): string => {
     // Ensure HH:MM:SS.mmm; prefix hours when using MM:SS.mmm
