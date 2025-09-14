@@ -32,7 +32,11 @@ import {
   SubtitleProvider,
   useSubtitleContext,
 } from "@/context/subtitle-context";
-import { parseSRT, parseVTT, extractVttPrologue } from "@/lib/subtitleOperations";
+import {
+  parseSRT,
+  parseVTT,
+  extractVttPrologue,
+} from "@/lib/subtitleOperations";
 import { timeToSeconds } from "@/lib/utils";
 import {
   IconArrowBack,
@@ -113,8 +117,11 @@ function MainContent() {
 
   const handleFileUpload = async (file: File) => {
     const text = await file.text();
-    const firstLine = text.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
-    const isVtt = file.name.toLowerCase().endsWith(".vtt") || /^WEBVTT( |$)/.test(firstLine);
+    const firstLine =
+      text.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
+    const isVtt =
+      file.name.toLowerCase().endsWith(".vtt") ||
+      /^WEBVTT( |$)/.test(firstLine);
     const parsedSubtitles = isVtt ? parseVTT(text) : parseSRT(text);
     // Preserve VTT prologue blocks (NOTE/STYLE/REGION) when loading VTT
     const meta = isVtt ? extractVttPrologue(text) : undefined;
@@ -424,8 +431,8 @@ function MainContent() {
                   className="h-full flex flex-col"
                 >
                   {tracks.length > 1 && (
-                    <div className="w-full max-w-full overflow-x-auto">
-                      <TabsList className="bg-white gap-4 border-b-1 border-dashed border-black rounded-none w-max flex-nowrap">
+                    <div className="w-full max-w-full flex justify-center overflow-x-auto border-b-1 border-dashed border-black h-fit">
+                      <TabsList className="bg-white gap-4 rounded-none w-max flex-nowrap h-fit">
                         {tracks.map((track) => (
                           <TabsTrigger
                             key={track.id}

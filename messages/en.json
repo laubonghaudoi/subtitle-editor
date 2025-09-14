@@ -65,9 +65,9 @@
   },
   "dialog": {
     "discardTitle": "Discard changes?",
-    "discardDescription": "You have unsaved changes. Are you sure you want to discard them by loading a new SRT file?",
+    "discardDescription": "You have unsaved changes. Are you sure you want to discard them by loading a new subtitle file?",
     "switchTitle": "Switch language?",
-    "switchDescription": "Changing the language will discard the current subtitles. Make sure you have downloaded the current SRT first.",
+    "switchDescription": "Changing the language will discard the current subtitles. Make sure you have downloaded the current subtitles first.",
     "cancel": "Cancel",
     "yes": "Yes, discard",
     "srtTitle": "Manage Subtitle Tracks",
@@ -92,11 +92,12 @@
     "noRoom": "No room to add"
   },
   "metadata": {
-    "title": "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT Editing Tool",
-    "description": "Edit, create, and align SRT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
+    "title": "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT/VTT Editing Tool",
+    "description": "Edit, create, and align SRT/VTT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
     "keywords": [
       "subtitle editor",
       "srt editor",
+      "vtt editor",
       "caption editor",
       "subtitle creator",
       "caption creator",
@@ -109,6 +110,7 @@
       "waveform visualization",
       "subtitle synchronization",
       "SRT file editor",
+      "VTT file editor",
       "add subtitles to video"
     ]
   },

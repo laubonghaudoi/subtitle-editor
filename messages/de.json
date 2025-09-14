@@ -7,8 +7,8 @@
   },
   "buttons": {
     "loadMedia": "Medien laden",
-    "loadSrt": "SRT/VTT laden",
-    "saveSrt": "SRT/VTT speichern",
+    "loadSrt": "Untertitel laden",
+    "saveSrt": "Speichern",
     "loadSrtFile": "SRT/VTT-Datei laden",
     "newTrack": "Neue Spur erstellen",
     "maxTracksReached": "Sie können maximal 4 Spuren hinzufügen",
@@ -65,14 +65,14 @@
   },
   "dialog": {
     "discardTitle": "Änderungen verwerfen?",
-    "discardDescription": "Sie haben nicht gespeicherte Änderungen. Sind Sie sicher, dass Sie sie verwerfen und eine neue SRT-Datei laden möchten?",
+    "discardDescription": "Sie haben nicht gespeicherte Änderungen. Sind Sie sicher, dass Sie sie verwerfen und eine neue Untertiteldatei laden möchten?",
     "switchTitle": "Sprache wechseln?",
-    "switchDescription": "Das Ändern der Sprache verwirft die aktuellen Untertitel. Stellen Sie sicher, dass Sie die aktuelle SRT zuerst heruntergeladen haben.",
+    "switchDescription": "Das Ändern der Sprache verwirft die aktuellen Untertitel. Stellen Sie sicher, dass Sie die aktuellen Untertitel zuerst heruntergeladen haben.",
     "cancel": "Abbrechen",
     "yes": "Ja, verwerfen",
     "srtTitle": "Untertitelspuren verwalten",
     "srtDescription": "Sie können maximal 4 Spuren hinzufügen. Sie können die Untertitelspur umbenennen.",
-    "saveTitle": "Untertitelspur speichern",
+    "saveTitle": "Format auswählen",
     "saveDescription": "Wählen Sie eine Spur, um sie als .srt oder .vtt herunterzuladen.",
     "deleteTrackTitle": "Diese Spur löschen?",
     "deleteTrackDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch werden die Spur und alle ihre Untertitel dauerhaft gelöscht.",
@@ -92,12 +92,12 @@
     "noRoom": "Kein Platz zum Hinzufügen"
   },
   "metadata": {
-    "title": "Untertitel-Editor - Dauerhaft kostenloses, quelloffenes, vollständig webbasiertes SRT-Bearbeitungstool",
-    "description": "Bearbeiten, erstellen und richten Sie SRT-Untertitel- und Untertiteldateien einfach mit diesem kostenlosen, quelloffenen, webbasierten Editor aus. Bietet Videovorschau und Wellenformvisualisierung. Keine Anmeldung erforderlich.",
+    "title": "Untertitel-Editor - Dauerhaft kostenloses, quelloffenes, vollständig webbasiertes SRT/VTT-Bearbeitungstool",
+    "description": "Bearbeiten, erstellen und richten Sie Untertiteldateien (SRT/VTT) einfach mit diesem kostenlosen, quelloffenen, webbasierten Editor aus. Bietet Videovorschau und Wellenformvisualisierung. Keine Anmeldung erforderlich.",
     "keywords": [
       "Untertitel-Editor",
       "SRT-Editor",
-      "Untertitel-Ersteller",
+      "VTT-Editor",
       "Untertitel-Ersteller",
       "Untertitel-Tool",
       "kostenloser Untertitel-Editor",
@@ -108,6 +108,7 @@
       "Wellenform-Visualisierung",
       "Untertitel-Synchronisation",
       "SRT-Datei-Editor",
+      "VTT-Datei-Editor",
       "Untertitel zu Video hinzufügen"
     ]
   },
