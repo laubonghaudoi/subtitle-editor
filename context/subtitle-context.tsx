@@ -22,11 +22,23 @@ interface SubtitleContextType {
   setActiveTrackId: (id: string | null) => void;
   showTrackLabels: boolean;
   setShowTrackLabels: (value: boolean) => void;
-  addTrack: (name: string, subtitles?: Subtitle[]) => string;
-  loadSubtitlesIntoTrack: (trackId: string, subtitles: Subtitle[]) => void;
+  addTrack: (
+    name: string,
+    subtitles?: Subtitle[],
+    meta?: { vttHeader?: string; vttPrologue?: string[] }
+  ) => string;
+  loadSubtitlesIntoTrack: (
+    trackId: string,
+    subtitles: Subtitle[],
+    meta?: { vttHeader?: string; vttPrologue?: string[] }
+  ) => void;
   renameTrack: (trackId: string, newName: string) => void;
   deleteTrack: (trackId: string) => void;
-  setInitialSubtitles: (subs: Subtitle[], trackName?: string) => void;
+  setInitialSubtitles: (
+    subs: Subtitle[],
+    trackName?: string,
+    meta?: { vttHeader?: string; vttPrologue?: string[] }
+  ) => void;
   addSubtitleAction: (
     beforeId: number,
     afterId: number | null,
@@ -101,7 +113,11 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
   }, [activeTrackId, tracks, setSubtitlesWithHistory]);
 
 
-  const addTrack = (name: string, subtitles: Subtitle[] = []) => {
+  const addTrack = (
+    name: string,
+    subtitles: Subtitle[] = [],
+    meta?: { vttHeader?: string; vttPrologue?: string[] }
+  ) => {
     if (tracks.length >= 4) {
       // Here you might want to show a toast or a notification to the user
       console.warn("Maximum number of tracks (4) reached.");
@@ -113,6 +129,8 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
       id: newTrackId,
       name,
       subtitles: subtitles.map(sub => ({ ...sub, trackId: newTrackId })),
+      vttHeader: meta?.vttHeader,
+      vttPrologue: meta?.vttPrologue,
     };
     setTracks(prev => [...prev, newTrack]);
     if (!activeTrackId) {
@@ -121,13 +139,19 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     return newTrackId;
   };
 
-  const loadSubtitlesIntoTrack = (trackId: string, newSubtitles: Subtitle[]) => {
+  const loadSubtitlesIntoTrack = (
+    trackId: string,
+    newSubtitles: Subtitle[],
+    meta?: { vttHeader?: string; vttPrologue?: string[] }
+  ) => {
     setTracks(prevTracks =>
       prevTracks.map(track => {
         if (track.id === trackId) {
           return {
             ...track,
             subtitles: newSubtitles.map(sub => ({ ...sub, trackId })),
+            vttHeader: meta?.vttHeader ?? track.vttHeader,
+            vttPrologue: meta?.vttPrologue ?? track.vttPrologue,
           };
         }
         return track;
@@ -166,8 +190,12 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
 
   // --- Action Functions (React Compiler handles memoization) ---
 
-  const setInitialSubtitles = (subs: Subtitle[], trackName?: string) => {
-    const newTrackId = addTrack(trackName || "Track 1", subs);
+  const setInitialSubtitles = (
+    subs: Subtitle[],
+    trackName?: string,
+    meta?: { vttHeader?: string; vttPrologue?: string[] }
+  ) => {
+    const newTrackId = addTrack(trackName || "Track 1", subs, meta);
     setActiveTrackId(newTrackId);
     setSubtitlesWithHistory(subs); // Set history for the first track
   };

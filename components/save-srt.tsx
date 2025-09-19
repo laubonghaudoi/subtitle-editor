@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSubtitleContext } from "@/context/subtitle-context";
+import { buildSrtContent, buildVttContent } from "@/lib/format";
 import { IconDownload } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -19,27 +20,23 @@ export default function SaveSrt() {
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const { tracks } = useSubtitleContext();
 
-  const buildSrtContent = (subtitles: (typeof tracks)[0]["subtitles"]) => {
-    return subtitles
-      .slice()
-      .sort((a, b) => a.id - b.id)
-      .map((subtitle) => {
-        return `${subtitle.id}\n${subtitle.startTime} --> ${subtitle.endTime}\n${subtitle.text}\n`;
-      })
-      .join("\n");
-  };
-
-  const downloadTrackById = (trackId: string) => {
+  const downloadTrackById = (trackId: string, format: "srt" | "vtt") => {
     const track = tracks.find((t) => t.id === trackId);
     if (!track || track.subtitles.length === 0) return;
-
-    const srtContent = buildSrtContent(track.subtitles);
-    const blob = new Blob([srtContent], { type: "text/plain" });
+    const content =
+      format === "vtt"
+        ? buildVttContent(track.subtitles, {
+            header: track.vttHeader,
+            prologue: track.vttPrologue,
+          })
+        : buildSrtContent(track.subtitles);
+    const mime = format === "vtt" ? "text/vtt" : "text/plain";
+    const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     const safeName = (track.name || "subtitles").replace(/\s+/g, "_");
-    a.download = `${safeName}.srt`;
+    a.download = `${safeName}.${format}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -48,22 +45,14 @@ export default function SaveSrt() {
   };
 
   const handleSaveClick = () => {
-    // If there's only one track with subtitles, download it directly
-    const tracksWithSubtitles = tracks.filter(
-      (track) => track.subtitles.length > 0
-    );
-    if (tracksWithSubtitles.length === 1) {
-      downloadTrackById(tracksWithSubtitles[0].id);
-    } else {
-      // Multiple tracks or no tracks, show dialog
-      setIsSaveDialogOpen(true);
-    }
+    // Always open dialog to choose format and track
+    setIsSaveDialogOpen(true);
   };
 
   const tracksWithSubtitles = tracks.filter(
     (track) => track.subtitles.length > 0
   );
-  const shouldShowDialog = tracksWithSubtitles.length > 1;
+  const shouldShowDialog = true;
 
   return (
     <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
@@ -109,15 +98,26 @@ export default function SaveSrt() {
                   })}
                 </span>
               </div>
-              <Button
-                variant="default"
-                disabled={track.subtitles.length === 0}
-                onClick={() => downloadTrackById(track.id)}
-                className="cursor-pointer"
-              >
-                <IconDownload size={18} />
-                <span className="ml-1">{t("buttons.download")}</span>
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="default"
+                  disabled={track.subtitles.length === 0}
+                  onClick={() => downloadTrackById(track.id, "srt")}
+                  className="cursor-pointer"
+                >
+                  <IconDownload size={18} />
+                  <span className="ml-1">{t("buttons.downloadAsSrt")}</span>
+                </Button>
+                <Button
+                  variant="default"
+                  disabled={track.subtitles.length === 0}
+                  onClick={() => downloadTrackById(track.id, "vtt")}
+                  className="cursor-pointer"
+                >
+                  <IconDownload size={18} />
+                  <span className="ml-1">{t("buttons.downloadAsVtt")}</span>
+                </Button>
+              </div>
             </div>
           ))}
         </div>

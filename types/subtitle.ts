@@ -13,4 +13,7 @@ export interface SubtitleTrack {
   id: string; // Unique identifier for the track
   name: string; // User-facing name (e.g., "English")
   subtitles: Subtitle[];
+  // Optional VTT metadata to preserve round-trip NOTE/STYLE header blocks
+  vttHeader?: string;
+  vttPrologue?: string[];
 }

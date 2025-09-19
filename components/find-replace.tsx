@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,7 +30,12 @@ import { useEffect, useState } from "react";
 
 export default function FindReplace() {
   const t = useTranslations();
-  const { subtitles, replaceAllSubtitlesAction } = useSubtitleContext();
+  const { subtitles, replaceAllSubtitlesAction, tracks } = useSubtitleContext();
+  const totalSubtitleCount = tracks.reduce(
+    (sum, tr) => sum + tr.subtitles.length,
+    0
+  );
+  const isDisabled = totalSubtitleCount === 0;
 
   const [findText, setFindText] = useState("");
   const [replaceText, setReplaceText] = useState("");
@@ -229,6 +235,7 @@ export default function FindReplace() {
         <Button
           variant="outline"
           className="border-black rounded-xs cursor-pointer"
+          disabled={isDisabled}
         >
           <IconSearch />
           <span className="">{t("findReplace.title")}</span>
@@ -237,6 +244,9 @@ export default function FindReplace() {
       <DialogContent className="sm:max-w-[48rem]">
         <DialogHeader>
           <DialogTitle>{t("findReplace.dialogTitle")}</DialogTitle>
+          <DialogDescription>
+            {t("findReplace.scopeNote")}
+          </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
@@ -407,13 +417,13 @@ export default function FindReplace() {
                         <TableCell className="border-r-1 border-black">
                           {subtitle.id}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="whitespace-pre-wrap break-words">
                           {/* Pass the potentially null, freshly created regex */}
                           {displayRegex
                             ? highlightMatches(subtitle.text, displayRegex)
                             : subtitle.text}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="whitespace-pre-wrap break-words">
                           {/* Pass the potentially null, freshly created regex */}
                           {
                             displayRegex

@@ -7,17 +7,19 @@
   },
   "buttons": {
     "loadMedia": "Medien laden",
-    "loadSrt": "SRT laden",
-    "saveSrt": "SRT speichern",
-    "loadSrtFile": "SRT-Datei laden",
+    "loadSrt": "Untertitel laden",
+    "saveSrt": "Speichern",
+    "loadSrtFile": "SRT/VTT-Datei laden",
     "newTrack": "Neue Spur erstellen",
     "maxTracksReached": "Sie können maximal 4 Spuren hinzufügen",
-    "reloadSrt": "SRT neu laden",
+    "reloadSrt": "SRT/VTT neu laden",
     "fromScratch": "Neu anfangen",
-    "download": "Herunterladen"
+    "download": "Herunterladen",
+    "downloadAsSrt": "Als SRT herunterladen",
+    "downloadAsVtt": "Als VTT herunterladen"
   },
   "labels": {
-    "loadSrtFile": "Eine SRT-Datei laden",
+    "loadSrtFile": "Eine SRT/VTT-Datei laden",
     "or": "oder",
     "startFromScratch": "Von vorne beginnen"
   },
@@ -29,6 +31,7 @@
   "findReplace": {
     "title": "Suchen / Ersetzen",
     "dialogTitle": "Suchen und Ersetzen",
+    "scopeNote": "Sucht nur innerhalb der aktuellen Untertitelspur.",
     "find": "Suchen",
     "replaceWith": "Ersetzen durch",
     "caseSensitive": "Groß- / Kleinschreibung beachten",
@@ -46,7 +49,7 @@
     "editText": "Klicken Sie auf den Untertiteltext oder die Zeitstempel, um Ihre Untertitel zu bearbeiten.",
     "icons": "Klicken Sie auf die Symbole, um Untertitel hinzuzufügen, zusammenzuführen oder zu löschen.",
     "dragBorders": "Ziehen Sie die gestrichelten Ränder auf der Wellenform, um die Zeitstempel der Untertitel zu ändern.",
-    "rememberSave": "Denken Sie daran, auf „SRT speichern“ zu klicken, um die Untertitel nach Abschluss der Bearbeitung zu speichern!"
+    "rememberSave": "Denken Sie daran, auf „Speichern“ zu klicken, um die Untertitel als .srt oder .vtt herunterzuladen!"
   },
   "shortcuts": {
     "title": "Tastenkombinationen",
@@ -62,15 +65,15 @@
   },
   "dialog": {
     "discardTitle": "Änderungen verwerfen?",
-    "discardDescription": "Sie haben nicht gespeicherte Änderungen. Sind Sie sicher, dass Sie sie verwerfen und eine neue SRT-Datei laden möchten?",
+    "discardDescription": "Sie haben nicht gespeicherte Änderungen. Sind Sie sicher, dass Sie sie verwerfen und eine neue Untertiteldatei laden möchten?",
     "switchTitle": "Sprache wechseln?",
-    "switchDescription": "Das Ändern der Sprache verwirft die aktuellen Untertitel. Stellen Sie sicher, dass Sie die aktuelle SRT zuerst heruntergeladen haben.",
+    "switchDescription": "Das Ändern der Sprache verwirft die aktuellen Untertitel. Stellen Sie sicher, dass Sie die aktuellen Untertitel zuerst heruntergeladen haben.",
     "cancel": "Abbrechen",
     "yes": "Ja, verwerfen",
     "srtTitle": "Untertitelspuren verwalten",
     "srtDescription": "Sie können maximal 4 Spuren hinzufügen. Sie können die Untertitelspur umbenennen.",
-    "saveTitle": "Untertitelspur speichern",
-    "saveDescription": "Wählen Sie eine Spur, um sie als .srt-Datei herunterzuladen.",
+    "saveTitle": "Format auswählen",
+    "saveDescription": "Wählen Sie eine Spur, um sie als .srt oder .vtt herunterzuladen.",
     "deleteTrackTitle": "Diese Spur löschen?",
     "deleteTrackDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch werden die Spur und alle ihre Untertitel dauerhaft gelöscht.",
     "delete": "Löschen",
@@ -89,12 +92,12 @@
     "noRoom": "Kein Platz zum Hinzufügen"
   },
   "metadata": {
-    "title": "Untertitel-Editor - Dauerhaft kostenloses, quelloffenes, vollständig webbasiertes SRT-Bearbeitungstool",
-    "description": "Bearbeiten, erstellen und richten Sie SRT-Untertitel- und Untertiteldateien einfach mit diesem kostenlosen, quelloffenen, webbasierten Editor aus. Bietet Videovorschau und Wellenformvisualisierung. Keine Anmeldung erforderlich.",
+    "title": "Untertitel-Editor - Dauerhaft kostenloses, quelloffenes, vollständig webbasiertes SRT/VTT-Bearbeitungstool",
+    "description": "Bearbeiten, erstellen und richten Sie Untertiteldateien (SRT/VTT) einfach mit diesem kostenlosen, quelloffenen, webbasierten Editor aus. Bietet Videovorschau und Wellenformvisualisierung. Keine Anmeldung erforderlich.",
     "keywords": [
       "Untertitel-Editor",
       "SRT-Editor",
-      "Untertitel-Ersteller",
+      "VTT-Editor",
       "Untertitel-Ersteller",
       "Untertitel-Tool",
       "kostenloser Untertitel-Editor",
@@ -105,6 +108,7 @@
       "Wellenform-Visualisierung",
       "Untertitel-Synchronisation",
       "SRT-Datei-Editor",
+      "VTT-Datei-Editor",
       "Untertitel zu Video hinzufügen"
     ]
   },

@@ -1,0 +1,46 @@
+WEBVTT - Invalid Cases
+
+NOTE Some cues below are intentionally malformed for testing
+
+bad-comma
+00:00:01,000 --> 00:00:02,000
+Comma-separated milliseconds are invalid for VTT.
+
+end-before-start
+00:00:05.000 --> 00:00:02.000
+End time occurs before start time.
+
+bad-arrow
+00:00:03.000 -> 00:00:04.000
+Wrong arrow token (should be `-->`).
+
+missing-time-line
+This cue has no time line at all.
+
+garbage
+not a time line
+Text follows but should be skipped.
+
+invalid-minute
+00:60:00.000 --> 00:60:02.000
+Minutes out of range (60).
+
+invalid-ms
+00:00:01.1000 --> 00:00:02.000
+Too many millisecond digits (4).
+
+unclosed-tag
+00:00:06.000 --> 00:00:08.000
+<i>Unclosed italic tag
+
+no-text-only-timings
+00:00:08.000 --> 00:00:09.000
+
+bad-format-less-fields
+00:00.000-00:02.000
+Missing arrow and hours/colons.
+
+ok
+00:00:10.000 --> 00:00:12.000
+Valid cue after errors.
+

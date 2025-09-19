@@ -7,17 +7,19 @@
   },
   "buttons": {
     "loadMedia": "Load Media",
-    "loadSrt": "Load SRT",
-    "saveSrt": "Save SRT",
-    "loadSrtFile": "Load SRT File",
+    "loadSrt": "Load Subtitles",
+    "saveSrt": "Save",
+    "loadSrtFile": "Load .srt / .vtt file",
     "newTrack": "Add New Track",
     "maxTracksReached": "You can add maximally 4 tracks",
-    "reloadSrt": "Reload SRT",
+    "reloadSrt": "Reload .srt / .vtt file",
     "fromScratch": "From Scratch",
-    "download": "Download"
+    "download": "Download",
+    "downloadAsSrt": "SRT  .srt",
+    "downloadAsVtt": "WebVTT .vtt"
   },
   "labels": {
-    "loadSrtFile": "Load an SRT file",
+    "loadSrtFile": "Load a .srt/.vtt file",
     "or": "or",
     "startFromScratch": "Start from scratch"
   },
@@ -29,6 +31,7 @@
   "findReplace": {
     "title": "Find / Replace",
     "dialogTitle": "Find and Replace",
+    "scopeNote": "Only searches within the current subtitle track.",
     "find": "Find",
     "replaceWith": "Replace with",
     "caseSensitive": "Case sensitive",
@@ -46,7 +49,7 @@
     "editText": "Click the subtitle text or timestamps to edit your captions.",
     "icons": "Click the icons to add, merge or delete subtitles.",
     "dragBorders": "Drag the dashed borders on the waveform to change the subtitles' time stamps.",
-    "rememberSave": "Remember to click \"Save SRT\" to save the subtitles when you finish editing!"
+    "rememberSave": "Remember to click \"Save\" to download as .srt/.vtt when you finish editing!"
   },
   "shortcuts": {
     "title": "Shortcuts",
@@ -62,15 +65,15 @@
   },
   "dialog": {
     "discardTitle": "Discard changes?",
-    "discardDescription": "You have unsaved changes. Are you sure you want to discard them by loading a new SRT file?",
+    "discardDescription": "You have unsaved changes. Are you sure you want to discard them by loading a new subtitle file?",
     "switchTitle": "Switch language?",
-    "switchDescription": "Changing the language will discard the current subtitles. Make sure you have downloaded the current SRT first.",
+    "switchDescription": "Changing the language will discard the current subtitles. Make sure you have downloaded the current subtitles first.",
     "cancel": "Cancel",
     "yes": "Yes, discard",
     "srtTitle": "Manage Subtitle Tracks",
     "srtDescription": "You can add 4 tracks at most. You can rename the tracks.",
-    "saveTitle": "Save Subtitle Track",
-    "saveDescription": "Choose a track to download as an .srt file.",
+    "saveTitle": "Choose format",
+    "saveDescription": "Choose a track to download as .srt or .vtt format.",
     "deleteTrackTitle": "Delete this track?",
     "deleteTrackDescription": "This action cannot be undone. This will permanently delete the track and all its subtitles.",
     "delete": "Delete",
@@ -89,11 +92,12 @@
     "noRoom": "No room to add"
   },
   "metadata": {
-    "title": "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT Editing Tool",
-    "description": "Edit, create, and align SRT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
+    "title": "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT/VTT Editing Tool",
+    "description": "Edit, create, and align SRT/VTT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
     "keywords": [
       "subtitle editor",
       "srt editor",
+      "vtt editor",
       "caption editor",
       "subtitle creator",
       "caption creator",
@@ -106,6 +110,7 @@
       "waveform visualization",
       "subtitle synchronization",
       "SRT file editor",
+      "VTT file editor",
       "add subtitles to video"
     ]
   },

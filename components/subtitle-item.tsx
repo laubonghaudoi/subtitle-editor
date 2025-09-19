@@ -330,8 +330,9 @@ const SubtitleItem = memo(function SubtitleItem({
               ) : (
                 <button
                   type="button"
-                  className="w-full text-left text-lg cursor-pointer"
+                  className="w-full text-left text-lg cursor-pointer whitespace-pre-wrap break-words"
                   tabIndex={0}
+                  aria-label={subtitle.text ? `Edit subtitle: ${subtitle.text}` : "Edit subtitle (empty)"}
                   onClick={() => {
                     setEditingSubtitleUuid(subtitle.uuid);
                   }}
