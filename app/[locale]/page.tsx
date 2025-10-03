@@ -431,19 +431,17 @@ function MainContent() {
                   className="h-full flex flex-col"
                 >
                   {tracks.length > 1 && (
-                    <div className="w-full max-w-full flex justify-center overflow-x-auto border-b-1 border-dashed border-black">
-                      <TabsList className="bg-white gap-4 rounded-none w-max flex-nowrap h-full">
-                        {tracks.map((track) => (
-                          <TabsTrigger
-                            key={track.id}
-                            value={track.id}
-                            className="flex-shrink-0 data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
-                          >
-                            {track.name}
-                          </TabsTrigger>
-                        ))}
-                      </TabsList>
-                    </div>
+                    <TabsList className="bg-white flex-nowrap overflow-x-auto overflow-y-hidden">
+                      {tracks.map((track) => (
+                        <TabsTrigger
+                          key={track.id}
+                          value={track.id}
+                          className="flex-shrink-0 data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
+                        >
+                          {track.name}
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
                   )}
                   {tracks.map((track) => (
                     <TabsContent
