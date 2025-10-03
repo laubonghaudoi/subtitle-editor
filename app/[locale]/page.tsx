@@ -535,7 +535,7 @@ function MainContent() {
         </div>
 
         {/* Bottom section - Waveform */}
-        <div className="h-[22vh]">
+        <div className="h-[21vh]">
           {/* Custom Controls */}
 
           {mediaFile ? (

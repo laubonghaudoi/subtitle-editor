@@ -12,7 +12,14 @@ import {
 } from "@/lib/subtitleOperations";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
 import type { ReactNode } from "react";
-import { createContext, useContext, useState, useMemo, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+} from "react";
 import { v4 as uuidv4 } from "uuid";
 
 // Define the shape of the context value
@@ -26,7 +33,7 @@ interface SubtitleContextType {
     name: string,
     subtitles?: Subtitle[],
     meta?: { vttHeader?: string; vttPrologue?: string[] }
-  ) => string;
+  ) => string | null;
   loadSubtitlesIntoTrack: (
     trackId: string,
     subtitles: Subtitle[],
@@ -89,39 +96,72 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
   const [tracks, setTracks] = useState<SubtitleTrack[]>([]);
   const [activeTrackId, setActiveTrackId] = useState<string | null>(null);
   const [showTrackLabels, setShowTrackLabels] = useState<boolean>(false);
+  const previousActiveTrackId = useRef<string | null>(null);
+  const hasSyncedActiveTrack = useRef(false);
 
   // Note: We are keeping a separate undo/redo history for now.
   // A more robust solution would involve a single history for all tracks.
   const [
     _subtitles, // Raw subtitles from the undoable state
     setSubtitlesWithHistory,
+    replaceSubtitlesWithoutHistory,
     undoSubtitles,
     redoSubtitles,
     canUndoSubtitles,
     canRedoSubtitles,
-  ] = useUndoableState<Subtitle[]>([]);
+  ] = useUndoableState<Subtitle[]>([], {
+    isEqual: (previous, next) => {
+      if (previous === next) return true;
+      if (previous.length !== next.length) return false;
+      for (let i = 0; i < previous.length; i++) {
+        const a = previous[i];
+        const b = next[i];
+        if (a === b) continue;
+        if (
+          a.id !== b.id ||
+          a.uuid !== b.uuid ||
+          a.startTime !== b.startTime ||
+          a.endTime !== b.endTime ||
+          a.text !== b.text ||
+          a.trackId !== b.trackId
+        ) {
+          return false;
+        }
+      }
+      return true;
+    },
+  });
 
   // CRITICAL FIX: This effect synchronizes the undo/redo state
   // with the currently active track.
   useEffect(() => {
+    if (
+      hasSyncedActiveTrack.current &&
+      previousActiveTrackId.current === activeTrackId
+    ) {
+      return;
+    }
+    previousActiveTrackId.current = activeTrackId;
+    hasSyncedActiveTrack.current = true;
+
     const activeTrack = tracks.find(track => track.id === activeTrackId);
     if (activeTrack) {
-      // We use the raw `setSubtitlesWithHistory` here to update the
-      // history state without creating a new undo point.
-      setSubtitlesWithHistory(activeTrack.subtitles);
+      replaceSubtitlesWithoutHistory(activeTrack.subtitles);
+    } else {
+      replaceSubtitlesWithoutHistory([]);
     }
-  }, [activeTrackId, tracks, setSubtitlesWithHistory]);
+  }, [activeTrackId, tracks, replaceSubtitlesWithoutHistory]);
 
 
   const addTrack = (
     name: string,
     subtitles: Subtitle[] = [],
     meta?: { vttHeader?: string; vttPrologue?: string[] }
-  ) => {
+  ): string | null => {
     if (tracks.length >= 4) {
       // Here you might want to show a toast or a notification to the user
       console.warn("Maximum number of tracks (4) reached.");
-      return ""; // Return empty string or handle error appropriately
+      return null; // Return null to signal failure
     }
 
     const newTrackId = uuidv4();
@@ -170,10 +210,10 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
       if (trackId === activeTrackId) {
         if (remainingTracks.length > 0) {
           setActiveTrackId(remainingTracks[0].id);
-          setSubtitlesWithHistory(remainingTracks[0].subtitles);
+          replaceSubtitlesWithoutHistory(remainingTracks[0].subtitles);
         } else {
           setActiveTrackId(null);
-          setSubtitlesWithHistory([]);
+          replaceSubtitlesWithoutHistory([]);
         }
       }
       return remainingTracks;
@@ -196,6 +236,7 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     meta?: { vttHeader?: string; vttPrologue?: string[] }
   ) => {
     const newTrackId = addTrack(trackName || "Track 1", subs, meta);
+    if (!newTrackId) return;
     setActiveTrackId(newTrackId);
     setSubtitlesWithHistory(subs); // Set history for the first track
   };
@@ -265,16 +306,40 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     newStartTime: string,
     newEndTime: string
   ) => {
+    let updatedActiveTrackSubtitles: Subtitle[] | null = null;
+
     setTracks(prevTracks =>
-      prevTracks.map(track => ({
-        ...track,
-        subtitles: track.subtitles.map(sub =>
-          sub.uuid === uuid
-            ? { ...sub, startTime: newStartTime, endTime: newEndTime }
-            : sub
-        )
-      }))
+      prevTracks.map(track => {
+        let hasChanges = false;
+        const subtitles = track.subtitles.map(sub => {
+          if (sub.uuid === uuid) {
+            hasChanges = true;
+            return {
+              ...sub,
+              startTime: newStartTime,
+              endTime: newEndTime,
+            };
+          }
+          return sub;
+        });
+
+        if (hasChanges) {
+          if (track.id === activeTrackId) {
+            updatedActiveTrackSubtitles = subtitles;
+          }
+          return {
+            ...track,
+            subtitles,
+          };
+        }
+
+        return track;
+      })
     );
+
+    if (updatedActiveTrackSubtitles) {
+      setSubtitlesWithHistory(updatedActiveTrackSubtitles);
+    }
   };
 
   // Individual time updates for SubtitleItem inputs

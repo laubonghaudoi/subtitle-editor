@@ -17,16 +17,19 @@ type SetStateAction<T> = T | ((prevState: T) => T);
  * @returns A tuple containing:
  *  - The current state.
  *  - A function to set the state (tracks history).
+ *  - A function to replace the state without recording history.
  *  - An undo function.
  *  - A redo function.
  *  - A boolean indicating if undo is possible.
  *  - A boolean indicating if redo is possible.
  */
 export function useUndoableState<T>(
-  initialState: T
+  initialState: T,
+  options?: { isEqual?: (a: T, b: T) => boolean }
 ): [
   T,
   (newState: SetStateAction<T>) => void,
+  (nextState: T) => void,
   () => void,
   () => void,
   boolean,
@@ -40,6 +43,7 @@ export function useUndoableState<T>(
 
   const canUndo = history.past.length > 0;
   const canRedo = history.future.length > 0;
+  const isEqual = options?.isEqual ?? Object.is;
 
   // State setter function that updates history
   const setState = (action: SetStateAction<T>) => {
@@ -51,9 +55,8 @@ export function useUndoableState<T>(
           ? (action as (prevState: T) => T)(previousPresent)
           : action;
 
-      // If the new state is the same as the current state, do nothing
-      // Using JSON.stringify for simple deep comparison; consider a library for complex objects if needed
-      if (JSON.stringify(previousPresent) === JSON.stringify(newPresent)) {
+      // Bail when the comparer marks the new state as identical
+      if (isEqual(previousPresent, newPresent)) {
         return currentHistory;
       }
 
@@ -66,6 +69,15 @@ export function useUndoableState<T>(
         present: newPresent,
         future: [], // Clear future history on new state change
       };
+    });
+  };
+
+  // Replace present state without recording to history.
+  const replaceState = (nextState: T) => {
+    setHistory({
+      past: [],
+      present: nextState,
+      future: [],
     });
   };
 
@@ -106,6 +118,6 @@ export function useUndoableState<T>(
     });
   };
 
-  // Return the state, setter, undo/redo functions, and flags
-  return [history.present, setState, undo, redo, canUndo, canRedo];
+  // Return the state, setter, raw replace, undo/redo functions, and flags
+  return [history.present, setState, replaceState, undo, redo, canUndo, canRedo];
 }

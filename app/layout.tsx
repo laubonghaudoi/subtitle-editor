@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
-import { useId } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import WebVitalsReporter from "@/components/web-vitals-reporter";
 import "./globals.css";
@@ -46,8 +45,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const googleAdsId = useId();
-
   return (
     <html lang="en">
       <body
@@ -61,7 +58,7 @@ export default function RootLayout({
           strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=AW-10839665138"
         />
-        <Script id={googleAdsId} strategy="afterInteractive">
+        <Script id="google-ads-script" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

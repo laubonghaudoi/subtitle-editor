@@ -26,7 +26,7 @@ import { escapeRegExp } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import { IconReplace, IconSearch } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 export default function FindReplace() {
   const t = useTranslations();
@@ -141,35 +141,63 @@ export default function FindReplace() {
   const highlightMatches = (text: string, findRegex: RegExp) => {
     if (!findText) return text;
 
-    const parts = text.split(findRegex);
-    const highlighted = [];
+    const flags = findRegex.flags.includes("g")
+      ? findRegex.flags
+      : `${findRegex.flags}g`;
+    const globalRegex = new RegExp(findRegex.source, flags);
+    const matches = Array.from(text.matchAll(globalRegex));
 
-    for (let i = 0; i < parts.length; i++) {
-      highlighted.push(parts[i]);
-      if (i < parts.length - 1) {
-        const match = text.match(findRegex)?.[0];
-        if (match) {
-          highlighted.push(
-            <span key={`match-${i}`} className="bg-red-500 text-white">
-              {match}
-            </span>
-          );
-        }
+    if (matches.length === 0) {
+      return text;
+    }
+
+    const highlighted: ReactNode[] = [];
+    let lastIndex = 0;
+
+    for (let i = 0; i < matches.length; i++) {
+      const match = matches[i];
+      const matchText = match[0];
+      const start = match.index ?? 0;
+
+      if (!matchText) {
+        return text;
       }
+
+      if (start > lastIndex) {
+        highlighted.push(text.slice(lastIndex, start));
+      }
+
+      highlighted.push(
+        <span key={`match-${start}-${i}`} className="bg-red-500 text-white">
+          {matchText}
+        </span>
+      );
+
+      lastIndex = start + matchText.length;
+    }
+
+    if (lastIndex < text.length) {
+      highlighted.push(text.slice(lastIndex));
     }
 
     return <>{highlighted}</>;
   };
 
   const highlightReplacements = (newText: string) => {
-    if (!findText) return newText;
+    if (!findText || replaceText.length === 0) return newText;
 
-    const replacedParts = newText.split(replaceText);
-    const highlighted = [];
+    const parts = newText.split(replaceText);
+    if (parts.length === 1) {
+      return newText;
+    }
 
-    for (let i = 0; i < replacedParts.length; i++) {
-      highlighted.push(replacedParts[i]);
-      if (i < replacedParts.length - 1) {
+    const highlighted: ReactNode[] = [];
+
+    for (let i = 0; i < parts.length; i++) {
+      highlighted.push(
+        <span key={`segment-${i}`}>{parts[i]}</span>
+      );
+      if (i < parts.length - 1) {
         highlighted.push(
           <span key={`replace-${i}`} className="bg-green-500 text-white">
             {replaceText}

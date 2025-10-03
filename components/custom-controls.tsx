@@ -36,10 +36,12 @@ const TimeDisplayAndSlider = memo(
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
       if (sliderRef.current) {
         const rect = sliderRef.current.getBoundingClientRect();
-        const position = (e.clientX - rect.left) / rect.width;
+        const relativeX = e.clientX - rect.left;
+        const clampedX = Math.max(0, Math.min(relativeX, rect.width));
+        const position = rect.width === 0 ? 0 : clampedX / rect.width;
         const time = position * duration;
         setHoverTime(time);
-        setTooltipPosition(e.clientX - 8 * rect.left);
+        setTooltipPosition(clampedX);
       }
     };
 
