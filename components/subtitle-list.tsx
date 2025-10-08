@@ -19,6 +19,8 @@ interface SubtitleListProps {
   setPlaybackTime: (time: number) => void;
   editingSubtitleUuid: string | null;
   setEditingSubtitleUuid: React.Dispatch<React.SetStateAction<string | null>>;
+  onTimeJump: (seconds: number) => void;
+  jumpDuration: number;
 }
 
 // Define the ref interface for SubtitleList
@@ -38,6 +40,8 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       setPlaybackTime,
       editingSubtitleUuid,
       setEditingSubtitleUuid,
+      onTimeJump,
+      jumpDuration,
     },
     ref
   ) => {
@@ -198,6 +202,24 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
           (activeElement.tagName === "INPUT" ||
             activeElement.tagName === "TEXTAREA");
 
+        // --- Ctrl + J/L (jump backward/forward in time) ---
+        if (event.ctrlKey && (event.key === "j" || event.key === "l")) {
+          event.preventDefault();
+          
+          // use the jump duration from jumpDuration state
+          if (event.key === "j") {
+            onTimeJump(-jumpDuration);
+          } else if (event.key === "l") {
+            onTimeJump(jumpDuration);
+          }
+        }
+
+        // --- Arrow Keys (Navigate Subtitles) ---
+        // This should NOT work when editing
+        if (isEditing) {
+          return; // Ignore arrow keys if editing
+        }
+
         // --- Shift + Backspace (Merge Previous) ---
         // This should work even when editing
         if (event.shiftKey && event.key === "Backspace") {
@@ -284,7 +306,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
         window.removeEventListener("keydown", handleKeyDown);
       };
       // Effect depends on the values used inside handleKeyDown
-    }, [subtitles, currentTime, setPlaybackTime, mergeSubtitlesAction]); // Add mergeSubtitlesAction dependency
+    }, [subtitles, currentTime, setPlaybackTime, mergeSubtitlesAction, onTimeJump, jumpDuration]); // Add mergeSubtitlesAction dependency
 
     if (subtitles.length === 0) {
       return (

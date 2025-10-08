@@ -467,6 +467,15 @@ function MainContent() {
                         setPlaybackTime={setPlaybackTime}
                         editingSubtitleUuid={editingSubtitleUuid}
                         setEditingSubtitleUuid={setEditingSubtitleUuid}
+                        onTimeJump={(seconds) =>
+                          setPlaybackTime(
+                            Math.min(
+                              duration,
+                              Math.max(0, playbackTime + seconds)
+                            )
+                          )
+                        }
+                        jumpDuration={jumpDuration}
                       />
                     </TabsContent>
                   ))}
