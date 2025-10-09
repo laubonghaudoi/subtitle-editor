@@ -130,7 +130,8 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
 
       const raw = await file.text();
       const lower = file.name.toLowerCase();
-      const firstLine = raw.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
+      const firstLine =
+        raw.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
       const isVtt = lower.endsWith(".vtt") || /^WEBVTT( |$)/.test(firstLine);
       const newSubtitles = isVtt ? parseVTT(raw) : parseSRT(raw);
       loadSubtitlesIntoTrack(activeTrackId, newSubtitles);
@@ -202,10 +203,16 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
           (activeElement.tagName === "INPUT" ||
             activeElement.tagName === "TEXTAREA");
 
-        // --- Ctrl + J/L (jump backward/forward in time) ---
-        if (event.ctrlKey && (event.key === "j" || event.key === "l")) {
+        // --- Cmd/Ctrl + J/L (jump backward/forward in time) ---
+        const applePlatformPattern = /Mac|iPhone|iPad|iPod/i;
+        const navigatorUserAgent =
+          typeof navigator !== "undefined" ? navigator.userAgent ?? "" : "";
+        const isApplePlatform = applePlatformPattern.test(navigatorUserAgent);
+        const jumpModPressed = isApplePlatform ? event.metaKey : event.ctrlKey;
+
+        if (jumpModPressed && (event.key === "j" || event.key === "l")) {
           event.preventDefault();
-          
+
           // use the jump duration from jumpDuration state
           if (event.key === "j") {
             onTimeJump(-jumpDuration);
@@ -306,7 +313,14 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
         window.removeEventListener("keydown", handleKeyDown);
       };
       // Effect depends on the values used inside handleKeyDown
-    }, [subtitles, currentTime, setPlaybackTime, mergeSubtitlesAction, onTimeJump, jumpDuration]); // Add mergeSubtitlesAction dependency
+    }, [
+      subtitles,
+      currentTime,
+      setPlaybackTime,
+      mergeSubtitlesAction,
+      onTimeJump,
+      jumpDuration,
+    ]); // Add mergeSubtitlesAction dependency
 
     if (subtitles.length === 0) {
       return (

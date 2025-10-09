@@ -1,6 +1,11 @@
-import { IconPlayerPause, IconPlayerPlay, IconChevronsLeft, IconChevronsRight } from "@tabler/icons-react";
+import {
+  IconPlayerPause,
+  IconPlayerPlay,
+  IconChevronsLeft,
+  IconChevronsRight,
+} from "@tabler/icons-react";
 import type React from "react";
-import { memo, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -126,6 +131,24 @@ export default function CustomControls({
   playbackRate,
   onChangePlaybackRate,
 }: CustomControlsProps) {
+  const [modifierKeyLabel, setModifierKeyLabel] = useState("ctrl");
+
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+
+    const applePlatformPattern = /Mac|iPhone|iPad|iPod/i;
+    const userAgent = navigator.userAgent ?? "";
+
+    if (applePlatformPattern.test(userAgent)) {
+      setModifierKeyLabel("⌘");
+    } else {
+      setModifierKeyLabel("ctrl");
+    }
+  }, []);
+
+  const backwardShortcutLabel = `${modifierKeyLabel} + J`;
+  const forwardShortcutLabel = `${modifierKeyLabel} + L`;
+
   return (
     <div className="p-4 flex items-center gap-4 h-[5vh] border-t-2 border-b-2 border-black">
       <Button onClick={onPlayPause} variant="ghost" className="cursor-pointer">
@@ -136,52 +159,74 @@ export default function CustomControls({
         )}
       </Button>
 
-      <div className="flex items-center gap-1 border-x-1 border-gray-300 px-4">
-          <Button
-            onClick={() => onTimeJump(-jumpDuration)}
-            variant="ghost"
-            className="px-2"
-          >
-            <IconChevronsLeft />
-          </Button>
+      <TooltipProvider>
+        <div className="flex items-center border-x-1 border-gray-300 px-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => onTimeJump(-jumpDuration)}
+                variant="ghost"
+                className="px-2 cursor-pointer"
+              >
+                <IconChevronsLeft />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{backwardShortcutLabel}</TooltipContent>
+          </Tooltip>
           <DropdownMenu>
-            <DropdownMenuTrigger className="px-2 py-2">{jumpDuration}s</DropdownMenuTrigger>
+            <DropdownMenuTrigger className="px-2 py-1 cursor-pointer hover:bg-accent rounded-sm">
+              {jumpDuration}s
+            </DropdownMenuTrigger>
             <DropdownMenuContent className="border-1 border-black">
               <DropdownMenuRadioGroup
                 value={jumpDuration.toString()}
                 onValueChange={onChangeJumpDuration}
               >
-                <DropdownMenuRadioItem value="1">1s</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="2">2s</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="5">5s</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="10">10s</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="1" className="cursor-pointer">
+                  1s
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="2" className="cursor-pointer">
+                  2s
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="5" className="cursor-pointer">
+                  5s
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="10" className="cursor-pointer">
+                  10s
+                </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button
-            onClick={() => onTimeJump(jumpDuration)}
-            variant="ghost"
-            className="px-2"
-          >
-            <IconChevronsRight />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => onTimeJump(jumpDuration)}
+                variant="ghost"
+                className="px-2 cursor-pointer"
+              >
+                <IconChevronsRight />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{forwardShortcutLabel}</TooltipContent>
+          </Tooltip>
         </div>
+      </TooltipProvider>
 
       <DropdownMenu>
-        <DropdownMenuTrigger className="">{playbackRate}x</DropdownMenuTrigger>
+        <DropdownMenuTrigger className="cursor-pointer hover:bg-accent rounded-sm px-2 py-1">{playbackRate}x</DropdownMenuTrigger>
         <DropdownMenuContent className="border-1 border-black">
           <DropdownMenuRadioGroup
             value={playbackRate.toString()}
             onValueChange={onChangePlaybackRate}
           >
-            <DropdownMenuRadioItem value="0.5">0.5x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="0.75">0.75x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="1">1x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="1.25">1.25x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="1.5">1.5x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="2">2x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="3">3x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="4">4x</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="0.5" className="cursor-pointer">0.5x</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="0.75" className="cursor-pointer">0.75x</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="1" className="cursor-pointer">1x</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="1.25" className="cursor-pointer">1.25x</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="1.5" className="cursor-pointer">1.5x</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="2" className="cursor-pointer">2x</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="3" className="cursor-pointer">3x</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="4" className="cursor-pointer">4x</DropdownMenuRadioItem>
           </DropdownMenuRadioGroup>
         </DropdownMenuContent>
       </DropdownMenu>
