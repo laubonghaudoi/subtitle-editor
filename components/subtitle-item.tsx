@@ -175,7 +175,7 @@ const SubtitleItem = memo(function SubtitleItem({
           </div>
 
           {/* Subtitle start and end time */}
-          <div className="text-sm text-muted-foreground flex flex-col gap-0">
+          <div className="text-sm text-muted-foreground flex flex-col gap-1">
             {editingStartTimeId === subtitle.id ? (
               <Input
                 ref={(input) => {
@@ -205,7 +205,7 @@ const SubtitleItem = memo(function SubtitleItem({
                     setEditingStartTimeId(null);
                   }
                 }}
-                className="p-0 w-26 h-8 text-center text-black"
+                className="py-1 bg-blue-100 h-fit text-center min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
               />
             ) : (
               <Button
@@ -221,7 +221,7 @@ const SubtitleItem = memo(function SubtitleItem({
                   }
                 }}
                 variant="ghost"
-                className="hover:bg-transparent h-8 cursor-pointer"
+                className="hover:bg-transparent h-fit cursor-pointer py-1"
               >
                 {subtitle.startTime}
               </Button>
@@ -256,7 +256,7 @@ const SubtitleItem = memo(function SubtitleItem({
                     setEditingEndTimeId(null);
                   }
                 }}
-                className="p-0 w-26 h-8 text-center text-black"
+                className="py-1 bg-blue-100 h-fit text-center min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
               />
             ) : (
               <Button
@@ -272,7 +272,7 @@ const SubtitleItem = memo(function SubtitleItem({
                   }
                 }}
                 variant="ghost"
-                className="hover:bg-transparent h-8 cursor-pointer"
+                className="hover:bg-transparent h-fit cursor-pointer py-1"
               >
                 {subtitle.endTime}
               </Button>
@@ -284,11 +284,14 @@ const SubtitleItem = memo(function SubtitleItem({
             <div className="flex-1">
               {editingSubtitleUuid === subtitle.uuid ? (
                 <Textarea
-                  className="w-full px-2 h-4" // Adjust height as needed
+                  className="w-full h-fit bg-blue-100 min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none [field-sizing:content]" // Adjust height as needed
+                  rows={1}
                   ref={textAreaRef} // Assign ref
                   value={editText}
                   onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => setEditText(e.target.value)}
+                  onChange={(e) => {
+                    setEditText(e.target.value);
+                  }}
                   onBlur={() => {
                     // Only update if text actually changed to avoid unnecessary history steps
                     if (editText !== subtitle.text) {
@@ -328,7 +331,7 @@ const SubtitleItem = memo(function SubtitleItem({
               ) : (
                 <button
                   type="button"
-                  className="w-full text-left text-lg cursor-pointer whitespace-pre-wrap break-words"
+                  className="w-full text-left text-lg px-3 py-2 cursor-pointer whitespace-pre-wrap break-words"
                   tabIndex={0}
                   aria-label={
                     subtitle.text
