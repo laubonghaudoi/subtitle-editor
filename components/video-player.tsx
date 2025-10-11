@@ -133,6 +133,12 @@ export default function VideoPlayer({
             onProgress(state.playedSeconds);
           }
         }}
+        onSeeked={() => {   // sometimes player.seeking is still true when onProgress is called, so this makes sure we update the waveform visualizer when seeking is done
+          if (playerRef.current) {
+            const currentTime = playerRef.current.getCurrentTime();
+            onProgress(currentTime);
+          }
+        }}
         onPlay={() => onPlayPause(true)}
         onPause={() => onPlayPause(false)}
         onDuration={onDuration}
