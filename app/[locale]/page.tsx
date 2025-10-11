@@ -444,6 +444,7 @@ function MainContent() {
                         }
                         // Pass only non-subtitle state/props
                         currentTime={playbackTime}
+                        isPlaying={isPlaying}
                         onScrollToRegion={(uuid) => {
                           if (waveformRef.current) {
                             waveformRef.current.scrollToRegion(uuid);

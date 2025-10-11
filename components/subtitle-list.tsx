@@ -14,6 +14,7 @@ import { useTranslations } from "next-intl";
 // Remove subtitle-related props
 interface SubtitleListProps {
   currentTime?: number;
+  isPlaying: boolean;
   onScrollToRegion: (uuid: string) => void;
   setIsPlaying: (isPlaying: boolean) => void;
   setPlaybackTime: (time: number) => void;
@@ -35,6 +36,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
   (
     {
       currentTime = 0,
+      isPlaying,
       onScrollToRegion,
       setIsPlaying,
       setPlaybackTime,
@@ -177,6 +179,10 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
         return;
       }
 
+      if (!isPlaying || editingSubtitleUuid) {
+        return;
+      }
+
       const currentUuid = currentSubtitle.uuid;
 
       if (suppressAutoCenterUuidRef.current === currentUuid) {
@@ -209,7 +215,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
         }
         activeSubtitleRef.current = currentUuid;
       }
-    }, [currentTime, subtitles]);
+    }, [currentTime, subtitles, isPlaying, editingSubtitleUuid]);
 
     // Keyboard shortcuts effect
     useEffect(() => {
