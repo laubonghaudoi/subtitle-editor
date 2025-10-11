@@ -18,6 +18,13 @@
     "downloadAsSrt": "SRT (.srt)",
     "downloadAsVtt": "WebVTT (.vtt)"
   },
+  "controls": {
+    "play": "Abspielen",
+    "pause": "Pause",
+    "jumpBack": "Zurückspringen um {seconds, plural, =1 {# Sekunde} other {# Sekunden}}",
+    "jumpForward": "Vorspulen um {seconds, plural, =1 {# Sekunde} other {# Sekunden}}",
+    "waveformLabel": "Wellenform-Zeitleiste"
+  },
   "labels": {
     "loadSrtFile": "Eine .srt/.vtt-Datei laden",
     "or": "oder",
@@ -91,6 +98,14 @@
     "delete": "Löschen",
     "noRoom": "Kein Platz zum Hinzufügen"
   },
+  "validation": {
+    "invalidTimeTitle": "Ungültiges Zeitformat",
+    "invalidTimeDescription": "Bitte verwende das Format HH:MM:SS,MS (z. B. 00:00:20,450).",
+    "invalidStartTitle": "Ungültige Startzeit",
+    "invalidStartDescription": "Die Startzeit darf nicht nach der Endzeit des Untertitels liegen.",
+    "invalidEndTitle": "Ungültige Endzeit",
+    "invalidEndDescription": "Die Endzeit darf nicht vor der Startzeit des Untertitels liegen."
+  },
   "metadata": {
     "title": "Untertitel-Editor - Dauerhaft kostenloses, quelloffenes, vollständig webbasiertes SRT/VTT-Bearbeitungstool",
     "description": "Bearbeiten, erstellen und richten Sie Untertiteldateien (SRT/VTT) einfach mit diesem kostenlosen, quelloffenen, webbasierten Editor aus. Bietet Videovorschau und Wellenformvisualisierung. Keine Anmeldung erforderlich.",
@@ -116,5 +131,12 @@
     "toMain": "Zum Hauptinhalt springen",
     "toSubtitles": "Zu Untertiteln springen",
     "toVideo": "Zum Video springen"
+  },
+  "waveform": {
+    "instructions": "Wellenformansicht fokussiert. Drücke die Leertaste zum Abspielen oder Pausieren und nutze die Pfeiltasten links/rechts, um um eine Sekunde zu springen.",
+    "keyboardHint": "Space: Play/Pause - Pfeil links/rechts: +/-1s",
+    "regionSummary": "Untertitel von {start} bis {end} in Spur {track}",
+    "regionAnnouncement": "Untertitel von {start} bis {end} in Spur {track} ausgewählt.",
+    "untitledTrack": "Unbenannte Spur"
   }
 }

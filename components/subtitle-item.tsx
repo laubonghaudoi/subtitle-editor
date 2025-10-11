@@ -89,8 +89,8 @@ const SubtitleItem = memo(function SubtitleItem({
   ) => {
     if (!isValidTime(newTime)) {
       toast({
-        title: "Invalid time format",
-        description: "Please use the format HH:MM:SS,MS (e.g., 00:00:20,450).",
+        title: t("validation.invalidTimeTitle"),
+        description: t("validation.invalidTimeDescription"),
         className: "border-0 bg-orange-200 text-red-700",
       });
       setEditingId(null);
@@ -102,9 +102,8 @@ const SubtitleItem = memo(function SubtitleItem({
     if (isStartTime) {
       if (newTimeInSeconds > timeToSeconds(subtitle.endTime)) {
         toast({
-          title: "Invalid start time",
-          description:
-            "Start time cannot be later than the end time of the subtitle.",
+          title: t("validation.invalidStartTitle"),
+          description: t("validation.invalidStartDescription"),
           className: "border-0 bg-orange-200 text-red-700",
         });
         setEditingId(null);
@@ -113,9 +112,8 @@ const SubtitleItem = memo(function SubtitleItem({
     } else {
       if (newTimeInSeconds < timeToSeconds(subtitle.startTime)) {
         toast({
-          title: "Invalid end time",
-          description:
-            "End time cannot be earlier than the start time of the subtitle.",
+          title: t("validation.invalidEndTitle"),
+          description: t("validation.invalidEndDescription"),
           className: "border-0 bg-orange-200 text-red-700",
         });
         setEditingId(null);
@@ -352,13 +350,14 @@ const SubtitleItem = memo(function SubtitleItem({
             {/* Delete button */}
 
             <Tooltip>
-              <TooltipTrigger
-                type="button"
-                onClick={() => deleteSubtitleAction(subtitle.id)}
-                className="mx-4 my-auto px-2 py-1 text-xs bg-red-100 hover:bg-red-200 text-red-700 rounded cursor-pointer"
-              >
-                <IconTrash size={16} />
-              </TooltipTrigger>
+            <TooltipTrigger
+              type="button"
+              onClick={() => deleteSubtitleAction(subtitle.id)}
+              className="mx-4 my-auto px-2 py-1 text-xs bg-red-100 hover:bg-red-200 text-red-700 rounded cursor-pointer"
+              aria-label={t("tooltips.delete")}
+            >
+              <IconTrash size={16} />
+            </TooltipTrigger>
               <TooltipContent className="bg-red-600 px-2 py-1 text-sm">
                 {t("tooltips.delete")}
               </TooltipContent>
@@ -370,15 +369,16 @@ const SubtitleItem = memo(function SubtitleItem({
         <div className="flex justify-center gap-16 -mt-3 -mb-3">
           {!isLastItem && nextSubtitle && (
             <Tooltip>
-              <TooltipTrigger
-                type="button"
-                onClick={() =>
-                  mergeSubtitlesAction(subtitle.id, nextSubtitle.id)
-                }
-                className="px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded cursor-pointer"
-              >
-                <IconFold size={16} />
-              </TooltipTrigger>
+            <TooltipTrigger
+              type="button"
+              onClick={() =>
+                mergeSubtitlesAction(subtitle.id, nextSubtitle.id)
+              }
+              className="px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded cursor-pointer"
+              aria-label={t("tooltips.merge")}
+            >
+              <IconFold size={16} />
+            </TooltipTrigger>
               <TooltipContent className="bg-amber-500 px-2 py-1 text-sm">
                 {t("tooltips.merge")}
               </TooltipContent>
@@ -403,6 +403,9 @@ const SubtitleItem = memo(function SubtitleItem({
                   ? "bg-gray-200 hover:bg-gray-300 text-gray-700 cursor-not-allowed"
                   : "bg-green-100 hover:bg-green-200 text-green-700 cursor-pointer"
               }`}
+              aria-label={
+                isAddDisabled ? t("tooltips.noRoom") : t("tooltips.add")
+              }
             >
               <IconPlus size={16} />
             </TooltipTrigger>

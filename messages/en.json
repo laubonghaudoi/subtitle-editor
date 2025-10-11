@@ -18,6 +18,13 @@
     "downloadAsSrt": "SRT  .srt",
     "downloadAsVtt": "WebVTT .vtt"
   },
+  "controls": {
+    "play": "Play",
+    "pause": "Pause",
+    "jumpBack": "Jump back {seconds, plural, =1 {# second} other {# seconds}}",
+    "jumpForward": "Jump forward {seconds, plural, =1 {# second} other {# seconds}}",
+    "waveformLabel": "Waveform timeline"
+  },
   "labels": {
     "loadSrtFile": "Load a .srt/.vtt file",
     "or": "or",
@@ -91,6 +98,14 @@
     "delete": "Delete",
     "noRoom": "No room to add"
   },
+  "validation": {
+    "invalidTimeTitle": "Invalid time format",
+    "invalidTimeDescription": "Please use the format HH:MM:SS,MS (e.g., 00:00:20,450).",
+    "invalidStartTitle": "Invalid start time",
+    "invalidStartDescription": "Start time cannot be later than the end time of the subtitle.",
+    "invalidEndTitle": "Invalid end time",
+    "invalidEndDescription": "End time cannot be earlier than the start time of the subtitle."
+  },
   "metadata": {
     "title": "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT/VTT Editing Tool",
     "description": "Edit, create, and align SRT/VTT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
@@ -118,5 +133,12 @@
     "toMain": "Skip to main content",
     "toSubtitles": "Skip to subtitles",
     "toVideo": "Skip to video"
+  },
+  "waveform": {
+    "instructions": "Waveform view focused. Press Space to play or pause, and use the Left and Right arrow keys to move by one second.",
+    "keyboardHint": "Space: play/pause · ←/→: scrub ±1s",
+    "regionSummary": "Subtitle from {start} to {end} on track {track}",
+    "regionAnnouncement": "Selected subtitle from {start} to {end} on track {track}.",
+    "untitledTrack": "Untitled track"
   }
 }

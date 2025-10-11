@@ -22,6 +22,7 @@ import {
 import { secondsToTime } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
+import { useTranslations } from "next-intl";
 
 // Memoized component for the time-sensitive parts
 const TimeDisplayAndSlider = memo(
@@ -131,6 +132,7 @@ export default function CustomControls({
   playbackRate,
   onChangePlaybackRate,
 }: CustomControlsProps) {
+  const t = useTranslations();
   const [modifierKeyLabel, setModifierKeyLabel] = useState("ctrl");
 
   useEffect(() => {
@@ -151,7 +153,12 @@ export default function CustomControls({
 
   return (
     <div className="p-4 flex items-center gap-4 h-[5vh] border-t-2 border-b-2 border-black">
-      <Button onClick={onPlayPause} variant="ghost" className="cursor-pointer">
+      <Button
+        onClick={onPlayPause}
+        variant="ghost"
+        className="cursor-pointer"
+        aria-label={isPlaying ? t("controls.pause") : t("controls.play")}
+      >
         {isPlaying ? (
           <IconPlayerPause size={20} />
         ) : (
@@ -167,6 +174,7 @@ export default function CustomControls({
                 onClick={() => onTimeJump(-jumpDuration)}
                 variant="ghost"
                 className="px-2 cursor-pointer"
+                aria-label={t("controls.jumpBack", { seconds: jumpDuration })}
               >
                 <IconChevronsLeft />
               </Button>
@@ -203,6 +211,9 @@ export default function CustomControls({
                 onClick={() => onTimeJump(jumpDuration)}
                 variant="ghost"
                 className="px-2 cursor-pointer"
+                aria-label={t("controls.jumpForward", {
+                  seconds: jumpDuration,
+                })}
               >
                 <IconChevronsRight />
               </Button>

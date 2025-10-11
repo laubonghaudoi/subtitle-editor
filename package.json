@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint --max-warnings=0 .",
     "format": "biome format --write .",
     "format:check": "biome check --write=false --linter-enabled=false --formatter-enabled=true .",
     "test": "tsx --test tests/**/*.test.ts"
@@ -47,6 +47,8 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.7",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "15.5.4",
     "eslint-plugin-react-compiler": "^19.1.0-rc.2",
     "jsdom": "^27.0.0",
     "postcss": "^8.5.6",
