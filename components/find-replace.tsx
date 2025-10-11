@@ -211,7 +211,7 @@ export default function FindReplace() {
             <Input
               value={findText}
               onChange={(e) => setFindText(e.target.value)}
-              className="flex-1"
+              className="flex-1 px-2 py-1 rounded-xs text-base"
             />
           </div>
           <div className="flex gap-4">
@@ -277,7 +277,7 @@ export default function FindReplace() {
             <Input
               value={replaceText}
               onChange={(e) => setReplaceText(e.target.value)}
-              className="flex-1"
+              className="flex-1 px-2 py-1 rounded-xs text-base"
             />
           </div>
           <div className="text-sm text-gray-500">
@@ -285,7 +285,7 @@ export default function FindReplace() {
             {t("findReplace.selected")}
           </div>
           <div className="w-full max-h-[32rem] overflow-y-auto">
-            <Table className="w-full border-collapse ">
+            <Table className="w-full border-collapse text-base">
               <TableHeader className="bg-gray-200 sticky top-0">
                 <TableRow className="border-black">
                   <TableHead className="sticky top-0 w-8 text-center text-black">
