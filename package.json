@@ -9,7 +9,7 @@
     "lint": "next lint",
     "format": "biome format --write .",
     "format:check": "biome check --write=false --linter-enabled=false --formatter-enabled=true .",
-    "test": "node --test"
+    "test": "tsx --test tests/**/*.test.ts"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.11",
@@ -42,13 +42,16 @@
   "devDependencies": {
     "@biomejs/biome": "^2.2.0",
     "@tailwindcss/postcss": "^4.1.12",
+    "@testing-library/react": "^16.3.0",
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.7",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "eslint-plugin-react-compiler": "^19.1.0-rc.2",
+    "jsdom": "^27.0.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.12",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.2"
   }
 }

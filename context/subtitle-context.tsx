@@ -15,7 +15,14 @@ import {
 } from "@/lib/subtitleOperations";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
 import type { ReactNode } from "react";
-import { createContext, useContext, useState, useEffect, useRef } from "react";
+import {
+  createContext,
+  createElement,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const EMPTY_HISTORY: UndoHistory<Subtitle[]> = {
@@ -169,9 +176,7 @@ interface SubtitleProviderProps {
   children: ReactNode;
 }
 
-export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
-  children,
-}) => {
+export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const [tracks, setTracks] = useState<SubtitleTrack[]>([]);
   const [activeTrackId, setActiveTrackId] = useState<string | null>(null);
   const [showTrackLabels, setShowTrackLabels] = useState<boolean>(false);
@@ -523,12 +528,8 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     subtitles,
   };
 
-  return (
-    <SubtitleContext.Provider value={value}>
-      {children}
-    </SubtitleContext.Provider>
-  );
-};
+  return createElement(SubtitleContext.Provider, { value }, children);
+}
 
 // Create a custom hook for consuming the context
 export const useSubtitleContext = (): SubtitleContextType => {
