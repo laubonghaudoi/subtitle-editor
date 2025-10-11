@@ -144,7 +144,7 @@ export default function LoadSrt() {
               <Input
                 value={track.name}
                 onChange={(e) => renameTrack(track.id, e.target.value)}
-                className="col-span-5 border-neutral-500 rounded-sm"
+                className="px-2 py-2 col-span-5 border-neutral-500 rounded-sm"
               />
               <div className="col-span-6 grid grid-cols-2 gap-2">
                 {track.subtitles.length > 0 ? (

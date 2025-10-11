@@ -418,12 +418,12 @@ function MainContent() {
                   className="h-full flex flex-col"
                 >
                   {tracks.length > 1 && (
-                    <TabsList className="bg-white flex-nowrap overflow-x-auto overflow-y-hidden">
+                    <TabsList className="bg-white py-1 flex-nowrap overflow-x-auto overflow-y-hidden">
                       {tracks.map((track) => (
                         <TabsTrigger
                           key={track.id}
                           value={track.id}
-                          className="flex-shrink-0 data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
+                          className="shadow-none flex-shrink-0 data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
                         >
                           {track.name}
                         </TabsTrigger>
@@ -434,7 +434,7 @@ function MainContent() {
                     <TabsContent
                       key={track.id}
                       value={track.id}
-                      className="flex-grow overflow-y-auto m-0"
+                      className="flex-grow overflow-y-auto m-0 min-h-0"
                     >
                       <SubtitleList
                         ref={
