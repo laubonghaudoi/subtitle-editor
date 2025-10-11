@@ -27,6 +27,7 @@ interface SubtitleItemProps {
   setIsPlaying: (isPlaying: boolean) => void;
   setPlaybackTime: (time: number) => void;
   setEditingSubtitleUuid: React.Dispatch<React.SetStateAction<string | null>>;
+  onPrepareSubtitleInteraction: (uuid: string) => void;
 }
 
 const SubtitleItem = memo(function SubtitleItem({
@@ -39,6 +40,7 @@ const SubtitleItem = memo(function SubtitleItem({
   setIsPlaying,
   setPlaybackTime,
   setEditingSubtitleUuid,
+  onPrepareSubtitleInteraction,
 }: SubtitleItemProps) {
   const t = useTranslations();
   const {
@@ -151,6 +153,7 @@ const SubtitleItem = memo(function SubtitleItem({
         <div
           id={`subtitle-${subtitle.uuid}`}
           tabIndex={-1}
+          onPointerDown={() => onPrepareSubtitleInteraction(subtitle.uuid)}
           onClick={() => onScrollToRegion(subtitle.uuid)}
           onFocus={() => {
             setPlaybackTime(timeToSeconds(subtitle.startTime));
@@ -256,7 +259,7 @@ const SubtitleItem = memo(function SubtitleItem({
                     setEditingEndTimeId(null);
                   }
                 }}
-                className="py-1 bg-blue-100 h-fit text-center min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
+                className="py-1 bg-blue-200 h-fit text-center min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
               />
             ) : (
               <Button
@@ -284,7 +287,7 @@ const SubtitleItem = memo(function SubtitleItem({
             <div className="flex-1">
               {editingSubtitleUuid === subtitle.uuid ? (
                 <Textarea
-                  className="w-full h-fit bg-blue-100 min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none [field-sizing:content]" // Adjust height as needed
+                  className="w-full h-fit bg-blue-200 min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none [field-sizing:content]" // Adjust height as needed
                   rows={1}
                   ref={textAreaRef} // Assign ref
                   value={editText}

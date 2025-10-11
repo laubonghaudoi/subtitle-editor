@@ -48,6 +48,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
     const t = useTranslations();
     const listRef = useRef<HTMLDivElement>(null);
     const activeSubtitleRef = useRef<string | null>(null);
+    const suppressAutoCenterUuidRef = useRef<string | null>(null);
     // Get subtitles and actions from context
     const {
       subtitles,
@@ -152,6 +153,15 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       ]);
     };
 
+    const prepareSubtitleInteraction = (uuid: string) => {
+      suppressAutoCenterUuidRef.current = uuid;
+    };
+
+    const handleSubtitleItemClick = (uuid: string) => {
+      suppressAutoCenterUuidRef.current = uuid;
+      onScrollToRegion(uuid);
+    };
+
     // Scroll to the current subtitle based on playback time
     useEffect(() => {
       if (!listRef.current) return;
@@ -163,34 +173,41 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
           timeToSeconds(sub.endTime) > currentTime, // strict end bound to avoid boundary ambiguity
       );
 
-      if (
-        currentSubtitle &&
-        currentSubtitle.uuid !== activeSubtitleRef.current
-      ) {
-        // Use uuid for the element ID
-        const subtitleElement = document.getElementById(
-          `subtitle-${currentSubtitle.uuid}`,
-        );
-        const container = listRef.current;
-        if (
-          subtitleElement &&
-          container &&
-          container.contains(subtitleElement)
-        ) {
-          // If it's already near centered, skip extra scroll to avoid fighting cross-track jump
-          const cRect = container.getBoundingClientRect();
-          const iRect = subtitleElement.getBoundingClientRect();
-          const centerY = cRect.top + container.clientHeight / 2;
-          const itemCenterY = iRect.top + iRect.height / 2;
-          const offBy = Math.abs(itemCenterY - centerY);
-          if (offBy > 4) {
-            subtitleElement.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-            });
-          }
-          activeSubtitleRef.current = currentSubtitle.uuid;
+      if (!currentSubtitle) {
+        return;
+      }
+
+      const currentUuid = currentSubtitle.uuid;
+
+      if (suppressAutoCenterUuidRef.current === currentUuid) {
+        activeSubtitleRef.current = currentUuid;
+        suppressAutoCenterUuidRef.current = null;
+        return;
+      }
+
+      if (currentUuid === activeSubtitleRef.current) {
+        return;
+      }
+
+      // Use uuid for the element ID
+      const subtitleElement = document.getElementById(
+        `subtitle-${currentUuid}`,
+      );
+      const container = listRef.current;
+      if (subtitleElement && container && container.contains(subtitleElement)) {
+        // If it's already near centered, skip extra scroll to avoid fighting cross-track jump
+        const cRect = container.getBoundingClientRect();
+        const iRect = subtitleElement.getBoundingClientRect();
+        const centerY = cRect.top + container.clientHeight / 2;
+        const itemCenterY = iRect.top + iRect.height / 2;
+        const offBy = Math.abs(itemCenterY - centerY);
+        if (offBy > 4) {
+          subtitleElement.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
         }
+        activeSubtitleRef.current = currentUuid;
       }
     }, [currentTime, subtitles]);
 
@@ -361,7 +378,8 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
                 isLastItem={isLastItem}
                 currentTime={currentTime}
                 editingSubtitleUuid={editingSubtitleUuid}
-                onScrollToRegion={onScrollToRegion}
+                onScrollToRegion={handleSubtitleItemClick}
+                onPrepareSubtitleInteraction={prepareSubtitleInteraction}
                 setEditingSubtitleUuid={setEditingSubtitleUuid}
                 setIsPlaying={setIsPlaying}
                 setPlaybackTime={setPlaybackTime}
