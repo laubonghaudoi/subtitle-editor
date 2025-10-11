@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "format": "biome format --write .",
+    "format:check": "biome check --write=false --linter-enabled=false --formatter-enabled=true .",
     "test": "node --test"
   },
   "dependencies": {

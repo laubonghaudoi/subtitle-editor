@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 const MAX_HISTORY_LENGTH = 50;
 
-interface History<T> {
+export interface UndoHistory<T> {
   past: T[];
   present: T;
   future: T[];
@@ -33,9 +33,11 @@ export function useUndoableState<T>(
   () => void,
   () => void,
   boolean,
-  boolean
+  boolean,
+  () => UndoHistory<T>,
+  (history: UndoHistory<T>) => void
 ] {
-  const [history, setHistory] = useState<History<T>>({
+  const [history, setHistory] = useState<UndoHistory<T>>({
     past: [],
     present: initialState,
     future: [],
@@ -119,5 +121,27 @@ export function useUndoableState<T>(
   };
 
   // Return the state, setter, raw replace, undo/redo functions, and flags
-  return [history.present, setState, replaceState, undo, redo, canUndo, canRedo];
+  const getHistorySnapshot = useCallback(() => history, [history]);
+  const setHistorySnapshot = useCallback(
+    (nextHistory: UndoHistory<T>) => {
+      setHistory({
+        past: nextHistory.past.slice(-MAX_HISTORY_LENGTH),
+        present: nextHistory.present,
+        future: nextHistory.future.slice(0, MAX_HISTORY_LENGTH),
+      });
+    },
+    []
+  );
+
+  return [
+    history.present,
+    setState,
+    replaceState,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    getHistorySnapshot,
+    setHistorySnapshot,
+  ];
 }

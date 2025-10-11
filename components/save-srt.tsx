@@ -44,44 +44,22 @@ export default function SaveSrt() {
     setIsSaveDialogOpen(false);
   };
 
-  const handleSaveClick = () => {
-    // Always open dialog to choose format and track
-    setIsSaveDialogOpen(true);
-  };
-
-  const tracksWithSubtitles = tracks.filter(
-    (track) => track.subtitles.length > 0
-  );
-  const shouldShowDialog = true;
+  const openDialog = () => setIsSaveDialogOpen(true);
+  const isDisabled =
+    tracks.length === 0 || !tracks.some((track) => track.subtitles.length > 0);
 
   return (
     <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
-      {shouldShowDialog ? (
-        <DialogTrigger asChild>
-          <Button
-            onClick={handleSaveClick}
-            disabled={
-              tracks.length === 0 ||
-              !tracks.some((tr) => tr.subtitles.length > 0)
-            }
-            className="cursor-pointer"
-          >
-            <IconDownload size={20} />
-            <span>{t("buttons.saveSrt")}</span>
-          </Button>
-        </DialogTrigger>
-      ) : (
+      <DialogTrigger asChild>
         <Button
-          onClick={handleSaveClick}
-          disabled={
-            tracks.length === 0 || !tracks.some((tr) => tr.subtitles.length > 0)
-          }
+          onClick={openDialog}
+          disabled={isDisabled}
           className="cursor-pointer"
         >
           <IconDownload size={20} />
           <span>{t("buttons.saveSrt")}</span>
         </Button>
-      )}
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[40rem]">
         <DialogHeader>
           <DialogTitle>{t("dialog.saveTitle")}</DialogTitle>

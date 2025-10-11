@@ -8,16 +8,6 @@ import LoadSrt from "@/components/load-srt";
 import SaveSrt from "@/components/save-srt";
 import SkipLinks from "@/components/skip-links";
 import SubtitleList, { type SubtitleListRef } from "@/components/subtitle-list";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -89,10 +79,6 @@ function MainContent() {
   } = useSubtitleContext();
 
   // Keep page-specific state here
-  // The overwrite dialog is not fully implemented with multi-track yet.
-  // We'll keep the state for now and address it in a future step.
-  const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
-  const [pendingSrtFile, setPendingSrtFile] = useState<File | null>(null);
 
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaFileName, setMediaFileName] = useState<string>(
@@ -590,38 +576,6 @@ function MainContent() {
             <BottomInstructions />
           )}
         </div>
-
-        {/* SRT ovverwrite alert dialog */}
-        <AlertDialog
-          open={showOverwriteDialog}
-          onOpenChange={setShowOverwriteDialog}
-        >
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t("dialog.discardTitle")}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t("dialog.discardDescription")}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setPendingSrtFile(null)}>
-                {t("dialog.cancel")}
-              </AlertDialogCancel>
-              <AlertDialogAction
-                className="bg-red-600 hover:bg-red-500"
-                onClick={async () => {
-                  if (pendingSrtFile) {
-                    await handleFileUpload(pendingSrtFile);
-                    setPendingSrtFile(null);
-                  }
-                  setShowOverwriteDialog(false);
-                }}
-              >
-                {t("dialog.yes")}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
     </div>
   );

@@ -73,30 +73,23 @@ export default function VideoPlayer({
   }, [mediaFile]);
 
   useEffect(() => {
-    // Only generate VTT URL if media is loaded
     if (!mediaUrl) {
-      setVttUrl(null); // Clear VTT URL if no media
+      setVttUrl(null);
       return;
     }
 
-    // 1) Convert subtitles to a fresh .vtt Blob URL
     const srtString = subtitlesToSrtString(subtitles);
     const vttString = srtToVtt(srtString);
-    const blob = new Blob([vttString], { type: "text/vtt" });
-    const url = URL.createObjectURL(blob);
+    const dataUrl = `data:text/vtt;charset=utf-8,${encodeURIComponent(
+      vttString
+    )}`;
 
-    // Capture current time before triggering remount
     if (playerRef.current) {
       timeToRestore.current = playerRef.current.getCurrentTime();
     }
 
-    setVttUrl(url); // This will trigger remount via key={vttUrl}
-
-    // Clean up the object URL when the component unmounts or subtitles/media change
-    return () => {
-      URL.revokeObjectURL(url);
-    };
-  }, [subtitles, mediaUrl]); // Add mediaUrl dependency
+    setVttUrl(dataUrl);
+  }, [subtitles, mediaUrl]);
 
   if (!mediaUrl) {
     return (

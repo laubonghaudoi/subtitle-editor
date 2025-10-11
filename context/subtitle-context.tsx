@@ -1,6 +1,9 @@
 "use client";
 
-import { useUndoableState } from "@/hooks/use-undoable-state";
+import {
+  useUndoableState,
+  type UndoHistory,
+} from "@/hooks/use-undoable-state";
 import {
   addSubtitle,
   deleteSubtitle,
@@ -12,15 +15,91 @@ import {
 } from "@/lib/subtitleOperations";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
 import type { ReactNode } from "react";
-import {
-  createContext,
-  useContext,
-  useState,
-  useMemo,
-  useEffect,
-  useRef,
-} from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
+
+const EMPTY_HISTORY: UndoHistory<Subtitle[]> = {
+  past: [],
+  present: [],
+  future: [],
+};
+
+const ensureTrackMetadata = (
+  subtitles: Subtitle[],
+  trackId: string
+): Subtitle[] => {
+  let mutated = false;
+  const normalized = subtitles.map((subtitle) => {
+    if (subtitle.trackId === trackId) {
+      return subtitle;
+    }
+    mutated = true;
+    return { ...subtitle, trackId };
+  });
+  return mutated ? normalized : subtitles;
+};
+
+const subtitlesAreEqual = (a: Subtitle[], b: Subtitle[]): boolean => {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    const prev = a[i];
+    const next = b[i];
+    if (
+      prev.id !== next.id ||
+      prev.uuid !== next.uuid ||
+      prev.startTime !== next.startTime ||
+      prev.endTime !== next.endTime ||
+      prev.text !== next.text ||
+      prev.trackId !== next.trackId
+    ) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const historiesAreEqual = (
+  a: UndoHistory<Subtitle[]> | undefined,
+  b: UndoHistory<Subtitle[]> | undefined
+): boolean => {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  if (a.past.length !== b.past.length || a.future.length !== b.future.length) {
+    return false;
+  }
+  for (let i = 0; i < a.past.length; i++) {
+    if (!subtitlesAreEqual(a.past[i], b.past[i])) {
+      return false;
+    }
+  }
+  if (!subtitlesAreEqual(a.present, b.present)) {
+    return false;
+  }
+  for (let i = 0; i < a.future.length; i++) {
+    if (!subtitlesAreEqual(a.future[i], b.future[i])) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const isHistoryEmpty = (history: UndoHistory<Subtitle[]>) =>
+  history.past.length === 0 &&
+  history.present.length === 0 &&
+  history.future.length === 0;
+
+const createTrackHistory = (
+  trackId: string,
+  subtitles: Subtitle[]
+): UndoHistory<Subtitle[]> => {
+  const normalized = ensureTrackMetadata(subtitles, trackId);
+  return {
+    past: [],
+    present: normalized,
+    future: [],
+  };
+};
 
 // Define the shape of the context value
 interface SubtitleContextType {
@@ -97,60 +176,93 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
   const [activeTrackId, setActiveTrackId] = useState<string | null>(null);
   const [showTrackLabels, setShowTrackLabels] = useState<boolean>(false);
   const previousActiveTrackId = useRef<string | null>(null);
-  const hasSyncedActiveTrack = useRef(false);
+  const trackHistoriesRef = useRef<
+    Map<string, UndoHistory<Subtitle[]>>
+  >(new Map());
 
-  // Note: We are keeping a separate undo/redo history for now.
-  // A more robust solution would involve a single history for all tracks.
+  // Each track keeps an independent undo/redo history stored alongside the track list.
   const [
-    _subtitles, // Raw subtitles from the undoable state
+    activeSubtitles, // Raw subtitles from the undoable state
     setSubtitlesWithHistory,
-    replaceSubtitlesWithoutHistory,
+    /* skip replaceState */,
     undoSubtitles,
     redoSubtitles,
     canUndoSubtitles,
     canRedoSubtitles,
+    getHistorySnapshot,
+    setHistorySnapshot,
   ] = useUndoableState<Subtitle[]>([], {
-    isEqual: (previous, next) => {
-      if (previous === next) return true;
-      if (previous.length !== next.length) return false;
-      for (let i = 0; i < previous.length; i++) {
-        const a = previous[i];
-        const b = next[i];
-        if (a === b) continue;
-        if (
-          a.id !== b.id ||
-          a.uuid !== b.uuid ||
-          a.startTime !== b.startTime ||
-          a.endTime !== b.endTime ||
-          a.text !== b.text ||
-          a.trackId !== b.trackId
-        ) {
-          return false;
-        }
-      }
-      return true;
-    },
+    isEqual: subtitlesAreEqual,
   });
 
   // CRITICAL FIX: This effect synchronizes the undo/redo state
   // with the currently active track.
   useEffect(() => {
-    if (
-      hasSyncedActiveTrack.current &&
-      previousActiveTrackId.current === activeTrackId
-    ) {
+    const snapshot = getHistorySnapshot();
+    const previousId = previousActiveTrackId.current;
+
+    if (previousId && previousId !== activeTrackId) {
+      trackHistoriesRef.current.set(previousId, snapshot);
+    }
+
+    if (!activeTrackId) {
+      previousActiveTrackId.current = null;
+      if (!isHistoryEmpty(snapshot)) {
+        setHistorySnapshot(EMPTY_HISTORY);
+      }
       return;
     }
-    previousActiveTrackId.current = activeTrackId;
-    hasSyncedActiveTrack.current = true;
 
-    const activeTrack = tracks.find(track => track.id === activeTrackId);
-    if (activeTrack) {
-      replaceSubtitlesWithoutHistory(activeTrack.subtitles);
-    } else {
-      replaceSubtitlesWithoutHistory([]);
+    const cachedHistory = trackHistoriesRef.current.get(activeTrackId);
+
+    if (!cachedHistory) {
+      const activeTrack = tracks.find((track) => track.id === activeTrackId);
+      const seededHistory = createTrackHistory(
+        activeTrackId,
+        activeTrack ? activeTrack.subtitles : []
+      );
+      trackHistoriesRef.current.set(activeTrackId, seededHistory);
+      if (!historiesAreEqual(seededHistory, snapshot)) {
+        setHistorySnapshot(seededHistory);
+      }
+      previousActiveTrackId.current = activeTrackId;
+      return;
     }
-  }, [activeTrackId, tracks, replaceSubtitlesWithoutHistory]);
+
+    if (previousId === activeTrackId) {
+      if (!historiesAreEqual(cachedHistory, snapshot)) {
+        trackHistoriesRef.current.set(activeTrackId, snapshot);
+      }
+      previousActiveTrackId.current = activeTrackId;
+      return;
+    }
+
+    if (!historiesAreEqual(cachedHistory, snapshot)) {
+      setHistorySnapshot(cachedHistory);
+    }
+    previousActiveTrackId.current = activeTrackId;
+  }, [activeTrackId, getHistorySnapshot, setHistorySnapshot, tracks]);
+
+  useEffect(() => {
+    if (!activeTrackId) return;
+    setTracks((prevTracks) => {
+      let hasChanges = false;
+      const nextTracks = prevTracks.map((track) => {
+        if (track.id !== activeTrackId) {
+          return track;
+        }
+        if (track.subtitles === activeSubtitles) {
+          return track;
+        }
+        hasChanges = true;
+        return {
+          ...track,
+          subtitles: activeSubtitles,
+        };
+      });
+      return hasChanges ? nextTracks : prevTracks;
+    });
+  }, [activeTrackId, activeSubtitles]);
 
 
   const addTrack = (
@@ -165,16 +277,19 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     }
 
     const newTrackId = uuidv4();
+    const history = createTrackHistory(newTrackId, subtitles);
     const newTrack: SubtitleTrack = {
       id: newTrackId,
       name,
-      subtitles: subtitles.map(sub => ({ ...sub, trackId: newTrackId })),
+      subtitles: history.present,
       vttHeader: meta?.vttHeader,
       vttPrologue: meta?.vttPrologue,
     };
     setTracks(prev => [...prev, newTrack]);
+    trackHistoriesRef.current.set(newTrackId, history);
     if (!activeTrackId) {
       setActiveTrackId(newTrackId);
+      setHistorySnapshot(history);
     }
     return newTrackId;
   };
@@ -184,12 +299,14 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     newSubtitles: Subtitle[],
     meta?: { vttHeader?: string; vttPrologue?: string[] }
   ) => {
-    setTracks(prevTracks =>
-      prevTracks.map(track => {
+    const history = createTrackHistory(trackId, newSubtitles);
+    trackHistoriesRef.current.set(trackId, history);
+    setTracks((prevTracks) =>
+      prevTracks.map((track) => {
         if (track.id === trackId) {
           return {
             ...track,
-            subtitles: newSubtitles.map(sub => ({ ...sub, trackId })),
+            subtitles: history.present,
             vttHeader: meta?.vttHeader ?? track.vttHeader,
             vttPrologue: meta?.vttPrologue ?? track.vttPrologue,
           };
@@ -197,23 +314,21 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
         return track;
       })
     );
-    // Also update the undo/redo history if it's the active track
     if (trackId === activeTrackId) {
-      setSubtitlesWithHistory(newSubtitles);
+      setHistorySnapshot(history);
     }
   };
 
   const deleteTrack = (trackId: string) => {
-    setTracks(prevTracks => {
-      const remainingTracks = prevTracks.filter(track => track.id !== trackId);
-      // If the deleted track was the active one, pick a new active track
+    trackHistoriesRef.current.delete(trackId);
+    setTracks((prevTracks) => {
+      const remainingTracks = prevTracks.filter((track) => track.id !== trackId);
       if (trackId === activeTrackId) {
         if (remainingTracks.length > 0) {
           setActiveTrackId(remainingTracks[0].id);
-          replaceSubtitlesWithoutHistory(remainingTracks[0].subtitles);
         } else {
           setActiveTrackId(null);
-          replaceSubtitlesWithoutHistory([]);
+          setHistorySnapshot(EMPTY_HISTORY);
         }
       }
       return remainingTracks;
@@ -237,23 +352,34 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
   ) => {
     const newTrackId = addTrack(trackName || "Track 1", subs, meta);
     if (!newTrackId) return;
+    if (activeTrackId) {
+      trackHistoriesRef.current.set(activeTrackId, getHistorySnapshot());
+    }
     setActiveTrackId(newTrackId);
-    setSubtitlesWithHistory(subs); // Set history for the first track
+    const seededHistory = trackHistoriesRef.current.get(newTrackId);
+    if (seededHistory) {
+      setHistorySnapshot(seededHistory);
+    } else {
+      const fallbackHistory = createTrackHistory(newTrackId, subs);
+      trackHistoriesRef.current.set(newTrackId, fallbackHistory);
+      setHistorySnapshot(fallbackHistory);
+    }
   };
 
-  // This is a temporary solution. In a real implementation, we would
-  // likely want to manage history per-track or have a more complex history state.
+  // Central helper to fan-out subtitle mutations into undo history + track state.
   const handleTrackedStateChange = (newSubtitles: Subtitle[]) => {
-    setSubtitlesWithHistory(newSubtitles);
-    if (activeTrackId) {
-      setTracks(prevTracks =>
-        prevTracks.map(track =>
-          track.id === activeTrackId
-            ? { ...track, subtitles: newSubtitles }
-            : track
-        )
-      );
+    if (!activeTrackId) {
+      setSubtitlesWithHistory(newSubtitles);
+      return;
     }
+
+    const normalized = ensureTrackMetadata(newSubtitles, activeTrackId);
+    setSubtitlesWithHistory(normalized);
+    setTracks((prevTracks) =>
+      prevTracks.map((track) =>
+        track.id === activeTrackId ? { ...track, subtitles: normalized } : track
+      )
+    );
   };
 
 
@@ -262,15 +388,17 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     afterId: number | null,
     newSubtitleText?: string
   ) => {
-    handleTrackedStateChange(addSubtitle(_subtitles, beforeId, afterId, newSubtitleText));
+    handleTrackedStateChange(
+      addSubtitle(activeSubtitles, beforeId, afterId, newSubtitleText)
+    );
   };
 
   const deleteSubtitleAction = (id: number) => {
-    handleTrackedStateChange(deleteSubtitle(_subtitles, id));
+    handleTrackedStateChange(deleteSubtitle(activeSubtitles, id));
   };
 
   const mergeSubtitlesAction = (id1: number, id2: number) => {
-    handleTrackedStateChange(mergeSubtitles(_subtitles, id1, id2));
+    handleTrackedStateChange(mergeSubtitles(activeSubtitles, id1, id2));
   };
 
   const splitSubtitleAction = (
@@ -278,11 +406,13 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     caretPos: number,
     textLength: number
   ) => {
-    handleTrackedStateChange(splitSubtitle(_subtitles, id, caretPos, textLength));
+    handleTrackedStateChange(
+      splitSubtitle(activeSubtitles, id, caretPos, textLength)
+    );
   };
 
   const updateSubtitleTextAction = (id: number, newText: string) => {
-    handleTrackedStateChange(updateSubtitle(_subtitles, id, newText));
+    handleTrackedStateChange(updateSubtitle(activeSubtitles, id, newText));
   };
 
   // Combined time update for WaveformVisualizer drag
@@ -292,7 +422,7 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
     newEndTime: string
   ) => {
     handleTrackedStateChange(
-      _subtitles.map(sub =>
+      activeSubtitles.map((sub) =>
         sub.id === id
           ? { ...sub, startTime: newStartTime, endTime: newEndTime }
           : sub
@@ -344,11 +474,15 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
 
   // Individual time updates for SubtitleItem inputs
   const updateSubtitleStartTimeAction = (id: number, newTime: string) => {
-    handleTrackedStateChange(updateSubtitleStartTime(id, newTime)(_subtitles));
+    handleTrackedStateChange(
+      updateSubtitleStartTime(id, newTime)(activeSubtitles)
+    );
   };
 
   const updateSubtitleEndTimeAction = (id: number, newTime: string) => {
-    handleTrackedStateChange(updateSubtitleEndTime(id, newTime)(_subtitles));
+    handleTrackedStateChange(
+      updateSubtitleEndTime(id, newTime)(activeSubtitles)
+    );
   };
 
   // Action for Find/Replace
@@ -357,11 +491,7 @@ export const SubtitleProvider: React.FC<SubtitleProviderProps> = ({
   };
 
   // Get the subtitles for the active track
-  const subtitles = useMemo(() => {
-    if (!activeTrackId) return [];
-    const activeTrack = tracks.find(t => t.id === activeTrackId);
-    return activeTrack ? activeTrack.subtitles : [];
-  }, [tracks, activeTrackId]);
+  const subtitles = activeSubtitles;
 
 
   // --- Context Value ---
