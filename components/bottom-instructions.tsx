@@ -41,15 +41,14 @@ export default function BottomInstructions() {
             {t("shortcuts.mergeSubtitle")}
           </li>
           <li>
-            <kbd>alt</kbd> (Windows) / <kbd>option</kbd> (Mac) + <kbd>1</kbd>–<kbd>4</kbd>{" "}
-            {t("shortcuts.switchTrack")}
+            <kbd>alt</kbd> (Windows) / <kbd>option</kbd> (Mac) + <kbd>1</kbd>–
+            <kbd>4</kbd> {t("shortcuts.switchTrack")}
           </li>
           <li>
-            <kbd>ctrl</kbd> + <kbd>z</kbd> (Windows) {t("labels.or")}{" "}
-            <kbd>&#8984;</kbd> + <kbd>z</kbd> (Mac) {t("shortcuts.undoRedo")}{" "}
-            <kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>z</kbd> (Windows){" "}
-            {t("labels.or")} <kbd>&#8984;</kbd> + <kbd>shift</kbd> +{" "}
-            <kbd>z</kbd> (Mac) {t("shortcuts.undoRedoAction")}
+            <kbd>ctrl</kbd> (Windows) / <kbd>&#8984;</kbd> (Mac) + <kbd>z</kbd>{" "}
+            {t("shortcuts.undoRedo")} <kbd>ctrl</kbd> (Windows) /{" "}
+            <kbd>&#8984;</kbd> (Mac) + <kbd>shift</kbd> + <kbd>z</kbd>{" "}
+            {t("shortcuts.undoRedoAction")}
           </li>
         </ul>
       </div>

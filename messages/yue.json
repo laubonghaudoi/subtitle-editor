@@ -49,7 +49,7 @@
     "editText": "撳字幕文字或時間點嚟編輯字幕。",
     "icons": "撳圖標嚟新增、合併或刪除字幕。",
     "dragBorders": "拖動波形圖方框嘅虛線邊界嚟改變字幕時間。",
-    "rememberSave": "編輯完後，記得撳「儲存」，揀 .srt/.vtt 格式嚟下載字幕！"
+    "rememberSave": "編輯完後，記得撳「儲存」，揀 .srt /.vtt 格式嚟下載字幕！"
   },
   "shortcuts": {
     "title": "快捷掣",

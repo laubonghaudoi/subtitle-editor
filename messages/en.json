@@ -49,7 +49,7 @@
     "editText": "Click the subtitle text or timestamps to edit your captions.",
     "icons": "Click the icons to add, merge or delete subtitles.",
     "dragBorders": "Drag the dashed borders on the waveform to change the subtitles' time stamps.",
-    "rememberSave": "Remember to click \"Save\" to download as .srt/.vtt when you finish editing!"
+    "rememberSave": "Remember to click \"Save\" to download as .srt / .vtt when you finish editing!"
   },
   "shortcuts": {
     "title": "Shortcuts",

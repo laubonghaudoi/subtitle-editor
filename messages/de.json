@@ -9,17 +9,17 @@
     "loadMedia": "Medien laden",
     "loadSrt": "Untertitel laden",
     "saveSrt": "Speichern",
-    "loadSrtFile": "SRT/VTT-Datei laden",
+    "loadSrtFile": ".srt/.vtt-Datei laden",
     "newTrack": "Neue Spur erstellen",
     "maxTracksReached": "Sie können maximal 4 Spuren hinzufügen",
     "reloadSrt": "SRT/VTT neu laden",
     "fromScratch": "Neu anfangen",
     "download": "Herunterladen",
-    "downloadAsSrt": "Als SRT herunterladen",
-    "downloadAsVtt": "Als VTT herunterladen"
+    "downloadAsSrt": "SRT (.srt)",
+    "downloadAsVtt": "WebVTT (.vtt)"
   },
   "labels": {
-    "loadSrtFile": "Eine SRT/VTT-Datei laden",
+    "loadSrtFile": "Eine .srt/.vtt-Datei laden",
     "or": "oder",
     "startFromScratch": "Von vorne beginnen"
   },
@@ -49,7 +49,7 @@
     "editText": "Klicken Sie auf den Untertiteltext oder die Zeitstempel, um Ihre Untertitel zu bearbeiten.",
     "icons": "Klicken Sie auf die Symbole, um Untertitel hinzuzufügen, zusammenzuführen oder zu löschen.",
     "dragBorders": "Ziehen Sie die gestrichelten Ränder auf der Wellenform, um die Zeitstempel der Untertitel zu ändern.",
-    "rememberSave": "Denken Sie daran, auf „Speichern“ zu klicken, um die Untertitel als .srt oder .vtt herunterzuladen!"
+    "rememberSave": "Denken Sie daran, auf „Speichern“ zu klicken, um die Untertitel als .srt/.vtt herunterzuladen!"
   },
   "shortcuts": {
     "title": "Tastenkombinationen",
@@ -57,11 +57,11 @@
     "tab": "zum Bearbeiten des aktuellen Untertiteltextes.",
     "arrows": "und",
     "arrowsAction": "zum Springen zum vorherigen/nächsten Untertitel.",
-    "splitSubtitle": "zum Teilen des Untertiteltextes an der Cursorposition während der Bearbeitung",
-    "mergeSubtitle": "zum Zusammenführen des aktuellen Untertitels mit dem vorherigen",
-    "switchTrack": "um zwischen Spuren zu wechseln.",
+    "splitSubtitle": "zum Teilen des Untertiteltextes an der Cursorposition während der Bearbeitung.",
+    "mergeSubtitle": "zum Zusammenführen des aktuellen Untertitels mit dem vorherigen.",
+    "switchTrack": "um zwischen Untertitelspuren zu wechseln, wenn mehrere vorhanden sind.",
     "undoRedo": "zum Rückgängigmachen,",
-    "undoRedoAction": "zum Wiederherstellen"
+    "undoRedoAction": "zum Wiederherstellen."
   },
   "dialog": {
     "discardTitle": "Änderungen verwerfen?",
@@ -71,7 +71,7 @@
     "cancel": "Abbrechen",
     "yes": "Ja, verwerfen",
     "srtTitle": "Untertitelspuren verwalten",
-    "srtDescription": "Sie können maximal 4 Spuren hinzufügen. Sie können die Untertitelspur umbenennen.",
+    "srtDescription": "Sie können maximal 4 Spuren hinzufügen und jede Spur umbenennen.",
     "saveTitle": "Format auswählen",
     "saveDescription": "Wählen Sie eine Spur, um sie als .srt oder .vtt herunterzuladen.",
     "deleteTrackTitle": "Diese Spur löschen?",
