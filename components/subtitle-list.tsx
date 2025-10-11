@@ -27,7 +27,7 @@ interface SubtitleListProps {
 export interface SubtitleListRef {
   scrollToSubtitle: (
     uuid: string,
-    opts?: { instant?: boolean; center?: boolean; focus?: boolean }
+    opts?: { instant?: boolean; center?: boolean; focus?: boolean },
   ) => boolean;
 }
 
@@ -43,7 +43,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       onTimeJump,
       jumpDuration,
     },
-    ref
+    ref,
   ) => {
     const t = useTranslations();
     const listRef = useRef<HTMLDivElement>(null);
@@ -61,7 +61,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
     useImperativeHandle(ref, () => ({
       scrollToSubtitle: (
         uuid: string,
-        opts?: { instant?: boolean; center?: boolean; focus?: boolean }
+        opts?: { instant?: boolean; center?: boolean; focus?: boolean },
       ) => {
         const subtitleElement = document.getElementById(`subtitle-${uuid}`);
         const container = listRef.current;
@@ -123,7 +123,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
     }));
 
     const handleSrtFileSelect = async (
-      event: React.ChangeEvent<HTMLInputElement>
+      event: React.ChangeEvent<HTMLInputElement>,
     ) => {
       const file = event.target.files?.[0];
       if (!file || !activeTrackId) return;
@@ -160,7 +160,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       const currentSubtitle = subtitles.find(
         (sub) =>
           timeToSeconds(sub.startTime) <= currentTime &&
-          timeToSeconds(sub.endTime) > currentTime // strict end bound to avoid boundary ambiguity
+          timeToSeconds(sub.endTime) > currentTime, // strict end bound to avoid boundary ambiguity
       );
 
       if (
@@ -169,7 +169,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       ) {
         // Use uuid for the element ID
         const subtitleElement = document.getElementById(
-          `subtitle-${currentSubtitle.uuid}`
+          `subtitle-${currentSubtitle.uuid}`,
         );
         const container = listRef.current;
         if (
@@ -206,7 +206,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
         // --- Cmd/Ctrl + J/L (jump backward/forward in time) ---
         const applePlatformPattern = /Mac|iPhone|iPad|iPod/i;
         const navigatorUserAgent =
-          typeof navigator !== "undefined" ? navigator.userAgent ?? "" : "";
+          typeof navigator !== "undefined" ? (navigator.userAgent ?? "") : "";
         const isApplePlatform = applePlatformPattern.test(navigatorUserAgent);
         const jumpModPressed = isApplePlatform ? event.metaKey : event.ctrlKey;
 
@@ -234,13 +234,13 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
           let currentIndex = subtitles.findIndex(
             (sub) =>
               timeToSeconds(sub.startTime) <= currentTime &&
-              timeToSeconds(sub.endTime) > currentTime
+              timeToSeconds(sub.endTime) > currentTime,
           );
 
           // If no subtitle is active, find the closest one before the current time
           if (currentIndex === -1) {
             currentIndex = subtitles.findLastIndex(
-              (sub) => timeToSeconds(sub.startTime) <= currentTime
+              (sub) => timeToSeconds(sub.startTime) <= currentTime,
             );
           }
 
@@ -273,13 +273,13 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
           let currentIndex = subtitles.findIndex(
             (sub) =>
               timeToSeconds(sub.startTime) <= currentTime &&
-              timeToSeconds(sub.endTime) > currentTime // Use the corrected logic
+              timeToSeconds(sub.endTime) > currentTime, // Use the corrected logic
           );
 
           // If no subtitle is active, find the closest one before the current time
           if (currentIndex === -1) {
             currentIndex = subtitles.findLastIndex(
-              (sub) => timeToSeconds(sub.startTime) <= currentTime
+              (sub) => timeToSeconds(sub.startTime) <= currentTime,
             );
             // If still not found (e.g., time is before the first subtitle), default to 0
             if (currentIndex === -1) {
@@ -371,7 +371,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
         </AnimatePresence>
       </div>
     );
-  }
+  },
 );
 
 SubtitleList.displayName = "SubtitleList";

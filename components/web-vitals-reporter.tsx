@@ -7,6 +7,6 @@ export default function WebVitalsReporter() {
   useEffect(() => {
     reportWebVitals();
   }, []);
-  
+
   return null;
 }

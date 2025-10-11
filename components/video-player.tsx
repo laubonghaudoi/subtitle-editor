@@ -81,7 +81,7 @@ export default function VideoPlayer({
     const srtString = subtitlesToSrtString(subtitles);
     const vttString = srtToVtt(srtString);
     const dataUrl = `data:text/vtt;charset=utf-8,${encodeURIComponent(
-      vttString
+      vttString,
     )}`;
 
     if (playerRef.current) {

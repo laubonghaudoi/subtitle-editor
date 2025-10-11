@@ -39,7 +39,7 @@ const TRACK_HANDLE_COLORS = [
 const getContentHtml = (
   startTime: string,
   text: string,
-  endTime: string
+  endTime: string,
 ): HTMLElement => {
   const content = document.createElement("div");
   // This is the style for the parent div of the region
@@ -75,12 +75,12 @@ const getContentHtml = (
 
 const styleRegionHandles = (
   region: Region,
-  handleColor: string = HANDLE_COLOR
+  handleColor: string = HANDLE_COLOR,
 ) => {
   // I have to do all these hakcy styling because the wavesurfer api doesn't allow custom styling regions
   if (!region.element) return;
   const leftHandleDiv = region.element.querySelector(
-    'div[part="region-handle region-handle-left"]'
+    'div[part="region-handle region-handle-left"]',
   ) as HTMLDivElement;
   if (leftHandleDiv) {
     leftHandleDiv.style.cssText += `
@@ -107,7 +107,7 @@ const styleRegionHandles = (
   }
 
   const rightHandleDiv = region.element.querySelector(
-    'div[part="region-handle region-handle-right"]'
+    'div[part="region-handle region-handle-right"]',
   ) as HTMLDivElement;
   if (rightHandleDiv) {
     rightHandleDiv.style.cssText += `
@@ -153,7 +153,7 @@ export default forwardRef(function WaveformVisualizer(
   ref: ForwardedRef<{
     scrollToRegion: (uuid: string) => void;
     setWaveformTime: (time: number) => void;
-  }>
+  }>,
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
   // Get tracks, active track, and actions from context
@@ -241,14 +241,14 @@ export default forwardRef(function WaveformVisualizer(
           const minutes = Math.floor((seconds % 3600) / 60);
           const remainingSeconds = seconds % 60;
           const milliseconds = Math.round(
-            (remainingSeconds - Math.floor(remainingSeconds)) * 1000
+            (remainingSeconds - Math.floor(remainingSeconds)) * 1000,
           );
 
           const paddedHours = String(hours).padStart(2, "0");
           const paddedMinutes = String(minutes).padStart(2, "0");
           const paddedSeconds = String(Math.floor(remainingSeconds)).padStart(
             2,
-            "0"
+            "0",
           );
           const paddedMilliseconds = String(milliseconds).padStart(3, "0");
 
@@ -301,7 +301,7 @@ export default forwardRef(function WaveformVisualizer(
         }
       },
     }),
-    [wavesurfer, onSeek] // Add dependencies
+    [wavesurfer, onSeek], // Add dependencies
   );
 
   // Handle zoom level based on duration
@@ -475,7 +475,7 @@ export default forwardRef(function WaveformVisualizer(
         const content = getContentHtml(
           subtitle.startTime,
           subtitle.text,
-          subtitle.endTime
+          subtitle.endTime,
         );
 
         // Get colors for this track
@@ -642,7 +642,7 @@ export default forwardRef(function WaveformVisualizer(
         // Completely passed over, revert to original position
         // Find original subtitle using UUID from current track
         const originalSubtitle = currentTrack.subtitles.find(
-          (s) => s.uuid === subtitleUuid
+          (s) => s.uuid === subtitleUuid,
         );
         if (originalSubtitle) {
           const originalStartTime = timeToSeconds(originalSubtitle.startTime);
@@ -659,7 +659,7 @@ export default forwardRef(function WaveformVisualizer(
             content: getContentHtml(
               originalSubtitle.startTime,
               originalSubtitle.text,
-              originalSubtitle.endTime
+              originalSubtitle.endTime,
             ),
           });
 
@@ -704,14 +704,14 @@ export default forwardRef(function WaveformVisualizer(
 
       // Find subtitle by UUID to update content from current track
       const subtitle = currentTrack.subtitles.find(
-        (s) => s.uuid === subtitleUuid
+        (s) => s.uuid === subtitleUuid,
       );
       if (subtitle) {
         region.setOptions({
           content: getContentHtml(
             newStartTimeFormatted,
             subtitle.text,
-            newEndTimeFormatted
+            newEndTimeFormatted,
           ),
         });
 
@@ -731,7 +731,7 @@ export default forwardRef(function WaveformVisualizer(
       updateSubtitleTimeByUuidAction(
         subtitleUuid, // Pass the UUID to find the correct subtitle
         newStartTimeFormatted,
-        newEndTimeFormatted
+        newEndTimeFormatted,
       );
       requestAnimationFrame(measureLabelsOverlay);
     };
@@ -789,7 +789,13 @@ export default forwardRef(function WaveformVisualizer(
       }
       window.removeEventListener("pointerup", handlePointerUp);
     };
-  }, [wavesurfer, tracks, activeTrackId, setActiveTrackId, updateSubtitleTimeByUuidAction]); // Depend on context action
+  }, [
+    wavesurfer,
+    tracks,
+    activeTrackId,
+    setActiveTrackId,
+    updateSubtitleTimeByUuidAction,
+  ]); // Depend on context action
 
   // Re-measure label overlay when labels are toggled or track count changes
   useEffect(() => {
@@ -839,7 +845,7 @@ export default forwardRef(function WaveformVisualizer(
           const content = getContentHtml(
             subtitle.startTime,
             subtitle.text,
-            subtitle.endTime
+            subtitle.endTime,
           );
 
           // Get colors for this track
@@ -891,7 +897,7 @@ export default forwardRef(function WaveformVisualizer(
             content: getContentHtml(
               subtitle.startTime,
               subtitle.text,
-              subtitle.endTime
+              subtitle.endTime,
             ),
           });
 

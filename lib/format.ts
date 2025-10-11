@@ -13,7 +13,7 @@ export const buildSrtContent = (subtitles: Subtitle[]): string => {
 
 export const buildVttContent = (
   subtitles: Subtitle[],
-  opts?: { header?: string; prologue?: string[] }
+  opts?: { header?: string; prologue?: string[] },
 ): string => {
   const srt = buildSrtContent(subtitles);
   const header = (opts?.header || "WEBVTT").trim();

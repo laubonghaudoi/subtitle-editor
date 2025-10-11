@@ -1,7 +1,7 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { secondsToTime, subtitlesToSrtString } from '../lib/utils';
-import type { Subtitle } from '../types/subtitle';
+import test from "node:test";
+import assert from "node:assert/strict";
+import { secondsToTime, subtitlesToSrtString } from "../lib/utils";
+import type { Subtitle } from "../types/subtitle";
 
 function generateSubtitles(count: number, startOffsetSec = 0): Subtitle[] {
   const subs: Subtitle[] = [];
@@ -21,7 +21,7 @@ function generateSubtitles(count: number, startOffsetSec = 0): Subtitle[] {
   return subs;
 }
 
-test('subtitlesToSrtString handles 4 tracks worth of data', () => {
+test("subtitlesToSrtString handles 4 tracks worth of data", () => {
   const tracks = [
     generateSubtitles(250, 0),
     generateSubtitles(250, 0.5),
@@ -33,8 +33,7 @@ test('subtitlesToSrtString handles 4 tracks worth of data', () => {
   for (const out of outputs) {
     assert.ok(out.length > 0);
     // Should contain time arrows and sample text
-    assert.ok(out.includes('-->'));
-    assert.ok(out.includes('Subtitle'));
+    assert.ok(out.includes("-->"));
+    assert.ok(out.includes("Subtitle"));
   }
 });
-

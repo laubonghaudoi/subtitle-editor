@@ -35,7 +35,7 @@ export async function generateMetadata({
           ...acc,
           [l]: localeConfig[l].url,
         }),
-        {}
+        {},
       ),
     },
     openGraph: {

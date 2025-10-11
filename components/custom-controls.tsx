@@ -102,7 +102,7 @@ const TimeDisplayAndSlider = memo(
         </span>
       </>
     );
-  }
+  },
 );
 
 TimeDisplayAndSlider.displayName = "TimeDisplayAndSlider";
@@ -224,20 +224,38 @@ export default function CustomControls({
       </TooltipProvider>
 
       <DropdownMenu>
-        <DropdownMenuTrigger className="cursor-pointer hover:bg-accent rounded-sm px-2 py-1">{playbackRate}x</DropdownMenuTrigger>
+        <DropdownMenuTrigger className="cursor-pointer hover:bg-accent rounded-sm px-2 py-1">
+          {playbackRate}x
+        </DropdownMenuTrigger>
         <DropdownMenuContent className="border-1 border-black">
           <DropdownMenuRadioGroup
             value={playbackRate.toString()}
             onValueChange={onChangePlaybackRate}
           >
-            <DropdownMenuRadioItem value="0.5" className="cursor-pointer">0.5x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="0.75" className="cursor-pointer">0.75x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="1" className="cursor-pointer">1x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="1.25" className="cursor-pointer">1.25x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="1.5" className="cursor-pointer">1.5x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="2" className="cursor-pointer">2x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="3" className="cursor-pointer">3x</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="4" className="cursor-pointer">4x</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="0.5" className="cursor-pointer">
+              0.5x
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="0.75" className="cursor-pointer">
+              0.75x
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="1" className="cursor-pointer">
+              1x
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="1.25" className="cursor-pointer">
+              1.25x
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="1.5" className="cursor-pointer">
+              1.5x
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="2" className="cursor-pointer">
+              2x
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="3" className="cursor-pointer">
+              3x
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="4" className="cursor-pointer">
+              4x
+            </DropdownMenuRadioItem>
           </DropdownMenuRadioGroup>
         </DropdownMenuContent>
       </DropdownMenu>

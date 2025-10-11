@@ -52,7 +52,7 @@ const SubtitleItem = memo(function SubtitleItem({
   } = useSubtitleContext();
 
   const [editingStartTimeId, setEditingStartTimeId] = useState<number | null>(
-    null
+    null,
   );
   const [editStartTime, setEditStartTime] = useState("");
   const [editingEndTimeId, setEditingEndTimeId] = useState<number | null>(null);
@@ -85,7 +85,7 @@ const SubtitleItem = memo(function SubtitleItem({
     // Replace updateFunction prop with context action
     updateAction: (id: number, newTime: string) => void,
     setEditingId: (id: number | null) => void,
-    isStartTime = false
+    isStartTime = false,
   ) => {
     if (!isValidTime(newTime)) {
       toast({
@@ -189,7 +189,7 @@ const SubtitleItem = memo(function SubtitleItem({
                     editStartTime,
                     updateSubtitleStartTimeAction,
                     setEditingStartTimeId,
-                    true // Indicate it's the start time
+                    true, // Indicate it's the start time
                   )
                 }
                 onKeyDown={(e) => {
@@ -199,7 +199,7 @@ const SubtitleItem = memo(function SubtitleItem({
                       editStartTime,
                       updateSubtitleStartTimeAction,
                       setEditingStartTimeId,
-                      true // Indicate it's the start time
+                      true, // Indicate it's the start time
                     );
                   } else if (e.key === "Escape") {
                     setEditingStartTimeId(null);
@@ -240,7 +240,7 @@ const SubtitleItem = memo(function SubtitleItem({
                     editEndTime,
                     updateSubtitleEndTimeAction,
                     setEditingEndTimeId,
-                    false // Indicate it's the end time
+                    false, // Indicate it's the end time
                   )
                 }
                 onKeyDown={(e) => {
@@ -250,7 +250,7 @@ const SubtitleItem = memo(function SubtitleItem({
                       editEndTime,
                       updateSubtitleEndTimeAction,
                       setEditingEndTimeId,
-                      false // Indicate it's the end time
+                      false, // Indicate it's the end time
                     );
                   } else if (e.key === "Escape") {
                     setEditingEndTimeId(null);
@@ -330,7 +330,11 @@ const SubtitleItem = memo(function SubtitleItem({
                   type="button"
                   className="w-full text-left text-lg cursor-pointer whitespace-pre-wrap break-words"
                   tabIndex={0}
-                  aria-label={subtitle.text ? `Edit subtitle: ${subtitle.text}` : "Edit subtitle (empty)"}
+                  aria-label={
+                    subtitle.text
+                      ? `Edit subtitle: ${subtitle.text}`
+                      : "Edit subtitle (empty)"
+                  }
                   onClick={() => {
                     setEditingSubtitleUuid(subtitle.uuid);
                   }}
@@ -350,14 +354,14 @@ const SubtitleItem = memo(function SubtitleItem({
             {/* Delete button */}
 
             <Tooltip>
-            <TooltipTrigger
-              type="button"
-              onClick={() => deleteSubtitleAction(subtitle.id)}
-              className="mx-4 my-auto px-2 py-1 text-xs bg-red-100 hover:bg-red-200 text-red-700 rounded cursor-pointer"
-              aria-label={t("tooltips.delete")}
-            >
-              <IconTrash size={16} />
-            </TooltipTrigger>
+              <TooltipTrigger
+                type="button"
+                onClick={() => deleteSubtitleAction(subtitle.id)}
+                className="mx-4 my-auto px-2 py-1 text-xs bg-red-100 hover:bg-red-200 text-red-700 rounded cursor-pointer"
+                aria-label={t("tooltips.delete")}
+              >
+                <IconTrash size={16} />
+              </TooltipTrigger>
               <TooltipContent className="bg-red-600 px-2 py-1 text-sm">
                 {t("tooltips.delete")}
               </TooltipContent>
@@ -369,16 +373,16 @@ const SubtitleItem = memo(function SubtitleItem({
         <div className="flex justify-center gap-16 -mt-3 -mb-3">
           {!isLastItem && nextSubtitle && (
             <Tooltip>
-            <TooltipTrigger
-              type="button"
-              onClick={() =>
-                mergeSubtitlesAction(subtitle.id, nextSubtitle.id)
-              }
-              className="px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded cursor-pointer"
-              aria-label={t("tooltips.merge")}
-            >
-              <IconFold size={16} />
-            </TooltipTrigger>
+              <TooltipTrigger
+                type="button"
+                onClick={() =>
+                  mergeSubtitlesAction(subtitle.id, nextSubtitle.id)
+                }
+                className="px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded cursor-pointer"
+                aria-label={t("tooltips.merge")}
+              >
+                <IconFold size={16} />
+              </TooltipTrigger>
               <TooltipContent className="bg-amber-500 px-2 py-1 text-sm">
                 {t("tooltips.merge")}
               </TooltipContent>
@@ -394,7 +398,7 @@ const SubtitleItem = memo(function SubtitleItem({
                   addSubtitleAction(
                     subtitle.id,
                     !isLastItem && nextSubtitle ? nextSubtitle.id : null,
-                    t("subtitle.newSubtitle")
+                    t("subtitle.newSubtitle"),
                   );
                 }
               }}

@@ -50,7 +50,7 @@ const WaveformVisualizer = dynamic(
   () => import("@/components/waveform-visualizer"),
   {
     ssr: false, // Disable server-side rendering
-  }
+  },
 );
 
 interface WaveformRef {
@@ -82,7 +82,7 @@ function MainContent() {
 
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaFileName, setMediaFileName] = useState<string>(
-    t("buttons.loadMedia")
+    t("buttons.loadMedia"),
   );
   const [playbackTime, setPlaybackTime] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -91,12 +91,12 @@ function MainContent() {
   const [jumpDuration, setJumpDuration] = useState(5);
   // State to track which subtitle is being edited
   const [editingSubtitleUuid, setEditingSubtitleUuid] = useState<string | null>(
-    null
+    null,
   );
 
   // State to track pending scroll-to-region after track switch
   const [pendingScrollToUuid, setPendingScrollToUuid] = useState<string | null>(
-    null
+    null,
   );
   // Whether the pending scroll should be instant (used for cross-track clicks)
   const [pendingScrollInstant, setPendingScrollInstant] =
@@ -116,7 +116,7 @@ function MainContent() {
     setInitialSubtitles(
       parsedSubtitles,
       file.name.replace(/\.(srt|vtt)$/i, ""),
-      meta ? { vttHeader: meta.header, vttPrologue: meta.prologue } : undefined
+      meta ? { vttHeader: meta.header, vttPrologue: meta.prologue } : undefined,
     );
   };
 
@@ -260,7 +260,7 @@ function MainContent() {
       // Function to attempt scroll with retry logic
       const attemptScroll = (retries = 0) => {
         const subtitleElement = document.getElementById(
-          `subtitle-${pendingScrollToUuid}`
+          `subtitle-${pendingScrollToUuid}`,
         );
         if (subtitleElement) {
           // Element found, use requestAnimationFrame to ensure layout has settled
@@ -272,7 +272,7 @@ function MainContent() {
                   instant: pendingScrollInstant,
                   center: true,
                   focus: pendingScrollInstant,
-                }
+                },
               );
               if (ok) {
                 // The subtitle will be highlighted naturally by the existing playback time logic
@@ -283,7 +283,7 @@ function MainContent() {
               } else {
                 console.warn(
                   "Could not center subtitle after retries:",
-                  pendingScrollToUuid
+                  pendingScrollToUuid,
                 );
                 setPendingScrollToUuid(null);
                 setPendingScrollInstant(false);
@@ -297,7 +297,7 @@ function MainContent() {
           // Max retries reached, give up
           console.warn(
             "Could not find subtitle element after retries:",
-            pendingScrollToUuid
+            pendingScrollToUuid,
           );
           setPendingScrollToUuid(null);
           setPendingScrollInstant(false);
@@ -457,8 +457,8 @@ function MainContent() {
                           setPlaybackTime(
                             Math.min(
                               duration,
-                              Math.max(0, playbackTime + seconds)
-                            )
+                              Math.max(0, playbackTime + seconds),
+                            ),
                           )
                         }
                         jumpDuration={jumpDuration}
@@ -496,7 +496,7 @@ function MainContent() {
                             text: t("subtitle.newSubtitle"),
                           },
                         ],
-                        t("subtitle.newTrackName", { number: 1 })
+                        t("subtitle.newTrackName", { number: 1 }),
                       )
                     }
                     className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-500"
@@ -541,10 +541,7 @@ function MainContent() {
                 onPlayPause={() => setIsPlaying(!isPlaying)}
                 onTimeJump={(seconds) =>
                   setPlaybackTime(
-                    Math.min(
-                      duration,
-                      Math.max(0, playbackTime + seconds)
-                    )
+                    Math.min(duration, Math.max(0, playbackTime + seconds)),
                   )
                 }
                 jumpDuration={jumpDuration}

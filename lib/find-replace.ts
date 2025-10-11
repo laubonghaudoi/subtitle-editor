@@ -13,7 +13,7 @@ export interface FindRegexConfig {
 
 export function getFindRegexConfig(
   findText: string,
-  options: FindRegexOptions
+  options: FindRegexOptions,
 ): FindRegexConfig | null {
   if (!findText) {
     return null;
@@ -40,7 +40,7 @@ export function getFindRegexConfig(
 }
 
 export function createFindRegexFromConfig(
-  config: FindRegexConfig | null
+  config: FindRegexConfig | null,
 ): RegExp | null {
   if (!config) {
     return null;

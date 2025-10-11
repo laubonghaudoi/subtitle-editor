@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Chiron+Hei+HK:ital,wght@0,200..900;1,200..900&display=swap');
-@import 'tailwindcss';
+@import url("https://fonts.googleapis.com/css2?family=Chiron+Hei+HK:ital,wght@0,200..900;1,200..900&display=swap");
+@import "tailwindcss";
 
 @plugin 'tailwindcss-animate';
 
@@ -146,7 +146,7 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
   [data-locale="yue"] * {
     font-family: "Chiron Hei HK", sans-serif;
     font-optical-sizing: auto;
@@ -166,7 +166,7 @@
     white-space: nowrap;
     border-width: 0;
   }
-  
+
   .not-sr-only {
     position: static;
     width: auto;

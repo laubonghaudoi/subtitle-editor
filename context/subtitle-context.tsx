@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  useUndoableState,
-  type UndoHistory,
-} from "@/hooks/use-undoable-state";
+import { useUndoableState, type UndoHistory } from "@/hooks/use-undoable-state";
 import {
   addSubtitle,
   deleteSubtitle,
@@ -33,7 +30,7 @@ const EMPTY_HISTORY: UndoHistory<Subtitle[]> = {
 
 const ensureTrackMetadata = (
   subtitles: Subtitle[],
-  trackId: string
+  trackId: string,
 ): Subtitle[] => {
   let mutated = false;
   const normalized = subtitles.map((subtitle) => {
@@ -68,7 +65,7 @@ const subtitlesAreEqual = (a: Subtitle[], b: Subtitle[]): boolean => {
 
 const historiesAreEqual = (
   a: UndoHistory<Subtitle[]> | undefined,
-  b: UndoHistory<Subtitle[]> | undefined
+  b: UndoHistory<Subtitle[]> | undefined,
 ): boolean => {
   if (a === b) return true;
   if (!a || !b) return false;
@@ -98,7 +95,7 @@ const isHistoryEmpty = (history: UndoHistory<Subtitle[]>) =>
 
 const createTrackHistory = (
   trackId: string,
-  subtitles: Subtitle[]
+  subtitles: Subtitle[],
 ): UndoHistory<Subtitle[]> => {
   const normalized = ensureTrackMetadata(subtitles, trackId);
   return {
@@ -118,42 +115,42 @@ interface SubtitleContextType {
   addTrack: (
     name: string,
     subtitles?: Subtitle[],
-    meta?: { vttHeader?: string; vttPrologue?: string[] }
+    meta?: { vttHeader?: string; vttPrologue?: string[] },
   ) => string | null;
   loadSubtitlesIntoTrack: (
     trackId: string,
     subtitles: Subtitle[],
-    meta?: { vttHeader?: string; vttPrologue?: string[] }
+    meta?: { vttHeader?: string; vttPrologue?: string[] },
   ) => void;
   renameTrack: (trackId: string, newName: string) => void;
   deleteTrack: (trackId: string) => void;
   setInitialSubtitles: (
     subs: Subtitle[],
     trackName?: string,
-    meta?: { vttHeader?: string; vttPrologue?: string[] }
+    meta?: { vttHeader?: string; vttPrologue?: string[] },
   ) => void;
   addSubtitleAction: (
     beforeId: number,
     afterId: number | null,
-    newSubtitleText?: string
+    newSubtitleText?: string,
   ) => void;
   deleteSubtitleAction: (id: number) => void;
   mergeSubtitlesAction: (id1: number, id2: number) => void;
   splitSubtitleAction: (
     id: number,
     caretPos: number,
-    textLength: number
+    textLength: number,
   ) => void;
   updateSubtitleTextAction: (id: number, newText: string) => void;
   updateSubtitleTimeAction: (
     id: number,
     newStartTime: string,
-    newEndTime: string
+    newEndTime: string,
   ) => void;
   updateSubtitleTimeByUuidAction: (
     uuid: string,
     newStartTime: string,
-    newEndTime: string
+    newEndTime: string,
   ) => void;
   updateSubtitleStartTimeAction: (id: number, newTime: string) => void;
   updateSubtitleEndTimeAction: (id: number, newTime: string) => void;
@@ -168,7 +165,7 @@ interface SubtitleContextType {
 
 // Create the context with a default value (or null/undefined and check in consumer)
 const SubtitleContext = createContext<SubtitleContextType | undefined>(
-  undefined
+  undefined,
 );
 
 // Create the provider component
@@ -181,16 +178,16 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const [activeTrackId, setActiveTrackId] = useState<string | null>(null);
   const [showTrackLabels, setShowTrackLabels] = useState<boolean>(false);
   const previousActiveTrackId = useRef<string | null>(null);
-  const trackHistoriesRef = useRef<
-    Map<string, UndoHistory<Subtitle[]>>
-  >(new Map());
+  const trackHistoriesRef = useRef<Map<string, UndoHistory<Subtitle[]>>>(
+    new Map(),
+  );
 
   // Each track keeps an independent undo/redo history stored alongside the track list.
   const [
     activeSubtitles, // Raw subtitles from the undoable state
     setSubtitlesWithHistory,
-    /* skip replaceState */,
-    undoSubtitles,
+    ,
+    /* skip replaceState */ undoSubtitles,
     redoSubtitles,
     canUndoSubtitles,
     canRedoSubtitles,
@@ -224,7 +221,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       const activeTrack = tracks.find((track) => track.id === activeTrackId);
       const seededHistory = createTrackHistory(
         activeTrackId,
-        activeTrack ? activeTrack.subtitles : []
+        activeTrack ? activeTrack.subtitles : [],
       );
       trackHistoriesRef.current.set(activeTrackId, seededHistory);
       if (!historiesAreEqual(seededHistory, snapshot)) {
@@ -269,11 +266,10 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     });
   }, [activeTrackId, activeSubtitles]);
 
-
   const addTrack = (
     name: string,
     subtitles: Subtitle[] = [],
-    meta?: { vttHeader?: string; vttPrologue?: string[] }
+    meta?: { vttHeader?: string; vttPrologue?: string[] },
   ): string | null => {
     if (tracks.length >= 4) {
       // Here you might want to show a toast or a notification to the user
@@ -290,7 +286,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       vttHeader: meta?.vttHeader,
       vttPrologue: meta?.vttPrologue,
     };
-    setTracks(prev => [...prev, newTrack]);
+    setTracks((prev) => [...prev, newTrack]);
     trackHistoriesRef.current.set(newTrackId, history);
     if (!activeTrackId) {
       setActiveTrackId(newTrackId);
@@ -302,7 +298,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const loadSubtitlesIntoTrack = (
     trackId: string,
     newSubtitles: Subtitle[],
-    meta?: { vttHeader?: string; vttPrologue?: string[] }
+    meta?: { vttHeader?: string; vttPrologue?: string[] },
   ) => {
     const history = createTrackHistory(trackId, newSubtitles);
     trackHistoriesRef.current.set(trackId, history);
@@ -317,7 +313,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
           };
         }
         return track;
-      })
+      }),
     );
     if (trackId === activeTrackId) {
       setHistorySnapshot(history);
@@ -327,7 +323,9 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const deleteTrack = (trackId: string) => {
     trackHistoriesRef.current.delete(trackId);
     setTracks((prevTracks) => {
-      const remainingTracks = prevTracks.filter((track) => track.id !== trackId);
+      const remainingTracks = prevTracks.filter(
+        (track) => track.id !== trackId,
+      );
       if (trackId === activeTrackId) {
         if (remainingTracks.length > 0) {
           setActiveTrackId(remainingTracks[0].id);
@@ -341,10 +339,10 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   };
 
   const renameTrack = (trackId: string, newName: string) => {
-    setTracks(prevTracks =>
-      prevTracks.map(track =>
-        track.id === trackId ? { ...track, name: newName } : track
-      )
+    setTracks((prevTracks) =>
+      prevTracks.map((track) =>
+        track.id === trackId ? { ...track, name: newName } : track,
+      ),
     );
   };
 
@@ -353,7 +351,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const setInitialSubtitles = (
     subs: Subtitle[],
     trackName?: string,
-    meta?: { vttHeader?: string; vttPrologue?: string[] }
+    meta?: { vttHeader?: string; vttPrologue?: string[] },
   ) => {
     const newTrackId = addTrack(trackName || "Track 1", subs, meta);
     if (!newTrackId) return;
@@ -382,19 +380,20 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     setSubtitlesWithHistory(normalized);
     setTracks((prevTracks) =>
       prevTracks.map((track) =>
-        track.id === activeTrackId ? { ...track, subtitles: normalized } : track
-      )
+        track.id === activeTrackId
+          ? { ...track, subtitles: normalized }
+          : track,
+      ),
     );
   };
-
 
   const addSubtitleAction = (
     beforeId: number,
     afterId: number | null,
-    newSubtitleText?: string
+    newSubtitleText?: string,
   ) => {
     handleTrackedStateChange(
-      addSubtitle(activeSubtitles, beforeId, afterId, newSubtitleText)
+      addSubtitle(activeSubtitles, beforeId, afterId, newSubtitleText),
     );
   };
 
@@ -409,10 +408,10 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const splitSubtitleAction = (
     id: number,
     caretPos: number,
-    textLength: number
+    textLength: number,
   ) => {
     handleTrackedStateChange(
-      splitSubtitle(activeSubtitles, id, caretPos, textLength)
+      splitSubtitle(activeSubtitles, id, caretPos, textLength),
     );
   };
 
@@ -424,14 +423,14 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const updateSubtitleTimeAction = (
     id: number,
     newStartTime: string,
-    newEndTime: string
+    newEndTime: string,
   ) => {
     handleTrackedStateChange(
       activeSubtitles.map((sub) =>
         sub.id === id
           ? { ...sub, startTime: newStartTime, endTime: newEndTime }
-          : sub
-      )
+          : sub,
+      ),
     );
   };
 
@@ -439,14 +438,14 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const updateSubtitleTimeByUuidAction = (
     uuid: string,
     newStartTime: string,
-    newEndTime: string
+    newEndTime: string,
   ) => {
     let updatedActiveTrackSubtitles: Subtitle[] | null = null;
 
-    setTracks(prevTracks =>
-      prevTracks.map(track => {
+    setTracks((prevTracks) =>
+      prevTracks.map((track) => {
         let hasChanges = false;
-        const subtitles = track.subtitles.map(sub => {
+        const subtitles = track.subtitles.map((sub) => {
           if (sub.uuid === uuid) {
             hasChanges = true;
             return {
@@ -469,7 +468,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
         }
 
         return track;
-      })
+      }),
     );
 
     if (updatedActiveTrackSubtitles) {
@@ -480,13 +479,13 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   // Individual time updates for SubtitleItem inputs
   const updateSubtitleStartTimeAction = (id: number, newTime: string) => {
     handleTrackedStateChange(
-      updateSubtitleStartTime(id, newTime)(activeSubtitles)
+      updateSubtitleStartTime(id, newTime)(activeSubtitles),
     );
   };
 
   const updateSubtitleEndTimeAction = (id: number, newTime: string) => {
     handleTrackedStateChange(
-      updateSubtitleEndTime(id, newTime)(activeSubtitles)
+      updateSubtitleEndTime(id, newTime)(activeSubtitles),
     );
   };
 
@@ -497,7 +496,6 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
 
   // Get the subtitles for the active track
   const subtitles = activeSubtitles;
-
 
   // --- Context Value ---
   const value: SubtitleContextType = {
@@ -536,7 +534,7 @@ export const useSubtitleContext = (): SubtitleContextType => {
   const context = useContext(SubtitleContext);
   if (context === undefined) {
     throw new Error(
-      "useSubtitleContext must be used within a SubtitleProvider"
+      "useSubtitleContext must be used within a SubtitleProvider",
     );
   }
   return context;

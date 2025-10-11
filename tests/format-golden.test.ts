@@ -64,7 +64,7 @@ test("buildVttContent preserves header and prologue blocks", () => {
       startTime,
       endTime,
       text,
-    }))
+    })),
   );
   assert.equal(rebuilt, expectedSrt);
 });
@@ -79,7 +79,7 @@ test("srtToVtt round-trips back to the original cues", () => {
       startTime,
       endTime,
       text,
-    }))
+    })),
   );
   assert.equal(roundTripped, expectedSrt);
 });

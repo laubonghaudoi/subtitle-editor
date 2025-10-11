@@ -25,7 +25,7 @@ type SetStateAction<T> = T | ((prevState: T) => T);
  */
 export function useUndoableState<T>(
   initialState: T,
-  options?: { isEqual?: (a: T, b: T) => boolean }
+  options?: { isEqual?: (a: T, b: T) => boolean },
 ): [
   T,
   (newState: SetStateAction<T>) => void,
@@ -35,7 +35,7 @@ export function useUndoableState<T>(
   boolean,
   boolean,
   () => UndoHistory<T>,
-  (history: UndoHistory<T>) => void
+  (history: UndoHistory<T>) => void,
 ] {
   const [history, setHistory] = useState<UndoHistory<T>>({
     past: [],
@@ -64,7 +64,9 @@ export function useUndoableState<T>(
 
       // Add the previous present state to the past and trim it if it grows
       // beyond the configured limit to avoid unbounded memory usage
-      const newPast = [...currentHistory.past, previousPresent].slice(-MAX_HISTORY_LENGTH);
+      const newPast = [...currentHistory.past, previousPresent].slice(
+        -MAX_HISTORY_LENGTH,
+      );
 
       return {
         past: newPast,
@@ -122,16 +124,13 @@ export function useUndoableState<T>(
 
   // Return the state, setter, raw replace, undo/redo functions, and flags
   const getHistorySnapshot = useCallback(() => history, [history]);
-  const setHistorySnapshot = useCallback(
-    (nextHistory: UndoHistory<T>) => {
-      setHistory({
-        past: nextHistory.past.slice(-MAX_HISTORY_LENGTH),
-        present: nextHistory.present,
-        future: nextHistory.future.slice(0, MAX_HISTORY_LENGTH),
-      });
-    },
-    []
-  );
+  const setHistorySnapshot = useCallback((nextHistory: UndoHistory<T>) => {
+    setHistory({
+      past: nextHistory.past.slice(-MAX_HISTORY_LENGTH),
+      present: nextHistory.present,
+      future: nextHistory.future.slice(0, MAX_HISTORY_LENGTH),
+    });
+  }, []);
 
   return [
     history.present,

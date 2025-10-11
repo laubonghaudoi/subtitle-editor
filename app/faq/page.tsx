@@ -237,12 +237,15 @@ export default function FaqPage() {
         I want to download a YouTube video and extract the subtitles of it, how?
       </h2>
       <p>
-        Use <Link
+        Use{" "}
+        <Link
           href="https://github.com/yt-dlp/yt-dlp"
           className="hover:underline text-blue-600 hover:text-blue-800"
         >
           yt-dlp
-        </Link>. It's free and the most reliable YouTube video downloader. It also supports downloading subtitles directly if they are available.
+        </Link>
+        . It's free and the most reliable YouTube video downloader. It also
+        supports downloading subtitles directly if they are available.
       </p>
       <Button asChild variant="secondary" className="my-8">
         <Link href="/">Back to Editor</Link>

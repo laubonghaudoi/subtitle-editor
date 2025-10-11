@@ -26,7 +26,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSubtitleContext } from "@/context/subtitle-context";
-import { parseSRT, parseVTT, extractVttPrologue } from "@/lib/subtitleOperations";
+import {
+  parseSRT,
+  parseVTT,
+  extractVttPrologue,
+} from "@/lib/subtitleOperations";
 import {
   IconBadgeCc,
   IconFile,
@@ -56,7 +60,7 @@ export default function LoadSrt() {
 
   const handleSrtFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>,
-    trackId: string
+    trackId: string,
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -64,7 +68,8 @@ export default function LoadSrt() {
     try {
       const raw = await file.text();
       const lower = file.name.toLowerCase();
-      const firstLine = raw.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
+      const firstLine =
+        raw.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
       const isVtt = lower.endsWith(".vtt") || /^WEBVTT( |$)/.test(firstLine);
       const newSubtitles = isVtt ? parseVTT(raw) : parseSRT(raw);
       const meta = isVtt ? extractVttPrologue(raw) : undefined;
@@ -79,7 +84,9 @@ export default function LoadSrt() {
       loadSubtitlesIntoTrack(
         trackId,
         newSubtitles,
-        meta ? { vttHeader: meta.header, vttPrologue: meta.prologue } : undefined
+        meta
+          ? { vttHeader: meta.header, vttPrologue: meta.prologue }
+          : undefined,
       );
       const safeName = file.name.replace(/\.(srt|vtt)$/i, "");
       renameTrack(trackId, safeName);
@@ -226,7 +233,7 @@ export default function LoadSrt() {
             variant="outline"
             onClick={() =>
               addTrack(
-                t("subtitle.newTrackName", { number: tracks.length + 1 })
+                t("subtitle.newTrackName", { number: tracks.length + 1 }),
               )
             }
             disabled={tracks.length >= 4}

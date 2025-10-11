@@ -22,7 +22,7 @@ export const secondsToTime = (seconds: number): string => {
 
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
     2,
-    "0"
+    "0",
   )}:${secs.toFixed(3).padStart(6, "0").replace(".", ",")}`;
 };
 
@@ -37,7 +37,10 @@ export const subtitlesToSrtString = (subtitles: Subtitle[]): string => {
     .join("\n");
 };
 
-export const srtToVtt = (srtString: string, header: string = "WEBVTT"): string => {
+export const srtToVtt = (
+  srtString: string,
+  header: string = "WEBVTT",
+): string => {
   // Normalize line endings, convert commas to dots in timestamps, and
   // preserve blank lines between cues (do NOT collapse them).
   const normalized = srtString.replace(/\r\n?/g, "\n");

@@ -36,7 +36,7 @@ export default function FindReplace() {
   const { subtitles, replaceAllSubtitlesAction, tracks } = useSubtitleContext();
   const totalSubtitleCount = tracks.reduce(
     (sum, tr) => sum + tr.subtitles.length,
-    0
+    0,
   );
   const isDisabled = totalSubtitleCount === 0;
 
@@ -54,12 +54,12 @@ export default function FindReplace() {
         isMatchFullWord,
         isRegexMode,
       }),
-    [findText, isCaseSensitive, isMatchFullWord, isRegexMode]
+    [findText, isCaseSensitive, isMatchFullWord, isRegexMode],
   );
 
   const [matchedSubtitles, setMatchedSubtitles] = useState<Subtitle[]>([]);
   const [selectedSubtitles, setSelectedSubtitles] = useState<Set<number>>(
-    new Set()
+    new Set(),
   );
 
   const handleReplace = () => {
@@ -131,7 +131,7 @@ export default function FindReplace() {
       highlighted.push(
         <span key={`match-${start}-${i}`} className="bg-red-500 text-white">
           {matchText}
-        </span>
+        </span>,
       );
 
       lastIndex = start + matchText.length;
@@ -155,14 +155,12 @@ export default function FindReplace() {
     const highlighted: ReactNode[] = [];
 
     for (let i = 0; i < parts.length; i++) {
-      highlighted.push(
-        <span key={`segment-${i}`}>{parts[i]}</span>
-      );
+      highlighted.push(<span key={`segment-${i}`}>{parts[i]}</span>);
       if (i < parts.length - 1) {
         highlighted.push(
           <span key={`replace-${i}`} className="bg-green-500 text-white">
             {replaceText}
-          </span>
+          </span>,
         );
       }
     }
@@ -186,7 +184,7 @@ export default function FindReplace() {
       subtitles.filter((subtitle) => {
         const testRegex = createFindRegexFromConfig(regexConfig);
         return testRegex ? testRegex.test(subtitle.text) : false;
-      })
+      }),
     );
   }, [subtitles, findText, regexConfig]);
 
@@ -205,9 +203,7 @@ export default function FindReplace() {
       <DialogContent className="sm:max-w-[48rem]">
         <DialogHeader>
           <DialogTitle>{t("findReplace.dialogTitle")}</DialogTitle>
-          <DialogDescription>
-            {t("findReplace.scopeNote")}
-          </DialogDescription>
+          <DialogDescription>{t("findReplace.scopeNote")}</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
@@ -297,13 +293,13 @@ export default function FindReplace() {
                       checked={
                         matchedSubtitles.length > 0 &&
                         matchedSubtitles.every((sub) =>
-                          selectedSubtitles.has(sub.id)
+                          selectedSubtitles.has(sub.id),
                         )
                       }
                       onCheckedChange={(checked) => {
                         if (checked) {
                           setSelectedSubtitles(
-                            new Set(matchedSubtitles.map((sub) => sub.id))
+                            new Set(matchedSubtitles.map((sub) => sub.id)),
                           );
                         } else {
                           setSelectedSubtitles(new Set());

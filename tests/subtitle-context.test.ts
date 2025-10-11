@@ -1,11 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
-import {
-  renderHook,
-  act,
-  waitFor,
-} from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import { createElement } from "react";
 import type { ReactNode } from "react";
 import {
@@ -36,7 +32,8 @@ globalThis.MutationObserver =
     }
   };
 globalThis.requestAnimationFrame =
-  window.requestAnimationFrame ?? ((cb: FrameRequestCallback) => setTimeout(cb, 0));
+  window.requestAnimationFrame ??
+  ((cb: FrameRequestCallback) => setTimeout(cb, 0));
 globalThis.cancelAnimationFrame =
   window.cancelAnimationFrame ?? ((id: number) => clearTimeout(id));
 globalThis.getComputedStyle = window.getComputedStyle.bind(window);
@@ -81,10 +78,13 @@ test("subtitle actions push history and support undo/redo cycles", async () => {
     result.current.splitSubtitleAction(1, splitCaret, splitLength);
   });
   assert.equal(result.current.subtitles.length, 3);
-  assert.equal(result.current.subtitles[0].text, originalFirst.slice(0, splitCaret));
+  assert.equal(
+    result.current.subtitles[0].text,
+    originalFirst.slice(0, splitCaret),
+  );
   assert.equal(
     result.current.subtitles[1].text,
-    originalFirst.slice(splitCaret)
+    originalFirst.slice(splitCaret),
   );
 
   await act(async () => {

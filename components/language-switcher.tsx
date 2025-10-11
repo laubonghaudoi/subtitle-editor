@@ -45,7 +45,7 @@ export default function LanguageSwitcher() {
 
   const handleLinkClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
-    href: string
+    href: string,
   ) => {
     if (canUndoSubtitles) {
       e.preventDefault();
