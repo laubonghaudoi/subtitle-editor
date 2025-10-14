@@ -140,6 +140,7 @@ interface SubtitleContextType {
     id: number,
     caretPos: number,
     textLength: number,
+    pendingText?: string,
   ) => void;
   updateSubtitleTextAction: (id: number, newText: string) => void;
   updateSubtitleTimeAction: (
@@ -409,9 +410,18 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     id: number,
     caretPos: number,
     textLength: number,
+    pendingText?: string,
   ) => {
+    const workingSubtitles =
+      pendingText === undefined
+        ? activeSubtitles
+        : activeSubtitles.map((sub) =>
+            sub.id === id ? { ...sub, text: pendingText } : sub,
+          );
+    const effectiveLength =
+      pendingText === undefined ? textLength : pendingText.length;
     handleTrackedStateChange(
-      splitSubtitle(activeSubtitles, id, caretPos, textLength),
+      splitSubtitle(workingSubtitles, id, caretPos, effectiveLength),
     );
   };
 

@@ -311,15 +311,19 @@ const SubtitleItem = memo(function SubtitleItem({
                     // Handle normal Enter key to confirm edit
                     if (e.key === "Enter") {
                       e.preventDefault(); // Prevent default newline behavior
-                      if (editText !== subtitle.text) {
-                        updateSubtitleTextAction(subtitle.id, editText);
-                      }
+                      const caretPos =
+                        e.currentTarget.selectionStart ?? editText.length;
+                      const nextText = e.currentTarget.value;
 
-                      // Check SHIFT + ENTER for split
                       if (e.shiftKey) {
-                        const caretPos = e.currentTarget.selectionStart;
-                        const totalLen = e.currentTarget.value.length;
-                        splitSubtitleAction(subtitle.id, caretPos, totalLen);
+                        splitSubtitleAction(
+                          subtitle.id,
+                          caretPos,
+                          nextText.length,
+                          nextText,
+                        );
+                      } else if (nextText !== subtitle.text) {
+                        updateSubtitleTextAction(subtitle.id, nextText);
                       }
 
                       setEditingSubtitleUuid(null); // Exit edit mode

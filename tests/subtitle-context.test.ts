@@ -213,6 +213,37 @@ test("undo stacks remain isolated per track when switching focus", async () => {
   assert.equal(result.current.subtitles[0].text, "Second track line");
 });
 
+test("splitSubtitleAction respects pending text before splitting", async () => {
+  const { result } = renderHook(() => useSubtitleContext(), { wrapper });
+
+  await act(async () => {
+    result.current.setInitialSubtitles([...baseSubtitles], "Track Zeta");
+  });
+
+  const pendingText = "Hello brand new world";
+  const caretIndex = pendingText.indexOf(" brand");
+  assert.ok(caretIndex > 0);
+
+  await act(async () => {
+    result.current.splitSubtitleAction(
+      1,
+      caretIndex,
+      pendingText.length,
+      pendingText,
+    );
+  });
+
+  assert.equal(result.current.subtitles.length, 3);
+  assert.equal(
+    result.current.subtitles[0].text,
+    pendingText.slice(0, caretIndex),
+  );
+  assert.equal(
+    result.current.subtitles[1].text,
+    pendingText.slice(caretIndex),
+  );
+});
+
 test.after(() => {
   dom.window.close();
 });
