@@ -28,7 +28,7 @@ interface AppHeaderProps {
   canRedo: boolean;
   onUndo: () => void;
   onRedo: () => void;
-  mediaFileInputRef: RefObject<HTMLInputElement>;
+  mediaFileInputRef: RefObject<HTMLInputElement | null>;
   onSelectMediaFile: (file: File) => void;
   mediaFileName: string;
 }

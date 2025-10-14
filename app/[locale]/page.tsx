@@ -50,7 +50,7 @@ function MainContent() {
   const t = useTranslations();
   const waveformRef = useRef<WaveformRef>(null);
   const subtitleListRef = useRef<SubtitleListRef>(null);
-  const mediaFileInputRef = useRef<HTMLInputElement>(null);
+  const mediaFileInputRef = useRef<HTMLInputElement | null>(null);
   // Get subtitle state and actions from context
   const {
     tracks,
