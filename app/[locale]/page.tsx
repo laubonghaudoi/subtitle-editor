@@ -27,7 +27,7 @@ import {
   parseVTT,
   extractVttPrologue,
 } from "@/lib/subtitleOperations";
-import { timeToSeconds } from "@/lib/utils";
+import { cn, timeToSeconds } from "@/lib/utils";
 import {
   IconArrowBack,
   IconArrowForward,
@@ -37,7 +37,7 @@ import {
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { type DragEvent, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export const runtime = "edge";
@@ -101,6 +101,123 @@ function MainContent() {
   // Whether the pending scroll should be instant (used for cross-track clicks)
   const [pendingScrollInstant, setPendingScrollInstant] =
     useState<boolean>(false);
+  const [isSubtitleDragActive, setIsSubtitleDragActive] = useState(false);
+  const [isMediaDragActive, setIsMediaDragActive] = useState(false);
+  const subtitleDragDepthRef = useRef(0);
+  const mediaDragDepthRef = useRef(0);
+
+  const loadMediaFile = (file: File) => {
+    setMediaFile(null);
+    if (mediaFileInputRef.current) {
+      mediaFileInputRef.current.value = "";
+    }
+    setTimeout(() => {
+      setMediaFile(file);
+      setMediaFileName(file.name);
+    }, 0);
+  };
+
+  const isSubtitleFile = (file: File) => {
+    const name = file.name.toLowerCase();
+    return (
+      name.endsWith(".srt") || name.endsWith(".vtt") || file.type === "text/vtt"
+    );
+  };
+
+  const isMediaFile = (file: File) => {
+    if (file.type.startsWith("audio/") || file.type.startsWith("video/")) {
+      return true;
+    }
+    return /\.(m4a|mp3|mp4|webm|ogg|wav|aac|flac|opus)$/i.test(file.name);
+  };
+
+  const getDroppedFile = (
+    dataTransfer: DataTransfer,
+    matcher: (file: File) => boolean,
+  ) => {
+    return Array.from(dataTransfer.files ?? []).find(matcher) ?? null;
+  };
+
+  const hasFilesPayload = (event: DragEvent<HTMLDivElement>) => {
+    return Array.from(event.dataTransfer.types ?? []).includes("Files");
+  };
+
+  const handleSubtitleDragOver = (event: DragEvent<HTMLDivElement>) => {
+    if (hasFilesPayload(event)) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "copy";
+    }
+  };
+
+  const handleSubtitleDragEnter = (event: DragEvent<HTMLDivElement>) => {
+    if (!hasFilesPayload(event)) {
+      return;
+    }
+    event.preventDefault();
+    subtitleDragDepthRef.current += 1;
+    setIsSubtitleDragActive(true);
+  };
+
+  const handleSubtitleDragLeave = (event: DragEvent<HTMLDivElement>) => {
+    if (!hasFilesPayload(event)) {
+      return;
+    }
+    subtitleDragDepthRef.current = Math.max(
+      0,
+      subtitleDragDepthRef.current - 1,
+    );
+    if (subtitleDragDepthRef.current === 0) {
+      setIsSubtitleDragActive(false);
+    }
+  };
+
+  const handleSubtitleDrop = async (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    subtitleDragDepthRef.current = 0;
+    setIsSubtitleDragActive(false);
+    const file = getDroppedFile(event.dataTransfer, isSubtitleFile);
+    if (!file) {
+      return;
+    }
+    await handleFileUpload(file);
+  };
+
+  const handleMediaDragOver = (event: DragEvent<HTMLDivElement>) => {
+    if (hasFilesPayload(event)) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "copy";
+    }
+  };
+
+  const handleMediaDragEnter = (event: DragEvent<HTMLDivElement>) => {
+    if (!hasFilesPayload(event)) {
+      return;
+    }
+    event.preventDefault();
+    mediaDragDepthRef.current += 1;
+    setIsMediaDragActive(true);
+  };
+
+  const handleMediaDragLeave = (event: DragEvent<HTMLDivElement>) => {
+    if (!hasFilesPayload(event)) {
+      return;
+    }
+    mediaDragDepthRef.current = Math.max(0, mediaDragDepthRef.current - 1);
+    if (mediaDragDepthRef.current === 0) {
+      setIsMediaDragActive(false);
+    }
+  };
+
+  const handleMediaDrop = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    mediaDragDepthRef.current = 0;
+    setIsMediaDragActive(false);
+    const file = getDroppedFile(event.dataTransfer, isMediaFile);
+    if (!file) {
+      return;
+    }
+    loadMediaFile(file);
+  };
 
   const handleFileUpload = async (file: File) => {
     const text = await file.text();
@@ -379,11 +496,7 @@ function MainContent() {
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
-                setMediaFile(null); // Reset first to trigger a re-render
-                setTimeout(() => {
-                  setMediaFile(file);
-                  setMediaFileName(file.name);
-                }, 0);
+                loadMediaFile(file);
               }}
             />
             <Button
@@ -391,7 +504,7 @@ function MainContent() {
               onClick={() => {
                 mediaFileInputRef.current?.click();
               }}
-              className="bg-cyan-300 hover:bg-cyan-500 hover:text-white text-black rounded-sm cursor-pointer"
+              className="bg-sky-300 hover:bg-blue-500 hover:text-white text-black rounded-sm cursor-pointer"
             >
               <IconMovie size={20} />
               <span className="max-w-36 flex-1 overflow-hidden whitespace-nowrap text-ellipsis text-left">
@@ -409,7 +522,16 @@ function MainContent() {
         {/* Top section - Split panels */}
         <div className="flex h-[64vh]">
           {/* Left panel - Subtitle list */}
-          <div className="w-1/2">
+          <div
+            className={cn(
+              "w-1/2 transition-colors",
+              isSubtitleDragActive && " bg-yellow-50",
+            )}
+            onDragOver={handleSubtitleDragOver}
+            onDragEnter={handleSubtitleDragEnter}
+            onDragLeave={handleSubtitleDragLeave}
+            onDrop={handleSubtitleDrop}
+          >
             <div className="h-full">
               {tracks.length > 0 && activeTrackId ? (
                 <Tabs
@@ -510,7 +632,16 @@ function MainContent() {
           </div>
 
           {/* Right panel - Media player */}
-          <div className="w-1/2 border-l-2 border-black">
+          <div
+            className={cn(
+              "w-1/2 border-l-2 border-black transition-colors",
+              isMediaDragActive && "bg-blue-50",
+            )}
+            onDragOver={handleMediaDragOver}
+            onDragEnter={handleMediaDragEnter}
+            onDragLeave={handleMediaDragLeave}
+            onDrop={handleMediaDrop}
+          >
             {/* VideoPlayer will get subtitles from context */}
             <VideoPlayer
               mediaFile={mediaFile}
