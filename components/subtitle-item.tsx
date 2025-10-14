@@ -19,6 +19,7 @@ import { useTranslations } from "next-intl";
 interface SubtitleItemProps {
   subtitle: Subtitle;
   nextSubtitle: Subtitle | null;
+  previousSubtitle: Subtitle | null;
   index: number;
   isLastItem: boolean;
   currentTime: number;
@@ -33,6 +34,7 @@ interface SubtitleItemProps {
 const SubtitleItem = memo(function SubtitleItem({
   subtitle,
   nextSubtitle,
+  previousSubtitle,
   isLastItem,
   currentTime,
   editingSubtitleUuid,
@@ -308,14 +310,40 @@ const SubtitleItem = memo(function SubtitleItem({
                       e.stopPropagation();
                     }
 
+                    if (
+                      (e.ctrlKey || e.metaKey) &&
+                      (e.key === "ArrowUp" || e.key === "ArrowDown")
+                    ) {
+                      e.preventDefault();
+                      const nextValue = e.currentTarget.value;
+                      if (nextValue !== subtitle.text) {
+                        updateSubtitleTextAction(subtitle.id, nextValue);
+                      }
+
+                      const targetSubtitle =
+                        e.key === "ArrowUp" ? previousSubtitle : nextSubtitle;
+
+                      if (targetSubtitle) {
+                        onPrepareSubtitleInteraction(targetSubtitle.uuid);
+                        onScrollToRegion(targetSubtitle.uuid);
+                        setEditingSubtitleUuid(targetSubtitle.uuid);
+                        setPlaybackTime(
+                          timeToSeconds(targetSubtitle.startTime),
+                        );
+                      } else {
+                        setEditingSubtitleUuid(subtitle.uuid);
+                      }
+
+                      return;
+                    }
+
                     // Handle normal Enter key to confirm edit
                     if (e.key === "Enter") {
                       if (e.ctrlKey || e.metaKey) {
                         e.preventDefault(); // Stop bubbling, keep focus
                         const { selectionStart, selectionEnd, value } =
                           e.currentTarget;
-                        const caretStart =
-                          selectionStart ?? editText.length;
+                        const caretStart = selectionStart ?? editText.length;
                         const caretEnd = selectionEnd ?? caretStart;
                         const nextValue =
                           value.slice(0, caretStart) +

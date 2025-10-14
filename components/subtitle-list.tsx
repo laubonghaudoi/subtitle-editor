@@ -182,8 +182,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       }
 
       const currentUuid = currentSubtitle.uuid;
-      const manualOverride =
-        manualScrollRequestUuidRef.current === currentUuid;
+      const manualOverride = manualScrollRequestUuidRef.current === currentUuid;
       const clearManualOverride = () => {
         if (manualOverride) {
           manualScrollRequestUuidRef.current = null;
@@ -198,7 +197,10 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
         return;
       }
 
-      if (suppressAutoCenterUuidRef.current === currentUuid && !manualOverride) {
+      if (
+        suppressAutoCenterUuidRef.current === currentUuid &&
+        !manualOverride
+      ) {
         activeSubtitleRef.current = currentUuid;
         suppressAutoCenterUuidRef.current = null;
         clearManualOverride();
@@ -393,11 +395,13 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
           {subtitles.map((subtitle: Subtitle, index: number) => {
             const isLastItem = index === subtitles.length - 1;
             const nextSubtitle = isLastItem ? null : subtitles[index + 1];
+            const previousSubtitle = index === 0 ? null : subtitles[index - 1];
             return (
               <SubtitleItem
                 key={subtitle.uuid}
                 subtitle={subtitle}
                 nextSubtitle={nextSubtitle}
+                previousSubtitle={previousSubtitle}
                 index={index}
                 isLastItem={isLastItem}
                 currentTime={currentTime}
