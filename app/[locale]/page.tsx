@@ -1,23 +1,14 @@
 "use client"; // Ensure this is the very first line
 
+import { AppHeader } from "@/components/app-header";
 import BottomInstructions from "@/components/bottom-instructions";
 import CustomControls from "@/components/custom-controls";
-import FindReplace from "@/components/find-replace";
-import LanguageSwitcher from "@/components/language-switcher";
-import LoadSrt from "@/components/load-srt";
-import SaveSrt from "@/components/save-srt";
 import SkipLinks from "@/components/skip-links";
 import SubtitleList, { type SubtitleListRef } from "@/components/subtitle-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   SubtitleProvider,
   useSubtitleContext,
@@ -31,15 +22,8 @@ import { isMediaFile, isSubtitleFile } from "@/lib/file-utils";
 import { useDroppablePanel } from "@/hooks/use-droppable-panel";
 import { useSubtitleShortcuts } from "@/hooks/use-subtitle-shortcuts";
 import { cn } from "@/lib/utils";
-import {
-  IconArrowBack,
-  IconArrowForward,
-  IconMovie,
-  IconQuestionMark,
-} from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -147,13 +131,11 @@ function MainContent() {
     onDropFile: loadSubtitleFile,
   });
 
-  const {
-    isDragActive: isMediaDragActive,
-    panelProps: mediaDropHandlers,
-  } = useDroppablePanel<HTMLDivElement>({
-    acceptFile: isMediaFile,
-    onDropFile: loadMediaFile,
-  });
+  const { isDragActive: isMediaDragActive, panelProps: mediaDropHandlers } =
+    useDroppablePanel<HTMLDivElement>({
+      acceptFile: isMediaFile,
+      onDropFile: loadMediaFile,
+    });
 
   useSubtitleShortcuts({
     subtitles,
@@ -187,7 +169,6 @@ function MainContent() {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [canUndoSubtitles]);
-
 
   // Effect to handle pending scroll-to-subtitle
   useEffect(() => {
@@ -247,93 +228,15 @@ function MainContent() {
   return (
     <div className="flex flex-col h-screen">
       <SkipLinks />
-      <nav className="h-[6vh] border-black border-b-2 flex items-center px-12 justify-between">
-        <div className="flex items-center">
-          <h1 className="text-lg font-semibold mx-4">
-            {t("navigation.title")}
-          </h1>
-          <LanguageSwitcher />
-          <Link href="/faq" target="_blank" aria-label={t("navigation.faq")}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="cursor-pointer"
-              aria-label={t("navigation.faq")}
-            >
-              <IconQuestionMark size={20} />
-            </Button>
-          </Link>
-        </div>
-
-        <div className="flex gap-4 items-center">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  disabled={!canUndoSubtitles}
-                  onClick={undoSubtitles}
-                  className="cursor-pointer"
-                  aria-label={t("navigation.undo")}
-                >
-                  <IconArrowBack />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{t("navigation.undo")}</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  disabled={!canRedoSubtitles}
-                  onClick={redoSubtitles}
-                  className="cursor-pointer"
-                  aria-label={t("navigation.redo")}
-                >
-                  <IconArrowForward />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{t("navigation.redo")}</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          {/* FindReplace will get subtitles & actions from context */}
-          <FindReplace />
-
-          <LoadSrt />
-
-          <Label className="cursor-pointer">
-            <Input
-              ref={mediaFileInputRef}
-              type="file"
-              className="hidden"
-              accept="audio/*,video/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                loadMediaFile(file);
-              }}
-            />
-            <Button
-              variant="secondary"
-              onClick={() => {
-                mediaFileInputRef.current?.click();
-              }}
-              className="bg-sky-300 hover:bg-blue-500 hover:text-white text-black rounded-sm cursor-pointer"
-            >
-              <IconMovie size={20} />
-              <span className="max-w-36 flex-1 overflow-hidden whitespace-nowrap text-ellipsis text-left">
-                {mediaFileName}
-              </span>
-            </Button>
-          </Label>
-
-          <SaveSrt />
-        </div>
-      </nav>
+      <AppHeader
+        canUndo={canUndoSubtitles}
+        canRedo={canRedoSubtitles}
+        onUndo={undoSubtitles}
+        onRedo={redoSubtitles}
+        mediaFileInputRef={mediaFileInputRef}
+        onSelectMediaFile={loadMediaFile}
+        mediaFileName={mediaFileName}
+      />
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col">
