@@ -48,7 +48,11 @@ export function useSubtitleShortcuts({
         return;
       }
 
-      if (event.key === "Tab") {
+      if (event.defaultPrevented) {
+        return;
+      }
+
+      if (event.key === "Tab" || event.key === "Enter") {
         event.preventDefault();
         const currentSubtitle = subtitles.find((sub) => {
           const startTimeSeconds = timeToSeconds(sub.startTime);
