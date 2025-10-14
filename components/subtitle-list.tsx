@@ -51,6 +51,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
     const listRef = useRef<HTMLDivElement>(null);
     const activeSubtitleRef = useRef<string | null>(null);
     const suppressAutoCenterUuidRef = useRef<string | null>(null);
+    const manualScrollRequestUuidRef = useRef<string | null>(null);
     // Get subtitles and actions from context
     const {
       subtitles,
@@ -176,22 +177,40 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       );
 
       if (!currentSubtitle) {
-        return;
-      }
-
-      if (!isPlaying || editingSubtitleUuid) {
+        manualScrollRequestUuidRef.current = null;
         return;
       }
 
       const currentUuid = currentSubtitle.uuid;
+      const manualOverride =
+        manualScrollRequestUuidRef.current === currentUuid;
+      const clearManualOverride = () => {
+        if (manualOverride) {
+          manualScrollRequestUuidRef.current = null;
+        }
+      };
 
-      if (suppressAutoCenterUuidRef.current === currentUuid) {
-        activeSubtitleRef.current = currentUuid;
-        suppressAutoCenterUuidRef.current = null;
+      if (editingSubtitleUuid && !manualOverride) {
         return;
       }
 
-      if (currentUuid === activeSubtitleRef.current) {
+      if (!isPlaying && !manualOverride) {
+        return;
+      }
+
+      if (suppressAutoCenterUuidRef.current === currentUuid && !manualOverride) {
+        activeSubtitleRef.current = currentUuid;
+        suppressAutoCenterUuidRef.current = null;
+        clearManualOverride();
+        return;
+      }
+
+      if (suppressAutoCenterUuidRef.current === currentUuid) {
+        suppressAutoCenterUuidRef.current = null;
+      }
+
+      if (currentUuid === activeSubtitleRef.current && !manualOverride) {
+        clearManualOverride();
         return;
       }
 
@@ -207,7 +226,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
         const centerY = cRect.top + container.clientHeight / 2;
         const itemCenterY = iRect.top + iRect.height / 2;
         const offBy = Math.abs(itemCenterY - centerY);
-        if (offBy > 4) {
+        if (offBy > 4 || manualOverride) {
           subtitleElement.scrollIntoView({
             behavior: "smooth",
             block: "center",
@@ -215,6 +234,8 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
         }
         activeSubtitleRef.current = currentUuid;
       }
+
+      clearManualOverride();
     }, [currentTime, subtitles, isPlaying, editingSubtitleUuid]);
 
     // Keyboard shortcuts effect
@@ -317,15 +338,12 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
             targetIndex = Math.min(subtitles.length - 1, currentIndex + 1);
           }
 
-          if (targetIndex !== currentIndex && subtitles[targetIndex]) {
+          if (subtitles[targetIndex]) {
+            manualScrollRequestUuidRef.current = subtitles[targetIndex].uuid;
             const targetTime = timeToSeconds(subtitles[targetIndex].startTime);
             setPlaybackTime(targetTime);
             // Optionally pause playback when navigating?
             // setIsPlaying(false);
-          } else if (targetIndex === currentIndex && subtitles[targetIndex]) {
-            // If pressing up/down on the first/last item, still jump to its start
-            const targetTime = timeToSeconds(subtitles[targetIndex].startTime);
-            setPlaybackTime(targetTime);
           }
         }
         // The Shift+Backspace logic is now handled above the isEditing check
