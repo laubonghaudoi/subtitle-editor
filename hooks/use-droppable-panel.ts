@@ -3,26 +3,26 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { DragEvent, DragEventHandler } from "react";
 
-interface UseDroppablePanelOptions<T extends HTMLElement> {
+interface UseDroppablePanelOptions {
   acceptFile: (file: File) => boolean;
   onDropFile: (file: File) => void | Promise<void>;
 }
 
-interface PanelHandlers<T extends HTMLElement> {
-  onDragEnter: DragEventHandler<T>;
-  onDragLeave: DragEventHandler<T>;
-  onDragOver: DragEventHandler<T>;
-  onDrop: DragEventHandler<T>;
+interface PanelHandlers<TEl extends HTMLElement> {
+  onDragEnter: DragEventHandler<TEl>;
+  onDragLeave: DragEventHandler<TEl>;
+  onDragOver: DragEventHandler<TEl>;
+  onDrop: DragEventHandler<TEl>;
 }
 
-export function useDroppablePanel<T extends HTMLElement = HTMLElement>({
+export function useDroppablePanel<TEl extends HTMLElement = HTMLElement>({
   acceptFile,
   onDropFile,
-}: UseDroppablePanelOptions<T>) {
+}: UseDroppablePanelOptions) {
   const [isDragActive, setIsDragActive] = useState(false);
   const dragDepthRef = useRef(0);
 
-  const hasFilesPayload = useCallback((event: DragEvent<T>) => {
+  const hasFilesPayload = useCallback((event: DragEvent<TEl>) => {
     const types = event.dataTransfer?.types;
     if (!types) {
       return false;
@@ -31,7 +31,7 @@ export function useDroppablePanel<T extends HTMLElement = HTMLElement>({
   }, []);
 
   const getMatchingFile = useCallback(
-    (event: DragEvent<T>) => {
+    (event: DragEvent<TEl>) => {
       const files = event.dataTransfer?.files;
       if (!files || files.length === 0) {
         return null;
@@ -41,7 +41,7 @@ export function useDroppablePanel<T extends HTMLElement = HTMLElement>({
     [acceptFile],
   );
 
-  const handleDragOver: DragEventHandler<T> = useCallback(
+  const handleDragOver: DragEventHandler<TEl> = useCallback(
     (event) => {
       if (hasFilesPayload(event)) {
         event.preventDefault();
@@ -51,7 +51,7 @@ export function useDroppablePanel<T extends HTMLElement = HTMLElement>({
     [hasFilesPayload],
   );
 
-  const handleDragEnter: DragEventHandler<T> = useCallback(
+  const handleDragEnter: DragEventHandler<TEl> = useCallback(
     (event) => {
       if (!hasFilesPayload(event)) {
         return;
@@ -63,7 +63,7 @@ export function useDroppablePanel<T extends HTMLElement = HTMLElement>({
     [hasFilesPayload],
   );
 
-  const handleDragLeave: DragEventHandler<T> = useCallback((event) => {
+  const handleDragLeave: DragEventHandler<TEl> = useCallback((event) => {
     if (!hasFilesPayload(event)) {
       return;
     }
@@ -73,7 +73,7 @@ export function useDroppablePanel<T extends HTMLElement = HTMLElement>({
     }
   }, [hasFilesPayload]);
 
-  const handleDrop: DragEventHandler<T> = useCallback(
+  const handleDrop: DragEventHandler<TEl> = useCallback(
     async (event) => {
       if (!hasFilesPayload(event)) {
         return;
@@ -90,7 +90,7 @@ export function useDroppablePanel<T extends HTMLElement = HTMLElement>({
     [getMatchingFile, hasFilesPayload, onDropFile],
   );
 
-  const panelProps = useMemo<PanelHandlers<T>>(
+  const panelProps = useMemo<PanelHandlers<TEl>>(
     () => ({
       onDragEnter: handleDragEnter,
       onDragLeave: handleDragLeave,
