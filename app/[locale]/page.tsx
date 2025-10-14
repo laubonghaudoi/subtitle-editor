@@ -27,7 +27,10 @@ import {
   parseVTT,
   extractVttPrologue,
 } from "@/lib/subtitleOperations";
-import { cn, timeToSeconds } from "@/lib/utils";
+import { isMediaFile, isSubtitleFile } from "@/lib/file-utils";
+import { useDroppablePanel } from "@/hooks/use-droppable-panel";
+import { useSubtitleShortcuts } from "@/hooks/use-subtitle-shortcuts";
+import { cn } from "@/lib/utils";
 import {
   IconArrowBack,
   IconArrowForward,
@@ -37,7 +40,7 @@ import {
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { type DragEvent, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export const runtime = "edge";
@@ -101,141 +104,70 @@ function MainContent() {
   // Whether the pending scroll should be instant (used for cross-track clicks)
   const [pendingScrollInstant, setPendingScrollInstant] =
     useState<boolean>(false);
-  const [isSubtitleDragActive, setIsSubtitleDragActive] = useState(false);
-  const [isMediaDragActive, setIsMediaDragActive] = useState(false);
-  const subtitleDragDepthRef = useRef(0);
-  const mediaDragDepthRef = useRef(0);
+  const loadMediaFile = useCallback(
+    (file: File) => {
+      setMediaFile(null);
+      if (mediaFileInputRef.current) {
+        mediaFileInputRef.current.value = "";
+      }
+      setTimeout(() => {
+        setMediaFile(file);
+        setMediaFileName(file.name);
+      }, 0);
+    },
+    [setMediaFile, setMediaFileName],
+  );
 
-  const loadMediaFile = (file: File) => {
-    setMediaFile(null);
-    if (mediaFileInputRef.current) {
-      mediaFileInputRef.current.value = "";
-    }
-    setTimeout(() => {
-      setMediaFile(file);
-      setMediaFileName(file.name);
-    }, 0);
-  };
+  const loadSubtitleFile = useCallback(
+    async (file: File) => {
+      const text = await file.text();
+      const firstLine =
+        text.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
+      const isVtt =
+        file.name.toLowerCase().endsWith(".vtt") ||
+        /^WEBVTT( |$)/.test(firstLine);
+      const parsedSubtitles = isVtt ? parseVTT(text) : parseSRT(text);
+      const meta = isVtt ? extractVttPrologue(text) : undefined;
+      setInitialSubtitles(
+        parsedSubtitles,
+        file.name.replace(/\.(srt|vtt)$/i, ""),
+        meta
+          ? { vttHeader: meta.header, vttPrologue: meta.prologue }
+          : undefined,
+      );
+    },
+    [setInitialSubtitles],
+  );
 
-  const isSubtitleFile = (file: File) => {
-    const name = file.name.toLowerCase();
-    return (
-      name.endsWith(".srt") || name.endsWith(".vtt") || file.type === "text/vtt"
-    );
-  };
+  const {
+    isDragActive: isSubtitleDragActive,
+    panelProps: subtitleDropHandlers,
+  } = useDroppablePanel<HTMLDivElement>({
+    acceptFile: isSubtitleFile,
+    onDropFile: loadSubtitleFile,
+  });
 
-  const isMediaFile = (file: File) => {
-    if (file.type.startsWith("audio/") || file.type.startsWith("video/")) {
-      return true;
-    }
-    return /\.(m4a|mp3|mp4|webm|ogg|wav|aac|flac|opus)$/i.test(file.name);
-  };
+  const {
+    isDragActive: isMediaDragActive,
+    panelProps: mediaDropHandlers,
+  } = useDroppablePanel<HTMLDivElement>({
+    acceptFile: isMediaFile,
+    onDropFile: loadMediaFile,
+  });
 
-  const getDroppedFile = (
-    dataTransfer: DataTransfer,
-    matcher: (file: File) => boolean,
-  ) => {
-    return Array.from(dataTransfer.files ?? []).find(matcher) ?? null;
-  };
-
-  const hasFilesPayload = (event: DragEvent<HTMLDivElement>) => {
-    return Array.from(event.dataTransfer.types ?? []).includes("Files");
-  };
-
-  const handleSubtitleDragOver = (event: DragEvent<HTMLDivElement>) => {
-    if (hasFilesPayload(event)) {
-      event.preventDefault();
-      event.dataTransfer.dropEffect = "copy";
-    }
-  };
-
-  const handleSubtitleDragEnter = (event: DragEvent<HTMLDivElement>) => {
-    if (!hasFilesPayload(event)) {
-      return;
-    }
-    event.preventDefault();
-    subtitleDragDepthRef.current += 1;
-    setIsSubtitleDragActive(true);
-  };
-
-  const handleSubtitleDragLeave = (event: DragEvent<HTMLDivElement>) => {
-    if (!hasFilesPayload(event)) {
-      return;
-    }
-    subtitleDragDepthRef.current = Math.max(
-      0,
-      subtitleDragDepthRef.current - 1,
-    );
-    if (subtitleDragDepthRef.current === 0) {
-      setIsSubtitleDragActive(false);
-    }
-  };
-
-  const handleSubtitleDrop = async (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    subtitleDragDepthRef.current = 0;
-    setIsSubtitleDragActive(false);
-    const file = getDroppedFile(event.dataTransfer, isSubtitleFile);
-    if (!file) {
-      return;
-    }
-    await handleFileUpload(file);
-  };
-
-  const handleMediaDragOver = (event: DragEvent<HTMLDivElement>) => {
-    if (hasFilesPayload(event)) {
-      event.preventDefault();
-      event.dataTransfer.dropEffect = "copy";
-    }
-  };
-
-  const handleMediaDragEnter = (event: DragEvent<HTMLDivElement>) => {
-    if (!hasFilesPayload(event)) {
-      return;
-    }
-    event.preventDefault();
-    mediaDragDepthRef.current += 1;
-    setIsMediaDragActive(true);
-  };
-
-  const handleMediaDragLeave = (event: DragEvent<HTMLDivElement>) => {
-    if (!hasFilesPayload(event)) {
-      return;
-    }
-    mediaDragDepthRef.current = Math.max(0, mediaDragDepthRef.current - 1);
-    if (mediaDragDepthRef.current === 0) {
-      setIsMediaDragActive(false);
-    }
-  };
-
-  const handleMediaDrop = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    mediaDragDepthRef.current = 0;
-    setIsMediaDragActive(false);
-    const file = getDroppedFile(event.dataTransfer, isMediaFile);
-    if (!file) {
-      return;
-    }
-    loadMediaFile(file);
-  };
-
-  const handleFileUpload = async (file: File) => {
-    const text = await file.text();
-    const firstLine =
-      text.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
-    const isVtt =
-      file.name.toLowerCase().endsWith(".vtt") ||
-      /^WEBVTT( |$)/.test(firstLine);
-    const parsedSubtitles = isVtt ? parseVTT(text) : parseSRT(text);
-    // Preserve VTT prologue blocks (NOTE/STYLE/REGION) when loading VTT
-    const meta = isVtt ? extractVttPrologue(text) : undefined;
-    // Use the context action to set initial subtitles
-    setInitialSubtitles(
-      parsedSubtitles,
-      file.name.replace(/\.(srt|vtt)$/i, ""),
-      meta ? { vttHeader: meta.header, vttPrologue: meta.prologue } : undefined,
-    );
-  };
+  useSubtitleShortcuts({
+    subtitles,
+    playbackTime,
+    setIsPlaying,
+    setEditingSubtitleUuid,
+    tracks,
+    activeTrackId: activeTrackId ?? null,
+    setActiveTrackId,
+    canUndoSubtitles,
+    canRedoSubtitles,
+    undoSubtitles,
+    redoSubtitles,
+  });
 
   // --- Old Subtitle Modification Callbacks Removed ---
   // Actions are now handled by context provider and consumed directly by child components
@@ -256,120 +188,6 @@ function MainContent() {
     };
   }, [canUndoSubtitles]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const activeElement = document.activeElement;
-      // Check if the focused element is an input or textarea
-      if (
-        activeElement?.tagName === "INPUT" ||
-        activeElement?.tagName === "TEXTAREA"
-      ) {
-        return; // Allow spacebar default behavior in inputs/textareas
-      }
-
-      if (event.code === "Space") {
-        event.preventDefault(); // Prevent default space behavior (like scrolling) elsewhere
-        setIsPlaying(!isPlaying);
-      } else if (event.key === "Tab") {
-        event.preventDefault(); // Prevent default tab behavior (focus switching)
-
-        // Find the subtitle currently playing
-        const currentSubtitle = subtitles.find((sub) => {
-          // Convert SRT time strings to seconds using the original util function
-          const startTimeSeconds = timeToSeconds(sub.startTime);
-          const endTimeSeconds = timeToSeconds(sub.endTime);
-          return (
-            playbackTime >= startTimeSeconds && playbackTime < endTimeSeconds
-          );
-        });
-
-        if (currentSubtitle) {
-          setEditingSubtitleUuid(currentSubtitle.uuid); // Set the UUID of the subtitle to edit
-          // Optionally, scroll the list to the editing item if needed
-          // This might require passing a ref or callback to SubtitleList
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    // Cleanup function
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-    // Dependencies now include subtitles and playbackTime for finding the current subtitle
-  }, [isPlaying, subtitles, playbackTime]); // Removed setEditingSubtitleUuid
-
-  // Track switching shortcuts: Alt + 1..4
-  useEffect(() => {
-    const handleTrackSwitch = (event: KeyboardEvent) => {
-      // Ignore when typing in inputs/textareas/contenteditable
-      const activeEl = document.activeElement as HTMLElement | null;
-      if (
-        activeEl &&
-        (activeEl.tagName === "INPUT" ||
-          activeEl.tagName === "TEXTAREA" ||
-          activeEl.isContentEditable)
-      ) {
-        return;
-      }
-
-      if (!event.altKey || event.shiftKey || event.ctrlKey || event.metaKey) {
-        return;
-      }
-
-      // Support both event.key ('1'..'4') and event.code ('Digit1'..'Digit4')
-      let index = -1;
-      if (event.code.startsWith("Digit")) {
-        const n = Number.parseInt(event.code.replace("Digit", ""), 10);
-        if (n >= 1 && n <= 4) index = n - 1;
-      } else if (event.key >= "1" && event.key <= "4") {
-        index = Number.parseInt(event.key, 10) - 1;
-      }
-
-      if (index >= 0 && index < tracks.length) {
-        event.preventDefault();
-        const targetTrack = tracks[index];
-        if (targetTrack && targetTrack.id !== activeTrackId) {
-          setActiveTrackId(targetTrack.id);
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleTrackSwitch);
-    return () => window.removeEventListener("keydown", handleTrackSwitch);
-  }, [tracks, activeTrackId, setActiveTrackId]);
-
-  // Effect for Undo/Redo keyboard shortcuts
-  useEffect(() => {
-    const handleUndoRedo = (event: KeyboardEvent) => {
-      const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
-      const modKey = isMac ? event.metaKey : event.ctrlKey;
-
-      // Check for Cmd/Ctrl + Z for Undo
-      if (modKey && !event.shiftKey && event.key.toLowerCase() === "z") {
-        // Prevent default browser/input undo behavior only if we can undo
-        if (canUndoSubtitles) {
-          event.preventDefault();
-          undoSubtitles();
-        }
-      }
-      // Check for Cmd/Ctrl + Shift + Z for Redo
-      else if (modKey && event.shiftKey && event.key.toLowerCase() === "z") {
-        // Prevent default browser redo behavior only if we can redo
-        if (canRedoSubtitles) {
-          event.preventDefault();
-          redoSubtitles();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleUndoRedo);
-    return () => {
-      window.removeEventListener("keydown", handleUndoRedo);
-    };
-    // Dependencies include the undo/redo functions and their possibility flags
-  }, [undoSubtitles, redoSubtitles, canUndoSubtitles, canRedoSubtitles]);
 
   // Effect to handle pending scroll-to-subtitle
   useEffect(() => {
@@ -525,12 +343,9 @@ function MainContent() {
           <div
             className={cn(
               "w-1/2 transition-colors",
-              isSubtitleDragActive && " bg-yellow-50",
+              isSubtitleDragActive && "bg-yellow-50",
             )}
-            onDragOver={handleSubtitleDragOver}
-            onDragEnter={handleSubtitleDragEnter}
-            onDragLeave={handleSubtitleDragLeave}
-            onDrop={handleSubtitleDrop}
+            {...subtitleDropHandlers}
           >
             <div className="h-full">
               {tracks.length > 0 && activeTrackId ? (
@@ -600,7 +415,7 @@ function MainContent() {
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
-                        await handleFileUpload(file);
+                        await loadSubtitleFile(file);
                       }}
                     />
                   </Label>
@@ -637,10 +452,7 @@ function MainContent() {
               "w-1/2 border-l-2 border-black transition-colors",
               isMediaDragActive && "bg-blue-50",
             )}
-            onDragOver={handleMediaDragOver}
-            onDragEnter={handleMediaDragEnter}
-            onDragLeave={handleMediaDragLeave}
-            onDrop={handleMediaDrop}
+            {...mediaDropHandlers}
           >
             {/* VideoPlayer will get subtitles from context */}
             <VideoPlayer
