@@ -310,6 +310,30 @@ const SubtitleItem = memo(function SubtitleItem({
 
                     // Handle normal Enter key to confirm edit
                     if (e.key === "Enter") {
+                      if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault(); // Stop bubbling, keep focus
+                        const { selectionStart, selectionEnd, value } =
+                          e.currentTarget;
+                        const caretStart =
+                          selectionStart ?? editText.length;
+                        const caretEnd = selectionEnd ?? caretStart;
+                        const nextValue =
+                          value.slice(0, caretStart) +
+                          "\n" +
+                          value.slice(caretEnd);
+                        setEditText(nextValue);
+                        requestAnimationFrame(() => {
+                          const textarea = textAreaRef.current;
+                          if (textarea) {
+                            textarea.setSelectionRange(
+                              caretStart + 1,
+                              caretStart + 1,
+                            );
+                          }
+                        });
+                        return;
+                      }
+
                       e.preventDefault(); // Prevent default newline behavior
                       const caretPos =
                         e.currentTarget.selectionStart ?? editText.length;
