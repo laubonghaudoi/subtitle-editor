@@ -24,7 +24,14 @@ import { useSubtitleShortcuts } from "@/hooks/use-subtitle-shortcuts";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import type { DragEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export const runtime = "edge";
@@ -58,6 +65,8 @@ function MainContent() {
     setActiveTrackId,
     subtitles,
     setInitialSubtitles, // Use this instead of setSubtitlesWithHistory
+    loadSubtitlesIntoTrack,
+    renameTrack,
     undoSubtitles,
     redoSubtitles,
     canUndoSubtitles,
@@ -88,6 +97,13 @@ function MainContent() {
   // Whether the pending scroll should be instant (used for cross-track clicks)
   const [pendingScrollInstant, setPendingScrollInstant] =
     useState<boolean>(false);
+
+  const activeTrack = activeTrackId
+    ? tracks.find((track) => track.id === activeTrackId) ?? null
+    : null;
+  const activeTrackIsEmpty =
+    activeTrack !== null && activeTrack.subtitles.length === 0;
+  const allowSubtitleDrop = tracks.length === 0 || activeTrackIsEmpty;
   const loadMediaFile = useCallback(
     (file: File) => {
       setMediaFile(null);
@@ -112,24 +128,88 @@ function MainContent() {
         /^WEBVTT( |$)/.test(firstLine);
       const parsedSubtitles = isVtt ? parseVTT(text) : parseSRT(text);
       const meta = isVtt ? extractVttPrologue(text) : undefined;
+      const safeTrackName =
+        file.name.replace(/\.(srt|vtt)$/i, "") || file.name;
+
+      if (activeTrackId && activeTrackIsEmpty) {
+        loadSubtitlesIntoTrack(
+          activeTrackId,
+          parsedSubtitles,
+          meta
+            ? { vttHeader: meta.header, vttPrologue: meta.prologue }
+            : undefined,
+        );
+        renameTrack(activeTrackId, safeTrackName);
+        return;
+      }
+
       setInitialSubtitles(
         parsedSubtitles,
-        file.name.replace(/\.(srt|vtt)$/i, ""),
+        safeTrackName,
         meta
           ? { vttHeader: meta.header, vttPrologue: meta.prologue }
           : undefined,
       );
     },
-    [setInitialSubtitles],
+    [
+      activeTrackId,
+      activeTrackIsEmpty,
+      loadSubtitlesIntoTrack,
+      renameTrack,
+      setInitialSubtitles,
+    ],
+  );
+
+  const acceptSubtitleFile = useCallback(
+    (file: File) => allowSubtitleDrop && isSubtitleFile(file),
+    [allowSubtitleDrop],
   );
 
   const {
     isDragActive: isSubtitleDragActive,
-    panelProps: subtitleDropHandlers,
+    panelProps: baseSubtitleDropHandlers,
   } = useDroppablePanel<HTMLDivElement>({
-    acceptFile: isSubtitleFile,
+    acceptFile: acceptSubtitleFile,
     onDropFile: loadSubtitleFile,
   });
+
+  const subtitleDropHandlers = useMemo(
+    () => ({
+      onDragEnter: (event: DragEvent<HTMLDivElement>) => {
+        if (!allowSubtitleDrop) {
+          if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = "none";
+          }
+          return;
+        }
+        baseSubtitleDropHandlers.onDragEnter(event);
+      },
+      onDragLeave: (event: DragEvent<HTMLDivElement>) => {
+        baseSubtitleDropHandlers.onDragLeave(event);
+      },
+      onDragOver: (event: DragEvent<HTMLDivElement>) => {
+        if (!allowSubtitleDrop) {
+          event.preventDefault();
+          if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = "none";
+          }
+          return;
+        }
+        baseSubtitleDropHandlers.onDragOver(event);
+      },
+      onDrop: (event: DragEvent<HTMLDivElement>) => {
+        if (!allowSubtitleDrop) {
+          event.preventDefault();
+          if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = "none";
+          }
+          return;
+        }
+        baseSubtitleDropHandlers.onDrop(event);
+      },
+    }),
+    [allowSubtitleDrop, baseSubtitleDropHandlers],
+  );
 
   const { isDragActive: isMediaDragActive, panelProps: mediaDropHandlers } =
     useDroppablePanel<HTMLDivElement>({
@@ -246,7 +326,7 @@ function MainContent() {
           <div
             className={cn(
               "w-1/2 transition-colors",
-              isSubtitleDragActive && "bg-yellow-50",
+              isSubtitleDragActive && allowSubtitleDrop && "bg-yellow-50",
             )}
             {...subtitleDropHandlers}
           >
