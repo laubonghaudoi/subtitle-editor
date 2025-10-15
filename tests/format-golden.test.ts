@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { buildSrtContent, buildVttContent } from "../lib/format";
-import { parseVTT } from "../lib/subtitleOperations";
+import { parseVTT } from "../lib/subtitle-operations";
 import { srtToVtt } from "../lib/utils";
 
 const goldenSubtitles = [

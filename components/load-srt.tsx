@@ -30,7 +30,7 @@ import {
   parseSRT,
   parseVTT,
   extractVttPrologue,
-} from "@/lib/subtitleOperations";
+} from "@/lib/subtitle-operations";
 import {
   IconBadgeCc,
   IconFile,

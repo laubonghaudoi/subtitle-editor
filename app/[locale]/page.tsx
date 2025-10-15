@@ -17,20 +17,14 @@ import {
   parseSRT,
   parseVTT,
   extractVttPrologue,
-} from "@/lib/subtitleOperations";
+} from "@/lib/subtitle-operations";
 import { isMediaFile, isSubtitleFile } from "@/lib/file-utils";
 import { useDroppablePanel } from "@/hooks/use-droppable-panel";
 import { useSubtitleShortcuts } from "@/hooks/use-subtitle-shortcuts";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DragEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -99,7 +93,7 @@ function MainContent() {
     useState<boolean>(false);
 
   const activeTrack = activeTrackId
-    ? tracks.find((track) => track.id === activeTrackId) ?? null
+    ? (tracks.find((track) => track.id === activeTrackId) ?? null)
     : null;
   const activeTrackIsEmpty =
     activeTrack !== null && activeTrack.subtitles.length === 0;
@@ -128,8 +122,7 @@ function MainContent() {
         /^WEBVTT( |$)/.test(firstLine);
       const parsedSubtitles = isVtt ? parseVTT(text) : parseSRT(text);
       const meta = isVtt ? extractVttPrologue(text) : undefined;
-      const safeTrackName =
-        file.name.replace(/\.(srt|vtt)$/i, "") || file.name;
+      const safeTrackName = file.name.replace(/\.(srt|vtt)$/i, "") || file.name;
 
       if (activeTrackId && activeTrackIsEmpty) {
         loadSubtitlesIntoTrack(

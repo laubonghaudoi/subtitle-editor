@@ -1,7 +1,7 @@
 import { AnimatePresence } from "motion/react";
 import { useEffect, useRef, forwardRef, useImperativeHandle } from "react"; // Remove useCallback import
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
-import { parseSRT, parseVTT } from "@/lib/subtitleOperations";
+import { parseSRT, parseVTT } from "@/lib/subtitle-operations";
 import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import SubtitleItem from "./subtitle-item";

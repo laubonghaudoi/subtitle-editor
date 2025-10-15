@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
-import { Toaster } from "@/components/ui/toaster";
 import WebVitalsReporter from "@/components/web-vitals-reporter";
+import ServiceWorkerRegister from "@/components/service-worker-register";
+import { Toaster } from "@/components/ui/toaster";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,6 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://subtitle-editor.org"),
+  applicationName: "Subtitle Editor",
   title: {
     template: "%s | Subtitle Editor", // Page title will replace %s
     default:
@@ -23,7 +25,24 @@ export const metadata: Metadata = {
   },
   description:
     "Edit, create, and align SRT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
-  icons: "/badge-cc.svg", // Set the favicon
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/badge-cc.svg", type: "image/svg+xml" },
+      { url: "/badge-cc.png", sizes: "512x512", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/icon-apple-180.png", sizes: "180x180" }],
+    shortcut: [{ url: "/icons/icon-192.png", sizes: "192x192" }],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Subtitle Editor",
+  },
+  formatDetection: {
+    telephone: false,
+  },
   // Add Open Graph tags
   openGraph: {
     // title: Will use title.default or template from above
@@ -40,6 +59,10 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#0f172a",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -47,12 +70,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#0f172a" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
         <Toaster />
         <WebVitalsReporter />
+        <ServiceWorkerRegister />
         {/* Google Ads Tag */}
         <Script
           strategy="afterInteractive"
