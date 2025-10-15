@@ -28,6 +28,28 @@ const EMPTY_HISTORY: UndoHistory<Subtitle[]> = {
   future: [],
 };
 
+const STORAGE_KEY = "subtitle-editor-state-v1";
+const STORAGE_VERSION = 1;
+
+const isPersistenceDisabled = (): boolean => {
+  if (typeof window !== "undefined") {
+    const userAgent = window.navigator?.userAgent ?? "";
+    if (userAgent.toLowerCase().includes("jsdom")) {
+      return true;
+    }
+  }
+  return (
+    typeof process !== "undefined" && process.env.NODE_ENV === "test"
+  );
+};
+
+interface PersistedState {
+  version: number;
+  tracks: SubtitleTrack[];
+  activeTrackId: string | null;
+  showTrackLabels: boolean;
+}
+
 const ensureTrackMetadata = (
   subtitles: Subtitle[],
   trackId: string,
@@ -182,6 +204,8 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const trackHistoriesRef = useRef<Map<string, UndoHistory<Subtitle[]>>>(
     new Map(),
   );
+  const hasBootstrappedFromStorage = useRef(false);
+  const shouldSkipPersistRef = useRef(true);
 
   // Each track keeps an independent undo/redo history stored alongside the track list.
   const [
@@ -197,6 +221,124 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   ] = useUndoableState<Subtitle[]>([], {
     isEqual: subtitlesAreEqual,
   });
+
+  // Hydrate from localStorage so the editor stays usable offline.
+  useEffect(() => {
+    if (hasBootstrappedFromStorage.current) return;
+    if (isPersistenceDisabled()) return;
+    if (typeof window === "undefined") return;
+    hasBootstrappedFromStorage.current = true;
+
+    const rawState = window.localStorage.getItem(STORAGE_KEY);
+    if (!rawState) return;
+
+    try {
+      const parsed = JSON.parse(rawState) as Partial<PersistedState>;
+      if (
+        parsed.version !== STORAGE_VERSION ||
+        !Array.isArray(parsed.tracks)
+      ) {
+        return;
+      }
+
+      const normalizedTracks = parsed.tracks
+        .map((track): SubtitleTrack | null => {
+          if (!track || typeof track !== "object") {
+            return null;
+          }
+          const { id, name, subtitles, vttHeader, vttPrologue } = track;
+          if (typeof id !== "string" || typeof name !== "string") {
+            return null;
+          }
+          if (!Array.isArray(subtitles)) {
+            return null;
+          }
+
+          const sanitizedSubtitles = subtitles
+            .map((subtitle, index): Subtitle | null => {
+              if (!subtitle || typeof subtitle !== "object") {
+                return null;
+              }
+              const startTime =
+                typeof subtitle.startTime === "string"
+                  ? subtitle.startTime
+                  : "00:00:00,000";
+              const endTime =
+                typeof subtitle.endTime === "string"
+                  ? subtitle.endTime
+                  : "00:00:00,000";
+              const text =
+                typeof subtitle.text === "string" ? subtitle.text : "";
+              const numericId =
+                typeof subtitle.id === "number" ? subtitle.id : index + 1;
+              const uuid =
+                typeof subtitle.uuid === "string" ? subtitle.uuid : uuidv4();
+              return {
+                id: numericId,
+                uuid,
+                startTime,
+                endTime,
+                text,
+                trackId: subtitle.trackId ?? id,
+              };
+            })
+            .filter((subtitle): subtitle is Subtitle => subtitle !== null);
+
+          const normalizedTrack: SubtitleTrack = {
+            id,
+            name,
+            subtitles: ensureTrackMetadata(sanitizedSubtitles, id),
+          };
+          if (typeof vttHeader === "string") {
+            normalizedTrack.vttHeader = vttHeader;
+          }
+          if (Array.isArray(vttPrologue)) {
+            normalizedTrack.vttPrologue = vttPrologue.filter(
+              (line): line is string => typeof line === "string",
+            );
+          }
+          return normalizedTrack;
+        })
+        .filter((track): track is SubtitleTrack => track !== null)
+        .slice(0, 4); // Respect the 4-track limit offline too.
+
+      if (normalizedTracks.length === 0) {
+        return;
+      }
+
+      const trackHistoryMap = new Map<string, UndoHistory<Subtitle[]>>();
+      normalizedTracks.forEach((track) => {
+        trackHistoryMap.set(
+          track.id,
+          createTrackHistory(track.id, track.subtitles),
+        );
+      });
+      trackHistoriesRef.current = trackHistoryMap;
+      setTracks(normalizedTracks);
+      setShowTrackLabels(Boolean(parsed.showTrackLabels));
+
+      const fallbackActiveId =
+        (parsed.activeTrackId &&
+          normalizedTracks.some((track) => track.id === parsed.activeTrackId) &&
+          parsed.activeTrackId) ||
+        normalizedTracks[0]?.id ||
+        null;
+
+      setActiveTrackId(fallbackActiveId);
+      if (fallbackActiveId) {
+        previousActiveTrackId.current = fallbackActiveId;
+      }
+      const activeHistory =
+        (fallbackActiveId && trackHistoryMap.get(fallbackActiveId)) ||
+        EMPTY_HISTORY;
+      setHistorySnapshot(activeHistory);
+    } catch (error) {
+      console.warn(
+        "[pwa] Failed to hydrate editor state from local storage",
+        error,
+      );
+    }
+  }, [setHistorySnapshot, setShowTrackLabels]);
 
   // CRITICAL FIX: This effect synchronizes the undo/redo state
   // with the currently active track.
@@ -266,6 +408,50 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       return hasChanges ? nextTracks : prevTracks;
     });
   }, [activeTrackId, activeSubtitles]);
+
+  // Persist the current workspace so offline refreshes pick up user edits.
+  useEffect(() => {
+    if (isPersistenceDisabled()) return;
+    if (typeof window === "undefined") return;
+    if (shouldSkipPersistRef.current) {
+      shouldSkipPersistRef.current = false;
+      return;
+    }
+
+    const serializableTracks = tracks.map((track) => ({
+      id: track.id,
+      name: track.name,
+      subtitles: ensureTrackMetadata(track.subtitles, track.id).map(
+        (subtitle, index) => ({
+          ...subtitle,
+          id:
+            typeof subtitle.id === "number" && !Number.isNaN(subtitle.id)
+              ? subtitle.id
+              : index + 1,
+          trackId: subtitle.trackId ?? track.id,
+        }),
+      ),
+      vttHeader: track.vttHeader,
+      vttPrologue: track.vttPrologue,
+    }));
+
+    const payload: PersistedState = {
+      version: STORAGE_VERSION,
+      tracks: serializableTracks,
+      activeTrackId,
+      showTrackLabels,
+    };
+
+    try {
+      if (payload.tracks.length === 0) {
+        window.localStorage.removeItem(STORAGE_KEY);
+      } else {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      }
+    } catch (error) {
+      console.warn("[pwa] Failed to persist editor state", error);
+    }
+  }, [tracks, activeTrackId, showTrackLabels]);
 
   const addTrack = (
     name: string,

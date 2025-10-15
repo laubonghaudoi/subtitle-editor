@@ -1,8 +1,8 @@
-import { isValidLocale, localeConfig, locales } from "@/lib/locales";
-import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { isValidLocale, localeConfig, locales } from "@/lib/locales";
+import type { Metadata, Viewport } from "next";
 
 export async function generateMetadata({
   params,
@@ -22,6 +22,8 @@ export async function generateMetadata({
 
   return {
     metadataBase: new URL("https://subtitle-editor.org"),
+    applicationName: messages.metadata.title,
+    manifest: "/manifest.json",
     title: {
       default: messages.metadata.title,
       template: `%s | ${messages.metadata.title}`,
@@ -59,8 +61,27 @@ export async function generateMetadata({
       description: messages.metadata.description,
       images: ["/badge-cc.png"],
     },
+    icons: {
+      icon: [
+        { url: "/badge-cc.svg", type: "image/svg+xml" },
+        { url: "/badge-cc.png", sizes: "512x512", type: "image/png" },
+        { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      ],
+      apple: [{ url: "/icons/icon-apple-180.png", sizes: "180x180" }],
+      shortcut: [{ url: "/icons/icon-192.png", sizes: "192x192" }],
+    },
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "black-translucent",
+      title: messages.metadata.title,
+    },
   };
 }
+
+export const viewport: Viewport = {
+  themeColor: "#0f172a",
+  colorScheme: "dark",
+};
 
 export default async function LocaleLayout({
   children,
