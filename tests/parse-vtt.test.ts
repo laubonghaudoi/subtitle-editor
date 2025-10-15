@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { parseVTT } from "../lib/subtitleOperations";
+import { parseVTT } from "../lib/subtitle-operations";
 import { timeToSeconds } from "../lib/utils";
 
 const readFixture = (name: string) =>

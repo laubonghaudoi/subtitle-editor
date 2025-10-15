@@ -11,7 +11,7 @@ import {
   updateSubtitle,
   updateSubtitleEndTime,
   updateSubtitleStartTime,
-} from "@/lib/subtitleOperations";
+} from "@/lib/subtitle-operations";
 import {
   createTrackHistory,
   ensureTrackMetadata,
@@ -27,7 +27,9 @@ interface UseSubtitleActionsParams {
   getHistorySnapshot: () => UndoHistory<Subtitle[]>;
   setHistorySnapshot: (history: UndoHistory<Subtitle[]>) => void;
   activeSubtitles: Subtitle[];
-  setSubtitlesWithHistory: (action: Subtitle[] | ((prev: Subtitle[]) => Subtitle[])) => void;
+  setSubtitlesWithHistory: (
+    action: Subtitle[] | ((prev: Subtitle[]) => Subtitle[]),
+  ) => void;
 }
 
 interface SubtitleActions {
