@@ -104,7 +104,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
       const player = playerRef.current;
       const currentTime = player.getCurrentTime();
       if (Math.abs(currentTime - seekTime) > 0.5) {
-        player.seekTo(seekTime, "seconds", true);
+        player.seekTo(seekTime, "seconds");
         timeToRestore.current = seekTime;
       }
     }
