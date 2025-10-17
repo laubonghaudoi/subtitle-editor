@@ -18,6 +18,7 @@ import {
   IconArrowForward,
   IconMovie,
   IconQuestionMark,
+  IconBrandGithub,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -57,6 +58,21 @@ export function AppHeader({
             aria-label={t("navigation.faq")}
           >
             <IconQuestionMark size={20} />
+          </Button>
+        </Link>
+        <Link
+          href="https://github.com/laubonghaudoi/subtitle-editor"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t("navigation.github")}
+        >
+          <Button
+            variant="ghost"
+            size="sm"
+            className="cursor-pointer"
+            aria-label={t("navigation.github")}
+          >
+            <IconBrandGithub size={20} />
           </Button>
         </Link>
       </div>

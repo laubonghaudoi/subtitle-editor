@@ -3,7 +3,8 @@
     "title": "Subtitle Editor",
     "faq": "Frequently Asked Questions",
     "undo": "Undo",
-    "redo": "Redo"
+    "redo": "Redo",
+    "github": "Open-source on GitHub with MIT License"
   },
   "buttons": {
     "loadMedia": "Load Media",

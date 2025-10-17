@@ -3,7 +3,8 @@
     "title": "Untertitel-Editor",
     "faq": "Häufig gestellte Fragen",
     "undo": "Rückgängig",
-    "redo": "Wiederherstellen"
+    "redo": "Wiederherstellen",
+    "github": "Open Source auf Github mit MIT-Lizenz"
   },
   "buttons": {
     "loadMedia": "Medien laden",

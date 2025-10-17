@@ -3,7 +3,8 @@
     "title": "字幕編輯器",
     "faq": "常見問題",
     "undo": "撤返",
-    "redo": "做返"
+    "redo": "做返",
+    "github": "源碼按照 MIT 協議開放於 GitHub"
   },
   "buttons": {
     "loadMedia": "載入媒體",
