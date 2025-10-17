@@ -25,7 +25,9 @@ interface SubtitleItemProps {
   currentTime: number;
   editingSubtitleUuid: string | null;
   onScrollToRegion: (uuid: string) => void;
-  setIsPlaying: (isPlaying: boolean) => void;
+  isPlaying: boolean;
+  resumePlayback: () => void;
+  setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   setPlaybackTime: (time: number) => void;
   setEditingSubtitleUuid: React.Dispatch<React.SetStateAction<string | null>>;
   onPrepareSubtitleInteraction: (uuid: string) => void;
@@ -39,6 +41,8 @@ const SubtitleItem = memo(function SubtitleItem({
   currentTime,
   editingSubtitleUuid,
   onScrollToRegion,
+  isPlaying,
+  resumePlayback,
   setIsPlaying,
   setPlaybackTime,
   setEditingSubtitleUuid,
@@ -165,6 +169,7 @@ const SubtitleItem = memo(function SubtitleItem({
               e.preventDefault();
               setPlaybackTime(timeToSeconds(subtitle.startTime));
               setIsPlaying(true);
+              resumePlayback();
             }
           }}
           className={`px-4 py-2 border-b border-gray-800 hover:bg-amber-50 cursor-pointer grid grid-cols-[1rem_7rem_1fr] gap-4 items-center ${
@@ -315,6 +320,7 @@ const SubtitleItem = memo(function SubtitleItem({
                       (e.key === "ArrowUp" || e.key === "ArrowDown")
                     ) {
                       e.preventDefault();
+                      const wasPlaying = isPlaying;
                       const nextValue = e.currentTarget.value;
                       if (nextValue !== subtitle.text) {
                         updateSubtitleTextAction(subtitle.id, nextValue);
@@ -323,16 +329,32 @@ const SubtitleItem = memo(function SubtitleItem({
                       const targetSubtitle =
                         e.key === "ArrowUp" ? previousSubtitle : nextSubtitle;
 
-                      if (targetSubtitle) {
-                        onPrepareSubtitleInteraction(targetSubtitle.uuid);
-                        onScrollToRegion(targetSubtitle.uuid);
-                        setEditingSubtitleUuid(targetSubtitle.uuid);
-                        setPlaybackTime(
-                          timeToSeconds(targetSubtitle.startTime),
-                        );
-                      } else {
-                        setEditingSubtitleUuid(subtitle.uuid);
-                      }
+                      // Exit current edit session to mimic Enter commit
+                      textAreaRef.current?.blur();
+                      setEditingSubtitleUuid(null);
+
+                      requestAnimationFrame(() => {
+                        if (targetSubtitle) {
+                          const targetStartTime = timeToSeconds(
+                            targetSubtitle.startTime,
+                          );
+                          onPrepareSubtitleInteraction(targetSubtitle.uuid);
+                          setPlaybackTime(targetStartTime);
+                          if (wasPlaying) {
+                            setIsPlaying(true);
+                            resumePlayback();
+                          }
+                          onScrollToRegion(targetSubtitle.uuid);
+                          setEditingSubtitleUuid(targetSubtitle.uuid);
+                        } else {
+                          // No neighbor subtitle; restore editing state
+                          if (wasPlaying) {
+                            setIsPlaying(true);
+                            resumePlayback();
+                          }
+                          setEditingSubtitleUuid(subtitle.uuid);
+                        }
+                      });
 
                       return;
                     }

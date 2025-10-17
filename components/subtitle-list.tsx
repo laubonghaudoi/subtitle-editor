@@ -1,5 +1,12 @@
 import { AnimatePresence } from "motion/react";
-import { useEffect, useRef, forwardRef, useImperativeHandle } from "react"; // Remove useCallback import
+import {
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+  type Dispatch,
+  type SetStateAction,
+} from "react"; // Remove useCallback import
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
 import { parseSRT, parseVTT } from "@/lib/subtitle-operations";
 import { timeToSeconds } from "@/lib/utils";
@@ -16,7 +23,8 @@ interface SubtitleListProps {
   currentTime?: number;
   isPlaying: boolean;
   onScrollToRegion: (uuid: string) => void;
-  setIsPlaying: (isPlaying: boolean) => void;
+  resumePlayback: () => void;
+  setIsPlaying: Dispatch<SetStateAction<boolean>>;
   setPlaybackTime: (time: number) => void;
   editingSubtitleUuid: string | null;
   setEditingSubtitleUuid: React.Dispatch<React.SetStateAction<string | null>>;
@@ -38,6 +46,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       currentTime = 0,
       isPlaying,
       onScrollToRegion,
+      resumePlayback,
       setIsPlaying,
       setPlaybackTime,
       editingSubtitleUuid,
@@ -405,10 +414,12 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
                 index={index}
                 isLastItem={isLastItem}
                 currentTime={currentTime}
+                isPlaying={isPlaying}
                 editingSubtitleUuid={editingSubtitleUuid}
                 onScrollToRegion={handleSubtitleItemClick}
                 onPrepareSubtitleInteraction={prepareSubtitleInteraction}
                 setEditingSubtitleUuid={setEditingSubtitleUuid}
+                resumePlayback={resumePlayback}
                 setIsPlaying={setIsPlaying}
                 setPlaybackTime={setPlaybackTime}
               />

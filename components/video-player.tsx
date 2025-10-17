@@ -1,6 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import {
+  type ForwardedRef,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import ReactPlayer from "react-player";
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
 import { srtToVtt, subtitlesToSrtString } from "@/lib/utils";
@@ -8,7 +16,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useTranslations } from "next-intl";
 
-interface VideoPlayerProps {
+export interface VideoPlayerProps {
   mediaFile: File | null;
   setMediaFile: (file: File | null) => void;
   setMediaFileName: (name: string) => void;
@@ -20,17 +28,24 @@ interface VideoPlayerProps {
   playbackRate: number;
 }
 
-export default function VideoPlayer({
-  mediaFile,
-  setMediaFile,
-  setMediaFileName,
-  onProgress,
-  onPlayPause,
-  onDuration,
-  seekTime,
-  isPlaying,
-  playbackRate,
-}: VideoPlayerProps) {
+export interface VideoPlayerHandle {
+  resumePlayback: () => void;
+}
+
+const VideoPlayer = forwardRef(function VideoPlayer(
+  {
+    mediaFile,
+    setMediaFile,
+    setMediaFileName,
+    onProgress,
+    onPlayPause,
+    onDuration,
+    seekTime,
+    isPlaying,
+    playbackRate,
+  }: VideoPlayerProps,
+  ref: ForwardedRef<VideoPlayerHandle>,
+) {
   const t = useTranslations();
   // Get subtitles from context
   const { subtitles } = useSubtitleContext();
@@ -43,12 +58,54 @@ export default function VideoPlayer({
   const lastPlayStateChange = useRef<number>(0);
   const DEBOUNCE_TIME = 200; // 200ms debounce
 
+  const resumePlayback = useCallback(() => {
+    const playerInstance = playerRef.current;
+    if (!playerInstance) return;
+
+    const internalPlayer = playerInstance.getInternalPlayer?.();
+    if (!internalPlayer) return;
+
+    const mediaElement =
+      typeof (internalPlayer as HTMLMediaElement).play === "function"
+        ? (internalPlayer as HTMLMediaElement)
+        : null;
+
+    if (!mediaElement) return;
+
+    try {
+      const playPromise = mediaElement.play();
+      if (
+        playPromise &&
+        typeof (playPromise as Promise<void>).catch === "function"
+      ) {
+        (playPromise as Promise<void>).catch((error) => {
+          if (
+            error &&
+            typeof error === "object" &&
+            "name" in error &&
+            (error as { name?: string }).name === "AbortError"
+          ) {
+            return;
+          }
+          console.warn("Failed to resume media playback:", error);
+        });
+      }
+    } catch (error) {
+      console.warn("Failed to resume media playback:", error);
+    }
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    resumePlayback,
+  }));
+
   useEffect(() => {
     if (playerRef.current && typeof seekTime === "number") {
       const player = playerRef.current;
       const currentTime = player.getCurrentTime();
       if (Math.abs(currentTime - seekTime) > 0.5) {
-        player.seekTo(seekTime, "seconds");
+        player.seekTo(seekTime, "seconds", true);
+        timeToRestore.current = seekTime;
       }
     }
   }, [seekTime]);
@@ -175,4 +232,8 @@ export default function VideoPlayer({
       />
     </div>
   );
-}
+});
+
+VideoPlayer.displayName = "VideoPlayer";
+
+export default VideoPlayer;

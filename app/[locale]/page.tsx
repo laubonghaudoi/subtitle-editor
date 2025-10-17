@@ -24,15 +24,30 @@ import { useSubtitleShortcuts } from "@/hooks/use-subtitle-shortcuts";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { DragEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import type { DragEvent, ForwardRefExoticComponent, RefAttributes } from "react";
 import { v4 as uuidv4 } from "uuid";
+import type {
+  VideoPlayerHandle,
+  VideoPlayerProps,
+} from "@/components/video-player";
 
 export const runtime = "edge";
 
-const VideoPlayer = dynamic(() => import("@/components/video-player"), {
-  ssr: false, // Disable server-side rendering
-});
+const VideoPlayer = dynamic<VideoPlayerProps>(
+  () => import("@/components/video-player"),
+  {
+    ssr: false, // Disable server-side rendering
+  },
+) as ForwardRefExoticComponent<
+  VideoPlayerProps & RefAttributes<VideoPlayerHandle>
+>;
 
 const WaveformVisualizer = dynamic(
   () => import("@/components/waveform-visualizer"),
@@ -51,6 +66,7 @@ function MainContent() {
   const t = useTranslations();
   const waveformRef = useRef<WaveformRef>(null);
   const subtitleListRef = useRef<SubtitleListRef>(null);
+  const videoPlayerRef = useRef<VideoPlayerHandle | null>(null);
   const mediaFileInputRef = useRef<HTMLInputElement | null>(null);
   // Get subtitle state and actions from context
   const {
@@ -91,6 +107,9 @@ function MainContent() {
   // Whether the pending scroll should be instant (used for cross-track clicks)
   const [pendingScrollInstant, setPendingScrollInstant] =
     useState<boolean>(false);
+  const resumeMediaPlayback = useCallback(() => {
+    videoPlayerRef.current?.resumePlayback();
+  }, []);
 
   const activeTrack = activeTrackId
     ? (tracks.find((track) => track.id === activeTrackId) ?? null)
@@ -363,6 +382,7 @@ function MainContent() {
                             waveformRef.current.scrollToRegion(uuid);
                           }
                         }}
+                        resumePlayback={resumeMediaPlayback}
                         setIsPlaying={setIsPlaying}
                         setPlaybackTime={setPlaybackTime}
                         editingSubtitleUuid={editingSubtitleUuid}
@@ -432,6 +452,7 @@ function MainContent() {
           >
             {/* VideoPlayer will get subtitles from context */}
             <VideoPlayer
+              ref={videoPlayerRef}
               mediaFile={mediaFile}
               setMediaFile={setMediaFile}
               setMediaFileName={setMediaFileName}
