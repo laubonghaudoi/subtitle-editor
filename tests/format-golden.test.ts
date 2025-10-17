@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildSrtContent, buildVttContent } from "../lib/format";
+import {
+  buildCsvContent,
+  buildPlainTextContent,
+  buildSrtContent,
+  buildVttContent,
+} from "../lib/format";
 import { parseVTT } from "../lib/subtitle-operations";
 import { srtToVtt } from "../lib/utils";
 
@@ -24,9 +29,26 @@ const goldenSubtitles = [
 const expectedSrt =
   "1\n00:00:00,000 --> 00:00:02,500\nFirst line\ncontinues\n\n2\n00:00:03,000 --> 00:00:05,000\n<i>Second</i> cue\n";
 
+const expectedPlainText = ["First line continues", "Second cue"].join("\n");
+const expectedCsv = [
+  "id,start_time,end_time,text",
+  '1,"00:00:00,000","00:00:02,500",First line continues',
+  '2,"00:00:03,000","00:00:05,000",Second cue',
+].join("\n");
+
 test("buildSrtContent matches golden cue output", () => {
   const actual = buildSrtContent(goldenSubtitles as any);
   assert.equal(actual, expectedSrt);
+});
+
+test("buildPlainTextContent flattens cues to single-line plain text", () => {
+  const actual = buildPlainTextContent(goldenSubtitles as any);
+  assert.equal(actual, expectedPlainText);
+});
+
+test("buildCsvContent outputs four-column CSV", () => {
+  const actual = buildCsvContent(goldenSubtitles as any);
+  assert.equal(actual, expectedCsv);
 });
 
 test("buildVttContent preserves header and prologue blocks", () => {

@@ -15,8 +15,10 @@
     "reloadSrt": "SRT/VTT neu laden",
     "fromScratch": "Neu anfangen",
     "download": "Herunterladen",
-    "downloadAsSrt": "SRT (.srt)",
-    "downloadAsVtt": "WebVTT (.vtt)"
+    "downloadAsSrt": ".srt",
+    "downloadAsVtt": ".vtt",
+    "downloadAsTxt": ".txt",
+    "downloadAsCsv": ".csv"
   },
   "controls": {
     "play": "Abspielen",
@@ -56,7 +58,7 @@
     "editText": "Klicken Sie auf den Untertiteltext oder die Zeitstempel, um Ihre Untertitel zu bearbeiten.",
     "icons": "Klicken Sie auf die Symbole, um Untertitel hinzuzufügen, zusammenzuführen oder zu löschen.",
     "dragBorders": "Ziehen Sie die gestrichelten Ränder auf der Wellenform, um die Zeitstempel der Untertitel zu ändern.",
-    "rememberSave": "Denken Sie daran, auf „Speichern“ zu klicken, um die Untertitel als .srt/.vtt herunterzuladen!"
+    "rememberSave": "Denken Sie daran, auf „Speichern“ zu klicken, um die Untertitel als .srt/.vtt/.txt/.csv herunterzuladen!"
   },
   "shortcuts": {
     "title": "Tastenkombinationen",
@@ -80,7 +82,7 @@
     "srtTitle": "Untertitelspuren verwalten",
     "srtDescription": "Sie können maximal 4 Spuren hinzufügen und jede Spur umbenennen.",
     "saveTitle": "Format auswählen",
-    "saveDescription": "Wählen Sie eine Spur, um sie als .srt oder .vtt herunterzuladen.",
+    "saveDescription": "Wählen Sie eine Spur, um sie als .srt, .vtt, .txt oder .csv herunterzuladen.",
     "deleteTrackTitle": "Diese Spur löschen?",
     "deleteTrackDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch werden die Spur und alle ihre Untertitel dauerhaft gelöscht.",
     "delete": "Löschen",

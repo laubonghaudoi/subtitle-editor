@@ -10,7 +10,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSubtitleContext } from "@/context/subtitle-context";
-import { buildSrtContent, buildVttContent } from "@/lib/format";
+import {
+  buildCsvContent,
+  buildPlainTextContent,
+  buildSrtContent,
+  buildVttContent,
+} from "@/lib/format";
 import { IconDownload } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -20,17 +25,31 @@ export default function SaveSrt() {
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const { tracks } = useSubtitleContext();
 
-  const downloadTrackById = (trackId: string, format: "srt" | "vtt") => {
+  const downloadTrackById = (
+    trackId: string,
+    format: "srt" | "vtt" | "txt" | "csv",
+  ) => {
     const track = tracks.find((t) => t.id === trackId);
     if (!track || track.subtitles.length === 0) return;
-    const content =
+    let content: string;
+    if (format === "vtt") {
+      content = buildVttContent(track.subtitles, {
+        header: track.vttHeader,
+        prologue: track.vttPrologue,
+      });
+    } else if (format === "csv") {
+      content = buildCsvContent(track.subtitles);
+    } else if (format === "txt") {
+      content = buildPlainTextContent(track.subtitles);
+    } else {
+      content = buildSrtContent(track.subtitles);
+    }
+    const mime =
       format === "vtt"
-        ? buildVttContent(track.subtitles, {
-            header: track.vttHeader,
-            prologue: track.vttPrologue,
-          })
-        : buildSrtContent(track.subtitles);
-    const mime = format === "vtt" ? "text/vtt" : "text/plain";
+        ? "text/vtt"
+        : format === "csv"
+          ? "text/csv"
+          : "text/plain";
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -54,7 +73,7 @@ export default function SaveSrt() {
         <Button
           onClick={openDialog}
           disabled={isDisabled}
-          className="cursor-pointer"
+          className="cursor-pointer bg-zinc-800 hover:bg-neutral-700 rounded-sm"
         >
           <IconDownload size={20} />
           <span>{t("buttons.saveSrt")}</span>
@@ -78,22 +97,36 @@ export default function SaveSrt() {
               </div>
               <div className="flex gap-2">
                 <Button
-                  variant="default"
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "srt")}
-                  className="cursor-pointer"
+                  className="cursor-pointer bg-zinc-800 hover:bg-neutral-700 rounded-sm"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsSrt")}</span>
                 </Button>
                 <Button
-                  variant="default"
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "vtt")}
-                  className="cursor-pointer"
+                  className="cursor-pointer bg-zinc-800 hover:bg-neutral-700 rounded-sm"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsVtt")}</span>
+                </Button>
+                <Button
+                  disabled={track.subtitles.length === 0}
+                  onClick={() => downloadTrackById(track.id, "txt")}
+                  className="cursor-pointer bg-zinc-800 hover:bg-neutral-700 rounded-sm"
+                >
+                  <IconDownload size={18} />
+                  <span className="ml-1">{t("buttons.downloadAsTxt")}</span>
+                </Button>
+                <Button
+                  disabled={track.subtitles.length === 0}
+                  onClick={() => downloadTrackById(track.id, "csv")}
+                  className="cursor-pointer bg-zinc-800 hover:bg-neutral-700 rounded-sm"
+                >
+                  <IconDownload size={18} />
+                  <span className="ml-1">{t("buttons.downloadAsCsv")}</span>
                 </Button>
               </div>
             </div>

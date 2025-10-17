@@ -15,8 +15,10 @@
     "reloadSrt": "Reload .srt / .vtt file",
     "fromScratch": "From Scratch",
     "download": "Download",
-    "downloadAsSrt": "SRT  .srt",
-    "downloadAsVtt": "WebVTT .vtt"
+    "downloadAsSrt": ".srt",
+    "downloadAsVtt": ".vtt",
+    "downloadAsTxt": ".txt",
+    "downloadAsCsv": ".csv"
   },
   "controls": {
     "play": "Play",
@@ -56,7 +58,7 @@
     "editText": "Click the subtitle text or timestamps to edit your captions.",
     "icons": "Click the icons to add, merge or delete subtitles.",
     "dragBorders": "Drag the dashed borders on the waveform to change the subtitles' time stamps.",
-    "rememberSave": "Remember to click \"Save\" to download as .srt / .vtt when you finish editing!"
+    "rememberSave": "Remember to click \"Save\" to download as .srt / .vtt / .txt / .csv when you finish editing!"
   },
   "shortcuts": {
     "title": "Shortcuts",
@@ -80,7 +82,7 @@
     "srtTitle": "Manage Subtitle Tracks",
     "srtDescription": "You can add 4 tracks at most. You can rename the tracks.",
     "saveTitle": "Choose format",
-    "saveDescription": "Choose a track to download as .srt or .vtt format.",
+    "saveDescription": "Choose a track to download as .srt, .vtt, .txt, or .csv format.",
     "deleteTrackTitle": "Delete this track?",
     "deleteTrackDescription": "This action cannot be undone. This will permanently delete the track and all its subtitles.",
     "delete": "Delete",
