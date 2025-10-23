@@ -169,6 +169,14 @@ export default function LoadSrt() {
                   </>
                 ) : (
                   <>
+                    <Button
+                      variant="secondary"
+                      className="w-full cursor-pointer"
+                      onClick={() => handleStartFromScratch(track.id)}
+                    >
+                      <IconPencilPlus />
+                      {t("buttons.fromScratch")}
+                    </Button>
                     <Button asChild variant="secondary" className="w-full">
                       <Label className="cursor-pointer">
                         <IconFile />
@@ -180,14 +188,6 @@ export default function LoadSrt() {
                           onChange={(e) => handleSrtFileSelect(e, track.id)}
                         />
                       </Label>
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      className="w-full cursor-pointer"
-                      onClick={() => handleStartFromScratch(track.id)}
-                    >
-                      <IconPencilPlus />
-                      {t("buttons.fromScratch")}
                     </Button>
                   </>
                 )}
