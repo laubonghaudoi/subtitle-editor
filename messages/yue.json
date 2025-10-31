@@ -4,7 +4,10 @@
     "faq": "常見問題",
     "undo": "撤返",
     "redo": "做返",
-    "github": "源碼按照 MIT 協議開放於 GitHub"
+    "github": "源碼按照 MIT 協議開放於 GitHub",
+    "bulkOffset": "批量調整",
+    "showBulkOffset": "顯示批量調整",
+    "hideBulkOffset": "收起批量調整"
   },
   "buttons": {
     "loadMedia": "載入媒體",
@@ -52,7 +55,7 @@
     "replace": "替換"
   },
   "bulkOffset": {
-    "title": "揀字幕批量位移時間點",
+    "title": "揀字幕批量位移當前字幕軌：{track}",
     "emptyState": "載入字幕先可以批量調整時間。",
     "noCaptions": "冇搵到字幕",
     "selectionSummary": "已揀 {selected} / {total}",
@@ -63,7 +66,7 @@
     "offsetLabel": "偏移秒數",
     "offsetInputLabel": "偏移幾多秒",
     "reset": "重設",
-    "apply": "套用偏移",
+    "apply": "確定位移",
     "selectAll": "揀晒全部字幕",
     "selectCaption": "揀字幕 {id}",
     "table": {

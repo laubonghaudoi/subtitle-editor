@@ -476,6 +476,7 @@ function MainContent() {
                 isOpen={isBulkOffsetOpen}
                 subtitles={activeTrackSubtitles}
                 trackIndex={activeTrackIndex}
+                currentTrackName={activeTrack?.name ?? null}
                 onApplyOffset={(selection, offsetSeconds, target) => {
                   bulkShiftSubtitlesAction(selection, offsetSeconds, target);
                 }}

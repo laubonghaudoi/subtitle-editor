@@ -1,7 +1,7 @@
 "use client";
 
-import LanguageSwitcher from "@/components/language-switcher";
 import FindReplace from "@/components/find-replace";
+import LanguageSwitcher from "@/components/language-switcher";
 import LoadSrt from "@/components/load-srt";
 import SaveSrt from "@/components/save-srt";
 import { Button } from "@/components/ui/button";
@@ -14,12 +14,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
+  IconAdjustmentsHorizontal,
   IconArrowBack,
   IconArrowForward,
+  IconBrandGithub,
   IconMovie,
   IconQuestionMark,
-  IconBrandGithub,
-  IconAdjustmentsHorizontal,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -128,15 +128,19 @@ export function AppHeader({
                 variant={isBulkOffsetOpen ? "default" : "outline"}
                 onClick={onToggleBulkOffset}
                 disabled={bulkOffsetDisabled}
-                className="flex items-center gap-2 rounded-none"
+                className="flex items-center gap-2 border-black rounded-xs"
                 aria-pressed={isBulkOffsetOpen}
               >
-                <IconAdjustmentsHorizontal size={18} />
-                <span className="hidden sm:inline">Offset time</span>
+                <IconAdjustmentsHorizontal />
+                <span className="hidden sm:inline">
+                  {t("navigation.bulkOffset")}
+                </span>
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              {isBulkOffsetOpen ? "Hide bulk offset" : "Show bulk offset"}
+              {isBulkOffsetOpen
+                ? t("navigation.hideBulkOffset")
+                : t("navigation.showBulkOffset")}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

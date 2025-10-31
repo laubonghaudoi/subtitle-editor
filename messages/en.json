@@ -4,7 +4,10 @@
     "faq": "Frequently Asked Questions",
     "undo": "Undo",
     "redo": "Redo",
-    "github": "Open-source on GitHub with MIT License"
+    "github": "Open-source on GitHub with MIT License",
+    "bulkOffset": "Bulk offset",
+    "showBulkOffset": "Show bulk offset",
+    "hideBulkOffset": "Hide bulk offset"
   },
   "buttons": {
     "loadMedia": "Load Media",
@@ -59,7 +62,7 @@
     "replace": "Replace"
   },
   "bulkOffset": {
-    "title": "Select subtitles to bulk offset timestamps",
+    "title": "Select subtitles to bulk offset timestamps of current track: {track}",
     "emptyState": "Load subtitles to enable bulk offsets.",
     "noCaptions": "No captions found",
     "selectionSummary": "{selected} of {total} selected",

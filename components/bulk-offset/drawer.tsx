@@ -13,6 +13,7 @@ interface BulkOffsetDrawerProps {
   isOpen: boolean;
   subtitles: Subtitle[];
   trackIndex: number;
+  currentTrackName?: string | null;
   onApplyOffset: (
     selectedUuids: string[],
     offsetSeconds: number,
@@ -24,6 +25,7 @@ export function BulkOffsetDrawer({
   isOpen,
   subtitles,
   trackIndex,
+  currentTrackName,
   onApplyOffset,
 }: BulkOffsetDrawerProps) {
   const t = useTranslations();
@@ -33,6 +35,10 @@ export function BulkOffsetDrawer({
   const lastInteractedIndexRef = useRef<number | null>(null);
   const normalizedTrackIndex = trackIndex >= 0 ? trackIndex : 0;
   const trackColor = getTrackHandleColor(normalizedTrackIndex);
+  const trackNameLabel =
+    currentTrackName && currentTrackName.trim().length > 0
+      ? currentTrackName
+      : t("waveform.untitledTrack");
 
   useEffect(() => {
     if (!isOpen) {
@@ -239,9 +245,8 @@ export function BulkOffsetDrawer({
     <div className="absolute inset-0 z-10 flex h-full flex-1 flex-col overflow-hidden bg-background">
       <div className="flex flex-1 flex-col overflow-hidden">
         <h2 className="font-semibold text-lg mx-4 my-2">
-          {t("bulkOffset.title")}
+          {t("bulkOffset.title", { track: trackNameLabel })}
         </h2>
-
         {subtitleCount === 0 ? (
           <div className="flex flex-1 items-center justify-center text-xs text-muted-foreground">
             {t("bulkOffset.emptyState")}

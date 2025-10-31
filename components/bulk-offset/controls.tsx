@@ -249,7 +249,7 @@ export function BulkOffsetControls({
             onClick={() => handleDelta(-STEP_MEDIUM)}
             aria-label={t("bulkOffset.aria.decreaseHundredMs")}
           >
-            −0.1s
+            −100ms
           </Button>
           <Button
             type="button"

@@ -4,7 +4,10 @@
     "faq": "Häufig gestellte Fragen",
     "undo": "Rückgängig",
     "redo": "Wiederherstellen",
-    "github": "Open Source auf Github mit MIT-Lizenz"
+    "github": "Open Source auf Github mit MIT-Lizenz",
+    "bulkOffset": "Sammelversatz",
+    "showBulkOffset": "Sammelversatz anzeigen",
+    "hideBulkOffset": "Sammelversatz ausblenden"
   },
   "buttons": {
     "loadMedia": "Medien laden",
@@ -59,7 +62,7 @@
     "replace": "Ersetzen"
   },
   "bulkOffset": {
-    "title": "Untertitel auswählen, um Zeitstempel gemeinsam zu verschieben",
+    "title": "Untertitel für die Stapelverschiebung der Zeitstempel auswählen. Aktuelle Spur: {track}",
     "emptyState": "Lade Untertitel, um Sammelverschiebungen zu aktivieren.",
     "noCaptions": "Keine Untertitel gefunden",
     "selectionSummary": "{selected} von {total} ausgewählt",
