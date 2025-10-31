@@ -78,6 +78,11 @@ interface SubtitleContextType {
   updateSubtitleStartTimeAction: (id: number, newTime: string) => void;
   updateSubtitleEndTimeAction: (id: number, newTime: string) => void;
   replaceAllSubtitlesAction: (newSubtitles: Subtitle[]) => void; // For Find/Replace
+  bulkShiftSubtitlesAction: (
+    targetUuids: string[],
+    offsetSeconds: number,
+    target: "start" | "end" | "both",
+  ) => void;
   undoSubtitles: () => void;
   redoSubtitles: () => void;
   canUndoSubtitles: boolean;
@@ -217,6 +222,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     updateSubtitleStartTimeAction,
     updateSubtitleEndTimeAction,
     replaceAllSubtitlesAction,
+    bulkShiftSubtitlesAction,
   } = useSubtitleActions({
     tracks,
     activeTrackId,
@@ -274,6 +280,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       updateSubtitleStartTimeAction,
       updateSubtitleEndTimeAction,
       replaceAllSubtitlesAction,
+      bulkShiftSubtitlesAction,
       undoSubtitles,
       redoSubtitles,
       canUndoSubtitles,
@@ -305,6 +312,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       updateSubtitleStartTimeAction,
       updateSubtitleEndTimeAction,
       replaceAllSubtitlesAction,
+      bulkShiftSubtitlesAction,
       undoSubtitles,
       redoSubtitles,
       canUndoSubtitles,

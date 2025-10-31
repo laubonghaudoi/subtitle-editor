@@ -36,6 +36,10 @@
   "videoPlayer": {
     "loadFile": "Load a video / audio file",
     "supportedFormats": "Supported formats:",
+    "supportedFormatsAudio": "Audio",
+    "supportedFormatsVideo": "Video",
+    "supportedFormatsStreams": "Streaming",
+    "supportedFormatsNote": "Playback depends on the codecs built into your browser.\nChrome, Edge, and Firefox handle Ogg/WebM/Opus audio (for example .oga, .opus, .weba) and Speex.\nSafari on macOS/iOS does not support those containers yet.",
     "subtitles": "Subtitles"
   },
   "findReplace": {

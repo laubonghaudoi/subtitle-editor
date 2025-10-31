@@ -29,6 +29,10 @@
   "videoPlayer": {
     "loadFile": "載入影片 / 音訊檔案",
     "supportedFormats": "支援格式：",
+    "supportedFormatsAudio": "音訊",
+    "supportedFormatsVideo": "影片",
+    "supportedFormatsStreams": "串流",
+    "supportedFormatsNote": "實際支援程度取決於瀏覽器自帶編碼\nChrome／Edge／Firefox 支援 Ogg／WebM／Opus 音訊（例如 .oga、.opus、.weba）同 Speex；\nSafari（macOS／iOS）暫時未支援。",
     "subtitles": "字幕"
   },
   "findReplace": {

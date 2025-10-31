@@ -19,6 +19,7 @@ import {
   IconMovie,
   IconQuestionMark,
   IconBrandGithub,
+  IconAdjustmentsHorizontal,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -32,6 +33,9 @@ interface AppHeaderProps {
   mediaFileInputRef: RefObject<HTMLInputElement | null>;
   onSelectMediaFile: (file: File) => void;
   mediaFileName: string;
+  isBulkOffsetOpen: boolean;
+  onToggleBulkOffset: () => void;
+  bulkOffsetDisabled: boolean;
 }
 
 export function AppHeader({
@@ -42,6 +46,9 @@ export function AppHeader({
   mediaFileInputRef,
   onSelectMediaFile,
   mediaFileName,
+  isBulkOffsetOpen,
+  onToggleBulkOffset,
+  bulkOffsetDisabled,
 }: AppHeaderProps) {
   const t = useTranslations();
 
@@ -109,6 +116,28 @@ export function AppHeader({
               </Button>
             </TooltipTrigger>
             <TooltipContent>{t("navigation.redo")}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                size="default"
+                variant={isBulkOffsetOpen ? "default" : "outline"}
+                onClick={onToggleBulkOffset}
+                disabled={bulkOffsetDisabled}
+                className="flex items-center gap-2 rounded-none"
+                aria-pressed={isBulkOffsetOpen}
+              >
+                <IconAdjustmentsHorizontal size={18} />
+                <span className="hidden sm:inline">Offset time</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {isBulkOffsetOpen ? "Hide bulk offset" : "Show bulk offset"}
+            </TooltipContent>
           </Tooltip>
         </TooltipProvider>
 

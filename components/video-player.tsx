@@ -165,12 +165,34 @@ const VideoPlayer = forwardRef(function VideoPlayer(
             }}
           />
         </Label>
-        <p className="my-4 text-lg">
-          {t("videoPlayer.supportedFormats")} <code>m4a</code>, <code>mp3</code>
-          , <code>mp4</code>, <code>webm</code>, <code>ogg</code>,{" "}
-          <code>wav</code>, <code>aac</code>, <code>flac</code>,{" "}
-          <code>opus</code>
-        </p>
+        <div className="my-4 space-y-1 text-base">
+          <p className="font-medium">{t("videoPlayer.supportedFormats")}</p>
+          <p>
+            <span className="font-semibold">
+              {t("videoPlayer.supportedFormatsAudio")}:
+            </span>{" "}
+            <code>mp3</code>, <code>m4a</code>, <code>aac</code>,{" "}
+            <code>wav</code>, <code>oga</code>, <code>weba</code>,{" "}
+            <code>spx</code>
+          </p>
+          <p>
+            <span className="font-semibold">
+              {t("videoPlayer.supportedFormatsVideo")}:
+            </span>{" "}
+            <code>mp4</code>, <code>mov</code>, <code>webm</code>,{" "}
+            <code>ogg</code>, <code>m4v</code>
+          </p>
+          <p>
+            <span className="font-semibold">
+              {t("videoPlayer.supportedFormatsStreams")}:
+            </span>{" "}
+            <code>HLS (.m3u8)</code>, <code>MPEG-DASH (.mpd)</code>,{" "}
+            <code>FLV (.flv)</code>
+          </p>
+          <p className="text-muted-foreground whitespace-pre-line">
+            {t("videoPlayer.supportedFormatsNote")}
+          </p>
+        </div>
       </div>
     );
   }
@@ -190,7 +212,8 @@ const VideoPlayer = forwardRef(function VideoPlayer(
             onProgress(state.playedSeconds);
           }
         }}
-        onSeeked={() => {   // sometimes player.seeking is still true when onProgress is called, so this makes sure we update the waveform visualizer when seeking is done
+        onSeeked={() => {
+          // sometimes player.seeking is still true when onProgress is called, so this makes sure we update the waveform visualizer when seeking is done
           if (playerRef.current) {
             const currentTime = playerRef.current.getCurrentTime();
             onProgress(currentTime);

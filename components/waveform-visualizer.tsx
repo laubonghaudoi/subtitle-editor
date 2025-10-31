@@ -17,24 +17,12 @@ import RegionsPlugin, {
 import Timeline from "wavesurfer.js/dist/plugins/timeline.esm.js";
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
 import { secondsToTime, timeToSeconds } from "@/lib/utils";
+import { getTrackHandleColor, TRACK_COLORS } from "@/lib/track-colors";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
 
 const HANDLE_COLOR = "#ef4444";
 
 // Multi-track colors
-const TRACK_COLORS = [
-  "#fcd34d40", // Yellow (active track)
-  "#3b82f640", // Blue
-  "#ec489940", // Red
-  "#84cc1640", // Green
-];
-
-const TRACK_HANDLE_COLORS = [
-  "#f59e0b", // Yellow (active track)
-  "#3b82f6", // Blue
-  "#ec4899", // Red
-  "#22c55e", // Green
-];
 
 const getContentHtml = (
   startTime: string,
@@ -44,27 +32,27 @@ const getContentHtml = (
   const content = document.createElement("div");
   // This is the style for the parent div of the region
   content.style.cssText += `
-    display:flex; 
-    flex-direction:column; 
-    height:100%; 
+    display:flex;
+    flex-direction:column;
+    height:100%;
     justify-content:space-between;
   `;
 
   content.innerHTML = `
     <div style="display: flex;
-                justify-content: space-between; 
-                flex-wrap:wrap; 
-                padding-left: 1rem; 
-                padding-right: 1rem; 
-                padding-top: 0.3rem; 
+                justify-content: space-between;
+                flex-wrap:wrap;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                padding-top: 0.3rem;
                 color: #525252;">
       <em>${startTime}</em>
       <em>${endTime}</em>
     </div>
-    <div style="padding-left: 1rem; 
-                padding-right: 1rem; 
-                padding-bottom: 1rem; 
-                font-size: 1rem; 
+    <div style="padding-left: 1rem;
+                padding-right: 1rem;
+                padding-bottom: 1rem;
+                font-size: 1rem;
                 color: #262626;">
       <span>${text}</span>
     </div>
@@ -480,8 +468,7 @@ export default forwardRef(function WaveformVisualizer(
 
         // Get colors for this track
         const regionColor = TRACK_COLORS[trackIndex % TRACK_COLORS.length];
-        const handleColor =
-          TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
+        const handleColor = getTrackHandleColor(trackIndex);
 
         // Create the new region using uuid as the ID
         const region = regionsPlugin.addRegion({
@@ -665,8 +652,7 @@ export default forwardRef(function WaveformVisualizer(
 
           // Get the correct handle color for this track
           const trackIndex = tracks.findIndex((t) => t.id === currentTrack.id);
-          const handleColor =
-            TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
+          const handleColor = getTrackHandleColor(trackIndex);
           styleRegionHandles(region, handleColor);
         }
         return; // Exit without updating subtitle timing
@@ -717,8 +703,7 @@ export default forwardRef(function WaveformVisualizer(
 
         // Get the correct handle color for this track
         const trackIndex = tracks.findIndex((t) => t.id === currentTrack.id);
-        const handleColor =
-          TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
+        const handleColor = getTrackHandleColor(trackIndex);
         styleRegionHandles(region, handleColor);
       }
 
@@ -850,8 +835,7 @@ export default forwardRef(function WaveformVisualizer(
 
           // Get colors for this track
           const regionColor = TRACK_COLORS[trackIndex % TRACK_COLORS.length];
-          const handleColor =
-            TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
+          const handleColor = getTrackHandleColor(trackIndex);
 
           const region = regionsPlugin.addRegion({
             id: subtitle.uuid,
@@ -902,8 +886,7 @@ export default forwardRef(function WaveformVisualizer(
           });
 
           // Get colors for this track
-          const handleColor =
-            TRACK_HANDLE_COLORS[trackIndex % TRACK_HANDLE_COLORS.length];
+          const handleColor = getTrackHandleColor(trackIndex);
           styleRegionHandles(region, handleColor);
 
           // Update vertical positioning based on current track index and total tracks
