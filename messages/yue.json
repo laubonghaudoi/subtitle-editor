@@ -51,6 +51,41 @@
     "noMatches": "揾唔到匹配項",
     "replace": "替換"
   },
+  "bulkOffset": {
+    "title": "揀字幕批量位移時間點",
+    "emptyState": "載入字幕先可以批量調整時間。",
+    "noCaptions": "冇搵到字幕",
+    "selectionSummary": "已揀 {selected} / {total}",
+    "chooseTarget": "揀要調整嘅部分",
+    "targetStart": "開始時間",
+    "targetBoth": "成段字幕",
+    "targetEnd": "結束時間",
+    "offsetLabel": "偏移秒數",
+    "offsetInputLabel": "偏移幾多秒",
+    "reset": "重設",
+    "apply": "套用偏移",
+    "selectAll": "揀晒全部字幕",
+    "selectCaption": "揀字幕 {id}",
+    "table": {
+      "id": "ID",
+      "start": "起點",
+      "previewStart": "預覽起點",
+      "end": "終點",
+      "previewEnd": "預覽終點",
+      "text": "文本",
+      "empty": "（空）"
+    },
+    "aria": {
+      "decreaseOneSecond": "早 1 秒",
+      "decreaseHundredMs": "早 0.1 秒",
+      "decreaseTenMs": "早 10 毫秒",
+      "decreaseOneMs": "早 1 毫秒",
+      "increaseOneMs": "遲 1 毫秒",
+      "increaseTenMs": "遲 10 毫秒",
+      "increaseHundredMs": "遲 0.1 秒",
+      "increaseOneSecond": "遲 1 秒"
+    }
+  },
   "instructions": {
     "afterLoading": "載入字幕同媒體檔案後：",
     "editText": "撳字幕文字或時間點嚟編輯字幕。",

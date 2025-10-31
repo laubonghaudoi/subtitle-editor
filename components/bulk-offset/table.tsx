@@ -5,6 +5,8 @@ import { useRef } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
+import type { CheckedState } from "@radix-ui/react-checkbox";
+import { useTranslations } from "next-intl";
 
 export interface PreviewSubtitle {
   previewStart: string;
@@ -23,8 +25,8 @@ interface BulkOffsetTableProps {
     shouldSelect: boolean,
     shiftKey: boolean,
   ) => void;
-  onToggleAll: (checked: boolean | "indeterminate") => void;
-  headerCheckboxState: boolean | "indeterminate";
+  onToggleAll: (checked: CheckedState) => void;
+  headerCheckboxState: CheckedState;
   trackColor: string;
 }
 
@@ -37,6 +39,7 @@ export function BulkOffsetTable({
   headerCheckboxState,
   trackColor,
 }: BulkOffsetTableProps) {
+  const t = useTranslations();
   const shiftPressedRef = useRef(false);
   return (
     <table className="min-w-full text-base">
@@ -44,7 +47,7 @@ export function BulkOffsetTable({
         <tr className="border-b text-black">
           <th className="h-10 px-4 text-center font-semibold text-muted-foreground flex items-center">
             <Checkbox
-              aria-label="Select all captions"
+              aria-label={t("bulkOffset.selectAll")}
               checked={headerCheckboxState}
               style={{
                 borderColor: trackColor,
@@ -56,22 +59,22 @@ export function BulkOffsetTable({
             />
           </th>
           <th className="h-10 px-2 text-left font-semibold text-muted-foreground">
-            ID
+            {t("bulkOffset.table.id")}
           </th>
           <th className="h-10 px-2 text-center font-semibold text-muted-foreground">
-            Start
+            {t("bulkOffset.table.start")}
           </th>
           <th className="h-10 px-2 text-center font-semibold text-muted-foreground">
-            Preview start
+            {t("bulkOffset.table.previewStart")}
           </th>
           <th className="h-10 px-2 text-center font-semibold text-muted-foreground">
-            End
+            {t("bulkOffset.table.end")}
           </th>
           <th className="h-10 px-2 text-center font-semibold text-muted-foreground">
-            Preview end
+            {t("bulkOffset.table.previewEnd")}
           </th>
           <th className="h-10 px-2 text-center font-semibold text-muted-foreground">
-            Text
+            {t("bulkOffset.table.text")}
           </th>
         </tr>
       </thead>
@@ -95,7 +98,9 @@ export function BulkOffsetTable({
             >
               <td className="px-4 align-middle">
                 <Checkbox
-                  aria-label={`Select caption ${subtitle.id}`}
+                  aria-label={t("bulkOffset.selectCaption", {
+                    id: subtitle.id,
+                  })}
                   checked={isChecked}
                   style={{
                     borderColor: trackColor,
@@ -138,7 +143,9 @@ export function BulkOffsetTable({
                 {preview.previewEnd}
               </td>
               <td className="px-4 py-1 align-middle text-muted-foreground">
-                {subtitle.text || <span className="italic">Empty</span>}
+                {subtitle.text || (
+                  <span className="italic">{t("bulkOffset.table.empty")}</span>
+                )}
               </td>
             </tr>
           );

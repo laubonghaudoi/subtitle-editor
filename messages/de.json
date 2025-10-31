@@ -58,6 +58,41 @@
     "noMatches": "Keine Übereinstimmungen gefunden",
     "replace": "Ersetzen"
   },
+  "bulkOffset": {
+    "title": "Untertitel auswählen, um Zeitstempel gemeinsam zu verschieben",
+    "emptyState": "Lade Untertitel, um Sammelverschiebungen zu aktivieren.",
+    "noCaptions": "Keine Untertitel gefunden",
+    "selectionSummary": "{selected} von {total} ausgewählt",
+    "chooseTarget": "Bereich für Verschiebung wählen",
+    "targetStart": "Startzeit",
+    "targetBoth": "Kompletter Untertitel",
+    "targetEnd": "Endzeit",
+    "offsetLabel": "Versatz in Sekunden",
+    "offsetInputLabel": "Versatz in Sekunden",
+    "reset": "Zurücksetzen",
+    "apply": "Versatz anwenden",
+    "selectAll": "Alle Untertitel auswählen",
+    "selectCaption": "Untertitel {id} auswählen",
+    "table": {
+      "id": "ID",
+      "start": "Start",
+      "previewStart": "Vorschau-Start",
+      "end": "Ende",
+      "previewEnd": "Vorschau-Ende",
+      "text": "Text",
+      "empty": "Leer"
+    },
+    "aria": {
+      "decreaseOneSecond": "Versatz um 1 Sekunde verringern",
+      "decreaseHundredMs": "Versatz um 0,1 Sekunden verringern",
+      "decreaseTenMs": "Versatz um 10 Millisekunden verringern",
+      "decreaseOneMs": "Versatz um 1 Millisekunde verringern",
+      "increaseOneMs": "Versatz um 1 Millisekunde erhöhen",
+      "increaseTenMs": "Versatz um 10 Millisekunden erhöhen",
+      "increaseHundredMs": "Versatz um 0,1 Sekunden erhöhen",
+      "increaseOneSecond": "Versatz um 1 Sekunde erhöhen"
+    }
+  },
   "instructions": {
     "afterLoading": "Nach dem Laden der Untertitel und der Mediendatei:",
     "editText": "Klicken Sie auf den Untertiteltext oder die Zeitstempel, um Ihre Untertitel zu bearbeiten.",

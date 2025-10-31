@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { BulkOffsetControls, type BulkShiftTarget } from "./controls";
 import { BulkOffsetTable } from "@/components/bulk-offset/table";
+import { getTrackHandleColor } from "@/lib/track-colors";
+import { secondsToTime, timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import type { CheckedState } from "@radix-ui/react-checkbox";
-import { secondsToTime, timeToSeconds } from "@/lib/utils";
-import { getTrackHandleColor } from "@/lib/track-colors";
+import { useTranslations } from "next-intl";
+import { useEffect, useRef, useState } from "react";
+import { BulkOffsetControls, type BulkShiftTarget } from "./controls";
 
 interface BulkOffsetDrawerProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export function BulkOffsetDrawer({
   trackIndex,
   onApplyOffset,
 }: BulkOffsetDrawerProps) {
+  const t = useTranslations();
   const [offsetSeconds, setOffsetSeconds] = useState(0);
   const [selectedUuids, setSelectedUuids] = useState<Set<string>>(new Set());
   const [shiftTarget, setShiftTarget] = useState<BulkShiftTarget>("both");
@@ -67,8 +69,11 @@ export function BulkOffsetDrawer({
 
   const selectionSummary =
     subtitleCount === 0
-      ? "No captions found"
-      : `${selectedCount} of ${subtitleCount} selected`;
+      ? t("bulkOffset.noCaptions")
+      : t("bulkOffset.selectionSummary", {
+          selected: selectedCount,
+          total: subtitleCount,
+        });
 
   const handleSelectAll = (checked: CheckedState) => {
     if (checked === true) {
@@ -234,12 +239,12 @@ export function BulkOffsetDrawer({
     <div className="absolute inset-0 z-10 flex h-full flex-1 flex-col overflow-hidden bg-background">
       <div className="flex flex-1 flex-col overflow-hidden">
         <h2 className="font-semibold text-lg mx-4 my-2">
-          Select subtitles to bulk-offset time stamps
+          {t("bulkOffset.title")}
         </h2>
 
         {subtitleCount === 0 ? (
           <div className="flex flex-1 items-center justify-center text-xs text-muted-foreground">
-            Load subtitles to enable bulk offsets.
+            {t("bulkOffset.emptyState")}
           </div>
         ) : (
           <div className="flex-1 overflow-auto">

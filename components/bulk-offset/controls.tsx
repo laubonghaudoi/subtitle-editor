@@ -3,13 +3,22 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import * as SliderPrimitive from "@radix-ui/react-slider";
-import { useMemo, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
+import { useTranslations } from "next-intl";
 
 const STEP_FINE = 0.001; // 1ms
 const STEP_TEN = 0.01; // 10ms
 const STEP_MEDIUM = 0.1; // 100ms
 const STEP_COARSE = 1; // 1s
-const SLIDER_LIMIT_SECONDS = 10;
+const INITIAL_SLIDER_LIMIT_SECONDS = 10;
+const SLIDER_LIMIT_INCREMENT = 1;
+const SLIDER_EXPANSION_MARGIN = SLIDER_LIMIT_INCREMENT / 2;
 
 function hexToRgba(hex: string, alpha: number): string {
   let normalized = hex.replace("#", "");
@@ -52,15 +61,52 @@ export function BulkOffsetControls({
   selectionSummary,
   accentColor,
 }: BulkOffsetControlsProps) {
+  const t = useTranslations();
+  const [sliderLimit, setSliderLimit] = useState(INITIAL_SLIDER_LIMIT_SECONDS);
+
+  const ensureSliderLimit = useCallback((value: number) => {
+    const absValue = Math.abs(value);
+    setSliderLimit((currentLimit) => {
+      const expansionThreshold = Math.max(
+        INITIAL_SLIDER_LIMIT_SECONDS,
+        currentLimit - SLIDER_EXPANSION_MARGIN,
+      );
+      if (absValue < expansionThreshold) {
+        return currentLimit;
+      }
+      const requiredLimit =
+        Math.ceil(absValue / SLIDER_LIMIT_INCREMENT) * SLIDER_LIMIT_INCREMENT +
+        SLIDER_LIMIT_INCREMENT;
+      const nextLimit = Math.max(
+        currentLimit + SLIDER_LIMIT_INCREMENT,
+        requiredLimit,
+      );
+      return Math.max(nextLimit, INITIAL_SLIDER_LIMIT_SECONDS);
+    });
+  }, []);
+
   const formattedOffset = useMemo(
     () => offsetSeconds.toFixed(3),
     [offsetSeconds],
   );
   const sliderValue = useMemo(() => {
-    if (offsetSeconds > SLIDER_LIMIT_SECONDS) return SLIDER_LIMIT_SECONDS;
-    if (offsetSeconds < -SLIDER_LIMIT_SECONDS) return -SLIDER_LIMIT_SECONDS;
-    return Number(offsetSeconds.toFixed(3));
-  }, [offsetSeconds]);
+    const rounded = Number(offsetSeconds.toFixed(3));
+    if (rounded > sliderLimit) return sliderLimit;
+    if (rounded < -sliderLimit) return -sliderLimit;
+    return rounded;
+  }, [offsetSeconds, sliderLimit]);
+
+  useEffect(() => {
+    if (offsetSeconds === 0) {
+      setSliderLimit((currentLimit) =>
+        currentLimit === INITIAL_SLIDER_LIMIT_SECONDS
+          ? currentLimit
+          : INITIAL_SLIDER_LIMIT_SECONDS,
+      );
+      return;
+    }
+    ensureSliderLimit(offsetSeconds);
+  }, [offsetSeconds, ensureSliderLimit]);
 
   const activeToggleStyle: CSSProperties = {
     backgroundColor: accentColor,
@@ -75,11 +121,14 @@ export function BulkOffsetControls({
   };
 
   const handleDelta = (delta: number) => {
-    onOffsetChange(Number((offsetSeconds + delta).toFixed(3)));
+    const nextValue = Number((offsetSeconds + delta).toFixed(3));
+    ensureSliderLimit(nextValue);
+    onOffsetChange(nextValue);
   };
 
   const handleInputChange = (value: string) => {
     if (value.trim().length === 0) {
+      setSliderLimit(INITIAL_SLIDER_LIMIT_SECONDS);
       onOffsetChange(0);
       return;
     }
@@ -87,13 +136,20 @@ export function BulkOffsetControls({
     if (Number.isNaN(parsed)) {
       return;
     }
-    onOffsetChange(Number(parsed.toFixed(3)));
+    const nextValue = Number(parsed.toFixed(3));
+    ensureSliderLimit(nextValue);
+    onOffsetChange(nextValue);
+  };
+
+  const handleReset = () => {
+    setSliderLimit(INITIAL_SLIDER_LIMIT_SECONDS);
+    onOffsetChange(0);
   };
 
   return (
     <section className="h-fit px-4 py-3 border-t-1 border-black border-dashed">
       <div className="flex flex-grow items-center gap-4 text-sm tracking-wide">
-        <span>Choose to offset</span>
+        <span>{t("bulkOffset.chooseTarget")}</span>
         <div className="flex items-center">
           <Button
             type="button"
@@ -106,7 +162,7 @@ export function BulkOffsetControls({
               shiftTarget === "start" ? activeToggleStyle : inactiveToggleStyle
             }
           >
-            Start time
+            {t("bulkOffset.targetStart")}
           </Button>
           <Button
             type="button"
@@ -119,7 +175,7 @@ export function BulkOffsetControls({
               shiftTarget === "both" ? activeToggleStyle : inactiveToggleStyle
             }
           >
-            Whole subtitle
+            {t("bulkOffset.targetBoth")}
           </Button>
           <Button
             type="button"
@@ -132,7 +188,7 @@ export function BulkOffsetControls({
               shiftTarget === "end" ? activeToggleStyle : inactiveToggleStyle
             }
           >
-            End time
+            {t("bulkOffset.targetEnd")}
           </Button>
         </div>
         {selectionSummary && (
@@ -143,16 +199,18 @@ export function BulkOffsetControls({
       </div>
 
       <div className="my-3 flex items-center gap-4 text-sm tracking-wide">
-        <span className="w-fit">Offset seconds</span>
+        <span className="w-fit">{t("bulkOffset.offsetLabel")}</span>
         <SliderPrimitive.Root
           value={[sliderValue]}
-          min={-SLIDER_LIMIT_SECONDS}
-          max={SLIDER_LIMIT_SECONDS}
+          min={-sliderLimit}
+          max={sliderLimit}
           step={STEP_FINE}
           className="relative flex select-none items-center grow"
-          onValueChange={(value) =>
-            onOffsetChange(Number(value[0]?.toFixed(3) ?? "0"))
-          }
+          onValueChange={(value) => {
+            const nextValue = Number(value[0]?.toFixed(3) ?? "0");
+            ensureSliderLimit(nextValue);
+            onOffsetChange(nextValue);
+          }}
         >
           <SliderPrimitive.Track
             className="relative h-1 w-full grow overflow-hidden rounded-full"
@@ -180,7 +238,7 @@ export function BulkOffsetControls({
             variant="secondary"
             size="sm"
             onClick={() => handleDelta(-STEP_COARSE)}
-            aria-label="Decrease offset by 1 second"
+            aria-label={t("bulkOffset.aria.decreaseOneSecond")}
           >
             −1s
           </Button>
@@ -189,7 +247,7 @@ export function BulkOffsetControls({
             variant="secondary"
             size="sm"
             onClick={() => handleDelta(-STEP_MEDIUM)}
-            aria-label="Decrease offset by 0.1 seconds"
+            aria-label={t("bulkOffset.aria.decreaseHundredMs")}
           >
             −0.1s
           </Button>
@@ -198,7 +256,7 @@ export function BulkOffsetControls({
             variant="secondary"
             size="sm"
             onClick={() => handleDelta(-STEP_TEN)}
-            aria-label="Decrease offset by 10 milliseconds"
+            aria-label={t("bulkOffset.aria.decreaseTenMs")}
           >
             −10ms
           </Button>
@@ -207,7 +265,7 @@ export function BulkOffsetControls({
             variant="secondary"
             size="sm"
             onClick={() => handleDelta(-STEP_FINE)}
-            aria-label="Decrease offset by 1 millisecond"
+            aria-label={t("bulkOffset.aria.decreaseOneMs")}
           >
             −1ms
           </Button>
@@ -221,7 +279,7 @@ export function BulkOffsetControls({
             value={formattedOffset}
             onChange={(event) => handleInputChange(event.target.value)}
             className="w-24 py-1 px-2 rounded-xs border-none text-center text-base"
-            aria-label="Offset in seconds"
+            aria-label={t("bulkOffset.offsetInputLabel")}
           />
           <span>s</span>
         </div>
@@ -232,7 +290,7 @@ export function BulkOffsetControls({
             variant="secondary"
             size="sm"
             onClick={() => handleDelta(STEP_FINE)}
-            aria-label="Increase offset by 1 millisecond"
+            aria-label={t("bulkOffset.aria.increaseOneMs")}
           >
             +1ms
           </Button>
@@ -241,7 +299,7 @@ export function BulkOffsetControls({
             variant="secondary"
             size="sm"
             onClick={() => handleDelta(STEP_TEN)}
-            aria-label="Increase offset by 10 milliseconds"
+            aria-label={t("bulkOffset.aria.increaseTenMs")}
           >
             +10ms
           </Button>
@@ -250,7 +308,7 @@ export function BulkOffsetControls({
             variant="secondary"
             size="sm"
             onClick={() => handleDelta(STEP_MEDIUM)}
-            aria-label="Increase offset by 0.1 seconds"
+            aria-label={t("bulkOffset.aria.increaseHundredMs")}
           >
             +100ms
           </Button>
@@ -259,7 +317,7 @@ export function BulkOffsetControls({
             variant="secondary"
             size="sm"
             onClick={() => handleDelta(STEP_COARSE)}
-            aria-label="Increase offset by 1 second"
+            aria-label={t("bulkOffset.aria.increaseOneSecond")}
           >
             +1s
           </Button>
@@ -270,9 +328,9 @@ export function BulkOffsetControls({
             type="button"
             variant="ghost"
             size="default"
-            onClick={() => onOffsetChange(0)}
+            onClick={handleReset}
           >
-            Reset
+            {t("bulkOffset.reset")}
           </Button>
           <Button
             type="button"
@@ -286,7 +344,7 @@ export function BulkOffsetControls({
               color: "#fff",
             }}
           >
-            Apply offset
+            {t("bulkOffset.apply")}
           </Button>
         </div>
       </div>

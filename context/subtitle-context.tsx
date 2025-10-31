@@ -1,6 +1,4 @@
 "use client";
-
-import { useSubtitlePersistence } from "@/hooks/use-subtitle-persistence";
 import { useSubtitleActions } from "@/hooks/use-subtitle-actions";
 import { useUndoableState, type UndoHistory } from "@/hooks/use-undoable-state";
 import {
@@ -125,17 +123,6 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     isEqual: subtitlesAreEqual,
   });
 
-  useSubtitlePersistence({
-    tracks,
-    activeTrackId,
-    showTrackLabels,
-    setTracks,
-    setActiveTrackId,
-    setShowTrackLabels,
-    trackHistoriesRef,
-    previousActiveTrackId,
-    setHistorySnapshot,
-  });
 
   // CRITICAL FIX: This effect synchronizes the undo/redo state
   // with the currently active track.
