@@ -65,7 +65,7 @@
     "title": "Select subtitles to bulk offset timestamps of current track: {track}",
     "emptyState": "Load subtitles to enable bulk offsets.",
     "noCaptions": "No captions found",
-    "selectionSummary": "{selected} of {total} selected",
+    "selectionSummary": "{selected} / {total} selected",
     "chooseTarget": "Choose what to offset",
     "targetStart": "Start time",
     "targetBoth": "Whole subtitle",

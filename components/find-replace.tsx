@@ -61,6 +61,7 @@ export default function FindReplace() {
   const [selectedSubtitles, setSelectedSubtitles] = useState<Set<number>>(
     new Set(),
   );
+  const stickyHeadClass = "sticky top-0 z-20 bg-gray-200 text-black";
 
   const handleReplace = () => {
     const currentSelection = new Set(selectedSubtitles);
@@ -284,16 +285,18 @@ export default function FindReplace() {
             {selectedSubtitles.size} / {matchedSubtitles.length}{" "}
             {t("findReplace.selected")}
           </div>
-          <div className="w-full max-h-[32rem] overflow-y-auto">
-            <Table className="w-full border-collapse text-base">
-              <TableHeader className="bg-gray-200 sticky top-0">
-                <TableRow className="border-black">
-                  <TableHead className="sticky top-0 w-8 text-center text-black">
-                    <Checkbox
-                      checked={
-                        matchedSubtitles.length > 0 &&
-                        matchedSubtitles.every((sub) =>
-                          selectedSubtitles.has(sub.id),
+          <Table
+            containerClassName="max-h-[32rem] overflow-y-auto"
+            className="w-full border-collapse text-base"
+          >
+            <TableHeader className="[&>tr]:bg-gray-200">
+              <TableRow className="border-black">
+                <TableHead className={`${stickyHeadClass} w-8 text-center`}>
+                  <Checkbox
+                    checked={
+                      matchedSubtitles.length > 0 &&
+                      matchedSubtitles.every((sub) =>
+                        selectedSubtitles.has(sub.id),
                         )
                       }
                       onCheckedChange={(checked) => {
@@ -307,13 +310,13 @@ export default function FindReplace() {
                       }}
                     />
                   </TableHead>
-                  <TableHead className="sticky top-0 text-black w-fit">
+                  <TableHead className={`${stickyHeadClass} w-fit`}>
                     {t("findReplace.id")}
                   </TableHead>
-                  <TableHead className="sticky top-0 text-black">
+                  <TableHead className={stickyHeadClass}>
                     {t("findReplace.original")}
                   </TableHead>
-                  <TableHead className="sticky top-0 text-black">
+                  <TableHead className={stickyHeadClass}>
                     {t("findReplace.preview")}
                   </TableHead>
                 </TableRow>
@@ -379,7 +382,6 @@ export default function FindReplace() {
                 )}
               </TableBody>
             </Table>
-          </div>
         </div>
         <DialogFooter>
           <Button

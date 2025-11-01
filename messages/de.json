@@ -65,7 +65,7 @@
     "title": "Untertitel für die Stapelverschiebung der Zeitstempel auswählen. Aktuelle Spur: {track}",
     "emptyState": "Lade Untertitel, um Sammelverschiebungen zu aktivieren.",
     "noCaptions": "Keine Untertitel gefunden",
-    "selectionSummary": "{selected} von {total} ausgewählt",
+    "selectionSummary": "{selected} / {total} ausgewählt",
     "chooseTarget": "Bereich für Verschiebung wählen",
     "targetStart": "Startzeit",
     "targetBoth": "Kompletter Untertitel",
