@@ -20,3 +20,5 @@ export const config = {
   // Match only internationalized pathnames, but exclude FAQ page and other static assets
   matcher: ["/((?!_next|api|faq|.*\\..*).*)"],
 };
+
+export const runtime = "experimental-edge";

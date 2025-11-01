@@ -18,7 +18,9 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   /* config options here */
-  reactCompiler: true,
+  experimental: {
+    reactCompiler: true,
+  },
 };
 
 export default withPWA(withNextIntl(nextConfig));
