@@ -28,7 +28,7 @@ type RegionMapEntry = {
 
 interface UseWaveformRegionsParams {
   wavesurfer: WaveSurfer | null;
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   tracks: SubtitleTrack[];
   activeTrackId: string | null;
   setActiveTrackId: (trackId: string | null) => void;
