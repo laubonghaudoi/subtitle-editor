@@ -79,7 +79,7 @@ export default function SaveSrt() {
           <span>{t("buttons.saveSrt")}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[40rem]">
+      <DialogContent className="sm:max-w-160">
         <DialogHeader>
           <DialogTitle>{t("dialog.saveTitle")}</DialogTitle>
           <DialogDescription>{t("dialog.saveDescription")}</DialogDescription>
