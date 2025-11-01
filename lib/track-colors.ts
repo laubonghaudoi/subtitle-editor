@@ -1,15 +1,15 @@
 export const TRACK_COLORS = [
   "#fcd34d40", // Yellow (active track)
   "#3b82f640", // Blue
-  "#ec489940", // Red
-  "#84cc1640", // Green
+  "#c7003640", // Red
+  "#00996640", // Green
 ];
 
 export const TRACK_HANDLE_COLORS = [
   "#f59e0b", // Yellow (active track)
   "#3b82f6", // Blue
-  "#ec4899", // Red
-  "#22c55e", // Green
+  "#c70036", // Red
+  "#009966", // Green
 ];
 
 export function getTrackHandleColor(index: number): string {

@@ -9,11 +9,19 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { BulkOffsetControls, type BulkShiftTarget } from "./controls";
 
+export interface BulkOffsetPreviewState {
+  startSeconds: number;
+  endSeconds: number;
+  startChanged: boolean;
+  endChanged: boolean;
+}
+
 interface BulkOffsetDrawerProps {
   isOpen: boolean;
   subtitles: Subtitle[];
   trackIndex: number;
   currentTrackName?: string | null;
+  onPreviewChange?: (preview: Record<string, BulkOffsetPreviewState>) => void;
   onApplyOffset: (
     selectedUuids: string[],
     offsetSeconds: number,
@@ -26,6 +34,7 @@ export function BulkOffsetDrawer({
   subtitles,
   trackIndex,
   currentTrackName,
+  onPreviewChange,
   onApplyOffset,
 }: BulkOffsetDrawerProps) {
   const t = useTranslations();
@@ -39,6 +48,7 @@ export function BulkOffsetDrawer({
     currentTrackName && currentTrackName.trim().length > 0
       ? currentTrackName
       : t("waveform.untitledTrack");
+  const lastPreviewRef = useRef<Record<string, BulkOffsetPreviewState>>({});
 
   useEffect(() => {
     if (!isOpen) {
@@ -236,6 +246,79 @@ export function BulkOffsetDrawer({
       endChanged: previewEnd !== subtitle.endTime,
     };
   });
+
+  useEffect(() => {
+    if (!onPreviewChange) return;
+    const shouldClear =
+      !isOpen || offsetSeconds === 0 || selectedUuids.size === 0;
+    if (shouldClear) {
+      if (Object.keys(lastPreviewRef.current).length > 0) {
+        lastPreviewRef.current = {};
+        onPreviewChange({});
+      }
+      return;
+    }
+
+    const previewMap: Record<string, BulkOffsetPreviewState> = {};
+    subtitles.forEach((subtitle, index) => {
+      if (!selectedUuids.has(subtitle.uuid)) {
+        return;
+      }
+      const preview = previewSubtitles[index];
+      if (!preview) {
+        return;
+      }
+      if (!preview.startChanged && !preview.endChanged) {
+        return;
+      }
+      previewMap[subtitle.uuid] = {
+        startSeconds: timeToSeconds(preview.previewStart),
+        endSeconds: timeToSeconds(preview.previewEnd),
+        startChanged: preview.startChanged,
+        endChanged: preview.endChanged,
+      };
+    });
+
+    const prev = lastPreviewRef.current;
+    const prevKeys = Object.keys(prev);
+    const nextKeys = Object.keys(previewMap);
+    let changed = prevKeys.length !== nextKeys.length;
+    if (!changed) {
+      for (const key of nextKeys) {
+        const next = previewMap[key];
+        const prior = prev[key];
+        if (
+          !prior ||
+          prior.startSeconds !== next.startSeconds ||
+          prior.endSeconds !== next.endSeconds ||
+          prior.startChanged !== next.startChanged ||
+          prior.endChanged !== next.endChanged
+        ) {
+          changed = true;
+          break;
+        }
+      }
+    }
+
+    if (changed) {
+      lastPreviewRef.current = previewMap;
+      onPreviewChange(previewMap);
+    }
+  }, [
+    isOpen,
+    offsetSeconds,
+    onPreviewChange,
+    previewSubtitles,
+    selectedUuids,
+    subtitles,
+  ]);
+
+  useEffect(() => {
+    return () => {
+      lastPreviewRef.current = {};
+      onPreviewChange?.({});
+    };
+  }, [onPreviewChange]);
 
   if (!isOpen) {
     return null;

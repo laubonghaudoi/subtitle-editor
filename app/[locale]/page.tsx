@@ -5,7 +5,10 @@ import BottomInstructions from "@/components/bottom-instructions";
 import CustomControls from "@/components/custom-controls";
 import SkipLinks from "@/components/skip-links";
 import SubtitleList, { type SubtitleListRef } from "@/components/subtitle-list";
-import { BulkOffsetDrawer } from "@/components/bulk-offset/drawer";
+import {
+  BulkOffsetDrawer,
+  type BulkOffsetPreviewState,
+} from "@/components/bulk-offset/drawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -110,6 +113,9 @@ function MainContent() {
   const [pendingScrollInstant, setPendingScrollInstant] =
     useState<boolean>(false);
   const [isBulkOffsetOpen, setIsBulkOffsetOpen] = useState<boolean>(false);
+  const [bulkOffsetPreview, setBulkOffsetPreview] = useState<
+    Record<string, BulkOffsetPreviewState>
+  >({});
   const resumeMediaPlayback = useCallback(() => {
     videoPlayerRef.current?.resumePlayback();
   }, []);
@@ -477,6 +483,7 @@ function MainContent() {
                 subtitles={activeTrackSubtitles}
                 trackIndex={activeTrackIndex}
                 currentTrackName={activeTrack?.name ?? null}
+                onPreviewChange={setBulkOffsetPreview}
                 onApplyOffset={(selection, offsetSeconds, target) => {
                   bulkShiftSubtitlesAction(selection, offsetSeconds, target);
                 }}
@@ -543,6 +550,7 @@ function MainContent() {
                 isPlaying={isPlaying}
                 onSeek={setPlaybackTime}
                 onPlayPause={setIsPlaying}
+                previewOffsets={bulkOffsetPreview}
                 onRegionClick={(uuid, opts) => {
                   // Set pending scroll to be handled after track switch completes
                   setPendingScrollToUuid(uuid);

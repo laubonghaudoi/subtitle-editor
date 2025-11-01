@@ -5,6 +5,7 @@ import { useWavesurfer } from "@wavesurfer/react";
 import {
   type ForwardedRef,
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -19,8 +20,115 @@ import { useSubtitleContext } from "@/context/subtitle-context"; // Import conte
 import { secondsToTime, timeToSeconds } from "@/lib/utils";
 import { getTrackHandleColor, TRACK_COLORS } from "@/lib/track-colors";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
+import type { BulkOffsetPreviewState } from "@/components/bulk-offset/drawer";
 
 const HANDLE_COLOR = "#ef4444";
+
+const hexToRgb = (hex: string) => {
+  let normalized = hex.replace("#", "");
+  if (normalized.length === 3) {
+    normalized = normalized
+      .split("")
+      .map((c) => c + c)
+      .join("");
+  }
+  if (normalized.length === 8) {
+    normalized = normalized.slice(0, 6);
+  }
+  const bigint = Number.parseInt(normalized, 16);
+  return {
+    r: (bigint >> 16) & 255,
+    g: (bigint >> 8) & 255,
+    b: bigint & 255,
+  };
+};
+
+const rgbToHex = ({ r, g, b }: { r: number; g: number; b: number }) =>
+  `#${[r, g, b].map((value) => value.toString(16).padStart(2, "0")).join("")}`;
+
+const rgbToHsl = (r: number, g: number, b: number) => {
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case rn:
+        h = (gn - bn) / d + (gn < bn ? 6 : 0);
+        break;
+      case gn:
+        h = (bn - rn) / d + 2;
+        break;
+      default:
+        h = (rn - gn) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+
+  return { h: h * 360, s, l };
+};
+
+const hslToRgb = (h: number, s: number, l: number) => {
+  const hue2rgb = (p: number, q: number, t: number) => {
+    let temp = t;
+    if (temp < 0) temp += 1;
+    if (temp > 1) temp -= 1;
+    if (temp < 1 / 6) return p + (q - p) * 6 * temp;
+    if (temp < 1 / 2) return q;
+    if (temp < 2 / 3) return p + (q - p) * (2 / 3 - temp) * 6;
+    return p;
+  };
+
+  if (s === 0) {
+    const component = Math.round(l * 255);
+    return { r: component, g: component, b: component };
+  }
+
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+
+  return {
+    r: Math.round(hue2rgb(p, q, h + 1 / 3) * 255),
+    g: Math.round(hue2rgb(p, q, h) * 255),
+    b: Math.round(hue2rgb(p, q, h - 1 / 3) * 255),
+  };
+};
+
+const createContrastColor = (hex: string) => {
+  const { r, g, b } = hexToRgb(hex);
+  const { h, s, l } = rgbToHsl(r, g, b);
+  const rotatedHue = (h + 150) % 360;
+  const adjustedS = Math.min(0.6, s * 0.65);
+  const adjustedL = Math.min(0.85, Math.max(0.35, l * 1.1));
+  const contrastRgb = hslToRgb(rotatedHue / 360, adjustedS, adjustedL);
+  return rgbToHex(contrastRgb);
+};
+
+const hexToRgba = (hex: string, alpha: number): string => {
+  let normalized = hex.replace("#", "");
+  if (normalized.length === 3) {
+    normalized = normalized
+      .split("")
+      .map((c) => c + c)
+      .join("");
+  }
+  if (normalized.length === 8) {
+    normalized = normalized.slice(0, 6);
+  }
+  const bigint = Number.parseInt(normalized, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
 
 // Multi-track colors
 
@@ -127,6 +235,7 @@ interface WaveformVisualizerProps {
   onSeek: (time: number) => void;
   onPlayPause: (playing: boolean) => void;
   onRegionClick?: (uuid: string, opts?: { crossTrack?: boolean }) => void;
+  previewOffsets?: Record<string, BulkOffsetPreviewState>;
 }
 
 export default forwardRef(function WaveformVisualizer(
@@ -136,6 +245,7 @@ export default forwardRef(function WaveformVisualizer(
     onSeek,
     onPlayPause,
     onRegionClick,
+    previewOffsets = {},
   }: WaveformVisualizerProps,
   // Update the ref type to expect uuid (string) and the new setWaveformTime method
   ref: ForwardedRef<{
@@ -161,8 +271,10 @@ export default forwardRef(function WaveformVisualizer(
 
   // Use UUID as the key for the map, store both region and track info
   const subtitleToRegionMap = useRef<
-    Map<string, { region: Region; trackId: string }>
+    Map<string, { region: Region; trackId: string; trackIndex: number }>
   >(new Map());
+  const previewRegionMap = useRef<Map<string, Region>>(new Map());
+  const previewOffsetsRef = useRef<Record<string, BulkOffsetPreviewState>>({});
 
   // Track drag state to avoid repeated scroll triggers mid-drag
   // Dragging regions should not trigger auto scroll/tab switching
@@ -437,6 +549,98 @@ export default forwardRef(function WaveformVisualizer(
   const lastDraggedSubtitleId = useRef<string | null>(null);
 
   // Initialize all regions from all tracks
+  const updatePreviewRegions = useCallback(
+    (previewMap: Record<string, BulkOffsetPreviewState>) => {
+      if (!wavesurfer) return;
+      let duration = 0;
+      try {
+        duration = wavesurfer.getDuration();
+      } catch {
+        duration = 0;
+      }
+      if (!duration || duration === 0) return;
+
+      const regionsPlugin = wavesurfer
+        .getActivePlugins()
+        .find((p) => p instanceof RegionsPlugin) as RegionsPlugin | undefined;
+      if (!regionsPlugin) return;
+
+      // Remove overlays not present in the new preview map
+      previewRegionMap.current.forEach((overlay, uuid) => {
+        const entry = previewMap[uuid];
+        if (!entry || (!entry.startChanged && !entry.endChanged)) {
+          overlay.remove();
+          previewRegionMap.current.delete(uuid);
+        }
+      });
+
+      Object.entries(previewMap).forEach(([uuid, data]) => {
+        const hasDiff = data.startChanged || data.endChanged;
+        const baseRegionEntry = subtitleToRegionMap.current.get(uuid);
+        if (!hasDiff || !baseRegionEntry) {
+          const existing = previewRegionMap.current.get(uuid);
+          if (existing) {
+            existing.remove();
+            previewRegionMap.current.delete(uuid);
+          }
+          return;
+        }
+        const { region: baseRegion, trackIndex } = baseRegionEntry;
+        const handleColor = getTrackHandleColor(trackIndex);
+        const contrast = createContrastColor(handleColor);
+        const overlayFill = hexToRgba(contrast, 0.18);
+        const overlayBorder = hexToRgba(contrast, 0.82);
+
+        let overlay = previewRegionMap.current.get(uuid);
+        if (!overlay) {
+          overlay = regionsPlugin.addRegion({
+            id: `preview-${uuid}`,
+            start: data.startSeconds,
+            end: data.endSeconds,
+            drag: false,
+            resize: false,
+            color: overlayFill,
+          });
+
+          previewRegionMap.current.set(uuid, overlay);
+        } else {
+          overlay.setOptions({
+            start: data.startSeconds,
+            end: data.endSeconds,
+            color: overlayFill,
+          });
+        }
+
+        const element = overlay.element;
+        if (element) {
+          element.style.pointerEvents = "none";
+          element.style.zIndex = "5";
+          element.style.border = `2px dashed ${overlayBorder}`;
+          element.style.backgroundColor = overlayFill;
+          element.style.mixBlendMode = "screen";
+          element.setAttribute("data-preview-region", "true");
+
+          const baseElement = baseRegion.element;
+          if (baseElement) {
+            element.style.top = baseElement.style.top;
+            element.style.height = baseElement.style.height;
+            element.style.position = "absolute";
+          }
+
+          const leftHandle = element.querySelector(
+            'div[part="region-handle region-handle-left"]',
+          ) as HTMLDivElement | null;
+          const rightHandle = element.querySelector(
+            'div[part="region-handle region-handle-right"]',
+          ) as HTMLDivElement | null;
+          if (leftHandle) leftHandle.style.display = "none";
+          if (rightHandle) rightHandle.style.display = "none";
+        }
+      });
+    },
+    [wavesurfer],
+  );
+
   const initRegions = () => {
     if (!wavesurfer || wavesurfer.getDuration() === 0) return;
 
@@ -453,6 +657,10 @@ export default forwardRef(function WaveformVisualizer(
     });
     regionsPlugin.clearRegions();
     subtitleToRegionMap.current.clear();
+    previewRegionMap.current.forEach((overlay) => {
+      overlay.remove();
+    });
+    previewRegionMap.current.clear();
 
     // 2) Add regions from all tracks
     tracks.forEach((track, trackIndex) => {
@@ -497,11 +705,13 @@ export default forwardRef(function WaveformVisualizer(
         subtitleToRegionMap.current.set(subtitle.uuid, {
           region,
           trackId: track.id,
+          trackIndex,
         });
       });
     });
     // After creating regions, measure label overlay area
     requestAnimationFrame(measureLabelsOverlay);
+    updatePreviewRegions(previewOffsetsRef.current);
   };
 
   const measureLabelsOverlay = () => {
@@ -576,6 +786,9 @@ export default forwardRef(function WaveformVisualizer(
     const handleRegionUpdate = (region: Region) => {
       // The region.id is now the UUID (string)
       const subtitleUuid = region.id;
+      if (subtitleUuid.startsWith("preview-")) {
+        return;
+      }
       let newStartTime = region.start;
       let newEndTime = region.end;
       let adjusted = false;
@@ -723,6 +936,9 @@ export default forwardRef(function WaveformVisualizer(
 
     // Handle region clicks to switch active track and focus subtitle
     const handleRegionClick = (region: Region) => {
+      if (region.id.startsWith("preview-")) {
+        return;
+      }
       const regionData = subtitleToRegionMap.current.get(region.id);
       if (regionData) {
         // Switch to the correct track if it's different
@@ -786,6 +1002,18 @@ export default forwardRef(function WaveformVisualizer(
   useEffect(() => {
     requestAnimationFrame(measureLabelsOverlay);
   }, [showTrackLabels, tracks.length]);
+
+  useEffect(() => {
+    previewOffsetsRef.current = previewOffsets ?? {};
+    updatePreviewRegions(previewOffsets ?? {});
+  }, [previewOffsets, updatePreviewRegions]);
+
+  useEffect(() => {
+    return () => {
+      previewRegionMap.current.forEach((region) => region.remove());
+      previewRegionMap.current.clear();
+    };
+  }, []);
 
   // Re-measure on window resize
   useEffect(() => {
@@ -861,6 +1089,7 @@ export default forwardRef(function WaveformVisualizer(
           subtitleToRegionMap.current.set(subtitle.uuid, {
             region,
             trackId: track.id,
+            trackIndex,
           });
         } else if (regionData.region.element) {
           // Update existing region
@@ -898,6 +1127,12 @@ export default forwardRef(function WaveformVisualizer(
             el.style.height = `${trackHeight}%`;
             el.style.position = "absolute";
           }
+
+          subtitleToRegionMap.current.set(subtitle.uuid, {
+            region,
+            trackId: track.id,
+            trackIndex,
+          });
         }
       });
     });
