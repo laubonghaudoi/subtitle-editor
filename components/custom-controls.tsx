@@ -47,7 +47,7 @@ const TimeDisplayAndSlider = memo(
         const position = rect.width === 0 ? 0 : clampedX / rect.width;
         const time = position * duration;
         setHoverTime(time);
-        setTooltipPosition(clampedX);
+        setTooltipPosition(clampedX - 2.5 * rect.left);
       }
     };
 
@@ -88,7 +88,7 @@ const TimeDisplayAndSlider = memo(
                     position: "absolute",
                     left: `${tooltipPosition}px`,
                     transform: "translateX(-50%)",
-                    bottom: "4px",
+                    bottom: "2px",
                   }}
                 >
                   {secondsToTime(hoverTime)}
