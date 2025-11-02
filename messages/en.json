@@ -6,8 +6,8 @@
     "redo": "Redo",
     "github": "Open-source on GitHub with MIT License",
     "bulkOffset": "Bulk offset",
-    "showBulkOffset": "Show bulk offset",
-    "hideBulkOffset": "Hide bulk offset"
+    "showBulkOffset": "Open bulk offset timestamp panel",
+    "hideBulkOffset": "Close bulk offset timestamp panel"
   },
   "buttons": {
     "loadMedia": "Load Media",

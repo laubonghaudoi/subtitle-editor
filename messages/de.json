@@ -5,9 +5,9 @@
     "undo": "Rückgängig",
     "redo": "Wiederherstellen",
     "github": "Open Source auf Github mit MIT-Lizenz",
-    "bulkOffset": "Sammelversatz",
-    "showBulkOffset": "Sammelversatz anzeigen",
-    "hideBulkOffset": "Sammelversatz ausblenden"
+    "bulkOffset": "Stapel-Offset",
+    "showBulkOffset": "Stapel-Offset-Panel öffnen",
+    "hideBulkOffset": "Stapel-Offset-Panel schließen"
   },
   "buttons": {
     "loadMedia": "Medien laden",

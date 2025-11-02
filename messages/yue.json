@@ -6,8 +6,8 @@
     "redo": "做返",
     "github": "源碼按照 MIT 協議開放於 GitHub",
     "bulkOffset": "批量調整",
-    "showBulkOffset": "顯示批量調整",
-    "hideBulkOffset": "收起批量調整"
+    "showBulkOffset": "打開批量位移面板",
+    "hideBulkOffset": "收起批量位移面板"
   },
   "buttons": {
     "loadMedia": "載入媒體",

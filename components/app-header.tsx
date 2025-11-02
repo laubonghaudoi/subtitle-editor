@@ -23,7 +23,9 @@ import {
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import type { RefObject } from "react";
+import { useMemo, type RefObject } from "react";
+import { useSubtitleContext } from "@/context/subtitle-context";
+import { getTrackHandleColor } from "@/lib/track-colors";
 
 interface AppHeaderProps {
   canUndo: boolean;
@@ -51,6 +53,14 @@ export function AppHeader({
   bulkOffsetDisabled,
 }: AppHeaderProps) {
   const t = useTranslations();
+  const { tracks, activeTrackId } = useSubtitleContext();
+  const bulkTooltipColor = useMemo(() => {
+    const index = tracks.findIndex((track) => track.id === activeTrackId);
+    if (index < 0) {
+      return "#334155"; // slate-700 fallback
+    }
+    return getTrackHandleColor(index);
+  }, [tracks, activeTrackId]);
 
   return (
     <nav className="h-[6vh] border-black border-b-2 flex items-center px-12 justify-between">
@@ -137,7 +147,13 @@ export function AppHeader({
                 </span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent
+              style={{
+                backgroundColor: bulkTooltipColor,
+                borderColor: bulkTooltipColor,
+                color: "#fff",
+              }}
+            >
               {isBulkOffsetOpen
                 ? t("navigation.hideBulkOffset")
                 : t("navigation.showBulkOffset")}
