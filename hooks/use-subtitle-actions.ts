@@ -12,6 +12,7 @@ import {
   updateSubtitleEndTime,
   updateSubtitleStartTime,
 } from "@/lib/subtitle-operations";
+import { sortSubtitlesChronologically } from "@/lib/subtitle-ordering";
 import { secondsToTime, timeToSeconds } from "@/lib/utils";
 import {
   createTrackHistory,
@@ -101,7 +102,7 @@ export const useSubtitleActions = ({
   useMemo(() => {
     const handleTrackedStateChange = (newSubtitles: Subtitle[]) => {
       if (!activeTrackId) {
-        setSubtitlesWithHistory(newSubtitles);
+        setSubtitlesWithHistory(sortSubtitlesChronologically(newSubtitles));
         return;
       }
 
