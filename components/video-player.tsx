@@ -2,6 +2,7 @@
 
 import {
   type ForwardedRef,
+  type SyntheticEvent,
   forwardRef,
   useCallback,
   useEffect,
@@ -52,7 +53,11 @@ const VideoPlayer = forwardRef(function VideoPlayer(
 
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [vttUrl, setVttUrl] = useState<string | null>(null);
-  const playerRef = useRef<ReactPlayer>(null);
+  const playerRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
+  const vttObjectUrlRef = useRef<string | null>(null);
+  const setPlayerRef = useCallback((element: HTMLVideoElement | null) => {
+    playerRef.current = element;
+  }, []);
   const timeToRestore = useRef<number | null>(null); // Ref to store time before remount
 
   const lastPlayStateChange = useRef<number>(0);
@@ -62,18 +67,8 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     const playerInstance = playerRef.current;
     if (!playerInstance) return;
 
-    const internalPlayer = playerInstance.getInternalPlayer?.();
-    if (!internalPlayer) return;
-
-    const mediaElement =
-      typeof (internalPlayer as HTMLMediaElement).play === "function"
-        ? (internalPlayer as HTMLMediaElement)
-        : null;
-
-    if (!mediaElement) return;
-
     try {
-      const playPromise = mediaElement.play();
+      const playPromise = playerInstance.play?.();
       if (
         playPromise &&
         typeof (playPromise as Promise<void>).catch === "function"
@@ -102,9 +97,9 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   useEffect(() => {
     if (playerRef.current && typeof seekTime === "number") {
       const player = playerRef.current;
-      const currentTime = player.getCurrentTime();
+      const currentTime = player.currentTime ?? 0;
       if (Math.abs(currentTime - seekTime) > 0.5) {
-        player.seekTo(seekTime, "seconds");
+        player.currentTime = seekTime;
         timeToRestore.current = seekTime;
       }
     }
@@ -132,21 +127,47 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   useEffect(() => {
     if (!mediaUrl) {
       setVttUrl(null);
+      if (vttObjectUrlRef.current) {
+        URL.revokeObjectURL(vttObjectUrlRef.current);
+        vttObjectUrlRef.current = null;
+      }
       return;
     }
 
     const srtString = subtitlesToSrtString(subtitles);
     const vttString = srtToVtt(srtString);
-    const dataUrl = `data:text/vtt;charset=utf-8,${encodeURIComponent(
-      vttString,
-    )}`;
+    const blob = new Blob([vttString], { type: "text/vtt" });
+    const objectUrl = URL.createObjectURL(blob);
 
     if (playerRef.current) {
-      timeToRestore.current = playerRef.current.getCurrentTime();
+      timeToRestore.current = playerRef.current.currentTime ?? null;
     }
 
-    setVttUrl(dataUrl);
+    if (vttObjectUrlRef.current) {
+      URL.revokeObjectURL(vttObjectUrlRef.current);
+    }
+
+    vttObjectUrlRef.current = objectUrl;
+    setVttUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+      if (vttObjectUrlRef.current === objectUrl) {
+        vttObjectUrlRef.current = null;
+      }
+    };
   }, [subtitles, mediaUrl]);
+
+  const handleLoadedMetadata = useCallback(
+    (event: SyntheticEvent<HTMLMediaElement>) => {
+      playerRef.current = event.currentTarget;
+      if (timeToRestore.current !== null) {
+        event.currentTarget.currentTime = timeToRestore.current;
+        timeToRestore.current = null;
+      }
+    },
+    [],
+  );
 
   if (!mediaUrl) {
     return (
@@ -165,12 +186,34 @@ const VideoPlayer = forwardRef(function VideoPlayer(
             }}
           />
         </Label>
-        <p className="my-4 text-lg">
-          {t("videoPlayer.supportedFormats")} <code>m4a</code>, <code>mp3</code>
-          , <code>mp4</code>, <code>webm</code>, <code>ogg</code>,{" "}
-          <code>wav</code>, <code>aac</code>, <code>flac</code>,{" "}
-          <code>opus</code>
-        </p>
+        <div className="my-4 space-y-1 text-base">
+          <p className="font-medium">{t("videoPlayer.supportedFormats")}</p>
+          <p>
+            <span className="font-semibold">
+              {t("videoPlayer.supportedFormatsAudio")}:
+            </span>{" "}
+            <code>mp3</code>, <code>m4a</code>, <code>aac</code>,{" "}
+            <code>wav</code>, <code>oga</code>, <code>weba</code>,{" "}
+            <code>spx</code>
+          </p>
+          <p>
+            <span className="font-semibold">
+              {t("videoPlayer.supportedFormatsVideo")}:
+            </span>{" "}
+            <code>mp4</code>, <code>mov</code>, <code>webm</code>,{" "}
+            <code>ogg</code>, <code>m4v</code>
+          </p>
+          <p>
+            <span className="font-semibold">
+              {t("videoPlayer.supportedFormatsStreams")}:
+            </span>{" "}
+            <code>HLS (.m3u8)</code>, <code>MPEG-DASH (.mpd)</code>,{" "}
+            <code>FLV (.flv)</code>
+          </p>
+          <p className="text-muted-foreground whitespace-pre-line">
+            {t("videoPlayer.supportedFormatsNote")}
+          </p>
+        </div>
       </div>
     );
   }
@@ -179,57 +222,40 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     <div className="w-full h-full flex items-center justify-center bg-black overflow-hidden">
       <ReactPlayer
         key={vttUrl ?? "no-subs"} // Remount when subtitle URL changes
-        ref={playerRef}
-        url={mediaUrl}
+        ref={setPlayerRef}
+        src={mediaUrl}
         width="100%"
         height="100%"
-        progressInterval={100}
-        onProgress={(state) => {
-          const player = playerRef.current?.getInternalPlayer();
-          if (player && !player.seeking) {
-            onProgress(state.playedSeconds);
+        playsInline
+        controlsList="nodownload"
+        onTimeUpdate={(event) => {
+          const player = event.currentTarget;
+          if (!player.seeking) {
+            onProgress(player.currentTime);
           }
         }}
-        onSeeked={() => {   // sometimes player.seeking is still true when onProgress is called, so this makes sure we update the waveform visualizer when seeking is done
-          if (playerRef.current) {
-            const currentTime = playerRef.current.getCurrentTime();
-            onProgress(currentTime);
-          }
+        onSeeked={(event) => {
+          // sometimes player.seeking is still true when onProgress is called, so this makes sure we update the waveform visualizer when seeking is done
+          onProgress(event.currentTarget.currentTime);
         }}
         onPlay={() => onPlayPause(true)}
         onPause={() => onPlayPause(false)}
-        onDuration={onDuration}
-        // Restore time using onReady after remount
-        onReady={(player) => {
-          playerRef.current = player; // Ensure ref is set
-          if (timeToRestore.current !== null) {
-            player.seekTo(timeToRestore.current, "seconds");
-            timeToRestore.current = null; // Reset after restoring
-          }
-        }}
+        onDurationChange={(event) => onDuration(event.currentTarget.duration)}
+        onLoadedMetadata={handleLoadedMetadata}
+        onLoadedData={handleLoadedMetadata}
         playing={isPlaying}
         playbackRate={playbackRate}
-        config={{
-          file: {
-            forceVideo: false, // Do not force video
-            attributes: {
-              controlsList: "nodownload",
-              playsInline: true,
-            },
-            tracks: vttUrl
-              ? [
-                  {
-                    label: t("videoPlayer.subtitles"),
-                    kind: "subtitles",
-                    src: vttUrl, // in-memory URL to the track
-                    srcLang: "unknown",
-                    default: true,
-                  },
-                ]
-              : [],
-          },
-        }}
-      />
+      >
+        {vttUrl ? (
+          <track
+            kind="subtitles"
+            src={vttUrl}
+            label={t("videoPlayer.subtitles")}
+            srcLang="unknown"
+            default
+          />
+        ) : null}
+      </ReactPlayer>
     </div>
   );
 });

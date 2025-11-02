@@ -167,7 +167,7 @@ export default function CustomControls({
       </Button>
 
       <TooltipProvider>
-        <div className="flex items-center border-x-1 border-gray-300 px-2">
+        <div className="flex items-center border-x border-gray-300 px-2">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -185,7 +185,7 @@ export default function CustomControls({
             <DropdownMenuTrigger className="px-2 py-1 cursor-pointer hover:bg-accent rounded-sm">
               {jumpDuration}s
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="border-1 border-black">
+            <DropdownMenuContent className="border border-black">
               <DropdownMenuRadioGroup
                 value={jumpDuration.toString()}
                 onValueChange={onChangeJumpDuration}
@@ -227,7 +227,7 @@ export default function CustomControls({
         <DropdownMenuTrigger className="cursor-pointer hover:bg-accent rounded-sm px-2 py-1">
           {playbackRate}x
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="border-1 border-black">
+        <DropdownMenuContent className="border border-black">
           <DropdownMenuRadioGroup
             value={playbackRate.toString()}
             onValueChange={onChangePlaybackRate}

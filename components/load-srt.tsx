@@ -124,13 +124,13 @@ export default function LoadSrt() {
       <DialogTrigger asChild>
         <Button
           variant="secondary"
-          className="hover:bg-amber-500 hover:text-white bg-yellow-300 text-black rounded-sm cursor-pointer"
+          className="hover:bg-orange-500 hover:text-white bg-yellow-300 text-black rounded-sm cursor-pointer"
         >
           <IconBadgeCc />
           <span className="leading-none truncate">{t("buttons.loadSrt")}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[48rem]" hideClose>
+      <DialogContent className="sm:max-w-3xl" hideClose>
         <DialogHeader>
           <DialogTitle>{t("dialog.srtTitle")}</DialogTitle>
           <DialogDescription>{t("dialog.srtDescription")}</DialogDescription>

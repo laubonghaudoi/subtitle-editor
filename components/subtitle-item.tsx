@@ -294,7 +294,7 @@ const SubtitleItem = memo(function SubtitleItem({
             <div className="flex-1">
               {editingSubtitleUuid === subtitle.uuid ? (
                 <Textarea
-                  className="w-full h-fit bg-blue-100 min-h-0 resize-none rounded-sm focus-visible:outline-none focus-visible:ring-0 shadow-none border-none [field-sizing:content]" // Adjust height as needed
+                  className="w-full h-fit bg-blue-100 min-h-0 resize-none rounded-sm focus-visible:outline-none focus-visible:ring-0 shadow-none border-none field-sizing-content" // Adjust height as needed
                   rows={1}
                   ref={textAreaRef} // Assign ref
                   value={editText}
@@ -412,7 +412,7 @@ const SubtitleItem = memo(function SubtitleItem({
               ) : (
                 <button
                   type="button"
-                  className="w-full text-left text-lg px-3 py-2 cursor-pointer whitespace-pre-wrap break-words"
+                  className="w-full text-left text-lg px-3 py-2 cursor-pointer whitespace-pre-wrap wrap-break-word"
                   tabIndex={0}
                   aria-label={
                     subtitle.text

@@ -1,10 +1,6 @@
 import { srtToVtt } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 
-const sortSubtitlesById = (subtitles: Subtitle[]) => {
-  return subtitles.slice().sort((a, b) => a.id - b.id);
-};
-
 const flattenSubtitleText = (subtitle: Subtitle): string => {
   const text = stripVttStyling(subtitle.text, false);
   return text
@@ -23,7 +19,7 @@ const toCsvCell = (value: string | number): string => {
 };
 
 export const buildSrtContent = (subtitles: Subtitle[]): string => {
-  return sortSubtitlesById(subtitles)
+  return subtitles
     .map((subtitle) => {
       return `${subtitle.id}\n${subtitle.startTime} --> ${subtitle.endTime}\n${subtitle.text}\n`;
     })
@@ -31,14 +27,14 @@ export const buildSrtContent = (subtitles: Subtitle[]): string => {
 };
 
 export const buildPlainTextContent = (subtitles: Subtitle[]): string => {
-  return sortSubtitlesById(subtitles)
+  return subtitles
     .map((subtitle) => flattenSubtitleText(subtitle))
     .join("\n");
 };
 
 export const buildCsvContent = (subtitles: Subtitle[]): string => {
   const header = ["id", "start_time", "end_time", "text"];
-  const rows = sortSubtitlesById(subtitles).map((subtitle) => [
+  const rows = subtitles.map((subtitle) => [
     subtitle.id,
     subtitle.startTime,
     subtitle.endTime,

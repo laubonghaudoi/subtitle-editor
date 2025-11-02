@@ -1,6 +1,4 @@
 "use client";
-
-import { useSubtitlePersistence } from "@/hooks/use-subtitle-persistence";
 import { useSubtitleActions } from "@/hooks/use-subtitle-actions";
 import { useUndoableState, type UndoHistory } from "@/hooks/use-undoable-state";
 import {
@@ -78,6 +76,11 @@ interface SubtitleContextType {
   updateSubtitleStartTimeAction: (id: number, newTime: string) => void;
   updateSubtitleEndTimeAction: (id: number, newTime: string) => void;
   replaceAllSubtitlesAction: (newSubtitles: Subtitle[]) => void; // For Find/Replace
+  bulkShiftSubtitlesAction: (
+    targetUuids: string[],
+    offsetSeconds: number,
+    target: "start" | "end" | "both",
+  ) => void;
   undoSubtitles: () => void;
   redoSubtitles: () => void;
   canUndoSubtitles: boolean;
@@ -120,17 +123,6 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     isEqual: subtitlesAreEqual,
   });
 
-  useSubtitlePersistence({
-    tracks,
-    activeTrackId,
-    showTrackLabels,
-    setTracks,
-    setActiveTrackId,
-    setShowTrackLabels,
-    trackHistoriesRef,
-    previousActiveTrackId,
-    setHistorySnapshot,
-  });
 
   // CRITICAL FIX: This effect synchronizes the undo/redo state
   // with the currently active track.
@@ -217,6 +209,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     updateSubtitleStartTimeAction,
     updateSubtitleEndTimeAction,
     replaceAllSubtitlesAction,
+    bulkShiftSubtitlesAction,
   } = useSubtitleActions({
     tracks,
     activeTrackId,
@@ -274,6 +267,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       updateSubtitleStartTimeAction,
       updateSubtitleEndTimeAction,
       replaceAllSubtitlesAction,
+      bulkShiftSubtitlesAction,
       undoSubtitles,
       redoSubtitles,
       canUndoSubtitles,
@@ -305,6 +299,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       updateSubtitleStartTimeAction,
       updateSubtitleEndTimeAction,
       replaceAllSubtitlesAction,
+      bulkShiftSubtitlesAction,
       undoSubtitles,
       redoSubtitles,
       canUndoSubtitles,

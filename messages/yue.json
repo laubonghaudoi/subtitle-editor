@@ -4,7 +4,10 @@
     "faq": "常見問題",
     "undo": "撤返",
     "redo": "做返",
-    "github": "源碼按照 MIT 協議開放於 GitHub"
+    "github": "源碼按照 MIT 協議開放於 GitHub",
+    "bulkOffset": "批量位移",
+    "showBulkOffset": "打開批量位移面板",
+    "hideBulkOffset": "收起批量位移面板"
   },
   "buttons": {
     "loadMedia": "載入媒體",
@@ -29,6 +32,10 @@
   "videoPlayer": {
     "loadFile": "載入影片 / 音訊檔案",
     "supportedFormats": "支援格式：",
+    "supportedFormatsAudio": "音訊",
+    "supportedFormatsVideo": "影片",
+    "supportedFormatsStreams": "串流",
+    "supportedFormatsNote": "實際支援程度取決於瀏覽器自帶編碼\nChrome／Edge／Firefox 支援 Ogg／WebM／Opus 音訊（例如 .oga、.opus、.weba）同 Speex；\nSafari（macOS／iOS）暫時未支援。",
     "subtitles": "字幕"
   },
   "findReplace": {
@@ -46,6 +53,41 @@
     "preview": "預覽",
     "noMatches": "揾唔到匹配項",
     "replace": "替換"
+  },
+  "bulkOffset": {
+    "title": "揀字幕批量位移當前字幕軌：{track}",
+    "emptyState": "載入字幕先可以批量位移時間。",
+    "noCaptions": "冇搵到字幕",
+    "selectionSummary": "已揀 {selected} / {total}",
+    "chooseTarget": "揀要位移嘅部分",
+    "targetStart": "開始時間",
+    "targetBoth": "成段字幕",
+    "targetEnd": "結束時間",
+    "offsetLabel": "偏移秒數",
+    "offsetInputLabel": "偏移幾多秒",
+    "reset": "重設",
+    "apply": "確定位移",
+    "selectAll": "揀晒全部字幕",
+    "selectCaption": "揀字幕 {id}",
+    "table": {
+      "id": "ID",
+      "start": "起點",
+      "previewStart": "預覽起點",
+      "end": "終點",
+      "previewEnd": "預覽終點",
+      "text": "文本",
+      "empty": "（空）"
+    },
+    "aria": {
+      "decreaseOneSecond": "早 1 秒",
+      "decreaseHundredMs": "早 0.1 秒",
+      "decreaseTenMs": "早 10 毫秒",
+      "decreaseOneMs": "早 1 毫秒",
+      "increaseOneMs": "遲 1 毫秒",
+      "increaseTenMs": "遲 10 毫秒",
+      "increaseHundredMs": "遲 0.1 秒",
+      "increaseOneSecond": "遲 1 秒"
+    }
   },
   "instructions": {
     "afterLoading": "載入字幕同媒體檔案後：",
