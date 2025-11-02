@@ -124,7 +124,7 @@ export default function LoadSrt() {
       <DialogTrigger asChild>
         <Button
           variant="secondary"
-          className="hover:bg-amber-500 hover:text-white bg-yellow-300 text-black rounded-sm cursor-pointer"
+          className="hover:bg-orange-500 hover:text-white bg-yellow-300 text-black rounded-sm cursor-pointer"
         >
           <IconBadgeCc />
           <span className="leading-none truncate">{t("buttons.loadSrt")}</span>
