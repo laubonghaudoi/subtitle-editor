@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
 import { parseSRT, parseVTT } from "@/lib/subtitle-operations";
+import { findActiveSubtitleIndex } from "@/lib/subtitle-lookup";
 import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import SubtitleItem from "./subtitle-item";
@@ -89,69 +90,13 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
 
     const findSubtitleIndexForTime = useCallback(
       (time: number) => {
-        if (!Number.isFinite(time) || subtitleTimings.length === 0) {
-          activeSubtitleIndexRef.current = -1;
-          return -1;
-        }
-
-        const withinIndex = (index: number) => {
-          if (index < 0 || index >= subtitleTimings.length) return false;
-          const { start, end } = subtitleTimings[index];
-          return time >= start && time < end;
-        };
-
-        let index = activeSubtitleIndexRef.current;
-        if (withinIndex(index)) {
-          return index;
-        }
-
-        if (index >= 0 && index < subtitleTimings.length) {
-          if (time >= subtitleTimings[index].end) {
-            let forward = index + 1;
-            while (forward < subtitleTimings.length) {
-              const { start, end } = subtitleTimings[forward];
-              if (time < start) {
-                break;
-              }
-              if (time < end) {
-                activeSubtitleIndexRef.current = forward;
-                return forward;
-              }
-              forward += 1;
-            }
-          } else if (time < subtitleTimings[index].start) {
-            let backward = index - 1;
-            while (backward >= 0) {
-              const { start, end } = subtitleTimings[backward];
-              if (time >= end) {
-                break;
-              }
-              if (time >= start) {
-                activeSubtitleIndexRef.current = backward;
-                return backward;
-              }
-              backward -= 1;
-            }
-          }
-        }
-
-        let low = 0;
-        let high = subtitleTimings.length - 1;
-        while (low <= high) {
-          const mid = Math.floor((low + high) / 2);
-          const { start, end } = subtitleTimings[mid];
-          if (time < start) {
-            high = mid - 1;
-          } else if (time >= end) {
-            low = mid + 1;
-          } else {
-            activeSubtitleIndexRef.current = mid;
-            return mid;
-          }
-        }
-
-        activeSubtitleIndexRef.current = -1;
-        return -1;
+        const resolved = findActiveSubtitleIndex(
+          subtitleTimings,
+          time,
+          activeSubtitleIndexRef.current,
+        );
+        activeSubtitleIndexRef.current = resolved;
+        return resolved;
       },
       [subtitleTimings],
     );

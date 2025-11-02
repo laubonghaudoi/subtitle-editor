@@ -244,6 +244,45 @@ test("splitSubtitleAction respects pending text before splitting", async () => {
   );
 });
 
+test("subtitles remain chronologically sorted after imports and edits", async () => {
+  const { result } = renderHook(() => useSubtitleContext(), { wrapper });
+
+  const unsorted = [
+    {
+      uuid: "late",
+      id: 1,
+      startTime: "00:00:05,000",
+      endTime: "00:00:06,000",
+      text: "Late",
+    },
+    {
+      uuid: "early",
+      id: 2,
+      startTime: "00:00:01,000",
+      endTime: "00:00:02,000",
+      text: "Early",
+    },
+  ];
+
+  await act(async () => {
+    result.current.setInitialSubtitles([...unsorted], "Chrono");
+  });
+
+  await waitFor(() => {
+    assert.equal(result.current.subtitles.length, 2);
+  });
+
+  assert.deepEqual(result.current.subtitles.map((s) => s.uuid), ["early", "late"]);
+  assert.deepEqual(result.current.subtitles.map((s) => s.id), [2, 1]);
+
+  await act(async () => {
+    result.current.updateSubtitleTimeAction(2, "00:00:07,000", "00:00:08,000");
+  });
+
+  assert.deepEqual(result.current.subtitles.map((s) => s.uuid), ["late", "early"]);
+  assert.deepEqual(result.current.subtitles.map((s) => s.id), [1, 2]);
+});
+
 test.after(() => {
   dom.window.close();
 });
