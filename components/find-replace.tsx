@@ -22,14 +22,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
-import {
-  createFindRegexFromConfig,
-  getFindRegexConfig,
-} from "@/lib/find-replace";
+import { getFindRegexConfig } from "@/lib/find-replace";
 import type { Subtitle } from "@/types/subtitle";
 import { IconReplace, IconSearch } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+
+const cloneRegex = (regex: RegExp | null): RegExp | null =>
+  regex ? new RegExp(regex.source, regex.flags) : null;
 
 export default function FindReplace() {
   const t = useTranslations();
@@ -57,6 +57,17 @@ export default function FindReplace() {
     [findText, isCaseSensitive, isMatchFullWord, isRegexMode],
   );
 
+  const compiledRegex = useMemo(() => {
+    if (!regexConfig) {
+      return null;
+    }
+    try {
+      return new RegExp(regexConfig.source, regexConfig.flags);
+    } catch {
+      return null;
+    }
+  }, [regexConfig]);
+
   const [matchedSubtitles, setMatchedSubtitles] = useState<Subtitle[]>([]);
   const [selectedSubtitles, setSelectedSubtitles] = useState<Set<number>>(
     new Set(),
@@ -66,7 +77,7 @@ export default function FindReplace() {
   const handleReplace = () => {
     const currentSelection = new Set(selectedSubtitles);
 
-    if (currentSelection.size === 0 || !regexConfig) {
+    if (currentSelection.size === 0 || !compiledRegex) {
       return;
     }
 
@@ -77,7 +88,7 @@ export default function FindReplace() {
         return subtitle;
       }
 
-      const replaceRegex = createFindRegexFromConfig(regexConfig);
+      const replaceRegex = cloneRegex(compiledRegex);
       if (!replaceRegex) {
         return subtitle;
       }
@@ -176,18 +187,24 @@ export default function FindReplace() {
       return;
     }
 
-    if (!regexConfig) {
+    if (!compiledRegex) {
+      setMatchedSubtitles([]);
+      return;
+    }
+
+    const filterRegex = cloneRegex(compiledRegex);
+    if (!filterRegex) {
       setMatchedSubtitles([]);
       return;
     }
 
     setMatchedSubtitles(
       subtitles.filter((subtitle) => {
-        const testRegex = createFindRegexFromConfig(regexConfig);
-        return testRegex ? testRegex.test(subtitle.text) : false;
+        filterRegex.lastIndex = 0;
+        return filterRegex.test(subtitle.text);
       }),
     );
-  }, [subtitles, findText, regexConfig]);
+  }, [subtitles, findText, compiledRegex]);
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -325,8 +342,11 @@ export default function FindReplace() {
               <TableBody>
                 {matchedSubtitles.length > 0 ? (
                   matchedSubtitles.map((subtitle) => {
-                    const displayRegex = createFindRegexFromConfig(regexConfig);
-                    const replaceRegex = createFindRegexFromConfig(regexConfig);
+                    const displayRegex = cloneRegex(compiledRegex);
+                    const replaceRegex = cloneRegex(compiledRegex);
+                    if (replaceRegex) {
+                      replaceRegex.lastIndex = 0;
+                    }
                     const newText = replaceRegex
                       ? subtitle.text.replace(replaceRegex, replaceText)
                       : subtitle.text;
@@ -354,13 +374,11 @@ export default function FindReplace() {
                           {subtitle.id}
                         </TableCell>
                         <TableCell className="whitespace-pre-wrap break-words">
-                          {/* Pass the potentially null, freshly created regex */}
                           {displayRegex
                             ? highlightMatches(subtitle.text, displayRegex)
                             : subtitle.text}
                         </TableCell>
                         <TableCell className="whitespace-pre-wrap break-words">
-                          {/* Pass the potentially null, freshly created regex */}
                           {
                             displayRegex
                               ? highlightReplacements(newText)

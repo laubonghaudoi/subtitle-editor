@@ -29,9 +29,9 @@ export const secondsToTime = (seconds: number): string => {
 // If you store your subtitles in an array, you might do something like:
 export const subtitlesToSrtString = (subtitles: Subtitle[]): string => {
   return subtitles
-    .map((sub) => {
+    .map((sub, idx) => {
       const index = Number.isFinite(sub.id) ? sub.id : 0;
-      const cueId = index > 0 ? index : subtitles.indexOf(sub) + 1;
+      const cueId = index > 0 ? index : idx + 1;
       return `${cueId}\n${sub.startTime} --> ${sub.endTime}\n${sub.text}\n`;
     })
     .join("\n");

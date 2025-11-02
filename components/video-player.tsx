@@ -54,6 +54,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [vttUrl, setVttUrl] = useState<string | null>(null);
   const playerRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
+  const vttObjectUrlRef = useRef<string | null>(null);
   const setPlayerRef = useCallback((element: HTMLVideoElement | null) => {
     playerRef.current = element;
   }, []);
@@ -126,20 +127,35 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   useEffect(() => {
     if (!mediaUrl) {
       setVttUrl(null);
+      if (vttObjectUrlRef.current) {
+        URL.revokeObjectURL(vttObjectUrlRef.current);
+        vttObjectUrlRef.current = null;
+      }
       return;
     }
 
     const srtString = subtitlesToSrtString(subtitles);
     const vttString = srtToVtt(srtString);
-    const dataUrl = `data:text/vtt;charset=utf-8,${encodeURIComponent(
-      vttString,
-    )}`;
+    const blob = new Blob([vttString], { type: "text/vtt" });
+    const objectUrl = URL.createObjectURL(blob);
 
     if (playerRef.current) {
       timeToRestore.current = playerRef.current.currentTime ?? null;
     }
 
-    setVttUrl(dataUrl);
+    if (vttObjectUrlRef.current) {
+      URL.revokeObjectURL(vttObjectUrlRef.current);
+    }
+
+    vttObjectUrlRef.current = objectUrl;
+    setVttUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+      if (vttObjectUrlRef.current === objectUrl) {
+        vttObjectUrlRef.current = null;
+      }
+    };
   }, [subtitles, mediaUrl]);
 
   const handleLoadedMetadata = useCallback(
