@@ -1,7 +1,7 @@
 "use client";
 
-import LanguageSwitcher from "@/components/language-switcher";
 import FindReplace from "@/components/find-replace";
+import LanguageSwitcher from "@/components/language-switcher";
 import LoadSrt from "@/components/load-srt";
 import SaveSrt from "@/components/save-srt";
 import { Button } from "@/components/ui/button";
@@ -14,15 +14,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
+  IconAdjustmentsHorizontal,
   IconArrowBack,
   IconArrowForward,
+  IconBrandGithub,
   IconMovie,
   IconQuestionMark,
-  IconBrandGithub,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import type { RefObject } from "react";
+import { useMemo, type RefObject } from "react";
+import { useSubtitleContext } from "@/context/subtitle-context";
+import { getTrackHandleColor } from "@/lib/track-colors";
 
 interface AppHeaderProps {
   canUndo: boolean;
@@ -32,6 +35,9 @@ interface AppHeaderProps {
   mediaFileInputRef: RefObject<HTMLInputElement | null>;
   onSelectMediaFile: (file: File) => void;
   mediaFileName: string;
+  isBulkOffsetOpen: boolean;
+  onToggleBulkOffset: () => void;
+  bulkOffsetDisabled: boolean;
 }
 
 export function AppHeader({
@@ -42,8 +48,19 @@ export function AppHeader({
   mediaFileInputRef,
   onSelectMediaFile,
   mediaFileName,
+  isBulkOffsetOpen,
+  onToggleBulkOffset,
+  bulkOffsetDisabled,
 }: AppHeaderProps) {
   const t = useTranslations();
+  const { tracks, activeTrackId } = useSubtitleContext();
+  const bulkTooltipColor = useMemo(() => {
+    const index = tracks.findIndex((track) => track.id === activeTrackId);
+    if (index < 0) {
+      return "#334155"; // slate-700 fallback
+    }
+    return getTrackHandleColor(index);
+  }, [tracks, activeTrackId]);
 
   return (
     <nav className="h-[6vh] border-black border-b-2 flex items-center px-12 justify-between">
@@ -109,6 +126,38 @@ export function AppHeader({
               </Button>
             </TooltipTrigger>
             <TooltipContent>{t("navigation.redo")}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                size="default"
+                variant={isBulkOffsetOpen ? "default" : "outline"}
+                onClick={onToggleBulkOffset}
+                disabled={bulkOffsetDisabled}
+                className="flex items-center gap-2 border-black rounded-xs"
+                aria-pressed={isBulkOffsetOpen}
+              >
+                <IconAdjustmentsHorizontal />
+                <span className="hidden sm:inline">
+                  {t("navigation.bulkOffset")}
+                </span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent
+              style={{
+                backgroundColor: bulkTooltipColor,
+                borderColor: bulkTooltipColor,
+                color: "#fff",
+              }}
+            >
+              {isBulkOffsetOpen
+                ? t("navigation.hideBulkOffset")
+                : t("navigation.showBulkOffset")}
+            </TooltipContent>
           </Tooltip>
         </TooltipProvider>
 

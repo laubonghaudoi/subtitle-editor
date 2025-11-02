@@ -4,7 +4,10 @@
     "faq": "Frequently Asked Questions",
     "undo": "Undo",
     "redo": "Redo",
-    "github": "Open-source on GitHub with MIT License"
+    "github": "Open-source on GitHub with MIT License",
+    "bulkOffset": "Bulk offset",
+    "showBulkOffset": "Open bulk offset timestamp panel",
+    "hideBulkOffset": "Close bulk offset timestamp panel"
   },
   "buttons": {
     "loadMedia": "Load Media",
@@ -36,6 +39,10 @@
   "videoPlayer": {
     "loadFile": "Load a video / audio file",
     "supportedFormats": "Supported formats:",
+    "supportedFormatsAudio": "Audio",
+    "supportedFormatsVideo": "Video",
+    "supportedFormatsStreams": "Streaming",
+    "supportedFormatsNote": "Playback depends on the codecs built into your browser.\nChrome, Edge, and Firefox handle Ogg/WebM/Opus audio (for example .oga, .opus, .weba) and Speex.\nSafari on macOS/iOS does not support those containers yet.",
     "subtitles": "Subtitles"
   },
   "findReplace": {
@@ -53,6 +60,41 @@
     "preview": "Preview",
     "noMatches": "No matches found",
     "replace": "Replace"
+  },
+  "bulkOffset": {
+    "title": "Select subtitles to bulk offset timestamps of current track: {track}",
+    "emptyState": "Load subtitles to enable bulk offsets.",
+    "noCaptions": "No captions found",
+    "selectionSummary": "{selected} / {total} selected",
+    "chooseTarget": "Choose what to offset",
+    "targetStart": "Start time",
+    "targetBoth": "Whole subtitle",
+    "targetEnd": "End time",
+    "offsetLabel": "Offset seconds",
+    "offsetInputLabel": "Offset in seconds",
+    "reset": "Reset",
+    "apply": "Apply offset",
+    "selectAll": "Select all captions",
+    "selectCaption": "Select caption {id}",
+    "table": {
+      "id": "ID",
+      "start": "Start",
+      "previewStart": "Preview start",
+      "end": "End",
+      "previewEnd": "Preview end",
+      "text": "Text",
+      "empty": "Empty"
+    },
+    "aria": {
+      "decreaseOneSecond": "Decrease offset by 1 second",
+      "decreaseHundredMs": "Decrease offset by 0.1 seconds",
+      "decreaseTenMs": "Decrease offset by 10 milliseconds",
+      "decreaseOneMs": "Decrease offset by 1 millisecond",
+      "increaseOneMs": "Increase offset by 1 millisecond",
+      "increaseTenMs": "Increase offset by 10 milliseconds",
+      "increaseHundredMs": "Increase offset by 0.1 seconds",
+      "increaseOneSecond": "Increase offset by 1 second"
+    }
   },
   "instructions": {
     "afterLoading": "After loading the subtitles and media file:",

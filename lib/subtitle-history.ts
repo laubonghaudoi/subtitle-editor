@@ -1,4 +1,5 @@
 import type { UndoHistory } from "@/hooks/use-undoable-state";
+import { sortSubtitlesChronologically } from "@/lib/subtitle-ordering";
 import type { Subtitle } from "@/types/subtitle";
 
 export const EMPTY_HISTORY: UndoHistory<Subtitle[]> = {
@@ -19,7 +20,9 @@ export const ensureTrackMetadata = (
     mutated = true;
     return { ...subtitle, trackId };
   });
-  return mutated ? normalized : subtitles;
+  const withTrack =
+    mutated || normalized !== subtitles ? normalized : subtitles;
+  return sortSubtitlesChronologically(withTrack);
 };
 
 export const subtitlesAreEqual = (

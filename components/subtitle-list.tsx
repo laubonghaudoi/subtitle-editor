@@ -4,9 +4,11 @@ import {
   useRef,
   forwardRef,
   useImperativeHandle,
+  useMemo,
+  useCallback,
   type Dispatch,
   type SetStateAction,
-} from "react"; // Remove useCallback import
+} from "react";
 import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
 import { parseSRT, parseVTT } from "@/lib/subtitle-operations";
 import { timeToSeconds } from "@/lib/utils";
@@ -69,6 +71,90 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       renameTrack,
       activeTrackId,
     } = useSubtitleContext();
+
+    const subtitleTimings = useMemo(
+      () =>
+        subtitles.map((subtitle) => ({
+          uuid: subtitle.uuid,
+          start: timeToSeconds(subtitle.startTime),
+          end: timeToSeconds(subtitle.endTime),
+        })),
+      [subtitles],
+    );
+    const activeSubtitleIndexRef = useRef<number>(-1);
+
+    useEffect(() => {
+      activeSubtitleIndexRef.current = -1;
+    }, [subtitleTimings]);
+
+    const findSubtitleIndexForTime = useCallback(
+      (time: number) => {
+        if (!Number.isFinite(time) || subtitleTimings.length === 0) {
+          activeSubtitleIndexRef.current = -1;
+          return -1;
+        }
+
+        const withinIndex = (index: number) => {
+          if (index < 0 || index >= subtitleTimings.length) return false;
+          const { start, end } = subtitleTimings[index];
+          return time >= start && time < end;
+        };
+
+        let index = activeSubtitleIndexRef.current;
+        if (withinIndex(index)) {
+          return index;
+        }
+
+        if (index >= 0 && index < subtitleTimings.length) {
+          if (time >= subtitleTimings[index].end) {
+            let forward = index + 1;
+            while (forward < subtitleTimings.length) {
+              const { start, end } = subtitleTimings[forward];
+              if (time < start) {
+                break;
+              }
+              if (time < end) {
+                activeSubtitleIndexRef.current = forward;
+                return forward;
+              }
+              forward += 1;
+            }
+          } else if (time < subtitleTimings[index].start) {
+            let backward = index - 1;
+            while (backward >= 0) {
+              const { start, end } = subtitleTimings[backward];
+              if (time >= end) {
+                break;
+              }
+              if (time >= start) {
+                activeSubtitleIndexRef.current = backward;
+                return backward;
+              }
+              backward -= 1;
+            }
+          }
+        }
+
+        let low = 0;
+        let high = subtitleTimings.length - 1;
+        while (low <= high) {
+          const mid = Math.floor((low + high) / 2);
+          const { start, end } = subtitleTimings[mid];
+          if (time < start) {
+            high = mid - 1;
+          } else if (time >= end) {
+            low = mid + 1;
+          } else {
+            activeSubtitleIndexRef.current = mid;
+            return mid;
+          }
+        }
+
+        activeSubtitleIndexRef.current = -1;
+        return -1;
+      },
+      [subtitleTimings],
+    );
 
     // Expose scrollToSubtitle method via ref
     useImperativeHandle(ref, () => ({
@@ -178,18 +264,13 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
     useEffect(() => {
       if (!listRef.current) return;
 
-      // Find the current subtitle based on playback time
-      const currentSubtitle = subtitles.find(
-        (sub) =>
-          timeToSeconds(sub.startTime) <= currentTime &&
-          timeToSeconds(sub.endTime) > currentTime, // strict end bound to avoid boundary ambiguity
-      );
-
-      if (!currentSubtitle) {
+      const activeIndex = findSubtitleIndexForTime(currentTime);
+      if (activeIndex < 0 || activeIndex >= subtitles.length) {
         manualScrollRequestUuidRef.current = null;
         return;
       }
 
+      const currentSubtitle = subtitles[activeIndex];
       const currentUuid = currentSubtitle.uuid;
       const manualOverride = manualScrollRequestUuidRef.current === currentUuid;
       const clearManualOverride = () => {
@@ -225,13 +306,11 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
         return;
       }
 
-      // Use uuid for the element ID
       const subtitleElement = document.getElementById(
         `subtitle-${currentUuid}`,
       );
       const container = listRef.current;
       if (subtitleElement && container && container.contains(subtitleElement)) {
-        // If it's already near centered, skip extra scroll to avoid fighting cross-track jump
         const cRect = container.getBoundingClientRect();
         const iRect = subtitleElement.getBoundingClientRect();
         const centerY = cRect.top + container.clientHeight / 2;
@@ -247,7 +326,13 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       }
 
       clearManualOverride();
-    }, [currentTime, subtitles, isPlaying, editingSubtitleUuid]);
+    }, [
+      currentTime,
+      subtitles,
+      isPlaying,
+      editingSubtitleUuid,
+      findSubtitleIndexForTime,
+    ]);
 
     // Keyboard shortcuts effect
     useEffect(() => {

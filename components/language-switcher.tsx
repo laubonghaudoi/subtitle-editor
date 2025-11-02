@@ -72,7 +72,7 @@ export default function LanguageSwitcher() {
             <IconLanguage />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="shadow-none p-0 rounded-xs border-neutral-800 border-1">
+        <DropdownMenuContent className="shadow-none p-0 rounded-xs border-neutral-800 border">
           {locales.map((loc) => {
             const href = getLocalizedPath(loc);
             return (

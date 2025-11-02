@@ -4,7 +4,10 @@
     "faq": "Häufig gestellte Fragen",
     "undo": "Rückgängig",
     "redo": "Wiederherstellen",
-    "github": "Open Source auf Github mit MIT-Lizenz"
+    "github": "Open Source auf Github mit MIT-Lizenz",
+    "bulkOffset": "Stapel-Offset",
+    "showBulkOffset": "Stapel-Offset-Panel öffnen",
+    "hideBulkOffset": "Stapel-Offset-Panel schließen"
   },
   "buttons": {
     "loadMedia": "Medien laden",
@@ -36,6 +39,10 @@
   "videoPlayer": {
     "loadFile": "Video- / Audiodatei laden",
     "supportedFormats": "Unterstützte Formate:",
+    "supportedFormatsAudio": "Audio",
+    "supportedFormatsVideo": "Video",
+    "supportedFormatsStreams": "Streaming",
+    "supportedFormatsNote": "Die Wiedergabe hängt von den in deinem Browser integrierten Codecs ab.\nChrome, Edge und Firefox spielen Ogg-/WebM-/Opus-Audio (z. B. .oga, .opus, .weba) sowie Speex.\nSafari auf macOS/iOS unterstützt diese Container derzeit nicht.",
     "subtitles": "Untertitel"
   },
   "findReplace": {
@@ -53,6 +60,41 @@
     "preview": "Vorschau",
     "noMatches": "Keine Übereinstimmungen gefunden",
     "replace": "Ersetzen"
+  },
+  "bulkOffset": {
+    "title": "Untertitel für die Stapelverschiebung der Zeitstempel auswählen. Aktuelle Spur: {track}",
+    "emptyState": "Lade Untertitel, um Sammelverschiebungen zu aktivieren.",
+    "noCaptions": "Keine Untertitel gefunden",
+    "selectionSummary": "{selected} / {total} ausgewählt",
+    "chooseTarget": "Bereich für Verschiebung wählen",
+    "targetStart": "Startzeit",
+    "targetBoth": "Kompletter Untertitel",
+    "targetEnd": "Endzeit",
+    "offsetLabel": "Versatz in Sekunden",
+    "offsetInputLabel": "Versatz in Sekunden",
+    "reset": "Zurücksetzen",
+    "apply": "Versatz anwenden",
+    "selectAll": "Alle Untertitel auswählen",
+    "selectCaption": "Untertitel {id} auswählen",
+    "table": {
+      "id": "ID",
+      "start": "Start",
+      "previewStart": "Vorschau-Start",
+      "end": "Ende",
+      "previewEnd": "Vorschau-Ende",
+      "text": "Text",
+      "empty": "Leer"
+    },
+    "aria": {
+      "decreaseOneSecond": "Versatz um 1 Sekunde verringern",
+      "decreaseHundredMs": "Versatz um 0,1 Sekunden verringern",
+      "decreaseTenMs": "Versatz um 10 Millisekunden verringern",
+      "decreaseOneMs": "Versatz um 1 Millisekunde verringern",
+      "increaseOneMs": "Versatz um 1 Millisekunde erhöhen",
+      "increaseTenMs": "Versatz um 10 Millisekunden erhöhen",
+      "increaseHundredMs": "Versatz um 0,1 Sekunden erhöhen",
+      "increaseOneSecond": "Versatz um 1 Sekunde erhöhen"
+    }
   },
   "instructions": {
     "afterLoading": "Nach dem Laden der Untertitel und der Mediendatei:",

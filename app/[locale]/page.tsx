@@ -5,6 +5,10 @@ import BottomInstructions from "@/components/bottom-instructions";
 import CustomControls from "@/components/custom-controls";
 import SkipLinks from "@/components/skip-links";
 import SubtitleList, { type SubtitleListRef } from "@/components/subtitle-list";
+import {
+  BulkOffsetDrawer,
+  type BulkOffsetPreviewState,
+} from "@/components/bulk-offset/drawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -81,6 +85,7 @@ function MainContent() {
     redoSubtitles,
     canUndoSubtitles,
     canRedoSubtitles,
+    bulkShiftSubtitlesAction,
     // Action functions are now available via context, no need for local handlers like handleUpdateSubtitleText etc.
   } = useSubtitleContext();
 
@@ -107,16 +112,25 @@ function MainContent() {
   // Whether the pending scroll should be instant (used for cross-track clicks)
   const [pendingScrollInstant, setPendingScrollInstant] =
     useState<boolean>(false);
+  const [isBulkOffsetOpen, setIsBulkOffsetOpen] = useState<boolean>(false);
+  const [bulkOffsetPreview, setBulkOffsetPreview] = useState<
+    Record<string, BulkOffsetPreviewState>
+  >({});
   const resumeMediaPlayback = useCallback(() => {
     videoPlayerRef.current?.resumePlayback();
   }, []);
 
-  const activeTrack = activeTrackId
-    ? (tracks.find((track) => track.id === activeTrackId) ?? null)
-    : null;
+  const activeTrackIndex = activeTrackId
+    ? tracks.findIndex((track) => track.id === activeTrackId)
+    : -1;
+  const activeTrack =
+    activeTrackIndex >= 0 ? tracks[activeTrackIndex] ?? null : null;
   const activeTrackIsEmpty =
     activeTrack !== null && activeTrack.subtitles.length === 0;
+  const activeTrackSubtitles = activeTrack?.subtitles ?? [];
   const allowSubtitleDrop = tracks.length === 0 || activeTrackIsEmpty;
+  const bulkOffsetDisabled =
+    !activeTrack || activeTrackSubtitles.length === 0;
   const loadMediaFile = useCallback(
     (file: File) => {
       setMediaFile(null);
@@ -317,6 +331,18 @@ function MainContent() {
     }
   }, [pendingScrollToUuid, pendingScrollInstant]);
 
+  useEffect(() => {
+    if (tracks.length === 0) {
+      setIsBulkOffsetOpen(false);
+    }
+  }, [tracks.length]);
+
+  useEffect(() => {
+    if (bulkOffsetDisabled && isBulkOffsetOpen) {
+      setIsBulkOffsetOpen(false);
+    }
+  }, [bulkOffsetDisabled, isBulkOffsetOpen]);
+
   return (
     <div className="flex flex-col h-screen">
       <SkipLinks />
@@ -328,6 +354,11 @@ function MainContent() {
         mediaFileInputRef={mediaFileInputRef}
         onSelectMediaFile={loadMediaFile}
         mediaFileName={mediaFileName}
+        isBulkOffsetOpen={isBulkOffsetOpen}
+        onToggleBulkOffset={() =>
+          setIsBulkOffsetOpen((previous) => !previous)
+        }
+        bulkOffsetDisabled={bulkOffsetDisabled}
       />
 
       {/* Main content area */}
@@ -337,12 +368,17 @@ function MainContent() {
           {/* Left panel - Subtitle list */}
           <div
             className={cn(
-              "w-1/2 transition-colors",
+              "relative w-1/2 transition-colors",
               isSubtitleDragActive && allowSubtitleDrop && "bg-yellow-50",
             )}
             {...subtitleDropHandlers}
           >
-            <div className="h-full">
+            <div
+              className={cn(
+                "h-full transition",
+                isBulkOffsetOpen && "pointer-events-none blur-[1px] opacity-40",
+              )}
+            >
               {tracks.length > 0 && activeTrackId ? (
                 <Tabs
                   value={activeTrackId}
@@ -440,6 +476,19 @@ function MainContent() {
                 </div>
               )}
             </div>
+
+            {tracks.length > 0 && (
+              <BulkOffsetDrawer
+                isOpen={isBulkOffsetOpen}
+                subtitles={activeTrackSubtitles}
+                trackIndex={activeTrackIndex}
+                currentTrackName={activeTrack?.name ?? null}
+                onPreviewChange={setBulkOffsetPreview}
+                onApplyOffset={(selection, offsetSeconds, target) => {
+                  bulkShiftSubtitlesAction(selection, offsetSeconds, target);
+                }}
+              />
+            )}
           </div>
 
           {/* Right panel - Media player */}
@@ -501,6 +550,7 @@ function MainContent() {
                 isPlaying={isPlaying}
                 onSeek={setPlaybackTime}
                 onPlayPause={setIsPlaying}
+                previewOffsets={bulkOffsetPreview}
                 onRegionClick={(uuid, opts) => {
                   // Set pending scroll to be handled after track switch completes
                   setPendingScrollToUuid(uuid);

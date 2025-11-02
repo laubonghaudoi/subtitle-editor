@@ -130,7 +130,7 @@ export default function LoadSrt() {
           <span className="leading-none truncate">{t("buttons.loadSrt")}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[48rem]" hideClose>
+      <DialogContent className="sm:max-w-3xl" hideClose>
         <DialogHeader>
           <DialogTitle>{t("dialog.srtTitle")}</DialogTitle>
           <DialogDescription>{t("dialog.srtDescription")}</DialogDescription>
