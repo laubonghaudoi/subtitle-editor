@@ -23,9 +23,30 @@ import {
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useMemo, type RefObject } from "react";
+import type { RefObject } from "react";
 import { useSubtitleContext } from "@/context/subtitle-context";
 import { getTrackHandleColor } from "@/lib/track-colors";
+import type { SubtitleTrack } from "@/types/subtitle";
+
+function getBulkButtonColors(
+  tracks: SubtitleTrack[],
+  activeTrackId: string | null,
+) {
+  const index = tracks.findIndex((track) => track.id === activeTrackId);
+  if (index < 0) {
+    return {
+      bulkColor: "#334155",
+      bulkTextColor: "#ffffff",
+      bulkOutlineColor: "#0f172a",
+    };
+  }
+  const base = getTrackHandleColor(index);
+  return {
+    bulkColor: base,
+    bulkTextColor: "#ffffff",
+    bulkOutlineColor: base,
+  };
+}
 
 interface AppHeaderProps {
   canUndo: boolean;
@@ -54,22 +75,10 @@ export function AppHeader({
 }: AppHeaderProps) {
   const t = useTranslations();
   const { tracks, activeTrackId } = useSubtitleContext();
-  const { bulkColor, bulkTextColor, bulkOutlineColor } = useMemo(() => {
-    const index = tracks.findIndex((track) => track.id === activeTrackId);
-    if (index < 0) {
-      return {
-        bulkColor: "#334155",
-        bulkTextColor: "#ffffff",
-        bulkOutlineColor: "#0f172a",
-      };
-    }
-    const base = getTrackHandleColor(index);
-    return {
-      bulkColor: base,
-      bulkTextColor: "#ffffff",
-      bulkOutlineColor: base,
-    };
-  }, [tracks, activeTrackId]);
+  const { bulkColor, bulkTextColor, bulkOutlineColor } = getBulkButtonColors(
+    tracks,
+    activeTrackId ?? null,
+  );
 
   return (
     <nav className="h-[6vh] border-black border-b-2 flex items-center px-12 justify-between">

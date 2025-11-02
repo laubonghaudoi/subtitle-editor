@@ -3,13 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import * as SliderPrimitive from "@radix-ui/react-slider";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type CSSProperties,
-} from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 
 const STEP_FINE = 0.001; // 1ms
@@ -85,16 +79,14 @@ export function BulkOffsetControls({
     });
   }, []);
 
-  const formattedOffset = useMemo(
-    () => offsetSeconds.toFixed(3),
-    [offsetSeconds],
-  );
-  const sliderValue = useMemo(() => {
-    const rounded = Number(offsetSeconds.toFixed(3));
-    if (rounded > sliderLimit) return sliderLimit;
-    if (rounded < -sliderLimit) return -sliderLimit;
-    return rounded;
-  }, [offsetSeconds, sliderLimit]);
+  const formattedOffset = offsetSeconds.toFixed(3);
+  const roundedOffset = Number(offsetSeconds.toFixed(3));
+  const sliderValue =
+    roundedOffset > sliderLimit
+      ? sliderLimit
+      : roundedOffset < -sliderLimit
+        ? -sliderLimit
+        : roundedOffset;
 
   useEffect(() => {
     if (offsetSeconds === 0) {
