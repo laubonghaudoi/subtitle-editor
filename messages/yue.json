@@ -5,7 +5,7 @@
     "undo": "撤返",
     "redo": "做返",
     "github": "源碼按照 MIT 協議開放於 GitHub",
-    "bulkOffset": "批量調整",
+    "bulkOffset": "批量位移",
     "showBulkOffset": "打開批量位移面板",
     "hideBulkOffset": "收起批量位移面板"
   },
@@ -56,10 +56,10 @@
   },
   "bulkOffset": {
     "title": "揀字幕批量位移當前字幕軌：{track}",
-    "emptyState": "載入字幕先可以批量調整時間。",
+    "emptyState": "載入字幕先可以批量位移時間。",
     "noCaptions": "冇搵到字幕",
     "selectionSummary": "已揀 {selected} / {total}",
-    "chooseTarget": "揀要調整嘅部分",
+    "chooseTarget": "揀要位移嘅部分",
     "targetStart": "開始時間",
     "targetBoth": "成段字幕",
     "targetEnd": "結束時間",

@@ -54,12 +54,21 @@ export function AppHeader({
 }: AppHeaderProps) {
   const t = useTranslations();
   const { tracks, activeTrackId } = useSubtitleContext();
-  const bulkTooltipColor = useMemo(() => {
+  const { bulkColor, bulkTextColor, bulkOutlineColor } = useMemo(() => {
     const index = tracks.findIndex((track) => track.id === activeTrackId);
     if (index < 0) {
-      return "#334155"; // slate-700 fallback
+      return {
+        bulkColor: "#334155",
+        bulkTextColor: "#ffffff",
+        bulkOutlineColor: "#0f172a",
+      };
     }
-    return getTrackHandleColor(index);
+    const base = getTrackHandleColor(index);
+    return {
+      bulkColor: base,
+      bulkTextColor: "#ffffff",
+      bulkOutlineColor: base,
+    };
   }, [tracks, activeTrackId]);
 
   return (
@@ -135,10 +144,14 @@ export function AppHeader({
               <Button
                 type="button"
                 size="default"
-                variant={isBulkOffsetOpen ? "default" : "outline"}
                 onClick={onToggleBulkOffset}
                 disabled={bulkOffsetDisabled}
-                className="flex items-center gap-2 border-black rounded-xs"
+                className="flex items-center border rounded-xs shadow-none"
+                style={{
+                  backgroundColor: isBulkOffsetOpen ? bulkColor : "transparent",
+                  color: isBulkOffsetOpen ? bulkTextColor : "black",
+                  borderColor: isBulkOffsetOpen ? bulkOutlineColor : "black",
+                }}
                 aria-pressed={isBulkOffsetOpen}
               >
                 <IconAdjustmentsHorizontal />
@@ -149,8 +162,8 @@ export function AppHeader({
             </TooltipTrigger>
             <TooltipContent
               style={{
-                backgroundColor: bulkTooltipColor,
-                borderColor: bulkTooltipColor,
+                backgroundColor: bulkColor,
+                borderColor: bulkColor,
                 color: "#fff",
               }}
             >
