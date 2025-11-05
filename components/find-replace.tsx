@@ -80,7 +80,8 @@ export default function FindReplace() {
   const [selectedSubtitles, setSelectedSubtitles] = useState<Set<number>>(
     new Set(),
   );
-  const stickyHeadClass = "sticky top-0 z-20 bg-gray-200 text-black";
+  const stickyHeadClass =
+    "sticky top-0 z-20 bg-gray-200 dark:bg-gray-800 text-black dark:text-white";
 
   const handleReplace = () => {
     const currentSelection = new Set(selectedSubtitles);
@@ -300,13 +301,13 @@ export default function FindReplace() {
               className="flex-1 px-2 py-1 rounded-xs text-base"
             />
           </div>
-          <div className="text-sm text-gray-500 flex items-center justify-between">
+          <div className="text-sm text-gray-600 dark:text-gray-300 flex items-center justify-between">
             <span>
               {selectedSubtitles.size} / {matchedSubtitles.length}{" "}
               {t("findReplace.selected")}{" "}
             </span>
             <Button
-              className="rounded-sm bg-slate-800 hover:bg-slate-600"
+              className="rounded-sm bg-slate-800 hover:bg-slate-600 dark:bg-slate-100 dark:hover:bg-slate-200"
               onClick={handleReplace}
               disabled={selectedSubtitles.size === 0} // Disable if nothing is selected
             >
@@ -318,7 +319,7 @@ export default function FindReplace() {
             containerClassName="max-h-[32rem] overflow-y-auto"
             className="w-full border-collapse text-base"
           >
-            <TableHeader className="[&>tr]:bg-gray-200">
+            <TableHeader className="">
               <TableRow className="border-black">
                 <TableHead className={`${stickyHeadClass} w-8 text-center`}>
                   <Checkbox
@@ -366,7 +367,7 @@ export default function FindReplace() {
                   return (
                     <TableRow
                       key={subtitle.id}
-                      className="hover:bg-gray-100 border-black"
+                      className="hover:bg-gray-100 dark:hover:bg-gray-800 border-black"
                     >
                       <TableCell className="text-center">
                         <Checkbox

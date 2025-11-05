@@ -109,25 +109,7 @@ export function AppHeader({
       <div className="flex items-center">
         <h1 className="text-lg font-semibold mx-4">{t("navigation.title")}</h1>
         <LanguageSwitcher />
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={handleToggleTheme}
-                className="cursor-pointer"
-                aria-label={t("navigation.toggleTheme")}
-                aria-pressed={isDarkMode}
-                disabled={!isThemeMounted}
-              >
-                <IconBrightness size={20} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>{t("navigation.toggleTheme")}</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+
         <Link href="/faq" target="_blank" aria-label={t("navigation.faq")}>
           <Button
             variant="ghost"
@@ -153,6 +135,25 @@ export function AppHeader({
             <IconBrandGithub size={20} />
           </Button>
         </Link>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={handleToggleTheme}
+                className="cursor-pointer"
+                aria-label={t("navigation.toggleTheme")}
+                aria-pressed={isDarkMode}
+                disabled={!isThemeMounted}
+              >
+                <IconBrightness size={20} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{t("navigation.toggleTheme")}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="flex gap-4 items-center">
