@@ -135,25 +135,18 @@ export function AppHeader({
             <IconBrandGithub size={20} />
           </Button>
         </Link>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={handleToggleTheme}
-                className="cursor-pointer"
-                aria-label={t("navigation.toggleTheme")}
-                aria-pressed={isDarkMode}
-                disabled={!isThemeMounted}
-              >
-                <IconBrightness size={20} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>{t("navigation.toggleTheme")}</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Button
+          type="button"
+          size="sm"
+          variant="ghost"
+          onClick={handleToggleTheme}
+          className="cursor-pointer"
+          aria-label={t("navigation.toggleTheme")}
+          aria-pressed={isDarkMode}
+          disabled={!isThemeMounted}
+        >
+          <IconBrightness size={20} />
+        </Button>
       </div>
 
       <div className="flex gap-4 items-center">
@@ -245,7 +238,7 @@ export function AppHeader({
             onClick={() => {
               mediaFileInputRef.current?.click();
             }}
-            className="bg-sky-300 hover:bg-blue-500 hover:text-white text-black rounded-sm cursor-pointer"
+            className="bg-sky-300 hover:bg-blue-500 dark:bg-sky-500 dark:hover:bg-blue-400 hover:text-white text-black rounded-sm cursor-pointer"
           >
             <IconMovie size={20} />
             <span className="max-w-36 flex-1 overflow-hidden whitespace-nowrap text-ellipsis text-left">

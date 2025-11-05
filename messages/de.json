@@ -48,8 +48,7 @@
   },
   "findReplace": {
     "title": "Suchen / Ersetzen",
-    "dialogTitle": "Suchen und Ersetzen",
-    "scopeNote": "Sucht nur innerhalb der aktuellen Untertitelspur.",
+    "dialogTitle": "Aktuelle Spur suchen und ersetzen: {track}",
     "find": "Suchen",
     "replaceWith": "Ersetzen durch",
     "caseSensitive": "Groß- / Kleinschreibung beachten",

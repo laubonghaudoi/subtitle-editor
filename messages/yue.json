@@ -41,8 +41,7 @@
   },
   "findReplace": {
     "title": "搜尋 / 替換",
-    "dialogTitle": "搜尋同替換",
-    "scopeNote": "只會喺當前字幕軌入面搜尋。",
+    "dialogTitle": "搜尋同替換當前字幕軌：{track}",
     "find": "尋找",
     "replaceWith": "替換成",
     "caseSensitive": "區分大細寫",

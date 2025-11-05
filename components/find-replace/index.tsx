@@ -5,7 +5,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -58,7 +57,8 @@ function OptionToggle({ id, checked, label, onChange }: OptionToggleProps) {
 
 export default function FindReplace() {
   const t = useTranslations();
-  const { subtitles, replaceAllSubtitlesAction, tracks } = useSubtitleContext();
+  const { subtitles, replaceAllSubtitlesAction, tracks, activeTrack } =
+    useSubtitleContext();
   const totalSubtitleCount = tracks.reduce(
     (sum, tr) => sum + tr.subtitles.length,
     0,
@@ -176,6 +176,10 @@ export default function FindReplace() {
   };
 
   const selectedCount = selectedIds.size;
+  const trackName =
+    activeTrack?.name ??
+    tracks[0]?.name ??
+    t("subtitle.newTrackName", { number: 1 });
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -191,8 +195,9 @@ export default function FindReplace() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>{t("findReplace.dialogTitle")}</DialogTitle>
-          <DialogDescription>{t("findReplace.scopeNote")}</DialogDescription>
+          <DialogTitle>
+            {t("findReplace.dialogTitle", { track: trackName })}
+          </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
@@ -201,7 +206,7 @@ export default function FindReplace() {
               id="find"
               value={findText}
               onChange={(event) => setFindText(event.target.value)}
-              className="flex-1 rounded-xs px-2 py-1 text-base"
+              className="flex-1 rounded-xs px-2 py-1"
             />
           </div>
           <div className="flex gap-4">
@@ -233,7 +238,7 @@ export default function FindReplace() {
               className="flex-1 rounded-xs px-2 py-1 text-base"
             />
           </div>
-          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
+          <div className="flex items-center justify-between text-gray-600 dark:text-gray-300">
             <span>
               {selectedCount} / {matchedSubtitles.length}{" "}
               {t("findReplace.selected")}

@@ -48,8 +48,7 @@
   },
   "findReplace": {
     "title": "Find / Replace",
-    "dialogTitle": "Find and Replace",
-    "scopeNote": "Only searches within the current subtitle track.",
+    "dialogTitle": "Find and replace the current track: {track}",
     "find": "Find",
     "replaceWith": "Replace with",
     "caseSensitive": "Case sensitive",
