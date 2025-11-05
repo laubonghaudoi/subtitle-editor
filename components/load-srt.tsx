@@ -237,7 +237,7 @@ export default function LoadSrt() {
               )
             }
             disabled={tracks.length >= 4}
-            className="mt-4 cursor-pointer border-black border-dashed hover:border-2 hover:bg-transparent disabled:border-none"
+            className="mt-4 cursor-pointer border-black dark:border-white border-dashed hover:border-2 hover:bg-transparent disabled:border-none"
           >
             {tracks.length < 4 && <IconPlus />}
             {tracks.length >= 4

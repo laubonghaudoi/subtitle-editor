@@ -1,5 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
+import AnalyticsLoader from "@/components/analytics-loader";
 import WebVitalsReporter from "@/components/web-vitals-reporter";
 import ServiceWorkerRegister from "@/components/service-worker-register";
 import { Toaster } from "@/components/ui/toaster";
@@ -85,24 +85,7 @@ export default function RootLayout({
           <Toaster />
           <WebVitalsReporter />
           <ServiceWorkerRegister />
-          {/* Google Ads Tag */}
-          <Script
-            strategy="afterInteractive"
-            src="https://www.googletagmanager.com/gtag/js?id=AW-10839665138"
-          />
-          <Script id="google-ads-script" strategy="afterInteractive">
-            {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'AW-10839665138');
-            `}
-          </Script>
-          <Script
-            strategy="afterInteractive"
-            src="https://cloud.umami.is/script.js"
-            data-website-id="505c9992-e14c-483a-aa4c-542fb097c809"
-          />
+          <AnalyticsLoader />
         </ThemeProvider>
       </body>
     </html>
