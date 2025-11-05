@@ -28,14 +28,12 @@ import { useSubtitleShortcuts } from "@/hooks/use-subtitle-shortcuts";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type {
+  DragEvent,
+  ForwardRefExoticComponent,
+  RefAttributes,
 } from "react";
-import type { DragEvent, ForwardRefExoticComponent, RefAttributes } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type {
   VideoPlayerHandle,
@@ -124,13 +122,12 @@ function MainContent() {
     ? tracks.findIndex((track) => track.id === activeTrackId)
     : -1;
   const activeTrack =
-    activeTrackIndex >= 0 ? tracks[activeTrackIndex] ?? null : null;
+    activeTrackIndex >= 0 ? (tracks[activeTrackIndex] ?? null) : null;
   const activeTrackIsEmpty =
     activeTrack !== null && activeTrack.subtitles.length === 0;
   const activeTrackSubtitles = activeTrack?.subtitles ?? [];
   const allowSubtitleDrop = tracks.length === 0 || activeTrackIsEmpty;
-  const bulkOffsetDisabled =
-    !activeTrack || activeTrackSubtitles.length === 0;
+  const bulkOffsetDisabled = !activeTrack || activeTrackSubtitles.length === 0;
   const loadMediaFile = useCallback(
     (file: File) => {
       setMediaFile(null);
@@ -355,9 +352,7 @@ function MainContent() {
         onSelectMediaFile={loadMediaFile}
         mediaFileName={mediaFileName}
         isBulkOffsetOpen={isBulkOffsetOpen}
-        onToggleBulkOffset={() =>
-          setIsBulkOffsetOpen((previous) => !previous)
-        }
+        onToggleBulkOffset={() => setIsBulkOffsetOpen((previous) => !previous)}
         bulkOffsetDisabled={bulkOffsetDisabled}
       />
 
@@ -386,12 +381,12 @@ function MainContent() {
                   className="h-full flex flex-col"
                 >
                   {tracks.length > 1 && (
-                    <TabsList className="bg-white py-1 flex-nowrap overflow-x-auto overflow-y-hidden">
+                    <TabsList className="py-1 flex-nowrap overflow-x-auto overflow-y-hidden border-dashed border-b border-black dark:border-white">
                       {tracks.map((track) => (
                         <TabsTrigger
                           key={track.id}
                           value={track.id}
-                          className="shadow-none flex-shrink-0 data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
+                          className="shadow-none shrink-0 data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:dark:bg-white data-[state=active]:dark:text-black rounded-xs"
                         >
                           {track.name}
                         </TabsTrigger>
@@ -402,7 +397,7 @@ function MainContent() {
                     <TabsContent
                       key={track.id}
                       value={track.id}
-                      className="flex-grow overflow-y-auto m-0 min-h-0"
+                      className="grow overflow-y-auto m-0 min-h-0"
                     >
                       <SubtitleList
                         ref={
@@ -494,7 +489,7 @@ function MainContent() {
           {/* Right panel - Media player */}
           <div
             className={cn(
-              "w-1/2 border-l-2 border-black transition-colors",
+              "w-1/2 border-l-2 border-black dark:border-white transition-colors",
               isMediaDragActive && "bg-blue-50",
             )}
             {...mediaDropHandlers}

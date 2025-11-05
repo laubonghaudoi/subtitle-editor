@@ -172,10 +172,10 @@ const SubtitleItem = memo(function SubtitleItem({
               resumePlayback();
             }
           }}
-          className={`px-4 py-2 border-b border-gray-800 hover:bg-amber-50 cursor-pointer grid grid-cols-[1rem_7rem_1fr] gap-4 items-center ${
+          className={`px-4 py-2 border-b border-gray-800 dark:border-white hover:bg-amber-50 hover:dark:bg-amber-900 cursor-pointer grid grid-cols-[1rem_7rem_1fr] gap-4 items-center ${
             timeToSeconds(subtitle.startTime) <= currentTime &&
             timeToSeconds(subtitle.endTime) > currentTime
-              ? "bg-cyan-50"
+              ? "bg-cyan-50 dark:bg-cyan-900"
               : ""
           }`}
         >
@@ -215,7 +215,7 @@ const SubtitleItem = memo(function SubtitleItem({
                     setEditingStartTimeId(null);
                   }
                 }}
-                className="py-1 bg-blue-100 h-fit text-center min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
+                className="py-1 bg-blue-100 dark:bg-blue-950 h-fit text-center min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
               />
             ) : (
               <Button
@@ -266,7 +266,7 @@ const SubtitleItem = memo(function SubtitleItem({
                     setEditingEndTimeId(null);
                   }
                 }}
-                className="py-1 bg-blue-100 h-fit text-center min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
+                className="py-1 bg-blue-100 dark:bg-blue-950 h-fit text-center min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
               />
             ) : (
               <Button
@@ -294,7 +294,7 @@ const SubtitleItem = memo(function SubtitleItem({
             <div className="flex-1">
               {editingSubtitleUuid === subtitle.uuid ? (
                 <Textarea
-                  className="w-full h-fit bg-blue-100 min-h-0 resize-none rounded-sm focus-visible:outline-none focus-visible:ring-0 shadow-none border-none field-sizing-content" // Adjust height as needed
+                  className="w-full h-fit bg-blue-100 dark:bg-blue-950 min-h-0 resize-none rounded-sm focus-visible:outline-none focus-visible:ring-0 shadow-none border-none field-sizing-content" // Adjust height as needed
                   rows={1}
                   ref={textAreaRef} // Assign ref
                   value={editText}
@@ -441,7 +441,7 @@ const SubtitleItem = memo(function SubtitleItem({
               <TooltipTrigger
                 type="button"
                 onClick={() => deleteSubtitleAction(subtitle.id)}
-                className="mx-4 my-auto px-2 py-1 text-xs bg-red-100 hover:bg-red-200 text-red-700 rounded cursor-pointer"
+                className="mx-4 my-auto px-2 py-1 text-xs rounded bg-red-100 hover:bg-red-200 text-red-700 dark:bg-red-800 dark:hover:bg-red-700 dark:text-red-200 cursor-pointer"
                 aria-label={t("tooltips.delete")}
               >
                 <IconTrash size={16} />
@@ -462,12 +462,12 @@ const SubtitleItem = memo(function SubtitleItem({
                 onClick={() =>
                   mergeSubtitlesAction(subtitle.id, nextSubtitle.id)
                 }
-                className="px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded cursor-pointer"
+                className="px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-700 dark:bg-yellow-700 dark:hover:bg-yellow-700 dark:text-yellow-200 rounded cursor-pointer"
                 aria-label={t("tooltips.merge")}
               >
                 <IconFold size={16} />
               </TooltipTrigger>
-              <TooltipContent className="bg-amber-500 px-2 py-1 text-sm">
+              <TooltipContent className="bg-amber-500 dark:bg-amber-400 px-2 py-1 text-sm">
                 {t("tooltips.merge")}
               </TooltipContent>
             </Tooltip>
@@ -488,8 +488,8 @@ const SubtitleItem = memo(function SubtitleItem({
               }}
               className={`px-2 py-1 text-sm rounded ${
                 isAddDisabled
-                  ? "bg-gray-200 hover:bg-gray-300 text-gray-700 cursor-not-allowed"
-                  : "bg-green-100 hover:bg-green-200 text-green-700 cursor-pointer"
+                  ? "bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover-gray dark:text-gray-200 cursor-not-allowed"
+                  : "bg-green-100 hover:bg-green-200 text-green-700 dark:bg-green-700 dark:hover:bg-green-600 dark:text-green-100 cursor-pointer"
               }`}
               aria-label={
                 isAddDisabled ? t("tooltips.noRoom") : t("tooltips.add")

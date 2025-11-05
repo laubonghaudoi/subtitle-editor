@@ -4,6 +4,7 @@ import WebVitalsReporter from "@/components/web-vitals-reporter";
 import ServiceWorkerRegister from "@/components/service-worker-register";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata, Viewport } from "next";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,7 +70,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#0f172a" />
@@ -79,28 +80,30 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        <Toaster />
-        <WebVitalsReporter />
-        <ServiceWorkerRegister />
-        {/* Google Ads Tag */}
-        <Script
-          strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=AW-10839665138"
-        />
-        <Script id="google-ads-script" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'AW-10839665138');
-          `}
-        </Script>
-        <Script
-          strategy="afterInteractive"
-          src="https://cloud.umami.is/script.js"
-          data-website-id="505c9992-e14c-483a-aa4c-542fb097c809"
-        />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          {children}
+          <Toaster />
+          <WebVitalsReporter />
+          <ServiceWorkerRegister />
+          {/* Google Ads Tag */}
+          <Script
+            strategy="afterInteractive"
+            src="https://www.googletagmanager.com/gtag/js?id=AW-10839665138"
+          />
+          <Script id="google-ads-script" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-10839665138');
+            `}
+          </Script>
+          <Script
+            strategy="afterInteractive"
+            src="https://cloud.umami.is/script.js"
+            data-website-id="505c9992-e14c-483a-aa4c-542fb097c809"
+          />
+        </ThemeProvider>
       </body>
     </html>
   );

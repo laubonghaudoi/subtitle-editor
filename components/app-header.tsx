@@ -18,15 +18,17 @@ import {
   IconArrowBack,
   IconArrowForward,
   IconBrandGithub,
+  IconBrightness,
   IconMovie,
   IconQuestionMark,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import type { RefObject } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import { useSubtitleContext } from "@/context/subtitle-context";
 import { getTrackHandleColor } from "@/lib/track-colors";
 import type { SubtitleTrack } from "@/types/subtitle";
+import { useTheme } from "next-themes";
 
 function getBulkButtonColors(
   tracks: SubtitleTrack[],
@@ -75,16 +77,57 @@ export function AppHeader({
 }: AppHeaderProps) {
   const t = useTranslations();
   const { tracks, activeTrackId } = useSubtitleContext();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [isThemeMounted, setIsThemeMounted] = useState(false);
   const { bulkColor, bulkTextColor, bulkOutlineColor } = getBulkButtonColors(
     tracks,
     activeTrackId ?? null,
   );
+  const bulkButtonStyle = isBulkOffsetOpen
+    ? {
+        backgroundColor: bulkColor,
+        color: bulkTextColor,
+        borderColor: bulkOutlineColor,
+      }
+    : undefined;
+
+  useEffect(() => {
+    setIsThemeMounted(true);
+  }, []);
+
+  const handleToggleTheme = () => {
+    if (!isThemeMounted) {
+      return;
+    }
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  };
+
+  const isDarkMode = isThemeMounted && resolvedTheme === "dark";
 
   return (
-    <nav className="h-[6vh] border-black border-b-2 flex items-center px-12 justify-between">
+    <nav className="h-[6vh] border-b-2 border-black dark:border-white flex items-center px-12 justify-between">
       <div className="flex items-center">
         <h1 className="text-lg font-semibold mx-4">{t("navigation.title")}</h1>
         <LanguageSwitcher />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={handleToggleTheme}
+                className="cursor-pointer"
+                aria-label={t("navigation.toggleTheme")}
+                aria-pressed={isDarkMode}
+                disabled={!isThemeMounted}
+              >
+                <IconBrightness size={20} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{t("navigation.toggleTheme")}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <Link href="/faq" target="_blank" aria-label={t("navigation.faq")}>
           <Button
             variant="ghost"
@@ -153,14 +196,11 @@ export function AppHeader({
               <Button
                 type="button"
                 size="default"
+                variant="outline"
                 onClick={onToggleBulkOffset}
                 disabled={bulkOffsetDisabled}
-                className="flex items-center border rounded-xs shadow-none"
-                style={{
-                  backgroundColor: isBulkOffsetOpen ? bulkColor : "transparent",
-                  color: isBulkOffsetOpen ? bulkTextColor : "black",
-                  borderColor: isBulkOffsetOpen ? bulkOutlineColor : "black",
-                }}
+                className="flex items-center rounded-xs shadow-none border-black dark:border-white"
+                style={bulkButtonStyle}
                 aria-pressed={isBulkOffsetOpen}
               >
                 <IconAdjustmentsHorizontal />

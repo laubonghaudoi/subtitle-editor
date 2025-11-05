@@ -213,7 +213,7 @@ export default function FindReplace() {
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="border-black rounded-xs cursor-pointer"
+          className="rounded-xs cursor-pointer border-black dark:border-white"
           disabled={isDisabled}
         >
           <IconSearch />

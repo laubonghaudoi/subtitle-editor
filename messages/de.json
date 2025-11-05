@@ -7,7 +7,8 @@
     "github": "Open Source auf Github mit MIT-Lizenz",
     "bulkOffset": "Stapel-Offset",
     "showBulkOffset": "Stapel-Offset-Panel öffnen",
-    "hideBulkOffset": "Stapel-Offset-Panel schließen"
+    "hideBulkOffset": "Stapel-Offset-Panel schließen",
+    "toggleTheme": "Hell- und Dunkelmodus umschalten"
   },
   "buttons": {
     "loadMedia": "Medien laden",

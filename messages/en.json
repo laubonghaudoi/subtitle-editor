@@ -7,7 +7,8 @@
     "github": "Open-source on GitHub with MIT License",
     "bulkOffset": "Bulk offset",
     "showBulkOffset": "Open bulk offset timestamp panel",
-    "hideBulkOffset": "Close bulk offset timestamp panel"
+    "hideBulkOffset": "Close bulk offset timestamp panel",
+    "toggleTheme": "Toggle light and dark mode"
   },
   "buttons": {
     "loadMedia": "Load Media",

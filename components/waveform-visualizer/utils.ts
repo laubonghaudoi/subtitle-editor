@@ -23,7 +23,11 @@ export const createSubtitleRegionContent = (
                 padding-left: 1rem;
                 padding-right: 1rem;
                 padding-top: 0.3rem;
-                color: #525252;">
+                color: color-mix(
+                  in srgb,
+                  var(--color-muted-foreground, #525252) 70%,
+                  white 30%
+                );">
       <em>${startTime}</em>
       <em>${endTime}</em>
     </div>
@@ -31,7 +35,7 @@ export const createSubtitleRegionContent = (
                 padding-right: 1rem;
                 padding-bottom: 1rem;
                 font-size: 1rem;
-                color: #262626;">
+                color: var(--color-foreground, #262626);">
       <span>${text}</span>
     </div>
 `;

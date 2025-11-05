@@ -16,6 +16,7 @@ import Timeline from "wavesurfer.js/dist/plugins/timeline.esm.js";
 import { useSubtitleContext } from "@/context/subtitle-context";
 import { useWaveformRegions } from "./use-waveform-regions";
 import type { BulkOffsetPreviewState } from "@/components/bulk-offset/drawer";
+import { useTheme } from "next-themes";
 
 interface WaveformVisualizerProps {
   mediaFile: File | null;
@@ -43,6 +44,10 @@ export default forwardRef(function WaveformVisualizer(
   const containerRef = useRef<HTMLDivElement>(null);
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const theme = resolvedTheme ?? "light";
+  const waveColor = theme === "dark" ? "#0f766e" : "#A7F3D0";
+  const progressColor = theme === "dark" ? "#0ea5e9" : "#00d4ff";
 
   const {
     tracks,
@@ -82,8 +87,8 @@ export default forwardRef(function WaveformVisualizer(
   const { wavesurfer } = useWavesurfer({
     container: containerRef,
     height: "auto",
-    waveColor: "#A7F3D0",
-    progressColor: "#00d4ff",
+    waveColor,
+    progressColor,
     cursorColor: "#b91c1c",
     url: mediaUrl,
     minPxPerSec: 100,
@@ -130,6 +135,13 @@ export default forwardRef(function WaveformVisualizer(
     ],
   });
 
+  useEffect(() => {
+    if (!wavesurfer) return;
+    wavesurfer.setOptions({
+      waveColor,
+      progressColor,
+    });
+  }, [wavesurfer, waveColor, progressColor]);
   /****************************************************************
    *  Hook the region lifecycle and track overlays into a standalone hook
    * */
@@ -316,7 +328,7 @@ export default forwardRef(function WaveformVisualizer(
           {tracks.map((track, idx) => (
             <div
               key={track.id}
-              className="absolute left-2 bg-neutral-500 text-white px-2 py-0.5 rounded text-xs font-semibold"
+              className="absolute left-2 bg-neutral-500 text-white dark:bg-slate-200 dark:text-slate-900 px-2 py-0.5 rounded text-xs font-semibold"
               style={{
                 top: `${((idx + 0.5) * 100) / tracks.length}%`,
                 transform: "translateY(-50%)",
@@ -328,8 +340,8 @@ export default forwardRef(function WaveformVisualizer(
         </div>
       )}
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/50">
-          <IconLoader2 className="text-3xl text-black animate-spin" />
+        <div className="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-black/40">
+          <IconLoader2 className="text-3xl text-black dark:text-white animate-spin" />
         </div>
       )}
     </div>

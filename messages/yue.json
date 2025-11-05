@@ -7,7 +7,8 @@
     "github": "源碼按照 MIT 協議開放於 GitHub",
     "bulkOffset": "批量位移",
     "showBulkOffset": "打開批量位移面板",
-    "hideBulkOffset": "收起批量位移面板"
+    "hideBulkOffset": "收起批量位移面板",
+    "toggleTheme": "切換明暗模式"
   },
   "buttons": {
     "loadMedia": "載入媒體",
