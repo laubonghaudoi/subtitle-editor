@@ -76,10 +76,13 @@ export default forwardRef(function WaveformVisualizer(
   }, [mediaFile]);
 
   const regionPlugin = RegionsPlugin.create();
-  // biome-ignore lint/suspicious/noExplicitAny: overriding internal wavesurfer behavior
-  (regionPlugin as any).avoidOverlapping = (_region: unknown) => {
-    // no-op to allow overlapping regions
-  };
+  Reflect.set(
+    regionPlugin as unknown as Record<string, unknown>,
+    "avoidOverlapping",
+    () => {
+      // Override the private avoidOverlapping helper to allow intersecting regions
+    },
+  );
 
   /****************************************************************
    *  Initialize the wavesurfer with options and plugins

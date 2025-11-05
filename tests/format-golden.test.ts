@@ -8,8 +8,9 @@ import {
 } from "../lib/format";
 import { parseVTT } from "../lib/subtitle-operations";
 import { srtToVtt } from "../lib/utils";
+import type { Subtitle } from "../types/subtitle";
 
-const goldenSubtitles = [
+const goldenSubtitles: Subtitle[] = [
   {
     uuid: "gold-1",
     id: 1,
@@ -37,22 +38,22 @@ const expectedCsv = [
 ].join("\n");
 
 test("buildSrtContent matches golden cue output", () => {
-  const actual = buildSrtContent(goldenSubtitles as any);
+  const actual = buildSrtContent(goldenSubtitles);
   assert.equal(actual, expectedSrt);
 });
 
 test("buildPlainTextContent flattens cues to single-line plain text", () => {
-  const actual = buildPlainTextContent(goldenSubtitles as any);
+  const actual = buildPlainTextContent(goldenSubtitles);
   assert.equal(actual, expectedPlainText);
 });
 
 test("buildCsvContent outputs four-column CSV", () => {
-  const actual = buildCsvContent(goldenSubtitles as any);
+  const actual = buildCsvContent(goldenSubtitles);
   assert.equal(actual, expectedCsv);
 });
 
 test("buildVttContent preserves header and prologue blocks", () => {
-  const vtt = buildVttContent(goldenSubtitles as any, {
+  const vtt = buildVttContent(goldenSubtitles, {
     header: "WEBVTT Kind: captions",
     prologue: ["NOTE example metadata", "STYLE\n::cue { color: yellow; }"],
   });
@@ -79,29 +80,13 @@ test("buildVttContent preserves header and prologue blocks", () => {
   assert.equal(vtt, expectedVtt);
 
   const parsed = parseVTT(vtt);
-  const rebuilt = buildSrtContent(
-    parsed.map(({ id, startTime, endTime, text }) => ({
-      uuid: `rt-${id}`,
-      id,
-      startTime,
-      endTime,
-      text,
-    })),
-  );
+  const rebuilt = buildSrtContent(parsed);
   assert.equal(rebuilt, expectedSrt);
 });
 
 test("srtToVtt round-trips back to the original cues", () => {
   const vtt = srtToVtt(expectedSrt, "WEBVTT");
   const reparsed = parseVTT(vtt);
-  const roundTripped = buildSrtContent(
-    reparsed.map(({ id, startTime, endTime, text }) => ({
-      uuid: `vtt-${id}`,
-      id,
-      startTime,
-      endTime,
-      text,
-    })),
-  );
+  const roundTripped = buildSrtContent(reparsed);
   assert.equal(roundTripped, expectedSrt);
 });

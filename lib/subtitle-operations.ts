@@ -56,7 +56,6 @@ export const parseVTT = (vttContent: string): Subtitle[] => {
   }
 
   const subtitles: Subtitle[] = [];
-  let _cueId: string | null = null;
   let idCounter = 1;
 
   /**
@@ -82,7 +81,7 @@ export const parseVTT = (vttContent: string): Subtitle[] => {
   };
 
   while (idx < lines.length) {
-    let line = lines[idx];
+    const line = lines[idx];
     if (line.trim() === "") {
       idx++;
       continue;
@@ -94,13 +93,10 @@ export const parseVTT = (vttContent: string): Subtitle[] => {
       while (idx < lines.length && lines[idx].trim() !== "") idx++;
       continue;
     }
-    _cueId = null;
     // Optional identifier line: next non-empty line that is NOT a time line
     if (idx < lines.length && !isTimeLine(lines[idx].trim())) {
-      const maybeId = lines[idx].trim();
       // If the following line is a time line, treat this line as cue id
       if (idx + 1 < lines.length && isTimeLine(lines[idx + 1].trim())) {
-        _cueId = maybeId;
         idx++;
       }
     }

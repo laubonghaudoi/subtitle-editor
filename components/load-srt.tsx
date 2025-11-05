@@ -77,7 +77,7 @@ export default function LoadSrt() {
         toast({
           title: "Invalid subtitle file",
           description: "No valid cues were found.",
-          variant: "destructive" as any,
+          variant: "destructive",
         });
         return;
       }
@@ -90,11 +90,12 @@ export default function LoadSrt() {
       );
       const safeName = file.name.replace(/\.(srt|vtt)$/i, "");
       renameTrack(trackId, safeName);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
       toast({
         title: "Failed to load subtitles",
-        description: String(err?.message || err) || "Unknown error",
-        variant: "destructive" as any,
+        description: errorMessage || "Unknown error",
+        variant: "destructive",
       });
     }
   };
