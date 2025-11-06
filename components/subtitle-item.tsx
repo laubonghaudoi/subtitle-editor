@@ -162,6 +162,9 @@ const SubtitleItem = memo(function SubtitleItem({
           onPointerDown={() => onPrepareSubtitleInteraction(subtitle.uuid)}
           onClick={() => onScrollToRegion(subtitle.uuid)}
           onFocus={() => {
+            if (isPlaying) {
+              return;
+            }
             setPlaybackTime(timeToSeconds(subtitle.startTime));
           }}
           onKeyDown={(e) => {
@@ -419,11 +422,17 @@ const SubtitleItem = memo(function SubtitleItem({
                       ? `Edit subtitle: ${subtitle.text}`
                       : "Edit subtitle (empty)"
                   }
-                  onClick={() => {
+                  onClick={(event) => {
+                    if (event.detail === 0) {
+                      event.stopPropagation();
+                      event.preventDefault();
+                    }
                     setEditingSubtitleUuid(subtitle.uuid);
                   }}
-                  onKeyUp={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
+                  onKeyUp={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      event.stopPropagation();
                       setEditingSubtitleUuid(subtitle.uuid);
                     }
                   }}
