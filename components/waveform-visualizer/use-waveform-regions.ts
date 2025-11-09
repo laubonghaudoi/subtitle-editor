@@ -42,6 +42,7 @@ interface UseWaveformRegionsParams {
   previewOffsets: Record<string, BulkOffsetPreviewState>;
   setIsLoading: (loading: boolean) => void;
   showTrackLabels: boolean;
+  theme: "light" | "dark";
 }
 
 export const useWaveformRegions = ({
@@ -56,6 +57,7 @@ export const useWaveformRegions = ({
   previewOffsets,
   setIsLoading,
   showTrackLabels,
+  theme,
 }: UseWaveformRegionsParams) => {
   const subtitleToRegionMap = useRef<Map<string, RegionMapEntry>>(new Map());
   const previewRegionMap = useRef<Map<string, Region>>(new Map());
@@ -225,6 +227,7 @@ export const useWaveformRegions = ({
           subtitle.startTime,
           subtitle.text,
           subtitle.endTime,
+          { theme },
         );
 
         const regionColor = getTrackColor(trackIndex);
@@ -261,7 +264,7 @@ export const useWaveformRegions = ({
 
     requestAnimationFrame(measureLabelsOverlay);
     updatePreviewRegions(previewOffsetsRef.current);
-  }, [tracks, wavesurfer, measureLabelsOverlay, updatePreviewRegions]);
+  }, [tracks, wavesurfer, measureLabelsOverlay, updatePreviewRegions, theme]);
 
   useEffect(() => {
     if (!wavesurfer) return;
@@ -358,6 +361,7 @@ export const useWaveformRegions = ({
               originalSubtitle.startTime,
               originalSubtitle.text,
               originalSubtitle.endTime,
+              { theme },
             ),
           });
 
@@ -404,6 +408,7 @@ export const useWaveformRegions = ({
             newStartTimeFormatted,
             subtitle.text,
             newEndTimeFormatted,
+            { theme },
           ),
         });
 
@@ -543,6 +548,7 @@ export const useWaveformRegions = ({
             subtitle.startTime,
             subtitle.text,
             subtitle.endTime,
+            { theme },
           );
 
           const regionColor = getTrackColor(trackIndex);
@@ -590,6 +596,7 @@ export const useWaveformRegions = ({
               subtitle.startTime,
               subtitle.text,
               subtitle.endTime,
+              { theme },
             ),
           });
 
@@ -629,7 +636,7 @@ export const useWaveformRegions = ({
     }
 
     requestAnimationFrame(measureLabelsOverlay);
-  }, [tracks, wavesurfer, measureLabelsOverlay]);
+  }, [tracks, wavesurfer, measureLabelsOverlay, theme]);
 
   // Re-measure label overlay when labels are toggled or track count changes
   useEffect(() => {

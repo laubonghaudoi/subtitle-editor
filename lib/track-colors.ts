@@ -5,7 +5,7 @@ const TRACK_BASE_COLORS = [
   "#c70036", // Red
   "#009966", // Green
 ];
-const DEFAULT_TRACK_ALPHA = 0.25;
+const DEFAULT_TRACK_ALPHA = 0.2;
 
 const normalizeIndex = (index: number, length: number) => {
   if (length === 0) return 0;

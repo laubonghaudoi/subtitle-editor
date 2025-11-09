@@ -45,7 +45,8 @@ export default forwardRef(function WaveformVisualizer(
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const { resolvedTheme } = useTheme();
-  const theme = resolvedTheme ?? "light";
+  const theme: "light" | "dark" =
+    resolvedTheme === "dark" ? "dark" : "light";
   const waveColor = theme === "dark" ? "#0f766e" : "#A7F3D0";
   const progressColor = theme === "dark" ? "#0ea5e9" : "#00d4ff";
 
@@ -164,6 +165,7 @@ export default forwardRef(function WaveformVisualizer(
     previewOffsets,
     setIsLoading,
     showTrackLabels,
+    theme,
   });
 
   /****************************************************************
