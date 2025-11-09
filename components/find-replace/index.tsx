@@ -122,6 +122,7 @@ export default function FindReplace() {
 
     if (!compiledRegex) {
       setMatchedSubtitles([]);
+      clearSelection();
       return;
     }
 
