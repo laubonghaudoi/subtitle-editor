@@ -26,7 +26,9 @@ import { isMediaFile, isSubtitleFile } from "@/lib/file-utils";
 import { useDroppablePanel } from "@/hooks/use-droppable-panel";
 import { useSubtitleShortcuts } from "@/hooks/use-subtitle-shortcuts";
 import { cn } from "@/lib/utils";
+import { getTrackHandleColor, getTrackColor } from "@/lib/track-colors";
 import { useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
@@ -86,6 +88,8 @@ function MainContent() {
     bulkShiftSubtitlesAction,
     // Action functions are now available via context, no need for local handlers like handleUpdateSubtitleText etc.
   } = useSubtitleContext();
+  const { resolvedTheme } = useTheme();
+  const theme = resolvedTheme ?? "light";
 
   // Keep page-specific state here
 
@@ -381,16 +385,33 @@ function MainContent() {
                   className="h-full flex flex-col"
                 >
                   {tracks.length > 1 && (
-                    <TabsList className="py-1 flex-nowrap overflow-x-auto overflow-y-hidden border-dashed border-b border-black dark:border-white">
-                      {tracks.map((track) => (
-                        <TabsTrigger
-                          key={track.id}
-                          value={track.id}
-                          className="shadow-none shrink-0 data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:dark:bg-white data-[state=active]:dark:text-black rounded-xs"
-                        >
-                          {track.name}
-                        </TabsTrigger>
-                      ))}
+                    <TabsList className="py-1 flex-nowrap overflow-x-auto overflow-y-hidden border-dashed border-b border-black dark:border-white gap-2">
+                      {tracks.map((track, trackIndex) => {
+                        const handleColor = getTrackHandleColor(trackIndex);
+                        const inactiveAlpha = theme === "dark" ? 0.5 : 0.25;
+                        const isActive = track.id === activeTrackId;
+                        const backgroundColor = isActive
+                          ? handleColor
+                          : getTrackColor(trackIndex, inactiveAlpha);
+                        const color = isActive ? "#ffffff" : "#111827";
+                        const borderColor = isActive
+                          ? handleColor
+                          : "transparent";
+                        return (
+                          <TabsTrigger
+                            key={track.id}
+                            value={track.id}
+                            className="shadow-none shrink-0 rounded-sm border px-3 py-1 text-xs font-semibold transition-opacity focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-hidden dark:focus-visible:ring-white"
+                            style={{
+                              backgroundColor,
+                              color,
+                              borderColor,
+                            }}
+                          >
+                            {track.name}
+                          </TabsTrigger>
+                        );
+                      })}
                     </TabsList>
                   )}
                   {tracks.map((track) => (

@@ -1,30 +1,32 @@
-export const TRACK_COLORS = [
-  "#fcd34d40", // Yellow (active track)
-  "#3b82f640", // Blue
-  "#c7003640", // Red
-  "#00996640", // Green
-];
-
-export const TRACK_HANDLE_COLORS = [
-  "#f59e0b", // Yellow (active track)
+const FALLBACK_HANDLE_COLOR = "#fcd34d";
+const TRACK_BASE_COLORS = [
+  "#efb100", // Yellow (active track)
   "#3b82f6", // Blue
   "#c70036", // Red
   "#009966", // Green
 ];
+const DEFAULT_TRACK_ALPHA = 0.25;
+
+const normalizeIndex = (index: number, length: number) => {
+  if (length === 0) return 0;
+  return ((index % length) + length) % length;
+};
+
+const getBaseColor = (index: number): string => {
+  if (TRACK_BASE_COLORS.length === 0) return FALLBACK_HANDLE_COLOR;
+  const normalizedIndex = normalizeIndex(index, TRACK_BASE_COLORS.length);
+  return TRACK_BASE_COLORS[normalizedIndex];
+};
 
 export function getTrackHandleColor(index: number): string {
-  if (TRACK_HANDLE_COLORS.length === 0) return "#f59e0b";
-  const normalizedIndex =
-    ((index % TRACK_HANDLE_COLORS.length) + TRACK_HANDLE_COLORS.length) %
-    TRACK_HANDLE_COLORS.length;
-  return TRACK_HANDLE_COLORS[normalizedIndex];
+  return getBaseColor(index);
 }
 
-export function getTrackColor(index: number): string {
-  if (TRACK_COLORS.length === 0) return "#fcd34d40";
-  const normalizedIndex =
-    ((index % TRACK_COLORS.length) + TRACK_COLORS.length) % TRACK_COLORS.length;
-  return TRACK_COLORS[normalizedIndex];
+export function getTrackColor(
+  index: number,
+  alpha: number = DEFAULT_TRACK_ALPHA,
+): string {
+  return hexToRgba(getBaseColor(index), alpha);
 }
 
 const hexToRgb = (hex: string) => {
@@ -44,6 +46,24 @@ const hexToRgb = (hex: string) => {
     g: (bigint >> 8) & 255,
     b: bigint & 255,
   };
+};
+
+export const getReadableTextColor = (
+  hex: string,
+  options?: {
+    light?: string;
+    dark?: string;
+    threshold?: number;
+  },
+) => {
+  const {
+    light = "#ffffff",
+    dark = "#111827",
+    threshold = 0.65,
+  } = options ?? {};
+  const { r, g, b } = hexToRgb(hex);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > threshold ? dark : light;
 };
 
 const rgbToHex = ({ r, g, b }: { r: number; g: number; b: number }) =>

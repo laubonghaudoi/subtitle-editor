@@ -1,7 +1,7 @@
 import type { BulkOffsetPreviewState } from "@/components/bulk-offset/drawer";
 import {
-  TRACK_COLORS,
   createContrastColor,
+  getTrackColor,
   getTrackHandleColor,
   hexToRgba,
 } from "@/lib/track-colors";
@@ -227,7 +227,7 @@ export const useWaveformRegions = ({
           subtitle.endTime,
         );
 
-        const regionColor = TRACK_COLORS[trackIndex % TRACK_COLORS.length];
+        const regionColor = getTrackColor(trackIndex);
         const handleColor = getTrackHandleColor(trackIndex);
 
         const region = regionsPlugin.addRegion({
@@ -545,7 +545,7 @@ export const useWaveformRegions = ({
             subtitle.endTime,
           );
 
-          const regionColor = TRACK_COLORS[trackIndex % TRACK_COLORS.length];
+          const regionColor = getTrackColor(trackIndex);
           const handleColor = getTrackHandleColor(trackIndex);
 
           const region = regionsPlugin.addRegion({

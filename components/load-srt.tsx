@@ -39,9 +39,23 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useState, type CSSProperties } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
+import {
+  getReadableTextColor,
+  getTrackHandleColor,
+} from "@/lib/track-colors";
+
+const getTrackButtonStyle = (trackIndex: number): CSSProperties => {
+  const backgroundColor = getTrackHandleColor(trackIndex);
+  const color = getReadableTextColor(backgroundColor);
+  return {
+    backgroundColor,
+    color,
+    borderColor: backgroundColor,
+  };
+};
 
 export default function LoadSrt() {
   const t = useTranslations();
@@ -137,98 +151,111 @@ export default function LoadSrt() {
           <DialogDescription>{t("dialog.srtDescription")}</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {tracks.map((track) => (
-            <div
-              key={track.id}
-              className="grid grid-cols-12 items-center gap-2"
-            >
-              <Input
-                value={track.name}
-                onChange={(e) => renameTrack(track.id, e.target.value)}
-                className="px-2 py-2 col-span-5 border-neutral-500 rounded-sm"
-              />
-              <div className="col-span-6 grid grid-cols-2 gap-2">
-                {track.subtitles.length > 0 ? (
-                  <>
-                    <Label className="w-full p-0 flex items-center justify-center">
-                      {t("subtitle.subtitleCount", {
-                        count: track.subtitles.length,
-                      })}
-                    </Label>
-                    <Button asChild variant="secondary" className="w-full">
-                      <Label className="cursor-pointer">
-                        <IconFile />
-                        {t("buttons.reloadSrt")}
-                        <Input
-                          type="file"
-                          className="hidden"
-                          accept=".srt,.vtt"
-                          onChange={(e) => handleSrtFileSelect(e, track.id)}
-                        />
+          {tracks.map((track, trackIndex) => {
+            const fileButtonStyle = getTrackButtonStyle(trackIndex);
+            return (
+              <div
+                key={track.id}
+                className="grid grid-cols-12 items-center gap-2"
+              >
+                <Input
+                  value={track.name}
+                  onChange={(e) => renameTrack(track.id, e.target.value)}
+                  className="px-2 py-2 col-span-5 border-neutral-500 rounded-sm"
+                />
+                <div className="col-span-6 grid grid-cols-2 gap-2">
+                  {track.subtitles.length > 0 ? (
+                    <>
+                      <Label className="w-full p-0 flex items-center justify-center">
+                        {t("subtitle.subtitleCount", {
+                          count: track.subtitles.length,
+                        })}
                       </Label>
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      variant="secondary"
-                      className="w-full cursor-pointer"
-                      onClick={() => handleStartFromScratch(track.id)}
-                    >
-                      <IconPencilPlus />
-                      {t("buttons.fromScratch")}
-                    </Button>
-                    <Button asChild variant="secondary" className="w-full">
-                      <Label className="cursor-pointer">
-                        <IconFile />
-                        {t("buttons.loadSrtFile")}
-                        <Input
-                          type="file"
-                          className="hidden"
-                          accept=".srt,.vtt"
-                          onChange={(e) => handleSrtFileSelect(e, track.id)}
-                        />
-                      </Label>
-                    </Button>
-                  </>
-                )}
-              </div>
-              <div className="col-span-1 flex justify-end">
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-red-500 hover:bg-red-700 hover:text-white bg-red-100 cursor-pointer"
-                    >
-                      <IconTrash />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        {t("dialog.deleteTrackTitle")}
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {t("dialog.deleteTrackDescription")}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>
-                        {t("dialog.cancel")}
-                      </AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => deleteTrack(track.id)}
-                        className="bg-red-700 hover:bg-red-500 cursor-pointer"
+                      <Button
+                        asChild
+                        variant="secondary"
+                        className="w-full border hover:opacity-90"
+                        style={fileButtonStyle}
                       >
-                        {t("dialog.delete")}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                        <Label className="cursor-pointer">
+                          <IconFile />
+                          {t("buttons.reloadSrt")}
+                          <Input
+                            type="file"
+                            className="hidden"
+                            accept=".srt,.vtt"
+                            onChange={(e) => handleSrtFileSelect(e, track.id)}
+                          />
+                        </Label>
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant="secondary"
+                        className="w-full cursor-pointer"
+                        onClick={() => handleStartFromScratch(track.id)}
+                      >
+                        <IconPencilPlus />
+                        {t("buttons.fromScratch")}
+                      </Button>
+                      <Button
+                        asChild
+                        variant="secondary"
+                        className="w-full border hover:opacity-90"
+                        style={fileButtonStyle}
+                      >
+                        <Label className="cursor-pointer">
+                          <IconFile />
+                          {t("buttons.loadSrtFile")}
+                          <Input
+                            type="file"
+                            className="hidden"
+                            accept=".srt,.vtt"
+                            onChange={(e) => handleSrtFileSelect(e, track.id)}
+                          />
+                        </Label>
+                      </Button>
+                    </>
+                  )}
+                </div>
+                <div className="col-span-1 flex justify-end">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:bg-red-700 hover:text-white bg-red-100 cursor-pointer"
+                      >
+                        <IconTrash />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          {t("dialog.deleteTrackTitle")}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t("dialog.deleteTrackDescription")}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>
+                          {t("dialog.cancel")}
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => deleteTrack(track.id)}
+                          className="bg-red-700 hover:bg-red-500 dark:text-white cursor-pointer"
+                        >
+                          {t("dialog.delete")}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           <Button
             variant="outline"
