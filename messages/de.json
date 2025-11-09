@@ -118,7 +118,7 @@
   "dialog": {
     "discardTitle": "Änderungen verwerfen?",
     "discardDescription": "Sie haben nicht gespeicherte Änderungen. Sind Sie sicher, dass Sie sie verwerfen und eine neue Untertiteldatei laden möchten?",
-    "switchTitle": "Sprache wechseln?",
+    "switchTitle": "Sprache wechseln",
     "switchDescription": "Das Ändern der Sprache verwirft die aktuellen Untertitel. Stellen Sie sicher, dass Sie die aktuellen Untertitel zuerst heruntergeladen haben.",
     "cancel": "Abbrechen",
     "yes": "Ja, verwerfen",

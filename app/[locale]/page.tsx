@@ -5,9 +5,9 @@ import BottomInstructions from "@/components/bottom-instructions";
 import CustomControls from "@/components/custom-controls";
 import SkipLinks from "@/components/skip-links";
 import SubtitleList, { type SubtitleListRef } from "@/components/subtitle-list";
-import {
-  BulkOffsetDrawer,
-  type BulkOffsetPreviewState,
+import type {
+  BulkOffsetDrawerProps,
+  BulkOffsetPreviewState,
 } from "@/components/bulk-offset/drawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,6 +57,17 @@ const WaveformVisualizer = dynamic(
   () => import("@/components/waveform-visualizer"),
   {
     ssr: false, // Disable server-side rendering
+  },
+);
+
+const BulkOffsetDrawer = dynamic<BulkOffsetDrawerProps>(
+  () =>
+    import("@/components/bulk-offset/drawer").then(
+      (mod) => mod.BulkOffsetDrawer,
+    ),
+  {
+    loading: () => null,
+    ssr: false,
   },
 );
 
@@ -493,7 +504,7 @@ function MainContent() {
               )}
             </div>
 
-            {tracks.length > 0 && (
+            {isBulkOffsetOpen && tracks.length > 0 && (
               <BulkOffsetDrawer
                 isOpen={isBulkOffsetOpen}
                 subtitles={activeTrackSubtitles}

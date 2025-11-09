@@ -68,7 +68,12 @@ export default function LanguageSwitcher() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="cursor-pointer">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="cursor-pointer"
+            aria-label={t("dialog.switchTitle")}
+          >
             <IconLanguage />
           </Button>
         </DropdownMenuTrigger>

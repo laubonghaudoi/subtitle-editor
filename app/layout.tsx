@@ -5,7 +5,10 @@ import ServiceWorkerRegister from "@/components/service-worker-register";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
+import enMessages from "@/messages/en.json";
 import "./globals.css";
+
+const EN_FALLBACK_DESCRIPTION = enMessages.metadata.description;
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,8 +27,7 @@ export const metadata: Metadata = {
     default:
       "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT Editing Tool", // Default title for root layout
   },
-  description:
-    "Edit, create, and align SRT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
+  description: EN_FALLBACK_DESCRIPTION,
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -75,13 +77,24 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#0f172a" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+        <meta name="description" content={EN_FALLBACK_DESCRIPTION} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <main id="main-content" className="min-h-screen">
+            {children}
+          </main>
           <Toaster />
           <WebVitalsReporter />
           <ServiceWorkerRegister />

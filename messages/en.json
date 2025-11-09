@@ -118,7 +118,7 @@
   "dialog": {
     "discardTitle": "Discard changes?",
     "discardDescription": "You have unsaved changes. Are you sure you want to discard them by loading a new subtitle file?",
-    "switchTitle": "Switch language?",
+    "switchTitle": "Switch language",
     "switchDescription": "Changing the language will discard the current subtitles. Make sure you have downloaded the current subtitles first.",
     "cancel": "Cancel",
     "yes": "Yes, discard",

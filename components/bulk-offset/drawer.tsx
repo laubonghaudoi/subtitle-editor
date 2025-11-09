@@ -16,7 +16,7 @@ export interface BulkOffsetPreviewState {
   endChanged: boolean;
 }
 
-interface BulkOffsetDrawerProps {
+export interface BulkOffsetDrawerProps {
   isOpen: boolean;
   subtitles: Subtitle[];
   trackIndex: number;
