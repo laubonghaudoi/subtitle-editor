@@ -73,7 +73,7 @@ export default function SaveSrt() {
         <Button
           onClick={openDialog}
           disabled={isDisabled}
-          className="cursor-pointer bg-slate-700 hover:bg-slate-600 rounded-sm"
+          className="cursor-pointer bg-slate-700  hover:bg-slate-600 dark:bg-slate-300 dark:hover:bg-slate-400 text-white dark:text-black rounded-sm"
         >
           <IconDownload size={20} />
           <span>{t("buttons.saveSrt")}</span>
@@ -89,7 +89,7 @@ export default function SaveSrt() {
             <div key={track.id} className="flex items-center justify-between">
               <div className="flex flex-col">
                 <span className="font-medium">{track.name}</span>
-                <span className="text-xs text-neutral-600">
+                <span className="text-sm text-neutral-600 dark:text-neutral-300">
                   {t("subtitle.subtitleCount", {
                     count: track.subtitles.length,
                   })}
@@ -99,7 +99,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "srt")}
-                  className="cursor-pointer bg-zinc-800 hover:bg-neutral-700 rounded-sm"
+                  className="cursor-pointer bg-zinc-800 dark:bg-slate-200 hover:bg-neutral-700 dark:hover:bg-slate-300 text-white dark:text-black rounded-sm"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsSrt")}</span>
@@ -107,7 +107,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "vtt")}
-                  className="cursor-pointer bg-zinc-800 hover:bg-neutral-700 rounded-sm"
+                  className="cursor-pointer bg-zinc-800 dark:bg-slate-200 hover:bg-neutral-700 dark:hover:bg-slate-300 text-white dark:text-black rounded-sm"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsVtt")}</span>
@@ -115,7 +115,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "txt")}
-                  className="cursor-pointer bg-zinc-800 hover:bg-neutral-700 rounded-sm"
+                  className="cursor-pointer bg-zinc-800 dark:bg-slate-200 hover:bg-neutral-700 dark:hover:bg-slate-300 text-white dark:text-black rounded-sm"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsTxt")}</span>
@@ -123,7 +123,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "csv")}
-                  className="cursor-pointer bg-zinc-800 hover:bg-neutral-700 rounded-sm"
+                  className="cursor-pointer bg-zinc-800 dark:bg-slate-200 hover:bg-neutral-700 dark:hover:bg-slate-300 text-white dark:text-black rounded-sm"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsCsv")}</span>

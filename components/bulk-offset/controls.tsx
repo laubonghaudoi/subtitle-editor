@@ -139,8 +139,8 @@ export function BulkOffsetControls({
   };
 
   return (
-    <section className="h-fit px-4 py-3 border-t-1 border-black border-dashed">
-      <div className="flex flex-grow items-center gap-4 text-sm tracking-wide">
+    <section className="h-fit px-4 py-3 border-t border-black border-dashed">
+      <div className="flex grow items-center gap-4 text-sm tracking-wide">
         <span>{t("bulkOffset.chooseTarget")}</span>
         <div className="flex items-center">
           <Button

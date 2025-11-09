@@ -6,7 +6,9 @@ export const createSubtitleRegionContent = (
   startTime: string,
   text: string,
   endTime: string,
+  opts?: { theme?: "light" | "dark" },
 ): HTMLElement => {
+  const headerColor = opts?.theme === "dark" ? "white" : "black";
   const content = document.createElement("div");
   // This is the style for the parent div of the region
   content.style.cssText += `
@@ -23,7 +25,7 @@ export const createSubtitleRegionContent = (
                 padding-left: 1rem;
                 padding-right: 1rem;
                 padding-top: 0.3rem;
-                color: #525252;">
+                color: ${headerColor};">
       <em>${startTime}</em>
       <em>${endTime}</em>
     </div>
@@ -31,7 +33,7 @@ export const createSubtitleRegionContent = (
                 padding-right: 1rem;
                 padding-bottom: 1rem;
                 font-size: 1rem;
-                color: #262626;">
+                color: var(--color-foreground, #262626);">
       <span>${text}</span>
     </div>
 `;

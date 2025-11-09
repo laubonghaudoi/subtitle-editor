@@ -7,8 +7,8 @@ export default function BottomInstructions() {
   const t = useTranslations();
 
   return (
-    <div className="grid grid-cols-2 items-start h-full text-gray-600 px-8 py-4 border-t-2 border-black">
-      <div className="text-lg text-gray-600 p-2">
+    <div className="grid grid-cols-2 items-start h-full text-foreground px-8 py-4 border-t-2 border-black dark:border-white">
+      <div className="text-lg text-foreground p-2">
         <p className="">{t("instructions.afterLoading")}</p>
         <ul className="list-disc list-inside my-2">
           <li>{t("instructions.editText")}</li>
@@ -18,7 +18,7 @@ export default function BottomInstructions() {
         </ul>
       </div>
       <div className="p-2">
-        <h2 className="text-lg inline-flex items-center">
+        <h2 className="text-lg inline-flex items-center text-foreground">
           <IconKeyboard className="mr-2" />
           {t("shortcuts.title")}
         </h2>

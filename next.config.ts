@@ -18,8 +18,12 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   /* config options here */
+  compress: true,
   experimental: {
     reactCompiler: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 

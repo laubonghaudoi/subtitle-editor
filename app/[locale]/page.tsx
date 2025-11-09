@@ -26,16 +26,16 @@ import { isMediaFile, isSubtitleFile } from "@/lib/file-utils";
 import { useDroppablePanel } from "@/hooks/use-droppable-panel";
 import { useSubtitleShortcuts } from "@/hooks/use-subtitle-shortcuts";
 import { cn } from "@/lib/utils";
+import { getTrackHandleColor, getTrackColor } from "@/lib/track-colors";
 import { useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type {
+  DragEvent,
+  ForwardRefExoticComponent,
+  RefAttributes,
 } from "react";
-import type { DragEvent, ForwardRefExoticComponent, RefAttributes } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type {
   VideoPlayerHandle,
@@ -88,6 +88,8 @@ function MainContent() {
     bulkShiftSubtitlesAction,
     // Action functions are now available via context, no need for local handlers like handleUpdateSubtitleText etc.
   } = useSubtitleContext();
+  const { resolvedTheme } = useTheme();
+  const theme = resolvedTheme ?? "light";
 
   // Keep page-specific state here
 
@@ -124,13 +126,12 @@ function MainContent() {
     ? tracks.findIndex((track) => track.id === activeTrackId)
     : -1;
   const activeTrack =
-    activeTrackIndex >= 0 ? tracks[activeTrackIndex] ?? null : null;
+    activeTrackIndex >= 0 ? (tracks[activeTrackIndex] ?? null) : null;
   const activeTrackIsEmpty =
     activeTrack !== null && activeTrack.subtitles.length === 0;
   const activeTrackSubtitles = activeTrack?.subtitles ?? [];
   const allowSubtitleDrop = tracks.length === 0 || activeTrackIsEmpty;
-  const bulkOffsetDisabled =
-    !activeTrack || activeTrackSubtitles.length === 0;
+  const bulkOffsetDisabled = !activeTrack || activeTrackSubtitles.length === 0;
   const loadMediaFile = useCallback(
     (file: File) => {
       setMediaFile(null);
@@ -355,9 +356,7 @@ function MainContent() {
         onSelectMediaFile={loadMediaFile}
         mediaFileName={mediaFileName}
         isBulkOffsetOpen={isBulkOffsetOpen}
-        onToggleBulkOffset={() =>
-          setIsBulkOffsetOpen((previous) => !previous)
-        }
+        onToggleBulkOffset={() => setIsBulkOffsetOpen((previous) => !previous)}
         bulkOffsetDisabled={bulkOffsetDisabled}
       />
 
@@ -386,23 +385,40 @@ function MainContent() {
                   className="h-full flex flex-col"
                 >
                   {tracks.length > 1 && (
-                    <TabsList className="bg-white py-1 flex-nowrap overflow-x-auto overflow-y-hidden">
-                      {tracks.map((track) => (
-                        <TabsTrigger
-                          key={track.id}
-                          value={track.id}
-                          className="shadow-none flex-shrink-0 data-[state=active]:bg-black data-[state=active]:text-white rounded-xs"
-                        >
-                          {track.name}
-                        </TabsTrigger>
-                      ))}
+                    <TabsList className="py-1 flex-nowrap overflow-x-auto overflow-y-hidden border-dashed border-b border-black dark:border-white gap-2">
+                      {tracks.map((track, trackIndex) => {
+                        const handleColor = getTrackHandleColor(trackIndex);
+                        const inactiveAlpha = theme === "dark" ? 0.5 : 0.25;
+                        const isActive = track.id === activeTrackId;
+                        const backgroundColor = isActive
+                          ? handleColor
+                          : getTrackColor(trackIndex, inactiveAlpha);
+                        const color = isActive ? "#ffffff" : "#111827";
+                        const borderColor = isActive
+                          ? handleColor
+                          : "transparent";
+                        return (
+                          <TabsTrigger
+                            key={track.id}
+                            value={track.id}
+                            className="shadow-none shrink-0 rounded-sm border px-3 py-1 text-xs font-semibold transition-opacity focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-hidden dark:focus-visible:ring-white"
+                            style={{
+                              backgroundColor,
+                              color,
+                              borderColor,
+                            }}
+                          >
+                            {track.name}
+                          </TabsTrigger>
+                        );
+                      })}
                     </TabsList>
                   )}
                   {tracks.map((track) => (
                     <TabsContent
                       key={track.id}
                       value={track.id}
-                      className="flex-grow overflow-y-auto m-0 min-h-0"
+                      className="grow overflow-y-auto m-0 min-h-0"
                     >
                       <SubtitleList
                         ref={
@@ -494,7 +510,7 @@ function MainContent() {
           {/* Right panel - Media player */}
           <div
             className={cn(
-              "w-1/2 border-l-2 border-black transition-colors",
+              "w-1/2 border-l-2 border-black dark:border-white transition-colors",
               isMediaDragActive && "bg-blue-50",
             )}
             {...mediaDropHandlers}

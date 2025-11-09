@@ -7,7 +7,8 @@
     "github": "Open-source on GitHub with MIT License",
     "bulkOffset": "Bulk offset",
     "showBulkOffset": "Open bulk offset timestamp panel",
-    "hideBulkOffset": "Close bulk offset timestamp panel"
+    "hideBulkOffset": "Close bulk offset timestamp panel",
+    "toggleTheme": "Toggle light and dark mode"
   },
   "buttons": {
     "loadMedia": "Load Media",
@@ -42,13 +43,12 @@
     "supportedFormatsAudio": "Audio",
     "supportedFormatsVideo": "Video",
     "supportedFormatsStreams": "Streaming",
-    "supportedFormatsNote": "Playback depends on the codecs built into your browser.\nChrome, Edge, and Firefox handle Ogg/WebM/Opus audio (for example .oga, .opus, .weba) and Speex.\nSafari on macOS/iOS does not support those containers yet.",
+    "supportedFormatsNote": "Playback depends on the codecs built into your browser.\nChrome, Edge, and Firefox handle Ogg/WebM/Opus audio (.oga, .opus, .weba) and Speex.\nSafari on macOS/iOS does not support those containers yet.",
     "subtitles": "Subtitles"
   },
   "findReplace": {
     "title": "Find / Replace",
-    "dialogTitle": "Find and Replace",
-    "scopeNote": "Only searches within the current subtitle track.",
+    "dialogTitle": "Find and replace the current track: {track}",
     "find": "Find",
     "replaceWith": "Replace with",
     "caseSensitive": "Case sensitive",

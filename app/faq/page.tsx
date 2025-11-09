@@ -45,7 +45,7 @@ export default function FaqPage() {
                 name: "Have feedback?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Feel free to open an issue on GitHub. I want to keep this app as minimalistic as possible, so these features are non-goals and I don't plan to add them: Account registration, Cloud storage, Collaborative editing, AI transcription, Translation, Complex subtitle editing such as VTT files.",
+                  text: "Feel free to open an issue on GitHub. I want to keep this app as minimalistic as possible, so these features are non-goals and I don\u2019t plan to add them: Account registration, Cloud storage, Collaborative editing, AI transcription, Translation, Complex subtitle editing such as VTT files.",
                 },
               },
             ],
@@ -70,9 +70,9 @@ export default function FaqPage() {
           </Link>{" "}
           offers a free online subtitle editor. No account registration is
           required. Editing subtitles and previewing with the video is very
-          easy. It is the closest to what I need. Unfortunately, it's missing
+          easy. It is the closest to what I need. Unfortunately, it&apos;s missing
           waveform visualization, which is deal breaker for me. It is not open
-          sourced either and we can't customize it.
+          sourced either and we can&apos;t customize it.
         </li>
         <li>
           <Link
@@ -84,7 +84,7 @@ export default function FaqPage() {
           is a great option and has all features I need. It supports waveform
           visualization, easy preview and editing, and even AI transcriptions.
           But it is a desktop software which requires installation, and it
-          doesn't support Mac. I have to use a Windows or Linux device to edit
+          doesn&apos;t support Mac. I have to use a Windows or Linux device to edit
           subtitles.
         </li>
         <li>
@@ -161,7 +161,7 @@ export default function FaqPage() {
           open an issue on GitHub
         </Link>
         . I want to keep this app as minimalistic as possible, so these features
-        are non-goals and I don't plan to add them:
+        are non-goals and I don&apos;t plan to add them:
       </p>
       <ul className="list-disc mx-6 my-2">
         <li>Account registration</li>
@@ -189,8 +189,8 @@ export default function FaqPage() {
       </h2>
       <p>
         Yes I recommend generating the srt file with an AI transcriber first,
-        then editing it with this editor. That's why I listed "AI
-        transcriptions" as a non-goal above. It's much easier to just use a
+        then editing it with this editor. That&apos;s why I listed &quot;AI
+        transcriptions&quot; as a non-goal above. It&apos;s much easier to just use a
         specialized tool for that than building it into this editor. There are
         many free srt generators available on huggingface, such as:
       </p>
@@ -244,7 +244,7 @@ export default function FaqPage() {
         >
           yt-dlp
         </Link>
-        . It's free and the most reliable YouTube video downloader. It also
+        . It&apos;s free and the most reliable YouTube video downloader. It also
         supports downloading subtitles directly if they are available.
       </p>
       <Button asChild variant="secondary" className="my-8">
