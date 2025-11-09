@@ -44,8 +44,8 @@ export function BulkOffsetTable({
   return (
     <table className="min-w-full text-base">
       <thead className="sticky top-0 z-20 bg-background shadow-sm">
-        <tr className="border-b text-black">
-          <th className="h-10 px-4 text-center font-semibold text-muted-foreground flex items-center">
+        <tr className="border-b">
+          <th className="h-10 px-4 text-center font-semibold flex items-center">
             <Checkbox
               aria-label={t("bulkOffset.selectAll")}
               checked={headerCheckboxState}
@@ -58,22 +58,22 @@ export function BulkOffsetTable({
               onCheckedChange={onToggleAll}
             />
           </th>
-          <th className="h-10 px-2 text-left font-semibold text-muted-foreground">
+          <th className="h-10 px-2 text-left font-semibold">
             {t("bulkOffset.table.id")}
           </th>
-          <th className="h-10 px-2 text-center font-semibold text-muted-foreground">
+          <th className="h-10 px-2 text-center font-semibold">
             {t("bulkOffset.table.start")}
           </th>
-          <th className="h-10 px-2 text-center font-semibold text-muted-foreground">
+          <th className="h-10 px-2 text-center font-semibold">
             {t("bulkOffset.table.previewStart")}
           </th>
-          <th className="h-10 px-2 text-center font-semibold text-muted-foreground">
+          <th className="h-10 px-2 text-center font-semibold">
             {t("bulkOffset.table.end")}
           </th>
-          <th className="h-10 px-2 text-center font-semibold text-muted-foreground">
+          <th className="h-10 px-2 text-center font-semibold">
             {t("bulkOffset.table.previewEnd")}
           </th>
-          <th className="h-10 px-2 text-center font-semibold text-muted-foreground">
+          <th className="h-10 px-2 text-center font-semibold">
             {t("bulkOffset.table.text")}
           </th>
         </tr>
@@ -121,9 +121,7 @@ export function BulkOffsetTable({
                   }}
                 />
               </td>
-              <td className="px-2 py-1 text-left text-sm text-muted-foreground">
-                {subtitle.id}
-              </td>
+              <td className="px-2 py-1 text-left text-sm">{subtitle.id}</td>
               <td className="px-2 py-1 align-middle font-mono text-center">
                 {subtitle.startTime}
               </td>
@@ -142,7 +140,7 @@ export function BulkOffsetTable({
               >
                 {preview.previewEnd}
               </td>
-              <td className="px-4 py-1 align-middle text-muted-foreground">
+              <td className="px-4 py-1 align-middle">
                 {subtitle.text || (
                   <span className="italic">{t("bulkOffset.table.empty")}</span>
                 )}

@@ -13,10 +13,10 @@ import {
 } from "@/lib/find-replace-helpers";
 import type { Subtitle } from "@/types/subtitle";
 import type { CheckedState } from "@radix-ui/react-checkbox";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 const STICKY_HEAD_CLASS =
-  "sticky top-0 z-20 bg-gray-200 dark:bg-gray-800 text-black dark:text-white";
+  "sticky top-0 z-20 border-b border-black dark:border-white font-semibold text-sm uppercase tracking-wide";
 
 type MatchHighlightProps = {
   text: string;
@@ -125,6 +125,8 @@ export type FindReplaceTableProps = {
   labels: FindReplaceTableLabels;
   onToggleRow: (id: number, checked: boolean) => void;
   onToggleAll: (checked: boolean) => void;
+  headerColor?: string;
+  headerTextColor?: string;
 };
 
 const isChecked = (state: CheckedState) => state !== false;
@@ -139,10 +141,16 @@ export function FindReplaceTable({
   labels,
   onToggleRow,
   onToggleAll,
+  headerColor = "rgba(243, 244, 246, 0.5)",
+  headerTextColor = "#111827",
 }: FindReplaceTableProps) {
   const allSelected =
     matchedSubtitles.length > 0 &&
     matchedSubtitles.every((subtitle) => selectedIds.has(subtitle.id));
+  const stickyStyle: CSSProperties = {
+    backgroundColor: headerColor,
+    color: headerTextColor,
+  };
 
   return (
     <Table
@@ -151,17 +159,27 @@ export function FindReplaceTable({
     >
       <TableHeader>
         <TableRow className="border-black">
-          <TableHead className={`${STICKY_HEAD_CLASS} w-8 text-center`}>
+          <TableHead
+            className={`${STICKY_HEAD_CLASS} w-8 text-center`}
+            style={stickyStyle}
+          >
             <Checkbox
               checked={allSelected}
               onCheckedChange={(state) => onToggleAll(isChecked(state))}
             />
           </TableHead>
-          <TableHead className={`${STICKY_HEAD_CLASS} w-fit`}>
+          <TableHead
+            className={`${STICKY_HEAD_CLASS} w-fit`}
+            style={stickyStyle}
+          >
             {labels.id}
           </TableHead>
-          <TableHead className={STICKY_HEAD_CLASS}>{labels.original}</TableHead>
-          <TableHead className={STICKY_HEAD_CLASS}>{labels.preview}</TableHead>
+          <TableHead className={STICKY_HEAD_CLASS} style={stickyStyle}>
+            {labels.original}
+          </TableHead>
+          <TableHead className={STICKY_HEAD_CLASS} style={stickyStyle}>
+            {labels.preview}
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

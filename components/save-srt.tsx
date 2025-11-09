@@ -89,7 +89,7 @@ export default function SaveSrt() {
             <div key={track.id} className="flex items-center justify-between">
               <div className="flex flex-col">
                 <span className="font-medium">{track.name}</span>
-                <span className="text-xs text-neutral-600">
+                <span className="text-sm text-neutral-600 dark:text-neutral-300">
                   {t("subtitle.subtitleCount", {
                     count: track.subtitles.length,
                   })}

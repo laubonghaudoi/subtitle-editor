@@ -26,6 +26,11 @@ import type { CheckedState } from "@radix-ui/react-checkbox";
 import { IconReplace, IconSearch } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
+import {
+  getReadableTextColor,
+  getTrackHandleColor,
+  hexToRgba,
+} from "@/lib/track-colors";
 
 const coerceCheckedState = (checked: CheckedState) =>
   checked === "indeterminate" ? true : Boolean(checked);
@@ -180,6 +185,15 @@ export default function FindReplace() {
     activeTrack?.name ??
     tracks[0]?.name ??
     t("subtitle.newTrackName", { number: 1 });
+  const activeTrackIndex = activeTrack
+    ? tracks.findIndex((track) => track.id === activeTrack.id)
+    : tracks.length > 0
+      ? 0
+      : -1;
+  const resolvedTrackIndex = activeTrackIndex >= 0 ? activeTrackIndex : 0;
+  const trackHandleColor = getTrackHandleColor(resolvedTrackIndex);
+  const headerColor = hexToRgba(trackHandleColor, 0.9);
+  const headerTextColor = getReadableTextColor(trackHandleColor);
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -273,6 +287,8 @@ export default function FindReplace() {
                 clearSelection();
               }
             }}
+            headerColor={headerColor}
+            headerTextColor={headerTextColor}
           />
         </div>
         <DialogFooter />
