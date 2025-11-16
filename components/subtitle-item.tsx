@@ -3,7 +3,10 @@ import { motion } from "motion/react";
 import { memo, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useSubtitleActionsContext } from "@/context/subtitle-context"; // Import context
+import {
+  useSubtitleActionsContext,
+  useSubtitleTimings,
+} from "@/context/subtitle-context"; // Import context
 import { useToast } from "@/hooks/use-toast";
 import { isValidTime, timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
@@ -58,6 +61,27 @@ const SubtitleItem = memo(function SubtitleItem({
     deleteSubtitleAction,
     splitSubtitleAction,
   } = useSubtitleActionsContext();
+  const { byUuid: subtitleTimingMap } = useSubtitleTimings();
+
+  const resolveStartSeconds = (candidate: Subtitle | null) => {
+    if (!candidate) {
+      return null;
+    }
+    const entry = subtitleTimingMap.get(candidate.uuid);
+    return entry ? entry.start : timeToSeconds(candidate.startTime);
+  };
+
+  const resolveEndSeconds = (candidate: Subtitle | null) => {
+    if (!candidate) {
+      return null;
+    }
+    const entry = subtitleTimingMap.get(candidate.uuid);
+    return entry ? entry.end : timeToSeconds(candidate.endTime);
+  };
+
+  const startSeconds = resolveStartSeconds(subtitle) ?? 0;
+  const endSeconds = resolveEndSeconds(subtitle) ?? startSeconds;
+  const nextStartSeconds = resolveStartSeconds(nextSubtitle);
 
   const [editingStartTimeId, setEditingStartTimeId] = useState<number | null>(
     null,
@@ -108,7 +132,7 @@ const SubtitleItem = memo(function SubtitleItem({
     const newTimeInSeconds = timeToSeconds(newTime);
 
     if (isStartTime) {
-      if (newTimeInSeconds > timeToSeconds(subtitle.endTime)) {
+      if (newTimeInSeconds > endSeconds) {
         toast({
           title: t("validation.invalidStartTitle"),
           description: t("validation.invalidStartDescription"),
@@ -118,7 +142,7 @@ const SubtitleItem = memo(function SubtitleItem({
         return;
       }
     } else {
-      if (newTimeInSeconds < timeToSeconds(subtitle.startTime)) {
+      if (newTimeInSeconds < startSeconds) {
         toast({
           title: t("validation.invalidEndTitle"),
           description: t("validation.invalidEndDescription"),
@@ -136,10 +160,8 @@ const SubtitleItem = memo(function SubtitleItem({
   // Calculate if the add button should be disabled
   let isAddDisabled = false;
   let addTooltipContent = t("tooltips.add");
-  if (!isLastItem && nextSubtitle) {
-    const currentEndTimeSec = timeToSeconds(subtitle.endTime);
-    const nextStartTimeSec = timeToSeconds(nextSubtitle.startTime);
-    const timeDiff = nextStartTimeSec - currentEndTimeSec;
+  if (!isLastItem && nextSubtitle && nextStartSeconds !== null) {
+    const timeDiff = nextStartSeconds - endSeconds;
     isAddDisabled = timeDiff <= 0.001;
     if (isAddDisabled) {
       addTooltipContent = t("tooltips.noRoom");
@@ -165,19 +187,18 @@ const SubtitleItem = memo(function SubtitleItem({
             if (isPlaying) {
               return;
             }
-            setPlaybackTime(timeToSeconds(subtitle.startTime));
+            setPlaybackTime(startSeconds);
           }}
           onKeyDown={(e) => {
             if (e.key === "Tab") {
               e.preventDefault();
-              setPlaybackTime(timeToSeconds(subtitle.startTime));
+              setPlaybackTime(startSeconds);
               setIsPlaying(true);
               resumePlayback();
             }
           }}
           className={`px-4 py-2 border-b border-gray-800 dark:border-white hover:bg-amber-50 hover:dark:bg-amber-900 cursor-pointer grid grid-cols-[1rem_7rem_1fr] gap-4 items-center ${
-            timeToSeconds(subtitle.startTime) <= currentTime &&
-            timeToSeconds(subtitle.endTime) > currentTime
+            startSeconds <= currentTime && endSeconds > currentTime
               ? "bg-cyan-50 dark:bg-cyan-900"
               : ""
           }`}
@@ -338,9 +359,8 @@ const SubtitleItem = memo(function SubtitleItem({
 
                       requestAnimationFrame(() => {
                         if (targetSubtitle) {
-                          const targetStartTime = timeToSeconds(
-                            targetSubtitle.startTime,
-                          );
+                          const targetStartTime =
+                            resolveStartSeconds(targetSubtitle) ?? startSeconds;
                           onPrepareSubtitleInteraction(targetSubtitle.uuid);
                           setPlaybackTime(targetStartTime);
                           if (wasPlaying) {

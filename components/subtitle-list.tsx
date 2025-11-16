@@ -4,7 +4,6 @@ import {
   useRef,
   forwardRef,
   useImperativeHandle,
-  useMemo,
   useCallback,
   type Dispatch,
   type SetStateAction,
@@ -13,10 +12,10 @@ import {
   useSubtitleActionsContext,
   useSubtitleState,
   useSubtitles,
+  useSubtitleTimings,
 } from "@/context/subtitle-context"; // Import context
 import { parseSRT, parseVTT } from "@/lib/subtitle-operations";
 import { findActiveSubtitleIndex } from "@/lib/subtitle-lookup";
-import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import SubtitleItem from "./subtitle-item";
 import { Label } from "@/components/ui/label";
@@ -76,15 +75,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
     } = useSubtitleActionsContext();
     const { activeTrackId } = useSubtitleState();
 
-    const subtitleTimings = useMemo(
-      () =>
-        subtitles.map((subtitle) => ({
-          uuid: subtitle.uuid,
-          start: timeToSeconds(subtitle.startTime),
-          end: timeToSeconds(subtitle.endTime),
-        })),
-      [subtitles],
-    );
+    const { list: subtitleTimings } = useSubtitleTimings();
     const activeSubtitleIndexRef = useRef<number>(-1);
 
     useEffect(() => {
@@ -319,16 +310,14 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
         // This should work even when editing
         if (event.shiftKey && event.key === "Backspace") {
           // Find the index of the currently active subtitle (same logic as arrows)
-          let currentIndex = subtitles.findIndex(
-            (sub) =>
-              timeToSeconds(sub.startTime) <= currentTime &&
-              timeToSeconds(sub.endTime) > currentTime,
+          let currentIndex = subtitleTimings.findIndex(
+            (timing) => timing.start <= currentTime && timing.end > currentTime,
           );
 
           // If no subtitle is active, find the closest one before the current time
           if (currentIndex === -1) {
-            currentIndex = subtitles.findLastIndex(
-              (sub) => timeToSeconds(sub.startTime) <= currentTime,
+            currentIndex = subtitleTimings.findLastIndex(
+              (timing) => timing.start <= currentTime,
             );
           }
 
@@ -358,16 +347,14 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
           event.preventDefault(); // Prevent default page scroll
 
           // Find the index of the currently active subtitle
-          let currentIndex = subtitles.findIndex(
-            (sub) =>
-              timeToSeconds(sub.startTime) <= currentTime &&
-              timeToSeconds(sub.endTime) > currentTime, // Use the corrected logic
+          let currentIndex = subtitleTimings.findIndex(
+            (timing) => timing.start <= currentTime && timing.end > currentTime, // Use the corrected logic
           );
 
           // If no subtitle is active, find the closest one before the current time
           if (currentIndex === -1) {
-            currentIndex = subtitles.findLastIndex(
-              (sub) => timeToSeconds(sub.startTime) <= currentTime,
+            currentIndex = subtitleTimings.findLastIndex(
+              (timing) => timing.start <= currentTime,
             );
             // If still not found (e.g., time is before the first subtitle), default to 0
             if (currentIndex === -1) {
@@ -384,7 +371,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
 
           if (subtitles[targetIndex]) {
             manualScrollRequestUuidRef.current = subtitles[targetIndex].uuid;
-            const targetTime = timeToSeconds(subtitles[targetIndex].startTime);
+            const targetTime = subtitleTimings[targetIndex]?.start ?? 0;
             setPlaybackTime(targetTime);
             // Optionally pause playback when navigating?
             // setIsPlaying(false);
@@ -400,6 +387,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       // Effect depends on the values used inside handleKeyDown
     }, [
       subtitles,
+      subtitleTimings,
       currentTime,
       setPlaybackTime,
       mergeSubtitlesAction,

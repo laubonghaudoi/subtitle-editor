@@ -11,6 +11,7 @@ import {
   subtitlesAreEqual,
   EMPTY_HISTORY,
 } from "@/lib/subtitle-history";
+import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
 import React, {
   createContext,
@@ -48,6 +49,17 @@ type SubtitleContextType = SubtitleStateValue &
     subtitles: Subtitle[];
   };
 
+interface SubtitleTimingEntry {
+  uuid: string;
+  start: number;
+  end: number;
+}
+
+interface SubtitleTimingState {
+  list: SubtitleTimingEntry[];
+  byUuid: Map<string, SubtitleTimingEntry>;
+}
+
 const SubtitleStateContext = createContext<SubtitleStateValue | undefined>(
   undefined,
 );
@@ -58,6 +70,9 @@ const SubtitleHistoryContext = createContext<SubtitleHistoryValue | undefined>(
   undefined,
 );
 const SubtitleDataContext = createContext<Subtitle[] | undefined>(undefined);
+const SubtitleTimingContext = createContext<SubtitleTimingState | undefined>(
+  undefined,
+);
 
 interface SubtitleProviderProps {
   children: ReactNode;
@@ -215,13 +230,25 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     [undoSubtitles, redoSubtitles, canUndoSubtitles, canRedoSubtitles],
   );
 
+  const timingState = useMemo<SubtitleTimingState>(() => {
+    const list = activeSubtitles.map((subtitle) => ({
+      uuid: subtitle.uuid,
+      start: timeToSeconds(subtitle.startTime),
+      end: timeToSeconds(subtitle.endTime),
+    }));
+    const byUuid = new Map(list.map((entry) => [entry.uuid, entry]));
+    return { list, byUuid };
+  }, [activeSubtitles]);
+
   return (
     <SubtitleActionsContext.Provider value={subtitleActions}>
       <SubtitleHistoryContext.Provider value={historyValue}>
         <SubtitleStateContext.Provider value={stateValue}>
-          <SubtitleDataContext.Provider value={activeSubtitles}>
-            {children}
-          </SubtitleDataContext.Provider>
+          <SubtitleTimingContext.Provider value={timingState}>
+            <SubtitleDataContext.Provider value={activeSubtitles}>
+              {children}
+            </SubtitleDataContext.Provider>
+          </SubtitleTimingContext.Provider>
         </SubtitleStateContext.Provider>
       </SubtitleHistoryContext.Provider>
     </SubtitleActionsContext.Provider>
@@ -253,6 +280,11 @@ export const useSubtitleHistory = (): SubtitleHistoryValue => {
 export const useSubtitles = (): Subtitle[] => {
   const ctx = useContext(SubtitleDataContext);
   return ensureContext(ctx, "useSubtitles");
+};
+
+export const useSubtitleTimings = (): SubtitleTimingState => {
+  const ctx = useContext(SubtitleTimingContext);
+  return ensureContext(ctx, "useSubtitleTimings");
 };
 
 export const useSubtitleContext = (): SubtitleContextType => {
