@@ -1,7 +1,7 @@
 "use client";
 
 import { useSubtitles } from "@/context/subtitle-context"; // Import context
-import { srtToVtt, subtitlesToSrtString } from "@/lib/utils";
+import { subtitlesToVttString } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import {
   type ForwardedRef,
@@ -141,8 +141,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
       return;
     }
 
-    const srtString = subtitlesToSrtString(subtitles);
-    const vttString = srtToVtt(srtString);
+    const vttString = subtitlesToVttString(subtitles);
     const blob = new Blob([vttString], { type: "text/vtt" });
     const objectUrl = URL.createObjectURL(blob);
 

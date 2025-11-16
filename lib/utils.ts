@@ -37,18 +37,21 @@ export const subtitlesToSrtString = (subtitles: Subtitle[]): string => {
     .join("\n");
 };
 
-export const srtToVtt = (
-  srtString: string,
+export const subtitlesToVttString = (
+  subtitles: Subtitle[],
   header: string = "WEBVTT",
 ): string => {
-  // Normalize line endings, convert commas to dots in timestamps, and
-  // preserve blank lines between cues (do NOT collapse them).
-  const normalized = srtString.replace(/\r\n?/g, "\n");
-  const converted = normalized.replace(/(\d\d:\d\d:\d\d),(\d\d\d)/g, "$1.$2");
-  // Ensure final newline at EOF
-  const body = converted.endsWith("\n") ? converted : converted + "\n";
   const safeHeader = header.trim().length > 0 ? header.trim() : "WEBVTT";
-  return `${safeHeader}\n\n${body}`;
+  const body = subtitles
+    .map((sub, idx) => {
+      const index = Number.isFinite(sub.id) ? sub.id : 0;
+      const cueId = index > 0 ? index : idx + 1;
+      const start = sub.startTime.replace(",", ".");
+      const end = sub.endTime.replace(",", ".");
+      return `${cueId}\n${start} --> ${end}\n${sub.text}\n`;
+    })
+    .join("\n");
+  return `${safeHeader}\n\n${body.endsWith("\n") ? body : `${body}\n`}`;
 };
 
 // Function to validate time format

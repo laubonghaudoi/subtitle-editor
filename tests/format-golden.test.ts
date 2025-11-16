@@ -7,7 +7,7 @@ import {
   buildVttContent,
 } from "../lib/format";
 import { parseVTT } from "../lib/subtitle-operations";
-import { srtToVtt } from "../lib/utils";
+import { subtitlesToVttString } from "../lib/utils";
 import type { Subtitle } from "../types/subtitle";
 
 const goldenSubtitles: Subtitle[] = [
@@ -84,8 +84,8 @@ test("buildVttContent preserves header and prologue blocks", () => {
   assert.equal(rebuilt, expectedSrt);
 });
 
-test("srtToVtt round-trips back to the original cues", () => {
-  const vtt = srtToVtt(expectedSrt, "WEBVTT");
+test("subtitlesToVttString round-trips back to the original cues", () => {
+  const vtt = subtitlesToVttString(goldenSubtitles);
   const reparsed = parseVTT(vtt);
   const roundTripped = buildSrtContent(reparsed);
   assert.equal(roundTripped, expectedSrt);

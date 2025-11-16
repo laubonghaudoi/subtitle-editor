@@ -1,4 +1,4 @@
-import { srtToVtt } from "@/lib/utils";
+import { subtitlesToVttString } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 
 const flattenSubtitleText = (subtitle: Subtitle): string => {
@@ -49,9 +49,8 @@ export const buildVttContent = (
   subtitles: Subtitle[],
   opts?: { header?: string; prologue?: string[] },
 ): string => {
-  const srt = buildSrtContent(subtitles);
-  const header = (opts?.header || "WEBVTT").trim();
-  const base = srtToVtt(srt, header);
+  const header = opts?.header ?? "WEBVTT";
+  const base = subtitlesToVttString(subtitles, header);
   if (!opts?.prologue || opts.prologue.length === 0) return base;
   const blocks = opts.prologue.join("\n\n");
   // Insert prologue blocks (NOTE/STYLE/REGION) after header and before cues
