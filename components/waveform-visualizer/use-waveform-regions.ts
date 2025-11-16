@@ -1,30 +1,18 @@
 import type { BulkOffsetPreviewState } from "@/components/bulk-offset/drawer";
-import {
-  createContrastColor,
-  getTrackColor,
-  getTrackHandleColor,
-  hexToRgba,
-} from "@/lib/track-colors";
+import { getTrackColor, getTrackHandleColor } from "@/lib/track-colors";
 import { secondsToTime, timeToSeconds } from "@/lib/utils";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type RefObject,
-} from "react";
+import { useCallback, useEffect, useRef, type RefObject } from "react";
 import type WaveSurfer from "wavesurfer.js";
 import RegionsPlugin, {
   type Region,
 } from "wavesurfer.js/dist/plugins/regions.esm.js";
+import {
+  useLabelMeasurements,
+  type RegionMapEntry,
+} from "./use-label-measurements";
+import { usePreviewRegions } from "./use-preview-regions";
 import { applyRegionHandleStyles, createSubtitleRegionContent } from "./utils";
-
-type RegionMapEntry = {
-  region: Region;
-  trackId: string;
-  trackIndex: number;
-};
 
 interface UseWaveformRegionsParams {
   wavesurfer: WaveSurfer | null;
@@ -60,145 +48,25 @@ export const useWaveformRegions = ({
   theme,
 }: UseWaveformRegionsParams) => {
   const subtitleToRegionMap = useRef<Map<string, RegionMapEntry>>(new Map());
-  const previewRegionMap = useRef<Map<string, Region>>(new Map());
-  const previewOffsetsRef = useRef<Record<string, BulkOffsetPreviewState>>({});
   // Track drag state to avoid repeated scroll triggers mid-drag
   // Dragging regions should not trigger auto scroll/tab switching
   const lastDraggedSubtitleId = useRef<string | null>(null);
   const prevTrackCountRef = useRef<number>(tracks.length);
+  const prevTracksRef = useRef<SubtitleTrack[]>(tracks);
 
-  const [labelsOffsetTop, setLabelsOffsetTop] = useState(0);
-  const [labelsAreaHeight, setLabelsAreaHeight] = useState(0);
+  const { labelsOffsetTop, labelsAreaHeight, measureLabelsOverlay } =
+    useLabelMeasurements(containerRef, tracks, subtitleToRegionMap);
+  const {
+    previewOffsetsRef,
+    updatePreviewRegions,
+    clearPreviewRegions,
+  } = usePreviewRegions(wavesurfer, subtitleToRegionMap, theme);
 
-  const measureLabelsOverlay = useCallback(() => {
-    const container = containerRef.current;
-    if (!container) {
-      setLabelsOffsetTop(0);
-      setLabelsAreaHeight(0);
-      return;
-    }
-    const containerRect = container.getBoundingClientRect();
-
-    let laneHeight = 0;
-    let topOfFirstLanePx: number | null = null;
-
-    subtitleToRegionMap.current.forEach(({ region, trackId }) => {
-      if (!region.element) return;
-      const el = region.element as HTMLElement;
-      const rect = el.getBoundingClientRect();
-      if (rect.height > 0) {
-        laneHeight = rect.height;
-        const idx = tracks.findIndex((t) => t.id === trackId);
-        const laneTopForThis = rect.top - containerRect.top;
-        const top0 = laneTopForThis - idx * laneHeight;
-        topOfFirstLanePx =
-          topOfFirstLanePx === null ? top0 : Math.min(topOfFirstLanePx, top0);
-      }
-    });
-
-    if (!laneHeight || topOfFirstLanePx === null) {
-      setLabelsOffsetTop(0);
-      setLabelsAreaHeight(0);
-      return;
-    }
-
-    setLabelsOffsetTop(Math.max(0, topOfFirstLanePx));
-    setLabelsAreaHeight(Math.max(0, laneHeight * Math.max(1, tracks.length)));
-  }, [containerRef, tracks]);
-
-  const updatePreviewRegions = useCallback(
-    (previewMap: Record<string, BulkOffsetPreviewState>) => {
-      if (!wavesurfer) return;
-      let duration = 0;
-      try {
-        duration = wavesurfer.getDuration();
-      } catch {
-        duration = 0;
-      }
-      if (!duration) return;
-
-      const regionsPlugin = wavesurfer
-        .getActivePlugins()
-        .find((plugin) => plugin instanceof RegionsPlugin) as
-        | RegionsPlugin
-        | undefined;
-      if (!regionsPlugin) return;
-
-      previewRegionMap.current.forEach((overlay, uuid) => {
-        const entry = previewMap[uuid];
-        if (!entry || (!entry.startChanged && !entry.endChanged)) {
-          overlay.remove();
-          previewRegionMap.current.delete(uuid);
-        }
-      });
-
-      Object.entries(previewMap).forEach(([uuid, data]) => {
-        const hasDiff = data.startChanged || data.endChanged;
-        const baseRegionEntry = subtitleToRegionMap.current.get(uuid);
-        if (!hasDiff || !baseRegionEntry) {
-          const existing = previewRegionMap.current.get(uuid);
-          if (existing) {
-            existing.remove();
-            previewRegionMap.current.delete(uuid);
-          }
-          return;
-        }
-        const { region: baseRegion, trackIndex } = baseRegionEntry;
-        const handleColor = getTrackHandleColor(trackIndex);
-        const contrast = createContrastColor(handleColor);
-        const overlayFill = hexToRgba(contrast, 0.18);
-        const overlayBorder = hexToRgba(contrast, 0.82);
-
-        let overlay = previewRegionMap.current.get(uuid);
-        if (!overlay) {
-          overlay = regionsPlugin.addRegion({
-            id: `preview-${uuid}`,
-            start: data.startSeconds,
-            end: data.endSeconds,
-            drag: false,
-            resize: false,
-            color: overlayFill,
-          });
-          previewRegionMap.current.set(uuid, overlay);
-        } else {
-          overlay.setOptions({
-            start: data.startSeconds,
-            end: data.endSeconds,
-            color: overlayFill,
-          });
-        }
-
-        const element = overlay.element;
-        if (element) {
-          element.style.pointerEvents = "none";
-          element.style.zIndex = "5";
-          element.style.border = `2px dashed ${overlayBorder}`;
-          element.style.backgroundColor = overlayFill;
-          element.style.mixBlendMode = "screen";
-          element.setAttribute("data-preview-region", "true");
-
-          const baseElement = baseRegion.element;
-          if (baseElement) {
-            element.style.top = baseElement.style.top;
-            element.style.height = baseElement.style.height;
-            element.style.position = "absolute";
-          }
-
-          const leftHandle = element.querySelector(
-            'div[part="region-handle region-handle-left"]',
-          ) as HTMLDivElement | null;
-          const rightHandle = element.querySelector(
-            'div[part="region-handle region-handle-right"]',
-          ) as HTMLDivElement | null;
-          if (leftHandle) leftHandle.style.display = "none";
-          if (rightHandle) rightHandle.style.display = "none";
-        }
-      });
-    },
-    [wavesurfer],
-  );
-
-  const initRegions = useCallback(() => {
+  /**
+   * Recreates all regions from scratch. Used when structural changes happen
+   * (track added/removed or subtitle order changed).
+   */
+  const regenerateRegions = useCallback(() => {
     if (!wavesurfer || wavesurfer.getDuration() === 0) return;
 
     const regionsPlugin = wavesurfer
@@ -213,10 +81,7 @@ export const useWaveformRegions = ({
     });
     regionsPlugin.clearRegions();
     subtitleToRegionMap.current.clear();
-    previewRegionMap.current.forEach((overlay) => {
-      overlay.remove();
-    });
-    previewRegionMap.current.clear();
+    clearPreviewRegions();
 
     tracks.forEach((track, trackIndex) => {
       track.subtitles.forEach((subtitle) => {
@@ -267,20 +132,80 @@ export const useWaveformRegions = ({
   }, [tracks, wavesurfer, measureLabelsOverlay, updatePreviewRegions, theme]);
 
   useEffect(() => {
+    // When tracks/subtitles change, decide if we can update in place
+    // or if a full regeneration is required.
     if (!wavesurfer) return;
-    const currentCount = tracks.length;
-    if (prevTrackCountRef.current !== currentCount) {
-      initRegions();
-      prevTrackCountRef.current = currentCount;
+
+    const prevTracks = prevTracksRef.current;
+    const regionsPlugin = wavesurfer
+      .getActivePlugins()
+      .find((plugin) => plugin instanceof RegionsPlugin) as
+      | RegionsPlugin
+      | undefined;
+    if (!regionsPlugin) return;
+
+    let shouldRecreate = false;
+    if (prevTracks.length !== tracks.length) {
+      shouldRecreate = true;
     }
-  }, [tracks.length, wavesurfer, initRegions, tracks]);
+    if (!shouldRecreate) {
+      for (let i = 0; i < tracks.length; i += 1) {
+        const prevTrack = prevTracks[i];
+        const nextTrack = tracks[i];
+        if (!prevTrack || prevTrack.id !== nextTrack.id) {
+          shouldRecreate = true;
+          break;
+        }
+        if (prevTrack.subtitles.length !== nextTrack.subtitles.length) {
+          shouldRecreate = true;
+          break;
+        }
+        for (let j = 0; j < nextTrack.subtitles.length; j += 1) {
+          if (prevTrack.subtitles[j]?.uuid !== nextTrack.subtitles[j]?.uuid) {
+            shouldRecreate = true;
+            break;
+          }
+        }
+        if (shouldRecreate) break;
+      }
+    }
+
+    if (shouldRecreate) {
+      regenerateRegions();
+      prevTrackCountRef.current = tracks.length;
+      prevTracksRef.current = tracks;
+      return;
+    }
+
+    tracks.forEach((track, trackIndex) => {
+      track.subtitles.forEach((subtitle) => {
+        const entry = subtitleToRegionMap.current.get(subtitle.uuid);
+        if (!entry) return;
+        const nextStart = timeToSeconds(subtitle.startTime);
+        const nextEnd = timeToSeconds(subtitle.endTime);
+        entry.region.setOptions({ start: nextStart, end: nextEnd });
+        entry.region.setOptions({
+          content: createSubtitleRegionContent(
+            subtitle.startTime,
+            subtitle.text,
+            subtitle.endTime,
+            { theme },
+          ),
+        });
+        applyRegionHandleStyles(entry.region, getTrackHandleColor(trackIndex));
+      });
+    });
+
+    requestAnimationFrame(measureLabelsOverlay);
+    prevTracksRef.current = tracks;
+  }, [tracks, wavesurfer, regenerateRegions, measureLabelsOverlay, theme]);
 
   useEffect(() => {
     if (!wavesurfer) return;
 
     const handleReady = () => {
       setIsLoading(false);
-      initRegions();
+      regenerateRegions();
       wavesurfer.setMuted(true);
       requestAnimationFrame(measureLabelsOverlay);
     };
@@ -487,7 +412,7 @@ export const useWaveformRegions = ({
     onPlayPause,
     updateSubtitleTimeByUuidAction,
     measureLabelsOverlay,
-    initRegions,
+    regenerateRegions,
     tracks,
     activeTrackId,
     setActiveTrackId,
@@ -502,10 +427,9 @@ export const useWaveformRegions = ({
 
   useEffect(() => {
     return () => {
-      previewRegionMap.current.forEach((region) => region.remove());
-      previewRegionMap.current.clear();
+      clearPreviewRegions();
     };
-  }, []);
+  }, [clearPreviewRegions]);
 
   // Re-measure on window resize
   useEffect(() => {
