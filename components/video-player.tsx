@@ -1,5 +1,8 @@
 "use client";
 
+import { useSubtitles } from "@/context/subtitle-context"; // Import context
+import { srtToVtt, subtitlesToSrtString } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import {
   type ForwardedRef,
   type SyntheticEvent,
@@ -10,12 +13,8 @@ import {
   useRef,
   useState,
 } from "react";
-import ReactPlayer from "react-player";
-import { useSubtitles } from "@/context/subtitle-context"; // Import context
-import { srtToVtt, subtitlesToSrtString } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { useTranslations } from "next-intl";
 
 export interface VideoPlayerProps {
   mediaFile: File | null;
@@ -53,15 +52,13 @@ const VideoPlayer = forwardRef(function VideoPlayer(
 
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [vttUrl, setVttUrl] = useState<string | null>(null);
-  const playerRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
+  const playerRef = useRef<HTMLVideoElement | null>(null);
   const vttObjectUrlRef = useRef<string | null>(null);
-  const setPlayerRef = useCallback((element: HTMLVideoElement | null) => {
-    playerRef.current = element;
-  }, []);
   const timeToRestore = useRef<number | null>(null); // Ref to store time before remount
 
-  const lastPlayStateChange = useRef<number>(0);
-  const DEBOUNCE_TIME = 200; // 200ms debounce
+  const setVideoRef = useCallback((element: HTMLVideoElement | null) => {
+    playerRef.current = element;
+  }, []);
 
   const resumePlayback = useCallback(() => {
     const playerInstance = playerRef.current;
@@ -105,14 +102,24 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     }
   }, [seekTime]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Handle play/pause with debounce
   useEffect(() => {
-    const now = Date.now();
-    if (now - lastPlayStateChange.current < DEBOUNCE_TIME) {
-      return; // Ignore rapid changes
+    const node = playerRef.current;
+    if (!node) return;
+    if (isPlaying) {
+      const playPromise = node.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {});
+      }
+    } else {
+      node.pause();
     }
-    lastPlayStateChange.current = now;
   }, [isPlaying]);
+
+  useEffect(() => {
+    if (playerRef.current) {
+      playerRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate]);
 
   useEffect(() => {
     if (!mediaFile) {
@@ -159,14 +166,17 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   }, [subtitles, mediaUrl]);
 
   const handleLoadedMetadata = useCallback(
-    (event: SyntheticEvent<HTMLMediaElement>) => {
+    (event: SyntheticEvent<HTMLVideoElement>) => {
       playerRef.current = event.currentTarget;
       if (timeToRestore.current !== null) {
         event.currentTarget.currentTime = timeToRestore.current;
         timeToRestore.current = null;
       }
+      if (Number.isFinite(event.currentTarget.duration)) {
+        onDuration(event.currentTarget.duration);
+      }
     },
-    [],
+    [onDuration],
   );
 
   if (!mediaUrl) {
@@ -220,13 +230,14 @@ const VideoPlayer = forwardRef(function VideoPlayer(
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-black overflow-hidden">
-      <ReactPlayer
-        key={vttUrl ?? "no-subs"} // Remount when subtitle URL changes
-        ref={setPlayerRef}
+      <video
+        key={mediaUrl}
+        ref={setVideoRef}
         src={mediaUrl}
-        width="100%"
-        height="100%"
+        className="w-full h-full object-contain"
         playsInline
+        preload="metadata"
+        controls={false}
         controlsList="nodownload"
         onTimeUpdate={(event) => {
           const player = event.currentTarget;
@@ -235,19 +246,17 @@ const VideoPlayer = forwardRef(function VideoPlayer(
           }
         }}
         onSeeked={(event) => {
-          // sometimes player.seeking is still true when onProgress is called, so this makes sure we update the waveform visualizer when seeking is done
           onProgress(event.currentTarget.currentTime);
         }}
         onPlay={() => onPlayPause(true)}
         onPause={() => onPlayPause(false)}
-        onDurationChange={(event) => onDuration(event.currentTarget.duration)}
         onLoadedMetadata={handleLoadedMetadata}
         onLoadedData={handleLoadedMetadata}
-        playing={isPlaying}
-        playbackRate={playbackRate}
+        onDurationChange={(event) => onDuration(event.currentTarget.duration)}
       >
         {vttUrl ? (
           <track
+            key={vttUrl}
             kind="subtitles"
             src={vttUrl}
             label={t("videoPlayer.subtitles")}
@@ -255,7 +264,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
             default
           />
         ) : null}
-      </ReactPlayer>
+      </video>
     </div>
   );
 });
