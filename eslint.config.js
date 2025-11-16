@@ -20,12 +20,6 @@ module.exports = [
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
-    files: ["**/*.{js,jsx,ts,tsx}"],
-    rules: {
-      "react-hooks/exhaustive-deps": "off",
-    },
-  },
-  {
     files: ["tests/**/*.test.ts"],
     languageOptions: {
       globals: { ...globals.node },

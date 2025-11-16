@@ -18,7 +18,6 @@ import type { RegionMapEntry } from "./use-label-measurements";
 export function usePreviewRegions(
   wavesurfer: WaveSurfer | null,
   subtitleToRegionMap: React.MutableRefObject<Map<string, RegionMapEntry>>,
-  theme: "light" | "dark",
 ) {
   const previewRegionMap = useRef<Map<string, Region>>(new Map());
   const previewOffsetsRef = useRef<Record<string, BulkOffsetPreviewState>>({});
@@ -112,7 +111,7 @@ export function usePreviewRegions(
         }
       });
     },
-    [subtitleToRegionMap, theme, wavesurfer],
+    [subtitleToRegionMap, wavesurfer],
   );
 
   const clearPreviewRegions = useCallback(() => {

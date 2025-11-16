@@ -491,7 +491,7 @@ const SubtitleItem = memo(function SubtitleItem({
                 onClick={() =>
                   mergeSubtitlesAction(subtitle.id, nextSubtitle.id)
                 }
-                className="px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-700 dark:bg-yellow-700 dark:hover:bg-yellow-700 dark:text-yellow-200 rounded cursor-pointer"
+                className="px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-700 dark:bg-yellow-700 dark:hover:bg-yellow-600 dark:text-yellow-200 rounded cursor-pointer"
                 aria-label={t("tooltips.merge")}
               >
                 <IconFold size={16} />

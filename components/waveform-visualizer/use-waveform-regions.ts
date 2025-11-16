@@ -60,7 +60,7 @@ export const useWaveformRegions = ({
     previewOffsetsRef,
     updatePreviewRegions,
     clearPreviewRegions,
-  } = usePreviewRegions(wavesurfer, subtitleToRegionMap, theme);
+  } = usePreviewRegions(wavesurfer, subtitleToRegionMap);
 
   /**
    * Recreates all regions from scratch. Used when structural changes happen
@@ -129,7 +129,15 @@ export const useWaveformRegions = ({
 
     requestAnimationFrame(measureLabelsOverlay);
     updatePreviewRegions(previewOffsetsRef.current);
-  }, [tracks, wavesurfer, measureLabelsOverlay, updatePreviewRegions, theme]);
+  }, [
+    tracks,
+    wavesurfer,
+    measureLabelsOverlay,
+    updatePreviewRegions,
+    theme,
+    previewOffsetsRef,
+    clearPreviewRegions,
+  ]);
 
   useEffect(() => {
     // When tracks/subtitles change, decide if we can update in place
@@ -418,12 +426,13 @@ export const useWaveformRegions = ({
     setActiveTrackId,
     onRegionClick,
     setIsLoading,
+    theme,
   ]);
 
   useEffect(() => {
     previewOffsetsRef.current = previewOffsets ?? {};
     updatePreviewRegions(previewOffsets ?? {});
-  }, [previewOffsets, updatePreviewRegions]);
+  }, [previewOffsets, updatePreviewRegions, previewOffsetsRef]);
 
   useEffect(() => {
     return () => {
