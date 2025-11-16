@@ -34,7 +34,7 @@ interface UseSubtitleActionsParams {
   ) => void;
 }
 
-interface SubtitleActions {
+export interface SubtitleActions {
   addTrack: (
     name: string,
     subtitles?: Subtitle[],

@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { memo, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
+import { useSubtitleActionsContext } from "@/context/subtitle-context"; // Import context
 import { useToast } from "@/hooks/use-toast";
 import { isValidTime, timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
@@ -57,7 +57,7 @@ const SubtitleItem = memo(function SubtitleItem({
     addSubtitleAction,
     deleteSubtitleAction,
     splitSubtitleAction,
-  } = useSubtitleContext();
+  } = useSubtitleActionsContext();
 
   const [editingStartTimeId, setEditingStartTimeId] = useState<number | null>(
     null,

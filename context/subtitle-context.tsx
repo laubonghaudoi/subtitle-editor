@@ -1,5 +1,8 @@
 "use client";
-import { useSubtitleActions } from "@/hooks/use-subtitle-actions";
+import {
+  useSubtitleActions,
+  type SubtitleActions,
+} from "@/hooks/use-subtitle-actions";
 import { useUndoableState, type UndoHistory } from "@/hooks/use-undoable-state";
 import {
   createTrackHistory,
@@ -9,20 +12,18 @@ import {
   EMPTY_HISTORY,
 } from "@/lib/subtitle-history";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
-import type { ReactNode } from "react";
-import {
+import React, {
   createContext,
-  createElement,
-  useContext,
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
   useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
+import type { ReactNode } from "react";
 
-// Define the shape of the context value
-interface SubtitleContextType {
+interface SubtitleStateValue {
   tracks: SubtitleTrack[];
   trackCount: number;
   hasMultipleTracks: boolean;
@@ -32,69 +33,32 @@ interface SubtitleContextType {
   setActiveTrackId: (id: string | null) => void;
   showTrackLabels: boolean;
   setShowTrackLabels: (value: boolean) => void;
-  addTrack: (
-    name: string,
-    subtitles?: Subtitle[],
-    meta?: { vttHeader?: string; vttPrologue?: string[] },
-  ) => string | null;
-  loadSubtitlesIntoTrack: (
-    trackId: string,
-    subtitles: Subtitle[],
-    meta?: { vttHeader?: string; vttPrologue?: string[] },
-  ) => void;
-  renameTrack: (trackId: string, newName: string) => void;
-  deleteTrack: (trackId: string) => void;
-  setInitialSubtitles: (
-    subs: Subtitle[],
-    trackName?: string,
-    meta?: { vttHeader?: string; vttPrologue?: string[] },
-  ) => void;
-  addSubtitleAction: (
-    beforeId: number,
-    afterId: number | null,
-    newSubtitleText?: string,
-  ) => void;
-  deleteSubtitleAction: (id: number) => void;
-  mergeSubtitlesAction: (id1: number, id2: number) => void;
-  splitSubtitleAction: (
-    id: number,
-    caretPos: number,
-    textLength: number,
-    pendingText?: string,
-  ) => void;
-  updateSubtitleTextAction: (id: number, newText: string) => void;
-  updateSubtitleTimeAction: (
-    id: number,
-    newStartTime: string,
-    newEndTime: string,
-  ) => void;
-  updateSubtitleTimeByUuidAction: (
-    uuid: string,
-    newStartTime: string,
-    newEndTime: string,
-  ) => void;
-  updateSubtitleStartTimeAction: (id: number, newTime: string) => void;
-  updateSubtitleEndTimeAction: (id: number, newTime: string) => void;
-  replaceAllSubtitlesAction: (newSubtitles: Subtitle[]) => void; // For Find/Replace
-  bulkShiftSubtitlesAction: (
-    targetUuids: string[],
-    offsetSeconds: number,
-    target: "start" | "end" | "both",
-  ) => void;
+}
+
+interface SubtitleHistoryValue {
   undoSubtitles: () => void;
   redoSubtitles: () => void;
   canUndoSubtitles: boolean;
   canRedoSubtitles: boolean;
-  // Get the subtitles of the active track
-  subtitles: Subtitle[];
 }
 
-// Create the context with a default value (or null/undefined and check in consumer)
-const SubtitleContext = createContext<SubtitleContextType | undefined>(
+type SubtitleContextType = SubtitleStateValue &
+  SubtitleActions &
+  SubtitleHistoryValue & {
+    subtitles: Subtitle[];
+  };
+
+const SubtitleStateContext = createContext<SubtitleStateValue | undefined>(
   undefined,
 );
+const SubtitleActionsContext = createContext<SubtitleActions | undefined>(
+  undefined,
+);
+const SubtitleHistoryContext = createContext<SubtitleHistoryValue | undefined>(
+  undefined,
+);
+const SubtitleDataContext = createContext<Subtitle[] | undefined>(undefined);
 
-// Create the provider component
 interface SubtitleProviderProps {
   children: ReactNode;
 }
@@ -108,9 +72,8 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     new Map(),
   );
 
-  // Each track keeps an independent undo/redo history stored alongside the track list.
   const [
-    activeSubtitles, // Raw subtitles from the undoable state
+    activeSubtitles,
     setSubtitlesWithHistory,
     ,
     /* skip replaceState */ undoSubtitles,
@@ -123,9 +86,6 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     isEqual: subtitlesAreEqual,
   });
 
-
-  // CRITICAL FIX: This effect synchronizes the undo/redo state
-  // with the currently active track.
   useEffect(() => {
     const snapshot = getHistorySnapshot();
     const previousId = previousActiveTrackId.current;
@@ -193,24 +153,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     });
   }, [activeTrackId, activeSubtitles]);
 
-  const {
-    addTrack,
-    loadSubtitlesIntoTrack,
-    renameTrack,
-    deleteTrack,
-    setInitialSubtitles,
-    addSubtitleAction,
-    deleteSubtitleAction,
-    mergeSubtitlesAction,
-    splitSubtitleAction,
-    updateSubtitleTextAction,
-    updateSubtitleTimeAction,
-    updateSubtitleTimeByUuidAction,
-    updateSubtitleStartTimeAction,
-    updateSubtitleEndTimeAction,
-    replaceAllSubtitlesAction,
-    bulkShiftSubtitlesAction,
-  } = useSubtitleActions({
+  const subtitleActions = useSubtitleActions({
     tracks,
     activeTrackId,
     setTracks,
@@ -237,11 +180,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     [tracks],
   );
 
-  // Get the subtitles for the active track
-  const subtitles = activeSubtitles;
-
-  // --- Context Value ---
-  const value = useMemo<SubtitleContextType>(
+  const stateValue = useMemo<SubtitleStateValue>(
     () => ({
       tracks,
       trackCount,
@@ -252,27 +191,6 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       setActiveTrackId,
       showTrackLabels,
       setShowTrackLabels,
-      addTrack,
-      loadSubtitlesIntoTrack,
-      renameTrack,
-      deleteTrack,
-      setInitialSubtitles,
-      addSubtitleAction,
-      deleteSubtitleAction,
-      mergeSubtitlesAction,
-      splitSubtitleAction,
-      updateSubtitleTextAction,
-      updateSubtitleTimeAction,
-      updateSubtitleTimeByUuidAction,
-      updateSubtitleStartTimeAction,
-      updateSubtitleEndTimeAction,
-      replaceAllSubtitlesAction,
-      bulkShiftSubtitlesAction,
-      undoSubtitles,
-      redoSubtitles,
-      canUndoSubtitles,
-      canRedoSubtitles,
-      subtitles,
     }),
     [
       tracks,
@@ -284,40 +202,72 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       setActiveTrackId,
       showTrackLabels,
       setShowTrackLabels,
-      addTrack,
-      loadSubtitlesIntoTrack,
-      renameTrack,
-      deleteTrack,
-      setInitialSubtitles,
-      addSubtitleAction,
-      deleteSubtitleAction,
-      mergeSubtitlesAction,
-      splitSubtitleAction,
-      updateSubtitleTextAction,
-      updateSubtitleTimeAction,
-      updateSubtitleTimeByUuidAction,
-      updateSubtitleStartTimeAction,
-      updateSubtitleEndTimeAction,
-      replaceAllSubtitlesAction,
-      bulkShiftSubtitlesAction,
+    ],
+  );
+
+  const historyValue = useMemo<SubtitleHistoryValue>(
+    () => ({
       undoSubtitles,
       redoSubtitles,
       canUndoSubtitles,
       canRedoSubtitles,
-      subtitles,
-    ],
+    }),
+    [undoSubtitles, redoSubtitles, canUndoSubtitles, canRedoSubtitles],
   );
 
-  return createElement(SubtitleContext.Provider, { value }, children);
+  return (
+    <SubtitleActionsContext.Provider value={subtitleActions}>
+      <SubtitleHistoryContext.Provider value={historyValue}>
+        <SubtitleStateContext.Provider value={stateValue}>
+          <SubtitleDataContext.Provider value={activeSubtitles}>
+            {children}
+          </SubtitleDataContext.Provider>
+        </SubtitleStateContext.Provider>
+      </SubtitleHistoryContext.Provider>
+    </SubtitleActionsContext.Provider>
+  );
 }
 
-// Create a custom hook for consuming the context
-export const useSubtitleContext = (): SubtitleContextType => {
-  const context = useContext(SubtitleContext);
-  if (context === undefined) {
-    throw new Error(
-      "useSubtitleContext must be used within a SubtitleProvider",
-    );
+function ensureContext<T>(ctx: T | undefined, name: string): T {
+  if (ctx === undefined) {
+    throw new Error(`${name} must be used within a SubtitleProvider`);
   }
-  return context;
+  return ctx;
+}
+
+export const useSubtitleState = (): SubtitleStateValue => {
+  const ctx = useContext(SubtitleStateContext);
+  return ensureContext(ctx, "useSubtitleState");
+};
+
+export const useSubtitleActionsContext = (): SubtitleActions => {
+  const ctx = useContext(SubtitleActionsContext);
+  return ensureContext(ctx, "useSubtitleActionsContext");
+};
+
+export const useSubtitleHistory = (): SubtitleHistoryValue => {
+  const ctx = useContext(SubtitleHistoryContext);
+  return ensureContext(ctx, "useSubtitleHistory");
+};
+
+export const useSubtitles = (): Subtitle[] => {
+  const ctx = useContext(SubtitleDataContext);
+  return ensureContext(ctx, "useSubtitles");
+};
+
+export const useSubtitleContext = (): SubtitleContextType => {
+  const state = useSubtitleState();
+  const actions = useSubtitleActionsContext();
+  const history = useSubtitleHistory();
+  const subtitles = useSubtitles();
+
+  return useMemo(
+    () => ({
+      ...state,
+      ...actions,
+      ...history,
+      subtitles,
+    }),
+    [actions, history, state, subtitles],
+  );
 };

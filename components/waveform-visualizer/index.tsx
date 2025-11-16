@@ -13,7 +13,10 @@ import {
 import Hover from "wavesurfer.js/dist/plugins/hover.esm.js";
 import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.esm.js";
 import Timeline from "wavesurfer.js/dist/plugins/timeline.esm.js";
-import { useSubtitleContext } from "@/context/subtitle-context";
+import {
+  useSubtitleActionsContext,
+  useSubtitleState,
+} from "@/context/subtitle-context";
 import { useWaveformRegions } from "./use-waveform-regions";
 import type { BulkOffsetPreviewState } from "@/components/bulk-offset/drawer";
 import { useTheme } from "next-themes";
@@ -50,13 +53,9 @@ export default forwardRef(function WaveformVisualizer(
   const waveColor = theme === "dark" ? "#0f766e" : "#A7F3D0";
   const progressColor = theme === "dark" ? "#0ea5e9" : "#00d4ff";
 
-  const {
-    tracks,
-    activeTrackId,
-    setActiveTrackId,
-    updateSubtitleTimeByUuidAction,
-    showTrackLabels,
-  } = useSubtitleContext();
+  const { tracks, activeTrackId, setActiveTrackId, showTrackLabels } =
+    useSubtitleState();
+  const { updateSubtitleTimeByUuidAction } = useSubtitleActionsContext();
 
 /****************************************************************
  *  Load media file into wavesurfer

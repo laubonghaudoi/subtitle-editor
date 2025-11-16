@@ -9,7 +9,11 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
+import {
+  useSubtitleActionsContext,
+  useSubtitleState,
+  useSubtitles,
+} from "@/context/subtitle-context"; // Import context
 import { parseSRT, parseVTT } from "@/lib/subtitle-operations";
 import { findActiveSubtitleIndex } from "@/lib/subtitle-lookup";
 import { timeToSeconds } from "@/lib/utils";
@@ -64,14 +68,13 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
     const activeSubtitleRef = useRef<string | null>(null);
     const suppressAutoCenterUuidRef = useRef<string | null>(null);
     const manualScrollRequestUuidRef = useRef<string | null>(null);
-    // Get subtitles and actions from context
+    const subtitles = useSubtitles();
     const {
-      subtitles,
       mergeSubtitlesAction,
       loadSubtitlesIntoTrack,
       renameTrack,
-      activeTrackId,
-    } = useSubtitleContext();
+    } = useSubtitleActionsContext();
+    const { activeTrackId } = useSubtitleState();
 
     const subtitleTimings = useMemo(
       () =>

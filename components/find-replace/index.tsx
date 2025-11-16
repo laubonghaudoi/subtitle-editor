@@ -13,7 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FindReplaceTable } from "@/components/find-replace/table";
-import { useSubtitleContext } from "@/context/subtitle-context";
+import {
+  useSubtitleActionsContext,
+  useSubtitleState,
+  useSubtitles,
+} from "@/context/subtitle-context";
 import { useFindReplaceSelection } from "@/hooks/use-find-replace-selection";
 import { getFindRegexConfig } from "@/lib/find-replace";
 import {
@@ -62,8 +66,9 @@ function OptionToggle({ id, checked, label, onChange }: OptionToggleProps) {
 
 export default function FindReplace() {
   const t = useTranslations();
-  const { subtitles, replaceAllSubtitlesAction, tracks, activeTrack } =
-    useSubtitleContext();
+  const subtitles = useSubtitles();
+  const { replaceAllSubtitlesAction } = useSubtitleActionsContext();
+  const { tracks, activeTrack } = useSubtitleState();
   const totalSubtitleCount = tracks.reduce(
     (sum, tr) => sum + tr.subtitles.length,
     0,

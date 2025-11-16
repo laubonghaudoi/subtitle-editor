@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useSubtitleContext } from "@/context/subtitle-context";
+import { useSubtitleState } from "@/context/subtitle-context";
 import {
   buildCsvContent,
   buildPlainTextContent,
@@ -23,7 +23,7 @@ import { useState } from "react";
 export default function SaveSrt() {
   const t = useTranslations();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
-  const { tracks } = useSubtitleContext();
+  const { tracks } = useSubtitleState();
 
   const downloadTrackById = (
     trackId: string,

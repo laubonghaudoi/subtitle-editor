@@ -15,7 +15,10 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   SubtitleProvider,
-  useSubtitleContext,
+  useSubtitleActionsContext,
+  useSubtitleHistory,
+  useSubtitleState,
+  useSubtitles,
 } from "@/context/subtitle-context";
 import {
   parseSRT,
@@ -84,21 +87,20 @@ function MainContent() {
   const videoPlayerRef = useRef<VideoPlayerHandle | null>(null);
   const mediaFileInputRef = useRef<HTMLInputElement | null>(null);
   // Get subtitle state and actions from context
+  const { tracks, activeTrackId, setActiveTrackId } = useSubtitleState();
+  const subtitles = useSubtitles();
   const {
-    tracks,
-    activeTrackId,
-    setActiveTrackId,
-    subtitles,
     setInitialSubtitles, // Use this instead of setSubtitlesWithHistory
     loadSubtitlesIntoTrack,
     renameTrack,
+    bulkShiftSubtitlesAction,
+  } = useSubtitleActionsContext();
+  const {
     undoSubtitles,
     redoSubtitles,
     canUndoSubtitles,
     canRedoSubtitles,
-    bulkShiftSubtitlesAction,
-    // Action functions are now available via context, no need for local handlers like handleUpdateSubtitleText etc.
-  } = useSubtitleContext();
+  } = useSubtitleHistory();
   const { resolvedTheme } = useTheme();
   const theme = resolvedTheme ?? "light";
 

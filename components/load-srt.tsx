@@ -25,7 +25,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSubtitleContext } from "@/context/subtitle-context";
+import {
+  useSubtitleActionsContext,
+  useSubtitleState,
+} from "@/context/subtitle-context";
 import {
   parseSRT,
   parseVTT,
@@ -63,14 +66,12 @@ export default function LoadSrt() {
   const { toast } = useToast();
   const showTrackLabelsId = useId();
   const {
-    tracks,
     addTrack,
     renameTrack,
     deleteTrack,
     loadSubtitlesIntoTrack,
-    showTrackLabels,
-    setShowTrackLabels,
-  } = useSubtitleContext();
+  } = useSubtitleActionsContext();
+  const { tracks, showTrackLabels, setShowTrackLabels } = useSubtitleState();
 
   const handleSrtFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>,

@@ -25,7 +25,7 @@ import {
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useState, type RefObject } from "react";
-import { useSubtitleContext } from "@/context/subtitle-context";
+import { useSubtitleState } from "@/context/subtitle-context";
 import { getTrackHandleColor } from "@/lib/track-colors";
 import type { SubtitleTrack } from "@/types/subtitle";
 import { useTheme } from "next-themes";
@@ -76,7 +76,7 @@ export function AppHeader({
   bulkOffsetDisabled,
 }: AppHeaderProps) {
   const t = useTranslations();
-  const { tracks, activeTrackId } = useSubtitleContext();
+  const { tracks, activeTrackId } = useSubtitleState();
   const { resolvedTheme, setTheme } = useTheme();
   const [isThemeMounted, setIsThemeMounted] = useState(false);
   const { bulkColor, bulkTextColor, bulkOutlineColor } = getBulkButtonColors(

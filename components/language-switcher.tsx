@@ -11,7 +11,7 @@ import { IconLanguage } from "@tabler/icons-react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { locales, localeConfig } from "@/lib/locales";
-import { useSubtitleContext } from "@/context/subtitle-context";
+import { useSubtitleHistory } from "@/context/subtitle-context";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -29,7 +29,7 @@ export default function LanguageSwitcher() {
   const locale = useLocale();
   const t = useTranslations();
   const router = useRouter();
-  const { canUndoSubtitles } = useSubtitleContext();
+  const { canUndoSubtitles } = useSubtitleHistory();
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [targetHref, setTargetHref] = useState<string>("");

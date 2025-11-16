@@ -11,7 +11,7 @@ import {
   useState,
 } from "react";
 import ReactPlayer from "react-player";
-import { useSubtitleContext } from "@/context/subtitle-context"; // Import context
+import { useSubtitles } from "@/context/subtitle-context"; // Import context
 import { srtToVtt, subtitlesToSrtString } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -49,7 +49,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
 ) {
   const t = useTranslations();
   // Get subtitles from context
-  const { subtitles } = useSubtitleContext();
+  const subtitles = useSubtitles();
 
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [vttUrl, setVttUrl] = useState<string | null>(null);
