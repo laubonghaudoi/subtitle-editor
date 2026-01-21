@@ -72,6 +72,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       mergeSubtitlesAction,
       loadSubtitlesIntoTrack,
       renameTrack,
+      deleteSubtitleAction,
     } = useSubtitleActionsContext();
     const { activeTrackId } = useSubtitleState();
 
@@ -377,6 +378,26 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
             // setIsPlaying(false);
           }
         }
+        if (event.key === "Delete") {
+          event.preventDefault();
+
+          // Find the index of the currently active subtitle
+          let currentIndex = subtitleTimings.findIndex(
+            (timing) => timing.start <= currentTime && timing.end > currentTime,
+          );
+
+          // If no subtitle is active, find the closest one before the current time
+          if (currentIndex === -1) {
+            currentIndex = subtitleTimings.findLastIndex(
+              (timing) => timing.start <= currentTime,
+            );
+          }
+
+          if (currentIndex !== -1) {
+            const subtitleToDelete = subtitles[currentIndex];
+            deleteSubtitleAction(subtitleToDelete.id);
+          }
+        }
         // The Shift+Backspace logic is now handled above the isEditing check
       };
 
@@ -393,6 +414,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       mergeSubtitlesAction,
       onTimeJump,
       jumpDuration,
+      deleteSubtitleAction,
     ]); // Add mergeSubtitlesAction dependency
 
     if (subtitles.length === 0) {
