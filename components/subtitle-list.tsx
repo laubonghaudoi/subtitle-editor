@@ -16,6 +16,7 @@ import {
 } from "@/context/subtitle-context"; // Import context
 import { parseSRT, parseVTT } from "@/lib/subtitle-operations";
 import { findActiveSubtitleIndex } from "@/lib/subtitle-lookup";
+import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import SubtitleItem from "./subtitle-item";
 import { Label } from "@/components/ui/label";
@@ -396,6 +397,23 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
           if (currentIndex !== -1) {
             const subtitleToDelete = subtitles[currentIndex];
             deleteSubtitleAction(subtitleToDelete.id);
+
+            // Focus on the next subtitle
+            const nextSubtitle = subtitles[currentIndex + 1];
+            if (nextSubtitle) {
+              const nextSubtitleTime = timeToSeconds(nextSubtitle.startTime);
+              setPlaybackTime(nextSubtitleTime);
+            } else {
+              const previousSubtitle = subtitles[currentIndex - 1];
+              if (previousSubtitle) {
+                const previousSubtitleTime = timeToSeconds(
+                  previousSubtitle.startTime,
+                );
+                setPlaybackTime(previousSubtitleTime);
+              } else {
+                setPlaybackTime(0);
+              }
+            }
           }
         }
         // The Shift+Backspace logic is now handled above the isEditing check
