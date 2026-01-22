@@ -21,4 +21,4 @@ export const config = {
   matcher: ["/((?!_next|api|faq|.*\\..*).*)"],
 };
 
-export const runtime = "experimental-edge";
+

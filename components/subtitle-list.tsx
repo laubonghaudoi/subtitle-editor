@@ -1,29 +1,29 @@
-import { AnimatePresence } from "motion/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  useEffect,
-  useRef,
+  useSubtitleActionsContext,
+  useSubtitles,
+  useSubtitleState,
+  useSubtitleTimings,
+} from "@/context/subtitle-context"; // Import context
+import { findActiveSubtitleIndex } from "@/lib/subtitle-lookup";
+import { parseSRT, parseVTT } from "@/lib/subtitle-operations";
+import { timeToSeconds } from "@/lib/utils";
+import type { Subtitle } from "@/types/subtitle";
+import { AnimatePresence } from "motion/react";
+import { useTranslations } from "next-intl";
+import {
   forwardRef,
-  useImperativeHandle,
   useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
   type Dispatch,
   type SetStateAction,
 } from "react";
-import {
-  useSubtitleActionsContext,
-  useSubtitleState,
-  useSubtitles,
-  useSubtitleTimings,
-} from "@/context/subtitle-context"; // Import context
-import { parseSRT, parseVTT } from "@/lib/subtitle-operations";
-import { findActiveSubtitleIndex } from "@/lib/subtitle-lookup";
-import { timeToSeconds } from "@/lib/utils";
-import type { Subtitle } from "@/types/subtitle";
-import SubtitleItem from "./subtitle-item";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { v4 as uuidv4 } from "uuid";
-import { useTranslations } from "next-intl";
+import SubtitleItem from "./subtitle-item";
 
 // Remove subtitle-related props
 interface SubtitleListProps {
