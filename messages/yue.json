@@ -8,7 +8,8 @@
     "bulkOffset": "批量位移",
     "showBulkOffset": "打開批量位移面板",
     "hideBulkOffset": "收起批量位移面板",
-    "toggleTheme": "切換明暗模式"
+    "toggleTheme": "切換明暗模式",
+    "settings": "設定"
   },
   "buttons": {
     "loadMedia": "載入媒體",
@@ -24,6 +25,13 @@
     "downloadAsVtt": ".vtt",
     "downloadAsTxt": ".txt",
     "downloadAsCsv": ".csv"
+  },
+  "controls": {
+    "play": "播放",
+    "pause": "暫停",
+    "jumpBack": "向後跳 {seconds, plural, =1 {# 秒} other {# 秒}}",
+    "jumpForward": "向前跳 {seconds, plural, =1 {# 秒} other {# 秒}}",
+    "waveformLabel": "波形圖時間軸"
   },
   "labels": {
     "loadSrtFile": "載入 .srt/.vtt 檔案",
@@ -123,7 +131,14 @@
     "deleteTrackDescription": "呢個操作冇得還原。呢個操作會永久刪除呢條字幕軌同佢所有嘅字幕。",
     "delete": "刪除",
     "done": "完成",
-    "showTrackLabels": "喺波形圖顯示字幕軌標籤"
+    "showTrackLabels": "喺波形圖顯示字幕軌標籤",
+    "settingsTitle": "設定",
+    "settingsDescription": "外觀同編輯器設定。",
+    "themeLabel": "主題",
+    "themeLight": "明",
+    "themeDark": "暗",
+    "overlapClampLabel": "自動防止字幕重疊",
+    "overlapClampDescription": "越過相鄰字幕仍然會被禁止"
   },
   "subtitle": {
     "newSubtitle": "新字幕",

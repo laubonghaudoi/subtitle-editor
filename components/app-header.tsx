@@ -4,6 +4,7 @@ import FindReplace from "@/components/find-replace";
 import LanguageSwitcher from "@/components/language-switcher";
 import LoadSrt from "@/components/load-srt";
 import SaveSrt from "@/components/save-srt";
+import SettingsMenu from "@/components/settings-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,17 +19,15 @@ import {
   IconArrowBack,
   IconArrowForward,
   IconBrandGithub,
-  IconBrightness,
   IconMovie,
   IconQuestionMark,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useEffect, useState, type RefObject } from "react";
+import { type RefObject } from "react";
 import { useSubtitleState } from "@/context/subtitle-context";
 import { getTrackHandleColor } from "@/lib/track-colors";
 import type { SubtitleTrack } from "@/types/subtitle";
-import { useTheme } from "next-themes";
 
 function getBulkButtonColors(
   tracks: SubtitleTrack[],
@@ -77,8 +76,6 @@ export function AppHeader({
 }: AppHeaderProps) {
   const t = useTranslations();
   const { tracks, activeTrackId } = useSubtitleState();
-  const { resolvedTheme, setTheme } = useTheme();
-  const [isThemeMounted, setIsThemeMounted] = useState(false);
   const { bulkColor, bulkTextColor, bulkOutlineColor } = getBulkButtonColors(
     tracks,
     activeTrackId ?? null,
@@ -90,19 +87,6 @@ export function AppHeader({
         borderColor: bulkOutlineColor,
       }
     : undefined;
-
-  useEffect(() => {
-    setIsThemeMounted(true);
-  }, []);
-
-  const handleToggleTheme = () => {
-    if (!isThemeMounted) {
-      return;
-    }
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
-  };
-
-  const isDarkMode = isThemeMounted && resolvedTheme === "dark";
 
   return (
     <nav className="h-[6vh] border-b-2 border-black dark:border-white flex items-center px-12 justify-between">
@@ -135,18 +119,6 @@ export function AppHeader({
             <IconBrandGithub size={20} />
           </Button>
         </Link>
-        <Button
-          type="button"
-          size="sm"
-          variant="ghost"
-          onClick={handleToggleTheme}
-          className="cursor-pointer"
-          aria-label={t("navigation.toggleTheme")}
-          aria-pressed={isDarkMode}
-          disabled={!isThemeMounted}
-        >
-          <IconBrightness size={20} />
-        </Button>
       </div>
 
       <div className="flex gap-4 items-center">
@@ -183,6 +155,8 @@ export function AppHeader({
             <TooltipContent>{t("navigation.redo")}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
+
+        <SettingsMenu />
 
         <TooltipProvider>
           <Tooltip>

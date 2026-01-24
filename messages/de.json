@@ -8,7 +8,8 @@
     "bulkOffset": "Stapel-Offset",
     "showBulkOffset": "Stapel-Offset-Panel öffnen",
     "hideBulkOffset": "Stapel-Offset-Panel schließen",
-    "toggleTheme": "Hell- und Dunkelmodus umschalten"
+    "toggleTheme": "Hell- und Dunkelmodus umschalten",
+    "settings": "Einstellungen"
   },
   "buttons": {
     "loadMedia": "Medien laden",
@@ -130,7 +131,14 @@
     "deleteTrackDescription": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch werden die Spur und alle ihre Untertitel dauerhaft gelöscht.",
     "delete": "Löschen",
     "done": "Fertig",
-    "showTrackLabels": "Spurbezeichnungen im Wellenform-Visualizer anzeigen"
+    "showTrackLabels": "Spurbezeichnungen im Wellenform-Visualizer anzeigen",
+    "settingsTitle": "Einstellungen",
+    "settingsDescription": "Darstellung und Editor-Einstellungen.",
+    "themeLabel": "Design",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
+    "overlapClampLabel": "Teilweise Überlappungen verhindern",
+    "overlapClampDescription": "Beim Ziehen werden Regionen so geklemmt, dass sie sich nicht überlappen. Das Überschreiten eines Nachbarn ist immer blockiert."
   },
   "subtitle": {
     "newSubtitle": "Neuer Untertitel",

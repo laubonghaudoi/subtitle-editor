@@ -31,6 +31,7 @@ interface UseWaveformRegionsParams {
   setIsLoading: (loading: boolean) => void;
   showTrackLabels: boolean;
   theme: "light" | "dark";
+  clampOverlaps: boolean;
 }
 
 export const useWaveformRegions = ({
@@ -46,6 +47,7 @@ export const useWaveformRegions = ({
   setIsLoading,
   showTrackLabels,
   theme,
+  clampOverlaps,
 }: UseWaveformRegionsParams) => {
   const subtitleToRegionMap = useRef<Map<string, RegionMapEntry>>(new Map());
   // Track drag state to avoid repeated scroll triggers mid-drag
@@ -256,27 +258,34 @@ export const useWaveformRegions = ({
        *  of the following region, or the end time is earlier than the start
        *  time of the preceding region), it will be reverted to its original
        *  position.
-       * 2. If the region is dragged to partially overlap with other regions,
-       *  it will be adjusted to avoid overlapping.
+       * 2. If overlap clamping is enabled and the region partially overlaps
+       *  with other regions, it will be adjusted to avoid overlapping.
        */
 
-      const trackRegions = Array.from(subtitleToRegionMap.current.values())
-        .filter((regionData) => regionData.trackId === currentTrack?.id)
-        .map((regionData) => regionData.region)
-        .sort((a, b) => a.start - b.start);
-
-      const currentIndex = trackRegions.findIndex((r) => r.id === subtitleUuid);
-
-      const prevRegion =
-        currentIndex > 0 ? trackRegions[currentIndex - 1] : null;
-      const nextRegion =
-        currentIndex < trackRegions.length - 1
-          ? trackRegions[currentIndex + 1]
+      const orderedIndex = currentTrack.subtitles.findIndex(
+        (subtitle) => subtitle.uuid === subtitleUuid,
+      );
+      const hasOrderIndex = orderedIndex >= 0;
+      const prevOrderedSubtitle =
+        hasOrderIndex && orderedIndex > 0
+          ? currentTrack.subtitles[orderedIndex - 1]
           : null;
+      const nextOrderedSubtitle =
+        hasOrderIndex && orderedIndex < currentTrack.subtitles.length - 1
+          ? currentTrack.subtitles[orderedIndex + 1]
+          : null;
+      const prevOrderedRegion = prevOrderedSubtitle
+        ? subtitleToRegionMap.current.get(prevOrderedSubtitle.uuid)?.region ??
+          null
+        : null;
+      const nextOrderedRegion = nextOrderedSubtitle
+        ? subtitleToRegionMap.current.get(nextOrderedSubtitle.uuid)?.region ??
+          null
+        : null;
 
       if (
-        (prevRegion && newEndTime <= prevRegion.start) ||
-        (nextRegion && newStartTime >= nextRegion.end)
+        (prevOrderedRegion && newEndTime <= prevOrderedRegion.start) ||
+        (nextOrderedRegion && newStartTime >= nextOrderedRegion.end)
       ) {
         const originalSubtitle = currentTrack.subtitles.find(
           (subtitle) => subtitle.uuid === subtitleUuid,
@@ -307,18 +316,34 @@ export const useWaveformRegions = ({
         return;
       }
 
-      if (prevRegion && newStartTime < prevRegion.end) {
-        adjusted = true;
-        newStartTime = prevRegion.end;
-        if (newStartTime >= newEndTime) {
-          newEndTime = newStartTime + 0.1;
+      const trackRegions = Array.from(subtitleToRegionMap.current.values())
+        .filter((regionData) => regionData.trackId === currentTrack?.id)
+        .map((regionData) => regionData.region)
+        .sort((a, b) => a.start - b.start);
+
+      const currentIndex = trackRegions.findIndex((r) => r.id === subtitleUuid);
+
+      const prevRegion =
+        currentIndex > 0 ? trackRegions[currentIndex - 1] : null;
+      const nextRegion =
+        currentIndex < trackRegions.length - 1
+          ? trackRegions[currentIndex + 1]
+          : null;
+
+      if (clampOverlaps) {
+        if (prevRegion && newStartTime < prevRegion.end) {
+          adjusted = true;
+          newStartTime = prevRegion.end;
+          if (newStartTime >= newEndTime) {
+            newEndTime = newStartTime + 0.1;
+          }
         }
-      }
-      if (nextRegion && newEndTime > nextRegion.start) {
-        adjusted = true;
-        newEndTime = nextRegion.start;
-        if (newEndTime <= newStartTime) {
-          newStartTime = newEndTime - 0.1;
+        if (nextRegion && newEndTime > nextRegion.start) {
+          adjusted = true;
+          newEndTime = nextRegion.start;
+          if (newEndTime <= newStartTime) {
+            newStartTime = newEndTime - 0.1;
+          }
         }
       }
 
@@ -427,6 +452,7 @@ export const useWaveformRegions = ({
     onRegionClick,
     setIsLoading,
     theme,
+    clampOverlaps,
   ]);
 
   useEffect(() => {

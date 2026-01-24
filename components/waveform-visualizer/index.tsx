@@ -53,8 +53,13 @@ export default forwardRef(function WaveformVisualizer(
   const waveColor = theme === "dark" ? "#0f766e" : "#A7F3D0";
   const progressColor = theme === "dark" ? "#0ea5e9" : "#00d4ff";
 
-  const { tracks, activeTrackId, setActiveTrackId, showTrackLabels } =
-    useSubtitleState();
+  const {
+    tracks,
+    activeTrackId,
+    setActiveTrackId,
+    showTrackLabels,
+    clampOverlaps,
+  } = useSubtitleState();
   const { updateSubtitleTimeByUuidAction } = useSubtitleActionsContext();
 
 /****************************************************************
@@ -165,6 +170,7 @@ export default forwardRef(function WaveformVisualizer(
     setIsLoading,
     showTrackLabels,
     theme,
+    clampOverlaps,
   });
 
   /****************************************************************

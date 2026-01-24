@@ -8,7 +8,8 @@
     "bulkOffset": "Bulk offset",
     "showBulkOffset": "Open bulk offset timestamp panel",
     "hideBulkOffset": "Close bulk offset timestamp panel",
-    "toggleTheme": "Toggle light and dark mode"
+    "toggleTheme": "Toggle light and dark mode",
+    "settings": "Settings"
   },
   "buttons": {
     "loadMedia": "Load Media",
@@ -130,7 +131,14 @@
     "deleteTrackDescription": "This action cannot be undone. This will permanently delete the track and all its subtitles.",
     "delete": "Delete",
     "done": "Done",
-    "showTrackLabels": "Show track labels in the waveform visualizer"
+    "showTrackLabels": "Show track labels in the waveform visualizer",
+    "settingsTitle": "Settings",
+    "settingsDescription": "Appearance and editor preferences.",
+    "themeLabel": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "overlapClampLabel": "Prevent partial overlaps",
+    "overlapClampDescription": "Clamp regions so they don't overlap while dragging. Passing a neighbor is always blocked."
   },
   "subtitle": {
     "newSubtitle": "New subtitle",
