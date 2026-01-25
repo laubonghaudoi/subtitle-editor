@@ -1,6 +1,3 @@
-import { IconFold, IconPlus, IconTrash } from "@tabler/icons-react";
-import { motion } from "motion/react";
-import { memo, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -10,6 +7,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { isValidTime, timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
+import { IconFold, IconPlus, IconTrash } from "@tabler/icons-react";
+import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
+import { memo, useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import {
   Tooltip,
@@ -17,7 +18,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
-import { useTranslations } from "next-intl";
 
 interface SubtitleItemProps {
   subtitle: Subtitle;

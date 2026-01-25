@@ -14,6 +14,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useSubtitleState } from "@/context/subtitle-context";
+import { getTrackHandleColor } from "@/lib/track-colors";
+import type { SubtitleTrack } from "@/types/subtitle";
 import {
   IconAdjustmentsHorizontal,
   IconArrowBack,
@@ -25,9 +28,6 @@ import {
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { type RefObject } from "react";
-import { useSubtitleState } from "@/context/subtitle-context";
-import { getTrackHandleColor } from "@/lib/track-colors";
-import type { SubtitleTrack } from "@/types/subtitle";
 
 function getBulkButtonColors(
   tracks: SubtitleTrack[],
