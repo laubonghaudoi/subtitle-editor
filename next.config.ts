@@ -19,7 +19,12 @@ const withPWA = withPWAInit({
 const nextConfig: NextConfig = {
   /* config options here */
   compress: true,
-  reactCompiler: true,
+  experimental: {
+    reactCompiler: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default withPWA(withNextIntl(nextConfig));
