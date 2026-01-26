@@ -1,10 +1,6 @@
 "use client";
 
 import FindReplace from "@/components/find-replace";
-import LanguageSwitcher from "@/components/language-switcher";
-import LoadSrt from "@/components/load-srt";
-import SaveSrt from "@/components/save-srt";
-import SettingsMenu from "@/components/settings-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +24,10 @@ import {
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { type RefObject } from "react";
+import LanguageSwitcher from "./language-switcher";
+import LoadSrt from "./load-srt";
+import SaveSrt from "./save-srt";
+import SettingsTrigger from "./settings-trigger";
 
 function getBulkButtonColors(
   tracks: SubtitleTrack[],
@@ -156,7 +156,7 @@ export function AppHeader({
           </Tooltip>
         </TooltipProvider>
 
-        <SettingsMenu />
+        <SettingsTrigger />
 
         <TooltipProvider>
           <Tooltip>

@@ -1,8 +1,5 @@
 "use client";
 
-import { useSubtitleState } from "@/context/subtitle-context";
-import { Switch } from "@/components/ui/switch";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +8,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useSubtitleState } from "@/context/subtitle-context";
 import { IconMoon, IconSun } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";

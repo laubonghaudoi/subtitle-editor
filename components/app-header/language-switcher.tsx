@@ -1,18 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { IconLanguage } from "@tabler/icons-react";
-import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
-import { locales, localeConfig } from "@/lib/locales";
-import { useSubtitleHistory } from "@/context/subtitle-context";
-import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +10,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useSubtitleHistory } from "@/context/subtitle-context";
+import { localeConfig, locales } from "@/lib/locales";
+import { IconLanguage } from "@tabler/icons-react";
+import { useLocale, useTranslations } from "next-intl";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function LanguageSwitcher() {
   const locale = useLocale();

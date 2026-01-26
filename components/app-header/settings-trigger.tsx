@@ -1,6 +1,5 @@
 "use client";
 
-import SettingsDialog from "@/components/settings-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -11,8 +10,9 @@ import {
 import { IconSettings } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import SettingsDialog from "./settings-dialog";
 
-export default function SettingsMenu() {
+export default function SettingsTrigger() {
   const t = useTranslations();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 

@@ -12,7 +12,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogClose,
@@ -25,15 +24,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   useSubtitleActionsContext,
   useSubtitleState,
 } from "@/context/subtitle-context";
+import { useToast } from "@/hooks/use-toast";
 import {
+  extractVttPrologue,
   parseSRT,
   parseVTT,
-  extractVttPrologue,
 } from "@/lib/subtitle-operations";
+import { getReadableTextColor, getTrackHandleColor } from "@/lib/track-colors";
 import {
   IconBadgeCc,
   IconFile,
@@ -43,9 +45,7 @@ import {
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useState, type CSSProperties } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
-import { getReadableTextColor, getTrackHandleColor } from "@/lib/track-colors";
 
 const getTrackButtonStyle = (trackIndex: number): CSSProperties => {
   const backgroundColor = getTrackHandleColor(trackIndex);
