@@ -12,7 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogClose,
@@ -45,10 +45,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useId, useState, type CSSProperties } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
-import {
-  getReadableTextColor,
-  getTrackHandleColor,
-} from "@/lib/track-colors";
+import { getReadableTextColor, getTrackHandleColor } from "@/lib/track-colors";
 
 const getTrackButtonStyle = (trackIndex: number): CSSProperties => {
   const backgroundColor = getTrackHandleColor(trackIndex);
@@ -65,12 +62,8 @@ export default function LoadSrt() {
   const [isSrtDialogOpen, setIsSrtDialogOpen] = useState(false);
   const { toast } = useToast();
   const showTrackLabelsId = useId();
-  const {
-    addTrack,
-    renameTrack,
-    deleteTrack,
-    loadSubtitlesIntoTrack,
-  } = useSubtitleActionsContext();
+  const { addTrack, renameTrack, deleteTrack, loadSubtitlesIntoTrack } =
+    useSubtitleActionsContext();
   const { tracks, showTrackLabels, setShowTrackLabels } = useSubtitleState();
 
   const handleSrtFileSelect = async (
@@ -140,7 +133,7 @@ export default function LoadSrt() {
       <DialogTrigger asChild>
         <Button
           variant="secondary"
-          className=" bg-yellow-300 hover:bg-orange-400 hover:text-white dark:bg-yellow-600 dark:hover:bg-orange-600 text-black rounded-sm cursor-pointer"
+          className="text-black bg-yellow-900 hover:bg-yellow-800 dark:bg-amber-800 dark:hover:bg-amber-900 rounded-sm cursor-pointer"
         >
           <IconBadgeCc />
           <span className="leading-none truncate">{t("buttons.loadSrt")}</span>
@@ -226,7 +219,7 @@ export default function LoadSrt() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-red-500 hover:bg-red-700 hover:text-white bg-red-100 cursor-pointer"
+                        className="text-red-900 hover:bg-red-900 hover:text-red-300 bg-red-300 cursor-pointer"
                       >
                         <IconTrash />
                       </Button>
@@ -276,10 +269,10 @@ export default function LoadSrt() {
         </div>
         <DialogFooter className="">
           <div className="flex justify-between items-center gap-2 mr-auto">
-            <Checkbox
+            <Switch
               id={showTrackLabelsId}
               checked={showTrackLabels}
-              onCheckedChange={(v) => setShowTrackLabels(Boolean(v))}
+              onCheckedChange={setShowTrackLabels}
             />
             <Label htmlFor={showTrackLabelsId} className="cursor-pointer">
               {t("dialog.showTrackLabels")}

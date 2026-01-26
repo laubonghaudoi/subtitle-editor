@@ -414,7 +414,7 @@ function MainContent() {
                           <TabsTrigger
                             key={track.id}
                             value={track.id}
-                            className="shadow-none shrink-0 rounded-sm border px-3 py-1 text-xs font-semibold transition-opacity focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-hidden dark:focus-visible:ring-white"
+                            className="shadow-none shrink-0 rounded-sm border px-2 py-1 text-sm font-semibold transition-opacity focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-hidden dark:focus-visible:ring-white"
                             style={{
                               backgroundColor,
                               color,
@@ -467,7 +467,7 @@ function MainContent() {
                 </Tabs>
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-muted-foreground rounded-sm">
-                  <Label className="cursor-pointer text-xl hover:text-blue-500 underline">
+                  <Label className="cursor-pointer text-xl hover:text-blue-800 underline">
                     <span>{t("labels.loadSrtFile")}</span>
                     <Input
                       type="file"
@@ -498,7 +498,7 @@ function MainContent() {
                         t("subtitle.newTrackName", { number: 1 }),
                       )
                     }
-                    className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-500"
+                    className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-800"
                   >
                     {t("labels.startFromScratch")}
                   </Button>

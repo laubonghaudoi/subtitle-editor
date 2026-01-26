@@ -17,6 +17,7 @@ import {
   useSubtitleActionsContext,
   useSubtitleState,
 } from "@/context/subtitle-context";
+import { getTrackHandleColor, hexToRgba } from "@/lib/track-colors";
 import { useWaveformRegions } from "./use-waveform-regions";
 import type { BulkOffsetPreviewState } from "@/components/bulk-offset/drawer";
 import { useTheme } from "next-themes";
@@ -335,18 +336,24 @@ export default forwardRef(function WaveformVisualizer(
             zIndex: 10,
           }}
         >
-          {tracks.map((track, idx) => (
-            <div
-              key={track.id}
-              className="absolute left-2 bg-neutral-500 text-white dark:bg-slate-200 dark:text-slate-900 px-2 py-0.5 rounded text-xs font-semibold"
-              style={{
-                top: `${((idx + 0.5) * 100) / tracks.length}%`,
-                transform: "translateY(-50%)",
-              }}
-            >
-              {track.name}
-            </div>
-          ))}
+          {tracks.map((track, idx) => {
+            const trackColor = getTrackHandleColor(idx);
+            const labelBackground = hexToRgba(trackColor, 0.2);
+            return (
+              <div
+                key={track.id}
+                className="absolute left-2 px-2 py-0.5 rounded text-sm font-semibold"
+                style={{
+                  top: `${((idx + 0.5) * 100) / tracks.length}%`,
+                  transform: "translateY(-50%)",
+                  backgroundColor: labelBackground,
+                  color: trackColor,
+                }}
+              >
+                {track.name}
+              </div>
+            );
+          })}
         </div>
       )}
       {isLoading && (

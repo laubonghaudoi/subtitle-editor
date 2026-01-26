@@ -181,7 +181,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   if (!mediaUrl) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-        <Label className="cursor-pointer text-xl hover:text-blue-500 underline">
+        <Label className="cursor-pointer text-xl hover:text-blue-800 underline">
           {t("videoPlayer.loadFile")}
           <Input
             className="hidden"

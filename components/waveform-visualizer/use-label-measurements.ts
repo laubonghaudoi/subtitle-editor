@@ -54,6 +54,11 @@ export function useLabelMeasurements(
     });
 
     if (!laneHeight || topOfFirstLanePx === null) {
+      if (tracks.length > 0 && containerRect.height > 0) {
+        setLabelsOffsetTop(0);
+        setLabelsAreaHeight(containerRect.height);
+        return;
+      }
       setLabelsOffsetTop(0);
       setLabelsAreaHeight(0);
       return;

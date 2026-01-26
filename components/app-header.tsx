@@ -212,7 +212,7 @@ export function AppHeader({
             onClick={() => {
               mediaFileInputRef.current?.click();
             }}
-            className="bg-sky-300 hover:bg-blue-500 dark:bg-sky-500 dark:hover:bg-blue-400 hover:text-white text-black rounded-sm cursor-pointer"
+            className="text-white dark:text-black bg-blue-800 hover:bg-blue-700 dark:bg-sky-800 dark:hover:bg-sky-900 rounded-sm cursor-pointer"
           >
             <IconMovie size={20} />
             <span className="max-w-36 flex-1 overflow-hidden whitespace-nowrap text-ellipsis text-left">

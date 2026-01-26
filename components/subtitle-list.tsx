@@ -438,7 +438,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
     if (subtitles.length === 0) {
       return (
         <div className="flex flex-col items-center justify-center h-full text-muted-foreground rounded-sm">
-          <Label className="cursor-pointer text-xl hover:text-blue-500 underline">
+          <Label className="cursor-pointer text-xl hover:text-blue-800 underline">
             <span>{t("labels.loadSrtFile")}</span>
             <Input
               type="file"
@@ -451,7 +451,7 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
           <Button
             variant="link"
             onClick={handleStartFromScratch}
-            className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-500"
+            className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-800"
           >
             {t("labels.startFromScratch")}
           </Button>

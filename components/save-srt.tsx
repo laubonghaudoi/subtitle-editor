@@ -73,7 +73,7 @@ export default function SaveSrt() {
         <Button
           onClick={openDialog}
           disabled={isDisabled}
-          className="cursor-pointer bg-slate-700  hover:bg-slate-600 dark:bg-slate-300 dark:hover:bg-slate-400 text-white dark:text-black rounded-sm"
+          className="cursor-pointer text-white bg-plum-800 hover:bg-plum-900 rounded-sm"
         >
           <IconDownload size={20} />
           <span>{t("buttons.saveSrt")}</span>

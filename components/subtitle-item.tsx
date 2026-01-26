@@ -197,9 +197,9 @@ const SubtitleItem = memo(function SubtitleItem({
               resumePlayback();
             }
           }}
-          className={`px-4 py-2 border-b border-gray-800 dark:border-white hover:bg-amber-50 hover:dark:bg-amber-900 cursor-pointer grid grid-cols-[1rem_7rem_1fr] gap-4 items-center ${
+          className={`px-4 py-2 border-b border-black dark:border-white hover:bg-yellow-200 cursor-pointer grid grid-cols-[1rem_7rem_1fr] gap-4 items-center ${
             startSeconds <= currentTime && endSeconds > currentTime
-              ? "bg-cyan-50 dark:bg-cyan-900"
+              ? "bg-sky-400"
               : ""
           }`}
         >
@@ -318,7 +318,7 @@ const SubtitleItem = memo(function SubtitleItem({
             <div className="flex-1">
               {editingSubtitleUuid === subtitle.uuid ? (
                 <Textarea
-                  className="w-full h-fit bg-blue-100 dark:bg-blue-950 min-h-0 resize-none rounded-sm focus-visible:outline-none focus-visible:ring-0 shadow-none border-none field-sizing-content" // Adjust height as needed
+                  className="w-full h-fit bg-blue-300 min-h-0 resize-none rounded-sm focus-visible:outline-none focus-visible:ring-0 shadow-none border-none field-sizing-content" // Adjust height as needed
                   rows={1}
                   ref={textAreaRef} // Assign ref
                   value={editText}
@@ -470,12 +470,12 @@ const SubtitleItem = memo(function SubtitleItem({
               <TooltipTrigger
                 type="button"
                 onClick={() => deleteSubtitleAction(subtitle.id)}
-                className="mx-4 my-auto px-2 py-1 text-xs rounded bg-red-100 hover:bg-red-200 text-red-700 dark:bg-red-800 dark:hover:bg-red-700 dark:text-red-200 cursor-pointer"
+                className="mx-4 my-auto px-2 py-1 text-sm rounded bg-red-300 hover:bg-red-400 text-red-800 dark:bg-red-800 dark:hover:bg-red-900 dark:text-red-300 cursor-pointer"
                 aria-label={t("tooltips.delete")}
               >
                 <IconTrash size={16} />
               </TooltipTrigger>
-              <TooltipContent className="bg-red-600 px-2 py-1 text-sm">
+              <TooltipContent className="bg-red-900 px-2 py-1 text-sm">
                 {t("tooltips.delete")}
               </TooltipContent>
             </Tooltip>
@@ -491,12 +491,12 @@ const SubtitleItem = memo(function SubtitleItem({
                 onClick={() =>
                   mergeSubtitlesAction(subtitle.id, nextSubtitle.id)
                 }
-                className="px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-700 dark:bg-yellow-700 dark:hover:bg-yellow-600 dark:text-yellow-200 rounded cursor-pointer"
+                className="px-2 py-1 text-xs bg-amber-200 hover:bg-amber-300 text-amber-800 dark:bg-amber-800 dark:hover:bg-amber-900 dark:text-amber-700 rounded cursor-pointer"
                 aria-label={t("tooltips.merge")}
               >
                 <IconFold size={16} />
               </TooltipTrigger>
-              <TooltipContent className="bg-amber-500 dark:bg-amber-400 px-2 py-1 text-sm">
+              <TooltipContent className="bg-amber-900 dark:bg-amber-800 px-2 py-1 text-sm">
                 {t("tooltips.merge")}
               </TooltipContent>
             </Tooltip>
@@ -518,7 +518,7 @@ const SubtitleItem = memo(function SubtitleItem({
               className={`px-2 py-1 text-sm rounded ${
                 isAddDisabled
                   ? "bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover-gray dark:text-gray-200 cursor-not-allowed"
-                  : "bg-green-100 hover:bg-green-200 text-green-700 dark:bg-green-700 dark:hover:bg-green-600 dark:text-green-100 cursor-pointer"
+                  : "bg-grass-300 hover:bg-grass-400 text-grass-800 dark:bg-grass-800 dark:hover:bg-grass-900 dark:text-grass-300 cursor-pointer"
               }`}
               aria-label={
                 isAddDisabled ? t("tooltips.noRoom") : t("tooltips.add")
@@ -528,7 +528,7 @@ const SubtitleItem = memo(function SubtitleItem({
             </TooltipTrigger>
             <TooltipContent
               className={`px-2 py-1 text-sm ${
-                isAddDisabled ? "bg-gray-500" : "bg-green-500"
+                isAddDisabled ? "bg-gray-800 dark:text-white" : "bg-grass-800"
               }`}
             >
               {addTooltipContent}

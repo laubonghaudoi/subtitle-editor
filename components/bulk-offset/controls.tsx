@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
+import { hexToRgba } from "@/lib/track-colors";
 
 const STEP_FINE = 0.001; // 1ms
 const STEP_TEN = 0.01; // 10ms
@@ -13,21 +14,6 @@ const STEP_COARSE = 1; // 1s
 const INITIAL_SLIDER_LIMIT_SECONDS = 10;
 const SLIDER_LIMIT_INCREMENT = 1;
 const SLIDER_EXPANSION_MARGIN = SLIDER_LIMIT_INCREMENT / 2;
-
-function hexToRgba(hex: string, alpha: number): string {
-  let normalized = hex.replace("#", "");
-  if (normalized.length === 3) {
-    normalized = normalized
-      .split("")
-      .map((c) => c + c)
-      .join("");
-  }
-  const bigint = Number.parseInt(normalized, 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
 
 export type BulkShiftTarget = "start" | "end" | "both";
 
