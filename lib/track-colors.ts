@@ -1,10 +1,16 @@
 const DEFAULT_TRACK_ALPHA = 0.2;
 
-const TRACK_BASE_COLORS = [
-  { token: "--amber-9", fallback: "#efb100" }, // Amber
-  { token: "--blue-9", fallback: "#3b82f6" }, // Blue
-  { token: "--crimson-9", fallback: "#c70036" }, // Crimson
-  { token: "--green-9", fallback: "#009966" }, // Green
+type TrackBaseColor = {
+  tokenLight: string;
+  tokenDark?: string;
+  fallback: string;
+};
+
+const TRACK_BASE_COLORS: TrackBaseColor[] = [
+  { tokenLight: "--amber-10", tokenDark: "--amber-9", fallback: "#efb100" }, // Amber
+  { tokenLight: "--blue-10", tokenDark: "--blue-9", fallback: "#3b82f6" }, // Blue
+  { tokenLight: "--crimson-10", tokenDark: "--crimson-9", fallback: "#c70036" }, // Crimson
+  { tokenLight: "--green-10", tokenDark: "--green-9", fallback: "#009966" }, // Green
 ];
 const FALLBACK_HANDLE_COLOR = TRACK_BASE_COLORS[0]?.fallback ?? "#fcd34d";
 
@@ -52,7 +58,10 @@ const getBaseColor = (index: number): string => {
   if (TRACK_BASE_COLORS.length === 0) return FALLBACK_HANDLE_COLOR;
   const normalizedIndex = normalizeIndex(index, TRACK_BASE_COLORS.length);
   const entry = TRACK_BASE_COLORS[normalizedIndex];
-  return resolveTokenColor(entry.token, entry.fallback);
+  const theme = getThemeKey();
+  const token =
+    theme === "dark" ? entry.tokenDark ?? entry.tokenLight : entry.tokenLight;
+  return resolveTokenColor(token, entry.fallback);
 };
 
 export function getTrackHandleColor(index: number): string {
