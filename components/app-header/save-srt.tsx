@@ -99,7 +99,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "srt")}
-                  className="cursor-pointer bg-zinc-800 dark:bg-slate-200 hover:bg-neutral-700 dark:hover:bg-slate-300 text-white dark:text-black rounded-sm"
+                  className="cursor-pointer bg-slate-950 hover:bg-mauve-900 text-white dark:text-black rounded-sm"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsSrt")}</span>
@@ -107,7 +107,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "vtt")}
-                  className="cursor-pointer bg-zinc-800 dark:bg-slate-200 hover:bg-neutral-700 dark:hover:bg-slate-300 text-white dark:text-black rounded-sm"
+                  className="cursor-pointer bg-slate-950 hover:bg-mauve-900 text-white dark:text-black rounded-sm"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsVtt")}</span>
@@ -115,7 +115,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "txt")}
-                  className="cursor-pointer bg-zinc-800 dark:bg-slate-200 hover:bg-neutral-700 dark:hover:bg-slate-300 text-white dark:text-black rounded-sm"
+                  className="cursor-pointer bg-slate-950 hover:bg-mauve-900 text-white dark:text-black rounded-sm"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsTxt")}</span>
@@ -123,7 +123,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "csv")}
-                  className="cursor-pointer bg-zinc-800 dark:bg-slate-200 hover:bg-neutral-700 dark:hover:bg-slate-300 text-white dark:text-black rounded-sm"
+                  className="cursor-pointer bg-slate-950 hover:bg-mauve-900 text-white dark:text-black rounded-sm"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsCsv")}</span>
