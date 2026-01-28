@@ -64,7 +64,7 @@ export default function FaqPage() {
           <Link
             href="https://www.happyscribe.com/subtitle-tools/online-subtitle-editor/free"
             target="_blank"
-            className="hover:underline text-blue-600 hover:text-blue-800"
+            className="hover:underline text-blue-800 hover:text-blue-900"
           >
             Happy Scribe
           </Link>{" "}
@@ -77,7 +77,7 @@ export default function FaqPage() {
         <li>
           <Link
             href="https://www.nikse.dk/subtitleedit"
-            className="hover:underline text-blue-600 hover:text-blue-800"
+            className="hover:underline text-blue-800 hover:text-blue-900"
           >
             Subtitle Edit
           </Link>{" "}
@@ -91,7 +91,7 @@ export default function FaqPage() {
           <Link
             href="https://aegisub.org/"
             target="_blank"
-            className="hover:underline text-blue-600 hover:text-blue-800"
+            className="hover:underline text-blue-800 hover:text-blue-900"
           >
             Aegisub
           </Link>{" "}
@@ -105,7 +105,7 @@ export default function FaqPage() {
           <Link
             href="https://opensubtitleed.sourceforge.net/"
             target="_blank"
-            className="hover:underline text-blue-600 hover:text-blue-800"
+            className="hover:underline text-blue-800 hover:text-blue-900"
           >
             Open Subtitle Editor
           </Link>{" "}
@@ -113,7 +113,7 @@ export default function FaqPage() {
           <Link
             href="https://www.movavi.com/"
             target="_blank"
-            className="hover:underline text-blue-600 hover:text-blue-800"
+            className="hover:underline text-blue-800 hover:text-blue-900"
           >
             Movavi
           </Link>{" "}
@@ -142,7 +142,7 @@ export default function FaqPage() {
         <Link
           href="https://github.com/laubonghaudoi/subtitle-editor"
           target="_blank"
-          className="hover:underline text-blue-600 hover:text-blue-800"
+          className="hover:underline text-blue-800 hover:text-blue-900"
         >
           laubonghaudoi/subtitle-editor
         </Link>
@@ -156,7 +156,7 @@ export default function FaqPage() {
         <Link
           href="https://github.com/laubonghaudoi/subtitle-editor/issues"
           target="_blank"
-          className="hover:underline text-blue-600 hover:text-blue-800"
+          className="hover:underline text-blue-800 hover:text-blue-900"
         >
           open an issue on GitHub
         </Link>
@@ -176,7 +176,7 @@ export default function FaqPage() {
         <Link
           href="https://github.com/laubonghaudoi/subtitle-editor/issues/11#issuecomment-3201949429"
           target="_blank"
-          className="hover:underline text-blue-600 hover:text-blue-800"
+          className="hover:underline text-blue-800 hover:text-blue-900"
         >
           this GitHub issue
         </Link>
@@ -199,7 +199,7 @@ export default function FaqPage() {
           <Link
             href="https://huggingface.co/spaces/k2-fsa/generate-subtitles-for-videos"
             target="_blank"
-            className="hover:underline text-blue-600 hover:text-blue-800"
+            className="hover:underline text-blue-800 hover:text-blue-900"
           >
             k2-fsa/generate-subtitles-for-videos
           </Link>
@@ -208,7 +208,7 @@ export default function FaqPage() {
           <Link
             href="https://huggingface.co/spaces/BatuhanYilmaz/Whisper-Auto-Subtitled-Video-Generator"
             target="_blank"
-            className="hover:underline text-blue-600 hover:text-blue-800"
+            className="hover:underline text-blue-800 hover:text-blue-900"
           >
             BatuhanYilmaz/Whisper-Auto-Subtitled-Video-Generator
           </Link>
@@ -217,7 +217,7 @@ export default function FaqPage() {
           <Link
             href="https://huggingface.co/spaces/NeuralFalcon/Whisper-Turbo-Subtitle"
             target="_blank"
-            className="hover:underline text-blue-600 hover:text-blue-800"
+            className="hover:underline text-blue-800 hover:text-blue-900"
           >
             NeuralFalcon/Whisper-Turbo-Subtitle
           </Link>
@@ -227,7 +227,7 @@ export default function FaqPage() {
         You can also download{" "}
         <Link
           href="https://www.nikse.dk/subtitleedit"
-          className="hover:underline text-blue-600 hover:text-blue-800"
+          className="hover:underline text-blue-800 hover:text-blue-900"
         >
           Subtitle Edit
         </Link>{" "}
@@ -240,7 +240,7 @@ export default function FaqPage() {
         Use{" "}
         <Link
           href="https://github.com/yt-dlp/yt-dlp"
-          className="hover:underline text-blue-600 hover:text-blue-800"
+          className="hover:underline text-blue-800 hover:text-blue-900"
         >
           yt-dlp
         </Link>
