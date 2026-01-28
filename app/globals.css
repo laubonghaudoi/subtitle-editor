@@ -548,14 +548,15 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    /* Keep borders in sync with text color (black in light, white in dark) */
+    border-color: currentColor;
   }
 }
 
 @layer base {
   :root {
     --background: var(--slate-1);
-    --foreground: var(--slate-12);
+    --foreground: black;
     --card: var(--slate-1);
     --card-foreground: var(--slate-12);
     --popover: var(--slate-1);
@@ -570,8 +571,8 @@
     --accent-foreground: var(--slate-12);
     --destructive: var(--red-9);
     --destructive-foreground: var(--red-1);
-    --border: var(--slate-6);
-    --input: var(--slate-6);
+    --border: black;
+    --input: black;
     --ring: var(--slate-8);
     --chart-1: var(--tomato-9);
     --chart-2: var(--blue-9);
@@ -582,7 +583,7 @@
   }
   .dark {
     --background: var(--slate-1);
-    --foreground: var(--slate-12);
+    --foreground: white;
     --card: var(--slate-2);
     --card-foreground: var(--slate-12);
     --popover: var(--slate-2);
@@ -597,8 +598,8 @@
     --accent-foreground: var(--slate-12);
     --destructive: var(--red-9);
     --destructive-foreground: var(--red-1);
-    --border: var(--slate-6);
-    --input: var(--slate-6);
+    --border: white;
+    --input: white;
     --ring: var(--slate-8);
     --chart-1: var(--tomato-9);
     --chart-2: var(--blue-9);
