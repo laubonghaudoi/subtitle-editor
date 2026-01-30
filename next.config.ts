@@ -1,7 +1,8 @@
+import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 import createNextIntlPlugin from "next-intl/plugin";
 import runtimeCaching from "next-pwa/cache";
 import withPWAInit from "next-pwa";
-import type { NextConfig } from "next";
 
 const withNextIntl = createNextIntlPlugin();
 const withPWA = withPWAInit({
@@ -21,5 +22,10 @@ const nextConfig: NextConfig = {
   compress: true,
   reactCompiler: true,
 };
+
+if (process.env.NODE_ENV === "development") {
+  // Allow `next dev` to expose local Cloudflare bindings (KV/R2/etc.)
+  initOpenNextCloudflareForDev();
+}
 
 export default withPWA(withNextIntl(nextConfig));

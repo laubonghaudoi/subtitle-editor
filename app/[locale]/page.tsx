@@ -45,8 +45,6 @@ import type {
   VideoPlayerProps,
 } from "@/components/video-player";
 
-export const runtime = "edge";
-
 const VideoPlayer = dynamic<VideoPlayerProps>(
   () => import("@/components/video-player"),
   {

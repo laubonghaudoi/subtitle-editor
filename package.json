@@ -5,6 +5,10 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "start": "next start",
     "lint": "eslint --max-warnings=0 .",
     "format": "biome format --write .",
@@ -46,6 +50,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.11",
+    "@cloudflare/workers-types": "^4.20260130.0",
+    "@opennextjs/cloudflare": "^1.16.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^25.0.9",
@@ -60,7 +66,8 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.61.1"
   },
   "overrides": {
     "@types/react": "19.2.10",

@@ -1,8 +1,6 @@
 import type { MetadataRoute } from "next";
 import { locales, localeConfig } from "@/lib/locales";
 
-export const runtime = "edge";
-
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://subtitle-editor.org";
 
