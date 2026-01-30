@@ -3,34 +3,22 @@
   "main": ".open-next/worker.js",
   "name": "subtitle-editor",
   "compatibility_date": "2026-01-30",
-  "compatibility_flags": [
-    // Enable Node.js API
-    // see https://developers.cloudflare.com/workers/configuration/compatibility-flags/#nodejs-compatibility-flag
-    "nodejs_compat",
-  ],
-  // Explicitly disable name preservation to avoid "__name is not defined" with next-themes
+  "compatibility_flags": ["nodejs_compat"],
   "keep_names": false,
   "assets": {
     "directory": ".open-next/assets",
-    "binding": "ASSETS",
+    "binding": "ASSETS"
   },
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      // The service should match the "name" of your worker
-      "service": "subtitle-editor",
-    },
+      "service": "subtitle-editor"
+    }
   ],
   "r2_buckets": [
     {
-      // Incremental cache storage for ISR/fetch cache
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "subtitle-editor-inc-cache",
-    },
-    {
-      "bucket_name": "subtitle-editor-inc-cache",
-      "binding": "subtitle_editor_inc_cache",
-      "remote": true,
-    },
-  ],
+      "bucket_name": "subtitle-editor-inc-cache"
+    }
+  ]
 }

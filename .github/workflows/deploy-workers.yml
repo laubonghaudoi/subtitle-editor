@@ -1,0 +1,91 @@
+name: Deploy Workers
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  deploy-prod:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy worker
+        run: npm run deploy
+
+  deploy-preview:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build OpenNext worker
+        run: npx opennextjs-cloudflare build
+
+      - name: Generate preview Wrangler config
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          node -e '
+            const fs = require("fs");
+            const cfg = JSON.parse(fs.readFileSync("wrangler.jsonc", "utf8"));
+            const name = `subtitle-editor-pr-${process.env.PR_NUMBER}`;
+            cfg.name = name;
+            if (Array.isArray(cfg.services)) {
+              cfg.services = cfg.services.map((service) => ({ ...service, service: name }));
+            }
+            fs.writeFileSync("wrangler.pr.jsonc", JSON.stringify(cfg, null, 2));
+          '
+
+      - name: Deploy preview worker
+        id: deploy
+        run: |
+          set -euo pipefail
+          out=$(npx wrangler deploy --config wrangler.pr.jsonc)
+          echo "$out"
+          url=$(echo "$out" | grep -oE 'https://[^ ]+workers.dev' | head -n 1 || true)
+          if [ -n "$url" ]; then
+            echo "url=$url" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment preview URL
+        if: steps.deploy.outputs.url != ''
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Preview deployed: ${{ steps.deploy.outputs.url }}
