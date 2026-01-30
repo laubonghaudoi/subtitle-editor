@@ -14,7 +14,7 @@
   "buttons": {
     "loadMedia": "載入媒體",
     "loadSrt": "載入 .srt/.vtt",
-    "saveSrt": "儲存 .srt/.vtt",
+    "saveSrt": "儲存字幕",
     "loadSrtFile": "載入 .srt/.vtt 檔案",
     "newTrack": "開新字幕軌",
     "maxTracksReached": "最多可以加 4 條字幕軌",
@@ -36,7 +36,7 @@
   "labels": {
     "loadSrtFile": "載入 .srt/.vtt 檔案",
     "or": "或",
-    "startFromScratch": "從頭開始"
+    "startFromScratch": "由頭開始"
   },
   "videoPlayer": {
     "loadFile": "載入影片 / 音訊檔案",
@@ -106,7 +106,8 @@
   },
   "shortcuts": {
     "title": "快捷掣",
-    "space": "播放 / 暫停影片。",
+    "space": "播放 / 暫停影片，",
+    "shiftSpace": "編輯緊嗰陣播放 / 暫停。",
     "tab": "編輯當前字幕文字。",
     "arrows": "同",
     "arrowsAction": "跳到上一條 / 下一條字幕。",

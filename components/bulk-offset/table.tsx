@@ -28,6 +28,7 @@ interface BulkOffsetTableProps {
   onToggleAll: (checked: CheckedState) => void;
   headerCheckboxState: CheckedState;
   trackColor: string;
+  trackBackgroundColor: string;
 }
 
 export function BulkOffsetTable({
@@ -38,6 +39,7 @@ export function BulkOffsetTable({
   onToggleAll,
   headerCheckboxState,
   trackColor,
+  trackBackgroundColor,
 }: BulkOffsetTableProps) {
   const t = useTranslations();
   const shiftPressedRef = useRef(false);
@@ -88,13 +90,16 @@ export function BulkOffsetTable({
           const previewEndStyle = preview.endChanged
             ? { color: trackColor }
             : undefined;
+          const rowStyle = isChecked
+            ? { backgroundColor: trackBackgroundColor }
+            : undefined;
           return (
             <tr
               key={subtitle.uuid}
               className={cn(
                 "border-b border-dashed transition-colors hover:bg-muted/50 last:border-b-0",
-                isChecked && "bg-secondary/30",
               )}
+              style={rowStyle}
             >
               <td className="px-4 align-middle">
                 <Checkbox

@@ -572,7 +572,7 @@
     --destructive: var(--red-9);
     --destructive-foreground: var(--red-1);
     --border: black;
-    --input: black;
+    --input: var(--slate-7);
     --ring: var(--slate-8);
     --chart-1: var(--tomato-9);
     --chart-2: var(--blue-9);
@@ -599,7 +599,7 @@
     --destructive: var(--red-9);
     --destructive-foreground: var(--red-1);
     --border: white;
-    --input: white;
+    --input: var(--slate-7);
     --ring: var(--slate-8);
     --chart-1: var(--tomato-9);
     --chart-2: var(--blue-9);

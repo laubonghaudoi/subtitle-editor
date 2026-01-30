@@ -24,7 +24,8 @@ export default function BottomInstructions() {
         </h2>
         <ul className="list-disc list-inside px-2">
           <li>
-            <kbd>space</kbd> {t("shortcuts.space")}
+            <kbd>space</kbd> {t("shortcuts.space")} {" "}
+            <kbd>shift</kbd> + <kbd>space</kbd> {t("shortcuts.shiftSpace")}
           </li>
           <li>
             <kbd>tab</kbd> {t("shortcuts.tab")}

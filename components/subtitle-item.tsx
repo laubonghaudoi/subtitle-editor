@@ -239,7 +239,7 @@ const SubtitleItem = memo(function SubtitleItem({
                     setEditingStartTimeId(null);
                   }
                 }}
-                className="py-1 bg-blue-100 dark:bg-blue-950 h-fit text-center text-sm min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
+                className="py-1 bg-blue-300 h-fit text-center text-sm min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
               />
             ) : (
               <Button
@@ -290,7 +290,7 @@ const SubtitleItem = memo(function SubtitleItem({
                     setEditingEndTimeId(null);
                   }
                 }}
-                className="py-1 bg-blue-100 dark:bg-blue-950 h-fit min-h-0 text-center text-sm resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
+                className="py-1 bg-blue-300 h-fit min-h-0 text-center text-sm resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
               />
             ) : (
               <Button
@@ -334,6 +334,13 @@ const SubtitleItem = memo(function SubtitleItem({
                     setEditingSubtitleUuid(null); // Exit edit mode
                   }}
                   onKeyDown={(e) => {
+                    if (e.code === "Space" && e.shiftKey) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsPlaying((previous) => !previous);
+                      return;
+                    }
+
                     // Stop space key propagation when editing
                     if (e.key === " ") {
                       e.stopPropagation();

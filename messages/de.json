@@ -107,6 +107,7 @@
   "shortcuts": {
     "title": "Tastenkombinationen",
     "space": "zum Abspielen/Anhalten des Videos.",
+    "shiftSpace": "Abspielen/Anhalten beim Bearbeiten eines Untertitels.",
     "tab": "zum Bearbeiten des aktuellen Untertiteltextes.",
     "arrows": "und",
     "arrowsAction": "zum Springen zum vorherigen/nächsten Untertitel.",

@@ -106,7 +106,8 @@
   },
   "shortcuts": {
     "title": "Shortcuts",
-    "space": "to play/pause the video.",
+    "space": "to play/pause the video;",
+    "shiftSpace": "to play/pause while editing a subtitle.",
     "tab": "to edit the current subtitle text.",
     "arrows": "and",
     "arrowsAction": "to jump to the previous/next subtitle.",

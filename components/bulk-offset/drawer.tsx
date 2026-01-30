@@ -1,7 +1,7 @@
 "use client";
 
 import { BulkOffsetTable } from "@/components/bulk-offset/table";
-import { getTrackHandleColor } from "@/lib/track-colors";
+import { getTrackColor, getTrackHandleColor } from "@/lib/track-colors";
 import { secondsToTime, timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import type { CheckedState } from "@radix-ui/react-checkbox";
@@ -43,7 +43,8 @@ export function BulkOffsetDrawer({
   const [shiftTarget, setShiftTarget] = useState<BulkShiftTarget>("both");
   const lastInteractedIndexRef = useRef<number | null>(null);
   const normalizedTrackIndex = trackIndex >= 0 ? trackIndex : 0;
-  const trackColor = getTrackHandleColor(normalizedTrackIndex);
+  const trackHandleColor = getTrackHandleColor(normalizedTrackIndex);
+  const trackBackgroundColor = getTrackColor(normalizedTrackIndex);
   const trackNameLabel =
     currentTrackName && currentTrackName.trim().length > 0
       ? currentTrackName
@@ -343,7 +344,8 @@ export function BulkOffsetDrawer({
               onToggleRow={handleRowToggle}
               onToggleAll={handleSelectAll}
               headerCheckboxState={headerCheckboxState}
-              trackColor={trackColor}
+              trackColor={trackHandleColor}
+              trackBackgroundColor={trackBackgroundColor}
             />
           </div>
         )}
@@ -357,7 +359,7 @@ export function BulkOffsetDrawer({
         shiftTarget={shiftTarget}
         onShiftTargetChange={setShiftTarget}
         selectionSummary={selectionSummary}
-        accentColor={trackColor}
+        accentColor={trackHandleColor}
       />
     </div>
   );
