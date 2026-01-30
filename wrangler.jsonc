@@ -20,5 +20,11 @@
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
       "bucket_name": "subtitle-editor-inc-cache"
     }
-  ]
+  ],
+		"observability": {
+			"logs": {
+				"enabled": true,
+				"invocation_logs": true
+			}
+		}
 }
