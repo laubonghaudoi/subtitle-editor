@@ -239,7 +239,7 @@ const SubtitleItem = memo(function SubtitleItem({
                     setEditingStartTimeId(null);
                   }
                 }}
-                className="py-1 bg-blue-100 dark:bg-blue-950 dark:text-neutral-100 h-fit text-center text-sm min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
+                className="py-1 bg-blue-100 dark:bg-blue-950 h-fit text-center text-sm min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
               />
             ) : (
               <Button
@@ -255,7 +255,7 @@ const SubtitleItem = memo(function SubtitleItem({
                   }
                 }}
                 variant="ghost"
-                className="text-sm hover:bg-transparent text-neutral-500 dark:text-neutral-300 h-fit cursor-pointer py-1"
+                className="text-sm hover:bg-transparent h-fit cursor-pointer py-1"
               >
                 {subtitle.startTime}
               </Button>
@@ -290,7 +290,7 @@ const SubtitleItem = memo(function SubtitleItem({
                     setEditingEndTimeId(null);
                   }
                 }}
-                className="py-1 bg-blue-100 dark:bg-blue-950 dark:text-neutral-100 h-fit min-h-0 text-center text-sm resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
+                className="py-1 bg-blue-100 dark:bg-blue-950 h-fit min-h-0 text-center text-sm resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
               />
             ) : (
               <Button
@@ -306,7 +306,7 @@ const SubtitleItem = memo(function SubtitleItem({
                   }
                 }}
                 variant="ghost"
-                className="hover:bg-transparent text-neutral-600 dark:text-neutral-200 h-fit cursor-pointer py-1 text-sm"
+                className="hover:bg-transparent h-fit cursor-pointer py-1 text-sm"
               >
                 {subtitle.endTime}
               </Button>
