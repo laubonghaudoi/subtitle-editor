@@ -1,3 +1,4 @@
+import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   useSubtitleActionsContext,
   useSubtitleTimings,
@@ -6,7 +7,6 @@ import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import { motion } from "motion/react";
 import { memo } from "react";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import SubtitleItemDeleteButton from "./subtitle-item-delete-button";
 import SubtitleItemMergeActions from "./subtitle-item-merge-actions";
 import SubtitleTextEditor from "./subtitle-item-text-editor";

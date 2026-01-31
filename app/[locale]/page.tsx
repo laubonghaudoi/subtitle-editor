@@ -2,19 +2,18 @@
 
 import { AppHeader } from "@/components/app-header";
 import BottomInstructions from "@/components/bottom-instructions";
-import CustomControls from "@/components/custom-controls";
-import SkipLinks from "@/components/skip-links";
-import SubtitleList, {
-  type SubtitleListRef,
-} from "@/components/subtitle/subtitle-list";
 import type {
   BulkOffsetDrawerProps,
   BulkOffsetPreviewState,
 } from "@/components/bulk-offset/drawer";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CustomControls from "@/components/custom-controls";
+import SkipLinks from "@/components/skip-links";
+import type { SubtitleListRef } from "@/components/subtitle/subtitle-list";
+import TrackTabs from "@/components/subtitle/track-tabs";
+import type {
+  VideoPlayerHandle,
+  VideoPlayerProps,
+} from "@/components/video-player";
 import {
   SubtitleProvider,
   useSubtitleActionsContext,
@@ -22,30 +21,24 @@ import {
   useSubtitleState,
   useSubtitles,
 } from "@/context/subtitle-context";
-import {
-  parseSRT,
-  parseVTT,
-  extractVttPrologue,
-} from "@/lib/subtitle-operations";
-import { isMediaFile, isSubtitleFile } from "@/lib/file-utils";
 import { useDroppablePanel } from "@/hooks/use-droppable-panel";
 import { useSubtitleShortcuts } from "@/hooks/use-subtitle-shortcuts";
+import { isMediaFile, isSubtitleFile } from "@/lib/file-utils";
+import {
+  extractVttPrologue,
+  parseSRT,
+  parseVTT,
+} from "@/lib/subtitle-operations";
 import { cn } from "@/lib/utils";
-import { getTrackHandleColor, getTrackColor } from "@/lib/track-colors";
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   DragEvent,
   ForwardRefExoticComponent,
   RefAttributes,
 } from "react";
+import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import type {
-  VideoPlayerHandle,
-  VideoPlayerProps,
-} from "@/components/video-player";
 
 const VideoPlayer = dynamic<VideoPlayerProps>(
   () => import("@/components/video-player"),
@@ -95,15 +88,8 @@ function MainContent() {
     renameTrack,
     bulkShiftSubtitlesAction,
   } = useSubtitleActionsContext();
-  const {
-    undoSubtitles,
-    redoSubtitles,
-    canUndoSubtitles,
-    canRedoSubtitles,
-  } = useSubtitleHistory();
-  const { resolvedTheme } = useTheme();
-  const theme = resolvedTheme ?? "light";
-
+  const { undoSubtitles, redoSubtitles, canUndoSubtitles, canRedoSubtitles } =
+    useSubtitleHistory();
   // Keep page-specific state here
 
   const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -131,9 +117,9 @@ function MainContent() {
   const [bulkOffsetPreview, setBulkOffsetPreview] = useState<
     Record<string, BulkOffsetPreviewState>
   >({});
-  const resumeMediaPlayback = useCallback(() => {
+  const resumeMediaPlayback = () => {
     videoPlayerRef.current?.resumePlayback();
-  }, []);
+  };
 
   const activeTrackIndex = activeTrackId
     ? tracks.findIndex((track) => track.id === activeTrackId)
@@ -145,111 +131,104 @@ function MainContent() {
   const activeTrackSubtitles = activeTrack?.subtitles ?? [];
   const allowSubtitleDrop = tracks.length === 0 || activeTrackIsEmpty;
   const bulkOffsetDisabled = !activeTrack || activeTrackSubtitles.length === 0;
-  const loadMediaFile = useCallback(
-    (file: File) => {
-      setMediaFile(null);
-      if (mediaFileInputRef.current) {
-        mediaFileInputRef.current.value = "";
-      }
-      setTimeout(() => {
-        setMediaFile(file);
-        setMediaFileName(file.name);
-      }, 0);
-    },
-    [setMediaFile, setMediaFileName],
-  );
+  const loadMediaFile = (file: File) => {
+    setMediaFile(null);
+    if (mediaFileInputRef.current) {
+      mediaFileInputRef.current.value = "";
+    }
+    setTimeout(() => {
+      setMediaFile(file);
+      setMediaFileName(file.name);
+    }, 0);
+  };
 
-  const loadSubtitleFile = useCallback(
-    async (file: File) => {
-      const text = await file.text();
-      const firstLine =
-        text.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
-      const isVtt =
-        file.name.toLowerCase().endsWith(".vtt") ||
-        /^WEBVTT( |$)/.test(firstLine);
-      const parsedSubtitles = isVtt ? parseVTT(text) : parseSRT(text);
-      const meta = isVtt ? extractVttPrologue(text) : undefined;
-      const safeTrackName = file.name.replace(/\.(srt|vtt)$/i, "") || file.name;
+  const loadSubtitleFile = async (file: File) => {
+    const text = await file.text();
+    const firstLine =
+      text.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
+    const isVtt =
+      file.name.toLowerCase().endsWith(".vtt") ||
+      /^WEBVTT( |$)/.test(firstLine);
+    const parsedSubtitles = isVtt ? parseVTT(text) : parseSRT(text);
+    const meta = isVtt ? extractVttPrologue(text) : undefined;
+    const safeTrackName = file.name.replace(/\.(srt|vtt)$/i, "") || file.name;
 
-      if (activeTrackId && activeTrackIsEmpty) {
-        loadSubtitlesIntoTrack(
-          activeTrackId,
-          parsedSubtitles,
-          meta
-            ? { vttHeader: meta.header, vttPrologue: meta.prologue }
-            : undefined,
-        );
-        renameTrack(activeTrackId, safeTrackName);
-        return;
-      }
-
-      setInitialSubtitles(
+    if (activeTrackId && activeTrackIsEmpty) {
+      loadSubtitlesIntoTrack(
+        activeTrackId,
         parsedSubtitles,
-        safeTrackName,
         meta
           ? { vttHeader: meta.header, vttPrologue: meta.prologue }
           : undefined,
       );
-    },
-    [
-      activeTrackId,
-      activeTrackIsEmpty,
-      loadSubtitlesIntoTrack,
-      renameTrack,
-      setInitialSubtitles,
-    ],
-  );
+      renameTrack(activeTrackId, safeTrackName);
+      return;
+    }
 
-  const acceptSubtitleFile = useCallback(
-    (file: File) => allowSubtitleDrop && isSubtitleFile(file),
-    [allowSubtitleDrop],
-  );
+    setInitialSubtitles(
+      parsedSubtitles,
+      safeTrackName,
+      meta ? { vttHeader: meta.header, vttPrologue: meta.prologue } : undefined,
+    );
+  };
+
+  const handleStartFromScratch = () => {
+    setInitialSubtitles(
+      [
+        {
+          uuid: uuidv4(),
+          id: 1,
+          startTime: "00:00:00,000",
+          endTime: "00:00:03,000",
+          text: t("subtitle.newSubtitle"),
+        },
+      ],
+      t("subtitle.newTrackName", { number: 1 }),
+    );
+  };
 
   const {
     isDragActive: isSubtitleDragActive,
     panelProps: baseSubtitleDropHandlers,
   } = useDroppablePanel<HTMLDivElement>({
-    acceptFile: acceptSubtitleFile,
+    acceptFile: (file: File) => allowSubtitleDrop && isSubtitleFile(file),
     onDropFile: loadSubtitleFile,
   });
 
-  const subtitleDropHandlers = useMemo(
-    () => ({
-      onDragEnter: (event: DragEvent<HTMLDivElement>) => {
-        if (!allowSubtitleDrop) {
-          if (event.dataTransfer) {
-            event.dataTransfer.dropEffect = "none";
-          }
-          return;
+  const subtitleDropHandlers = {
+    onDragEnter: (event: DragEvent<HTMLDivElement>) => {
+      if (!allowSubtitleDrop) {
+        if (event.dataTransfer) {
+          event.dataTransfer.dropEffect = "none";
         }
-        baseSubtitleDropHandlers.onDragEnter(event);
-      },
-      onDragLeave: (event: DragEvent<HTMLDivElement>) => {
-        baseSubtitleDropHandlers.onDragLeave(event);
-      },
-      onDragOver: (event: DragEvent<HTMLDivElement>) => {
-        if (!allowSubtitleDrop) {
-          event.preventDefault();
-          if (event.dataTransfer) {
-            event.dataTransfer.dropEffect = "none";
-          }
-          return;
+        return;
+      }
+      baseSubtitleDropHandlers.onDragEnter(event);
+    },
+    onDragLeave: (event: DragEvent<HTMLDivElement>) => {
+      baseSubtitleDropHandlers.onDragLeave(event);
+    },
+    onDragOver: (event: DragEvent<HTMLDivElement>) => {
+      if (!allowSubtitleDrop) {
+        event.preventDefault();
+        if (event.dataTransfer) {
+          event.dataTransfer.dropEffect = "none";
         }
-        baseSubtitleDropHandlers.onDragOver(event);
-      },
-      onDrop: (event: DragEvent<HTMLDivElement>) => {
-        if (!allowSubtitleDrop) {
-          event.preventDefault();
-          if (event.dataTransfer) {
-            event.dataTransfer.dropEffect = "none";
-          }
-          return;
+        return;
+      }
+      baseSubtitleDropHandlers.onDragOver(event);
+    },
+    onDrop: (event: DragEvent<HTMLDivElement>) => {
+      if (!allowSubtitleDrop) {
+        event.preventDefault();
+        if (event.dataTransfer) {
+          event.dataTransfer.dropEffect = "none";
         }
-        baseSubtitleDropHandlers.onDrop(event);
-      },
-    }),
-    [allowSubtitleDrop, baseSubtitleDropHandlers],
-  );
+        return;
+      }
+      baseSubtitleDropHandlers.onDrop(event);
+    },
+  };
 
   const { isDragActive: isMediaDragActive, panelProps: mediaDropHandlers } =
     useDroppablePanel<HTMLDivElement>({
@@ -391,119 +370,32 @@ function MainContent() {
                 isBulkOffsetOpen && "pointer-events-none blur-[1px] opacity-40",
               )}
             >
-              {tracks.length > 0 && activeTrackId ? (
-                <Tabs
-                  value={activeTrackId}
-                  onValueChange={setActiveTrackId}
-                  className="h-full flex flex-col"
-                >
-                  {tracks.length > 1 && (
-                    <TabsList className="py-1 flex-nowrap overflow-x-auto overflow-y-hidden border-dashed border-b border-black dark:border-white gap-2">
-                      {tracks.map((track, trackIndex) => {
-                        const handleColor = getTrackHandleColor(trackIndex);
-                        const inactiveAlpha = theme === "dark" ? 0.5 : 0.25;
-                        const isActive = track.id === activeTrackId;
-                        const backgroundColor = isActive
-                          ? handleColor
-                          : getTrackColor(trackIndex, inactiveAlpha);
-                        const color = isActive ? "#ffffff" : "#111827";
-                        const borderColor = isActive
-                          ? handleColor
-                          : "transparent";
-                        return (
-                          <TabsTrigger
-                            key={track.id}
-                            value={track.id}
-                            className="shadow-none shrink-0 rounded-sm border px-2 py-1 text-sm font-semibold transition-opacity focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-hidden dark:focus-visible:ring-white"
-                            style={{
-                              backgroundColor,
-                              color,
-                              borderColor,
-                            }}
-                          >
-                            {track.name}
-                          </TabsTrigger>
-                        );
-                      })}
-                    </TabsList>
-                  )}
-                  {tracks.map((track) => (
-                    <TabsContent
-                      key={track.id}
-                      value={track.id}
-                      className="grow overflow-y-auto m-0 min-h-0"
-                    >
-                      <SubtitleList
-                        ref={
-                          activeTrackId === track.id
-                            ? subtitleListRef
-                            : undefined
-                        }
-                        // Pass only non-subtitle state/props
-                        currentTime={playbackTime}
-                        isPlaying={isPlaying}
-                        onScrollToRegion={(uuid) => {
-                          if (waveformRef.current) {
-                            waveformRef.current.scrollToRegion(uuid);
-                          }
-                        }}
-                        resumePlayback={resumeMediaPlayback}
-                        setIsPlaying={setIsPlaying}
-                        setPlaybackTime={setPlaybackTime}
-                        editingSubtitleUuid={editingSubtitleUuid}
-                        setEditingSubtitleUuid={setEditingSubtitleUuid}
-                        onTimeJump={(seconds) =>
-                          setPlaybackTime(
-                            Math.min(
-                              duration,
-                              Math.max(0, playbackTime + seconds),
-                            ),
-                          )
-                        }
-                        jumpDuration={jumpDuration}
-                      />
-                    </TabsContent>
-                  ))}
-                </Tabs>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-muted-foreground rounded-sm">
-                  <Label className="cursor-pointer text-xl hover:text-blue-800 underline">
-                    <span>{t("labels.loadSrtFile")}</span>
-                    <Input
-                      type="file"
-                      className="hidden"
-                      accept=".srt,.vtt"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        await loadSubtitleFile(file);
-                      }}
-                    />
-                  </Label>
-                  <p className="text-xl my-4">{t("labels.or")}</p>
-                  <Button
-                    variant="link"
-                    onClick={() =>
-                      // Use the context action for starting from scratch
-                      setInitialSubtitles(
-                        [
-                          {
-                            uuid: uuidv4(), // Assign UUID
-                            id: 1,
-                            startTime: "00:00:00,000",
-                            endTime: "00:00:03,000",
-                            text: t("subtitle.newSubtitle"),
-                          },
-                        ],
-                        t("subtitle.newTrackName", { number: 1 }),
-                      )
-                    }
-                    className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-800"
-                  >
-                    {t("labels.startFromScratch")}
-                  </Button>
-                </div>
-              )}
+              <TrackTabs
+                tracks={tracks}
+                activeTrackId={activeTrackId}
+                setActiveTrackId={setActiveTrackId}
+                subtitleListRef={subtitleListRef}
+                playbackTime={playbackTime}
+                isPlaying={isPlaying}
+                resumePlayback={resumeMediaPlayback}
+                setIsPlaying={setIsPlaying}
+                setPlaybackTime={setPlaybackTime}
+                editingSubtitleUuid={editingSubtitleUuid}
+                setEditingSubtitleUuid={setEditingSubtitleUuid}
+                onScrollToRegion={(uuid) => {
+                  if (waveformRef.current) {
+                    waveformRef.current.scrollToRegion(uuid);
+                  }
+                }}
+                onTimeJump={(seconds) =>
+                  setPlaybackTime(
+                    Math.min(duration, Math.max(0, playbackTime + seconds)),
+                  )
+                }
+                jumpDuration={jumpDuration}
+                onLoadSubtitleFile={loadSubtitleFile}
+                onStartFromScratch={handleStartFromScratch}
+              />
             </div>
 
             {isBulkOffsetOpen && tracks.length > 0 && (
