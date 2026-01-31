@@ -4,7 +4,9 @@ import { AppHeader } from "@/components/app-header";
 import BottomInstructions from "@/components/bottom-instructions";
 import CustomControls from "@/components/custom-controls";
 import SkipLinks from "@/components/skip-links";
-import SubtitleList, { type SubtitleListRef } from "@/components/subtitle-list";
+import SubtitleList, {
+  type SubtitleListRef,
+} from "@/components/subtitle/subtitle-list";
 import type {
   BulkOffsetDrawerProps,
   BulkOffsetPreviewState,
