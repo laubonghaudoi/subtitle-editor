@@ -148,6 +148,10 @@
     "subtitleCount": "{count, plural, =1 {# Untertitel} other {# Untertitel}}",
     "newTrackName": "Spur {number}"
   },
+  "subtitleStats": {
+    "wordUnit": "W",
+    "charUnit": "Z"
+  },
   "tooltips": {
     "add": "Hinzufügen",
     "merge": "Zusammenführen",

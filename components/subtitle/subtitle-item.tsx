@@ -7,6 +7,7 @@ import {
 import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { memo } from "react";
 import SubtitleItemDeleteButton from "./subtitle-item-delete-button";
 import SubtitleItemMergeActions from "./subtitle-item-merge-actions";
@@ -55,6 +56,7 @@ const SubtitleItem = memo(function SubtitleItem({
   } = useSubtitleActionsContext();
   const { byUuid: subtitleTimingMap } = useSubtitleTimings();
   const { showSubtitleDuration } = useSubtitleState();
+  const t = useTranslations();
 
   const resolveStartSeconds = (candidate: Subtitle | null) => {
     if (!candidate) {
@@ -123,9 +125,7 @@ const SubtitleItem = memo(function SubtitleItem({
               : "grid-cols-[1rem_7rem_1fr]"
           }`}
         >
-          <div className="text-sm font-mono">
-            {subtitle.id}
-          </div>
+          <div className="text-sm font-mono">{subtitle.id}</div>
 
           <SubtitleTimeFields
             subtitle={subtitle}
@@ -139,8 +139,14 @@ const SubtitleItem = memo(function SubtitleItem({
           {showSubtitleDuration ? (
             <div className="flex flex-col justify-between text-sm text-gray-900 font-mono tabular-nums text-center">
               <p>{durationLabel}</p>
-              <p>{wordCount}w </p>
-              <p>{characterCount}c</p>
+              <p>
+                {wordCount}
+                {t("subtitleStats.wordUnit")}
+              </p>
+              <p>
+                {characterCount}
+                {t("subtitleStats.charUnit")}
+              </p>
             </div>
           ) : null}
 

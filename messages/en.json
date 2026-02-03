@@ -148,6 +148,10 @@
     "subtitleCount": "{count, plural, =1 {# subtitle} other {# subtitles}}",
     "newTrackName": "Track {number}"
   },
+  "subtitleStats": {
+    "wordUnit": "w",
+    "charUnit": "c"
+  },
   "tooltips": {
     "add": "Add",
     "merge": "Merge",

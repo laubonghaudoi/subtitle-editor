@@ -140,13 +140,17 @@
     "themeDark": "暗",
     "overlapClampLabel": "自動防止字幕重疊",
     "overlapClampDescription": "越過相鄰字幕仍然會被禁止",
-    "subtitleDurationLabel": "顯示字幕時長同字數、字符數",
+    "subtitleDurationLabel": "顯示字幕時長同字數、詞數",
     "subtitleDurationDescription": "喺時間同文字中間顯示統計欄"
   },
   "subtitle": {
     "newSubtitle": "新字幕",
     "subtitleCount": "{count} 條字幕",
     "newTrackName": "字幕軌 {number}"
+  },
+  "subtitleStats": {
+    "wordUnit": "詞",
+    "charUnit": "字"
   },
   "tooltips": {
     "add": "加新",
