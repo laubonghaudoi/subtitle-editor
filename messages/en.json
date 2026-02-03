@@ -139,7 +139,9 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "overlapClampLabel": "Prevent partial overlaps",
-    "overlapClampDescription": "Clamp regions so they don't overlap while dragging. Passing a neighbor is always blocked."
+    "overlapClampDescription": "Clamp regions so they don't overlap while dragging. Passing a neighbor is always blocked.",
+    "subtitleDurationLabel": "Show subtitle duration and word, character count",
+    "subtitleDurationDescription": "Adds a stats column between time and text."
   },
   "subtitle": {
     "newSubtitle": "New subtitle",

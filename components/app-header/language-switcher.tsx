@@ -115,7 +115,7 @@ export default function LanguageSwitcher() {
               {t("dialog.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-red-600 hover:bg-red-500 cursor-pointer"
+              className="bg-red-800 hover:bg-red-900 cursor-pointer"
               onClick={handleConfirmNavigation}
             >
               {t("dialog.yes")}

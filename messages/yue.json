@@ -139,7 +139,9 @@
     "themeLight": "明",
     "themeDark": "暗",
     "overlapClampLabel": "自動防止字幕重疊",
-    "overlapClampDescription": "越過相鄰字幕仍然會被禁止"
+    "overlapClampDescription": "越過相鄰字幕仍然會被禁止",
+    "subtitleDurationLabel": "顯示字幕時長同字數、字符數",
+    "subtitleDurationDescription": "喺時間同文字中間顯示統計欄"
   },
   "subtitle": {
     "newSubtitle": "新字幕",

@@ -1,6 +1,7 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   useSubtitleActionsContext,
+  useSubtitleState,
   useSubtitleTimings,
 } from "@/context/subtitle-context";
 import { timeToSeconds } from "@/lib/utils";
@@ -53,6 +54,7 @@ const SubtitleItem = memo(function SubtitleItem({
     splitSubtitleAction,
   } = useSubtitleActionsContext();
   const { byUuid: subtitleTimingMap } = useSubtitleTimings();
+  const { showSubtitleDuration } = useSubtitleState();
 
   const resolveStartSeconds = (candidate: Subtitle | null) => {
     if (!candidate) {
@@ -73,6 +75,12 @@ const SubtitleItem = memo(function SubtitleItem({
   const startSeconds = resolveStartSeconds(subtitle) ?? 0;
   const endSeconds = resolveEndSeconds(subtitle) ?? startSeconds;
   const nextStartSeconds = resolveStartSeconds(nextSubtitle);
+  const durationSeconds = Math.max(0, endSeconds - startSeconds);
+  const durationLabel = `${durationSeconds.toFixed(3)}s`;
+  const trimmedText = subtitle.text.trim();
+  const wordCount =
+    trimmedText.length > 0 ? trimmedText.split(/\s+/).length : 0;
+  const characterCount = Array.from(subtitle.text).length;
 
   const isEditing = editingSubtitleUuid === subtitle.uuid;
 
@@ -105,13 +113,17 @@ const SubtitleItem = memo(function SubtitleItem({
               resumePlayback();
             }
           }}
-          className={`px-4 py-2 border-b border-black dark:border-white hover:bg-yellow-200 cursor-pointer grid grid-cols-[1rem_7rem_1fr] gap-4 items-center ${
+          className={`px-4 py-2 border-b border-black dark:border-white hover:bg-yellow-200 cursor-pointer grid gap-4 items-center ${
             startSeconds <= currentTime && endSeconds > currentTime
               ? "bg-sky-400"
               : ""
+          } ${
+            showSubtitleDuration
+              ? "grid-cols-[1rem_7rem_5rem_1fr]"
+              : "grid-cols-[1rem_7rem_1fr]"
           }`}
         >
-          <div className="text-sm text-neutral-800 dark:text-neutral-100 font-mono">
+          <div className="text-sm font-mono">
             {subtitle.id}
           </div>
 
@@ -123,6 +135,14 @@ const SubtitleItem = memo(function SubtitleItem({
             onUpdateStartTime={updateSubtitleStartTimeAction}
             onUpdateEndTime={updateSubtitleEndTimeAction}
           />
+
+          {showSubtitleDuration ? (
+            <div className="flex flex-col justify-between text-sm text-gray-900 font-mono tabular-nums text-center">
+              <p>{durationLabel}</p>
+              <p>{wordCount}w </p>
+              <p>{characterCount}c</p>
+            </div>
+          ) : null}
 
           <div className="flex justify-between items-start gap-4">
             <div className="flex-1">

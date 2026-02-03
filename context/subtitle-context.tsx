@@ -34,6 +34,8 @@ interface SubtitleStateValue {
   setActiveTrackId: (id: string | null) => void;
   showTrackLabels: boolean;
   setShowTrackLabels: (value: boolean) => void;
+  showSubtitleDuration: boolean;
+  setShowSubtitleDuration: (value: boolean) => void;
   clampOverlaps: boolean;
   setClampOverlaps: (value: boolean) => void;
 }
@@ -84,6 +86,8 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const [tracks, setTracks] = useState<SubtitleTrack[]>([]);
   const [activeTrackId, setActiveTrackId] = useState<string | null>(null);
   const [showTrackLabels, setShowTrackLabels] = useState<boolean>(false);
+  const [showSubtitleDuration, setShowSubtitleDuration] =
+    useState<boolean>(false);
   const [clampOverlaps, setClampOverlaps] = useState<boolean>(true);
   const previousActiveTrackId = useRef<string | null>(null);
   const trackHistoriesRef = useRef<Map<string, UndoHistory<Subtitle[]>>>(
@@ -209,6 +213,8 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       setActiveTrackId,
       showTrackLabels,
       setShowTrackLabels,
+      showSubtitleDuration,
+      setShowSubtitleDuration,
       clampOverlaps,
       setClampOverlaps,
     }),
@@ -222,6 +228,8 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       setActiveTrackId,
       showTrackLabels,
       setShowTrackLabels,
+      showSubtitleDuration,
+      setShowSubtitleDuration,
       clampOverlaps,
       setClampOverlaps,
     ],

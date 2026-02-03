@@ -28,8 +28,14 @@ export default function SettingsDialog({
   const t = useTranslations();
   const { resolvedTheme, setTheme } = useTheme();
   const [isThemeMounted, setIsThemeMounted] = useState(false);
-  const { clampOverlaps, setClampOverlaps } = useSubtitleState();
+  const {
+    clampOverlaps,
+    setClampOverlaps,
+    showSubtitleDuration,
+    setShowSubtitleDuration,
+  } = useSubtitleState();
   const overlapClampId = useId();
+  const subtitleDurationId = useId();
 
   useEffect(() => {
     setIsThemeMounted(true);
@@ -80,7 +86,7 @@ export default function SettingsDialog({
             </ToggleGroup>
           </div>
 
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center justify-between gap-4">
             <div className="space-y-1">
               <Label htmlFor={overlapClampId} className="text-sm">
                 {t("dialog.overlapClampLabel")}
@@ -93,6 +99,22 @@ export default function SettingsDialog({
               id={overlapClampId}
               checked={clampOverlaps}
               onCheckedChange={(value) => setClampOverlaps(value)}
+            />
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-1">
+              <Label htmlFor={subtitleDurationId} className="text-sm">
+                {t("dialog.subtitleDurationLabel")}
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                {t("dialog.subtitleDurationDescription")}
+              </p>
+            </div>
+            <Switch
+              id={subtitleDurationId}
+              checked={showSubtitleDuration}
+              onCheckedChange={(value) => setShowSubtitleDuration(value)}
             />
           </div>
         </div>
