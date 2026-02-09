@@ -11,6 +11,20 @@ export const metadata: Metadata = {
     "subtitle editor Frequently Asked Questions",
     "Why another subtitle editor?",
   ],
+  alternates: {
+    canonical: "https://subtitle-editor.org/faq",
+  },
+  openGraph: {
+    title: "FAQ | Subtitle Editor",
+    description: "Frequently asked questions about the subtitle editor.",
+    url: "https://subtitle-editor.org/faq",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FAQ | Subtitle Editor",
+    description: "Frequently asked questions about the subtitle editor.",
+  },
 };
 
 export default function FaqPage() {

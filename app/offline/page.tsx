@@ -1,9 +1,15 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Offline Mode",
   description:
     "You appear to be offline. The editor stays available with cached assets.",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
 };
 
 export default function OfflinePage() {

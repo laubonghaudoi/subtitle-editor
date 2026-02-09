@@ -17,6 +17,6 @@ export default createMiddleware({
 });
 
 export const config = {
-  // Match only internationalized pathnames, but exclude FAQ page and other static assets
-  matcher: ["/((?!_next|api|faq|.*\\..*).*)"],
+  // Match only internationalized pathnames, but exclude static utility routes/assets.
+  matcher: ["/((?!_next|api|faq|offline|.*\\..*).*)"],
 };
