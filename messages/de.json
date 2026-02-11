@@ -167,7 +167,7 @@
     "invalidEndDescription": "Die Endzeit darf nicht vor der Startzeit des Untertitels liegen."
   },
   "metadata": {
-    "title": "Untertitel-Editor - Dauerhaft kostenloses, quelloffenes, vollständig webbasiertes SRT/VTT-Bearbeitungstool",
+    "title": "Untertitel-Editor - Quelloffenes, webbasiertes SRT/VTT-Editor",
     "description": "Bearbeiten, erstellen und richten Sie Untertiteldateien (SRT/VTT) einfach mit diesem kostenlosen, quelloffenen, webbasierten Editor aus. Bietet Videovorschau und Wellenformvisualisierung. Keine Anmeldung erforderlich.",
     "keywords": [
       "Untertitel-Editor",

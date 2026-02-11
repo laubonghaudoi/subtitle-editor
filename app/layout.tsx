@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import enMessages from "@/messages/en.json";
 import "./globals.css";
 
+const EN_FALLBACK_TITLE = enMessages.metadata.title;
 const EN_FALLBACK_DESCRIPTION = enMessages.metadata.description;
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,8 +25,7 @@ export const metadata: Metadata = {
   applicationName: "Subtitle Editor",
   title: {
     template: "%s | Subtitle Editor", // Page title will replace %s
-    default:
-      "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT Editing Tool", // Default title for root layout
+    default: EN_FALLBACK_TITLE, // Default title for root layout
   },
   description: EN_FALLBACK_DESCRIPTION,
   manifest: "/manifest.json",
@@ -81,7 +81,6 @@ export default function RootLayout({
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
-        <meta name="description" content={EN_FALLBACK_DESCRIPTION} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

@@ -167,7 +167,7 @@
     "invalidEndDescription": "End time cannot be earlier than the start time of the subtitle."
   },
   "metadata": {
-    "title": "Subtitle Editor - Permanently Free, Open-source, Fully Web-based SRT/VTT Editing Tool",
+    "title": "Subtitle Editor - Open-sourced, Web-based SRT/VTT Editor",
     "description": "Edit, create, and align SRT/VTT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
     "keywords": [
       "subtitle editor",
