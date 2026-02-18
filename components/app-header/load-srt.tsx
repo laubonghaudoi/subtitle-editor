@@ -239,7 +239,7 @@ export default function LoadSrt() {
                         </AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => deleteTrack(track.id)}
-                          className="bg-red-700 hover:bg-red-500 dark:text-white cursor-pointer"
+                          className="bg-red-800 hover:bg-red-900 dark:text-white cursor-pointer"
                         >
                           {t("dialog.delete")}
                         </AlertDialogAction>
