@@ -1,5 +1,5 @@
 const mediaExtensionPattern =
-  /\.(m4a|mp3|mp4|webm|ogg|wav|aac|flac|opus)$/i;
+  /\.(m4a|mp3|mp4|webm|ogg|wav|aac|ac3|flac|opus)$/i;
 
 export function isSubtitleFile(file: File) {
   const name = file.name.toLowerCase();
