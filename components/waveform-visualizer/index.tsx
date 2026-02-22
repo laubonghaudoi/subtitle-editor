@@ -25,6 +25,7 @@ import { useTheme } from "next-themes";
 interface WaveformVisualizerProps {
   mediaFile: File | null;
   isPlaying: boolean;
+  playInBackground: boolean;
   onSeek: (time: number) => void;
   onPlayPause: (playing: boolean) => void;
   onRegionClick?: (uuid: string, opts?: { crossTrack?: boolean }) => void;
@@ -35,6 +36,7 @@ export default forwardRef(function WaveformVisualizer(
   {
     mediaFile,
     isPlaying,
+    playInBackground,
     onSeek,
     onPlayPause,
     onRegionClick,
@@ -172,6 +174,7 @@ export default forwardRef(function WaveformVisualizer(
     showTrackLabels,
     theme,
     clampOverlaps,
+    playInBackground,
   });
 
   /****************************************************************
@@ -323,6 +326,27 @@ export default forwardRef(function WaveformVisualizer(
       console.warn("Play/pause operation failed:", error);
     }
   }, [isPlaying, wavesurfer]);
+
+  useEffect(() => {
+    if (!wavesurfer || !playInBackground || typeof document === "undefined") {
+      return;
+    }
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden && isPlaying) {
+        try {
+          wavesurfer.play();
+        } catch (error) {
+          console.warn("Failed to resume waveform playback:", error);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [wavesurfer, playInBackground, isPlaying]);
 
   return (
     <div className="relative w-full h-full border-black">

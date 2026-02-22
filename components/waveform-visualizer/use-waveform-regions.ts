@@ -32,6 +32,7 @@ interface UseWaveformRegionsParams {
   showTrackLabels: boolean;
   theme: "light" | "dark";
   clampOverlaps: boolean;
+  playInBackground: boolean;
 }
 
 export const useWaveformRegions = ({
@@ -48,6 +49,7 @@ export const useWaveformRegions = ({
   showTrackLabels,
   theme,
   clampOverlaps,
+  playInBackground,
 }: UseWaveformRegionsParams) => {
   const subtitleToRegionMap = useRef<Map<string, RegionMapEntry>>(new Map());
   // Track drag state to avoid repeated scroll triggers mid-drag
@@ -226,6 +228,10 @@ export const useWaveformRegions = ({
     };
 
     const handlePause = () => {
+      const isHidden = typeof document !== "undefined" && document.hidden;
+      if (playInBackground && isHidden) {
+        return;
+      }
       onPlayPause(false);
     };
 
@@ -453,6 +459,7 @@ export const useWaveformRegions = ({
     setIsLoading,
     theme,
     clampOverlaps,
+    playInBackground,
   ]);
 
   useEffect(() => {

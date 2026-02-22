@@ -33,9 +33,12 @@ export default function SettingsDialog({
     setClampOverlaps,
     showSubtitleDuration,
     setShowSubtitleDuration,
+    playInBackground,
+    setPlayInBackground,
   } = useSubtitleState();
   const overlapClampId = useId();
   const subtitleDurationId = useId();
+  const playInBackgroundId = useId();
 
   useEffect(() => {
     setIsThemeMounted(true);
@@ -115,6 +118,22 @@ export default function SettingsDialog({
               id={subtitleDurationId}
               checked={showSubtitleDuration}
               onCheckedChange={(value) => setShowSubtitleDuration(value)}
+            />
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-1">
+              <Label htmlFor={playInBackgroundId} className="text-sm">
+                {t("dialog.playInBackgroundLabel")}
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                {t("dialog.playInBackgroundDescription")}
+              </p>
+            </div>
+            <Switch
+              id={playInBackgroundId}
+              checked={playInBackground}
+              onCheckedChange={(value) => setPlayInBackground(value)}
             />
           </div>
         </div>

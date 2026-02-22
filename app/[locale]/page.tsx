@@ -80,7 +80,8 @@ function MainContent() {
   const videoPlayerRef = useRef<VideoPlayerHandle | null>(null);
   const mediaFileInputRef = useRef<HTMLInputElement | null>(null);
   // Get subtitle state and actions from context
-  const { tracks, activeTrackId, setActiveTrackId } = useSubtitleState();
+  const { tracks, activeTrackId, setActiveTrackId, playInBackground } =
+    useSubtitleState();
   const subtitles = useSubtitles();
   const {
     setInitialSubtitles, // Use this instead of setSubtitlesWithHistory
@@ -269,6 +270,23 @@ function MainContent() {
     };
   }, [canUndoSubtitles]);
 
+  useEffect(() => {
+    if (playInBackground || typeof document === "undefined") {
+      return;
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setIsPlaying(false);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [playInBackground]);
+
   // Effect to handle pending scroll-to-subtitle
   useEffect(() => {
     if (pendingScrollToUuid && subtitleListRef.current) {
@@ -435,6 +453,7 @@ function MainContent() {
               seekTime={playbackTime}
               isPlaying={isPlaying}
               playbackRate={playbackRate}
+              playInBackground={playInBackground}
             />
           </div>
         </div>
@@ -469,6 +488,7 @@ function MainContent() {
                 ref={waveformRef}
                 mediaFile={mediaFile}
                 isPlaying={isPlaying}
+                playInBackground={playInBackground}
                 onSeek={setPlaybackTime}
                 onPlayPause={setIsPlaying}
                 previewOffsets={bulkOffsetPreview}

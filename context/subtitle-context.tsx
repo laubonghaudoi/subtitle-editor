@@ -38,6 +38,8 @@ interface SubtitleStateValue {
   setShowSubtitleDuration: (value: boolean) => void;
   clampOverlaps: boolean;
   setClampOverlaps: (value: boolean) => void;
+  playInBackground: boolean;
+  setPlayInBackground: (value: boolean) => void;
 }
 
 interface SubtitleHistoryValue {
@@ -89,6 +91,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const [showSubtitleDuration, setShowSubtitleDuration] =
     useState<boolean>(false);
   const [clampOverlaps, setClampOverlaps] = useState<boolean>(true);
+  const [playInBackground, setPlayInBackground] = useState<boolean>(false);
   const previousActiveTrackId = useRef<string | null>(null);
   const trackHistoriesRef = useRef<Map<string, UndoHistory<Subtitle[]>>>(
     new Map(),
@@ -217,6 +220,8 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       setShowSubtitleDuration,
       clampOverlaps,
       setClampOverlaps,
+      playInBackground,
+      setPlayInBackground,
     }),
     [
       tracks,
@@ -232,6 +237,8 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       setShowSubtitleDuration,
       clampOverlaps,
       setClampOverlaps,
+      playInBackground,
+      setPlayInBackground,
     ],
   );
 

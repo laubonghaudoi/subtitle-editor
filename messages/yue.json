@@ -141,7 +141,9 @@
     "overlapClampLabel": "自動防止字幕重疊",
     "overlapClampDescription": "越過相鄰字幕仍然會被禁止",
     "subtitleDurationLabel": "顯示字幕時長同字數、詞數",
-    "subtitleDurationDescription": "喺時間同文字中間顯示統計欄"
+    "subtitleDurationDescription": "喺時間同文字中間顯示統計欄",
+    "playInBackgroundLabel": "背景播放",
+    "playInBackgroundDescription": "就算個分頁唔喺前景都繼續播放。"
   },
   "subtitle": {
     "newSubtitle": "新字幕",

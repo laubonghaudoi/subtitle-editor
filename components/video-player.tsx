@@ -26,6 +26,7 @@ export interface VideoPlayerProps {
   seekTime: number;
   isPlaying: boolean;
   playbackRate: number;
+  playInBackground: boolean;
 }
 
 export interface VideoPlayerHandle {
@@ -43,6 +44,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     seekTime,
     isPlaying,
     playbackRate,
+    playInBackground,
   }: VideoPlayerProps,
   ref: ForwardedRef<VideoPlayerHandle>,
 ) {
@@ -120,6 +122,23 @@ const VideoPlayer = forwardRef(function VideoPlayer(
       playerRef.current.playbackRate = playbackRate;
     }
   }, [playbackRate]);
+
+  useEffect(() => {
+    if (!playInBackground || typeof document === "undefined") {
+      return;
+    }
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden && isPlaying) {
+        resumePlayback();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isPlaying, playInBackground, resumePlayback]);
 
   useEffect(() => {
     if (!mediaFile) {
@@ -248,7 +267,13 @@ const VideoPlayer = forwardRef(function VideoPlayer(
           onProgress(event.currentTarget.currentTime);
         }}
         onPlay={() => onPlayPause(true)}
-        onPause={() => onPlayPause(false)}
+        onPause={() => {
+          const isHidden = typeof document !== "undefined" && document.hidden;
+          if (playInBackground && isHidden) {
+            return;
+          }
+          onPlayPause(false);
+        }}
         onLoadedMetadata={handleLoadedMetadata}
         onLoadedData={handleLoadedMetadata}
         onDurationChange={(event) => onDuration(event.currentTarget.duration)}
