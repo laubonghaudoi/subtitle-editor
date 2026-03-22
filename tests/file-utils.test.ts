@@ -10,6 +10,14 @@ test("isMediaFile accepts ac3 extension fallback", () => {
   assert.equal(isMediaFile(file), true);
 });
 
+test("isMediaFile accepts mkv extension fallback", () => {
+  const file = new File(["fake"], "sample.mkv", {
+    type: "application/octet-stream",
+  });
+
+  assert.equal(isMediaFile(file), true);
+});
+
 test("isMediaFile rejects unsupported extension", () => {
   const file = new File(["fake"], "sample.xyz", {
     type: "application/octet-stream",

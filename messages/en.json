@@ -40,11 +40,14 @@
   },
   "videoPlayer": {
     "loadFile": "Load a video / audio file",
-    "supportedFormats": "Supported formats:",
+    "supportedFormats": "Supported in your browser:",
+    "supportedFormatsChecking": "Detecting browser media support...",
     "supportedFormatsAudio": "Audio",
     "supportedFormatsVideo": "Video",
-    "supportedFormatsStreams": "Streaming",
-    "supportedFormatsNote": "Playback depends on the codecs built into your browser.\nChrome, Edge, and Firefox handle Ogg/WebM/Opus audio (.oga, .opus, .weba) and Speex.\nSafari on macOS/iOS does not support those containers yet.",
+    "supportedFormatsNone": "None detected",
+    "supportedFormatsMaybe": "maybe",
+    "supportedFormatsNote": "This list is detected from your browser's native HTML media support. Actual loading still depends on the codecs inside the file.",
+    "supportedFormatsUnsupported": "Streaming manifests (.m3u8, .mpd) and FLV are not currently supported by this app.",
     "subtitles": "Subtitles"
   },
   "findReplace": {

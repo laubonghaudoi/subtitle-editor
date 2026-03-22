@@ -1,9 +1,15 @@
 "use client";
 
 import { useSubtitles } from "@/context/subtitle-context"; // Import context
+import {
+  detectBrowserMediaSupport,
+  type BrowserMediaSupport,
+  type MediaFormatSupport,
+} from "@/lib/media-support";
 import { subtitlesToVttString } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import {
+  Fragment,
   type ForwardedRef,
   type SyntheticEvent,
   forwardRef,
@@ -54,12 +60,30 @@ const VideoPlayer = forwardRef(function VideoPlayer(
 
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [vttUrl, setVttUrl] = useState<string | null>(null);
+  const [browserMediaSupport, setBrowserMediaSupport] =
+    useState<BrowserMediaSupport | null>(null);
   const playerRef = useRef<HTMLVideoElement | null>(null);
   const vttObjectUrlRef = useRef<string | null>(null);
   const timeToRestore = useRef<number | null>(null); // Ref to store time before remount
 
   const setVideoRef = useCallback((element: HTMLVideoElement | null) => {
     playerRef.current = element;
+  }, []);
+
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    const audio = document.createElement("audio");
+    const video = document.createElement("video");
+
+    setBrowserMediaSupport(
+      detectBrowserMediaSupport(
+        audio.canPlayType.bind(audio),
+        video.canPlayType.bind(video),
+      ),
+    );
   }, []);
 
   const resumePlayback = useCallback(() => {
@@ -197,6 +221,32 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     [onDuration],
   );
 
+  const renderSupportedFormats = useCallback(
+    (formats: MediaFormatSupport[]) => {
+      if (formats.length === 0) {
+        return (
+          <span className="text-muted-foreground">
+            {t("videoPlayer.supportedFormatsNone")}
+          </span>
+        );
+      }
+
+      return formats.map((format, index) => (
+        <Fragment key={format.label}>
+          {index > 0 ? ", " : null}
+          <code>{format.label}</code>
+          {format.support === "maybe" ? (
+            <span className="text-muted-foreground">
+              {" "}
+              ({t("videoPlayer.supportedFormatsMaybe")})
+            </span>
+          ) : null}
+        </Fragment>
+      ));
+    },
+    [t],
+  );
+
   if (!mediaUrl) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
@@ -214,32 +264,33 @@ const VideoPlayer = forwardRef(function VideoPlayer(
             }}
           />
         </Label>
-        <div className="my-4 space-y-1 text-base">
+        <div className="my-4 px-8 space-y-1 text-base">
           <p className="font-medium">{t("videoPlayer.supportedFormats")}</p>
-          <p>
-            <span className="font-semibold">
-              {t("videoPlayer.supportedFormatsAudio")}:
-            </span>{" "}
-            <code>mp3</code>, <code>m4a</code>, <code>aac</code>,{" "}
-            <code>wav</code>, <code>oga</code>, <code>weba</code>,{" "}
-            <code>spx</code>
-          </p>
-          <p>
-            <span className="font-semibold">
-              {t("videoPlayer.supportedFormatsVideo")}:
-            </span>{" "}
-            <code>mp4</code>, <code>mov</code>, <code>webm</code>,{" "}
-            <code>ogg</code>, <code>m4v</code>
-          </p>
-          <p>
-            <span className="font-semibold">
-              {t("videoPlayer.supportedFormatsStreams")}:
-            </span>{" "}
-            <code>HLS (.m3u8)</code>, <code>MPEG-DASH (.mpd)</code>,{" "}
-            <code>FLV (.flv)</code>
-          </p>
+          {browserMediaSupport ? (
+            <>
+              <p>
+                <span className="font-semibold">
+                  {t("videoPlayer.supportedFormatsAudio")}:
+                </span>{" "}
+                {renderSupportedFormats(browserMediaSupport.audio)}
+              </p>
+              <p>
+                <span className="font-semibold">
+                  {t("videoPlayer.supportedFormatsVideo")}:
+                </span>{" "}
+                {renderSupportedFormats(browserMediaSupport.video)}
+              </p>
+            </>
+          ) : (
+            <p className="text-muted-foreground">
+              {t("videoPlayer.supportedFormatsChecking")}
+            </p>
+          )}
           <p className="text-muted-foreground whitespace-pre-line">
             {t("videoPlayer.supportedFormatsNote")}
+          </p>
+          <p className="text-muted-foreground">
+            {t("videoPlayer.supportedFormatsUnsupported")}
           </p>
         </div>
       </div>

@@ -40,11 +40,14 @@
   },
   "videoPlayer": {
     "loadFile": "載入影片 / 音訊檔案",
-    "supportedFormats": "支援格式：",
+    "supportedFormats": "你嘅瀏覽器支援：",
+    "supportedFormatsChecking": "偵測緊瀏覽器媒體支援...",
     "supportedFormatsAudio": "音訊",
     "supportedFormatsVideo": "影片",
-    "supportedFormatsStreams": "串流",
-    "supportedFormatsNote": "實際支援程度取決於瀏覽器自帶編碼\nChrome／Edge／Firefox 支援 Ogg／WebM／Opus 音訊（例如 .oga、.opus、.weba）同 Speex；\nSafari（macOS／iOS）暫時未支援。",
+    "supportedFormatsNone": "偵測唔到",
+    "supportedFormatsMaybe": "可能",
+    "supportedFormatsNote": "呢個清單係根據你瀏覽器原生 HTML 媒體支援偵測出嚟。實際上讀唔讀到要睇個音檔案入面用咩 codec。",
+    "supportedFormatsUnsupported": "目前未支援串流 manifest（.m3u8、.mpd）同 FLV。",
     "subtitles": "字幕"
   },
   "findReplace": {
