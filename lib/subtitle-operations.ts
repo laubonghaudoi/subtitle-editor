@@ -253,7 +253,7 @@ export const mergeSubtitles = (
     id: sub1.id, // Will be reordered later
     startTime: sub1.startTime,
     endTime: sub2.endTime,
-    text: `${sub1.text}${sub2.text}`,
+    text: `${sub1.text} ${sub2.text}`,
   };
 
   const updatedSubtitles = subtitles
