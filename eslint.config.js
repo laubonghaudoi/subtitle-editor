@@ -1,12 +1,8 @@
-const { FlatCompat } = require("@eslint/eslintrc");
+const nextCoreWebVitals = require("eslint-config-next/core-web-vitals");
 const globals = require("globals");
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  resolvePluginsRelativeTo: __dirname,
-});
-
 module.exports = [
+  ...nextCoreWebVitals,
   {
     ignores: [
       ".next/",
@@ -18,7 +14,11 @@ module.exports = [
       "**/eslint.config.js",
     ],
   },
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
   {
     files: ["tests/**/*.test.ts"],
     languageOptions: {

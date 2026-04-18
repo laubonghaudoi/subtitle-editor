@@ -238,10 +238,19 @@ test("splitSubtitleAction respects pending text before splitting", async () => {
     result.current.subtitles[0].text,
     pendingText.slice(0, caretIndex),
   );
-  assert.equal(
-    result.current.subtitles[1].text,
-    pendingText.slice(caretIndex),
-  );
+  assert.equal(result.current.subtitles[1].text, pendingText.slice(caretIndex));
+});
+
+test("addSpaceOnMerge defaults to off and can be toggled", async () => {
+  const { result } = renderHook(() => useSubtitleContext(), { wrapper });
+
+  assert.equal(result.current.addSpaceOnMerge, false);
+
+  await act(async () => {
+    result.current.setAddSpaceOnMerge(true);
+  });
+
+  assert.equal(result.current.addSpaceOnMerge, true);
 });
 
 test("subtitles remain chronologically sorted after imports and edits", async () => {
@@ -272,15 +281,27 @@ test("subtitles remain chronologically sorted after imports and edits", async ()
     assert.equal(result.current.subtitles.length, 2);
   });
 
-  assert.deepEqual(result.current.subtitles.map((s) => s.uuid), ["early", "late"]);
-  assert.deepEqual(result.current.subtitles.map((s) => s.id), [2, 1]);
+  assert.deepEqual(
+    result.current.subtitles.map((s) => s.uuid),
+    ["early", "late"],
+  );
+  assert.deepEqual(
+    result.current.subtitles.map((s) => s.id),
+    [2, 1],
+  );
 
   await act(async () => {
     result.current.updateSubtitleTimeAction(2, "00:00:07,000", "00:00:08,000");
   });
 
-  assert.deepEqual(result.current.subtitles.map((s) => s.uuid), ["late", "early"]);
-  assert.deepEqual(result.current.subtitles.map((s) => s.id), [1, 2]);
+  assert.deepEqual(
+    result.current.subtitles.map((s) => s.uuid),
+    ["late", "early"],
+  );
+  assert.deepEqual(
+    result.current.subtitles.map((s) => s.id),
+    [1, 2],
+  );
 });
 
 test.after(() => {

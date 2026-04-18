@@ -238,10 +238,35 @@ export const updateSubtitle = (
   );
 };
 
+interface MergeSubtitleOptions {
+  addSpaceBetweenTexts?: boolean;
+}
+
+const joinSubtitleTexts = (
+  firstText: string,
+  secondText: string,
+  addSpaceBetweenTexts: boolean,
+): string => {
+  if (
+    !addSpaceBetweenTexts ||
+    firstText.length === 0 ||
+    secondText.length === 0
+  ) {
+    return `${firstText}${secondText}`;
+  }
+
+  if (/\s$/u.test(firstText) || /^\s/u.test(secondText)) {
+    return `${firstText}${secondText}`;
+  }
+
+  return `${firstText} ${secondText}`;
+};
+
 export const mergeSubtitles = (
   subtitles: Subtitle[],
   id1: number,
   id2: number,
+  options: MergeSubtitleOptions = {},
 ): Subtitle[] => {
   const sub1 = subtitles.find((s) => s.id === id1);
   const sub2 = subtitles.find((s) => s.id === id2);
@@ -253,7 +278,11 @@ export const mergeSubtitles = (
     id: sub1.id, // Will be reordered later
     startTime: sub1.startTime,
     endTime: sub2.endTime,
-    text: `${sub1.text}${sub2.text}`,
+    text: joinSubtitleTexts(
+      sub1.text,
+      sub2.text,
+      options.addSpaceBetweenTexts ?? false,
+    ),
   };
 
   const updatedSubtitles = subtitles

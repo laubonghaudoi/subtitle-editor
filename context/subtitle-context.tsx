@@ -36,6 +36,8 @@ interface SubtitleStateValue {
   setShowTrackLabels: (value: boolean) => void;
   showSubtitleDuration: boolean;
   setShowSubtitleDuration: (value: boolean) => void;
+  addSpaceOnMerge: boolean;
+  setAddSpaceOnMerge: (value: boolean) => void;
   clampOverlaps: boolean;
   setClampOverlaps: (value: boolean) => void;
   playInBackground: boolean;
@@ -90,6 +92,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const [showTrackLabels, setShowTrackLabels] = useState<boolean>(false);
   const [showSubtitleDuration, setShowSubtitleDuration] =
     useState<boolean>(false);
+  const [addSpaceOnMerge, setAddSpaceOnMerge] = useState<boolean>(false);
   const [clampOverlaps, setClampOverlaps] = useState<boolean>(true);
   const [playInBackground, setPlayInBackground] = useState<boolean>(false);
   const previousActiveTrackId = useRef<string | null>(null);
@@ -188,6 +191,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     setHistorySnapshot,
     activeSubtitles,
     setSubtitlesWithHistory,
+    addSpaceOnMerge,
   });
 
   const activeTrack = useMemo(() => {
@@ -218,6 +222,8 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       setShowTrackLabels,
       showSubtitleDuration,
       setShowSubtitleDuration,
+      addSpaceOnMerge,
+      setAddSpaceOnMerge,
       clampOverlaps,
       setClampOverlaps,
       playInBackground,
@@ -235,6 +241,8 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       setShowTrackLabels,
       showSubtitleDuration,
       setShowSubtitleDuration,
+      addSpaceOnMerge,
+      setAddSpaceOnMerge,
       clampOverlaps,
       setClampOverlaps,
       playInBackground,

@@ -145,6 +145,8 @@
     "overlapClampDescription": "Beim Ziehen werden Regionen so geklemmt, dass sie sich nicht überlappen. Das Überschreiten eines Nachbarn ist immer blockiert.",
     "subtitleDurationLabel": "Untertitel-Dauer sowie Wort- und Zeichenanzahl anzeigen",
     "subtitleDurationDescription": "Zeigt eine Statistik-Spalte zwischen Zeit und Text.",
+    "addSpaceOnMergeLabel": "Beim Zusammenführen ein Leerzeichen einfügen",
+    "addSpaceOnMergeDescription": "Fügt zwischen zusammengeführten Untertiteltexten ein einzelnes Leerzeichen ein, sofern dort nicht bereits Whitespace vorhanden ist.",
     "playInBackgroundLabel": "Im Hintergrund abspielen",
     "playInBackgroundDescription": "Lässt die Wiedergabe weiterlaufen, wenn dieser Tab nicht aktiv ist."
   },

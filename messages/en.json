@@ -145,6 +145,8 @@
     "overlapClampDescription": "Clamp regions so they don't overlap while dragging. Passing a neighbor is always blocked.",
     "subtitleDurationLabel": "Show subtitle duration and word, character count",
     "subtitleDurationDescription": "Adds a stats column between time and text.",
+    "addSpaceOnMergeLabel": "Add a space when merging subtitles",
+    "addSpaceOnMergeDescription": "Insert a single space between merged subtitle texts unless whitespace is already present.",
     "playInBackgroundLabel": "Play in background",
     "playInBackgroundDescription": "Keep playback running when this tab is not active."
   },

@@ -1,19 +1,20 @@
 import type { NextConfig } from "next";
+import withPWAInit, { runtimeCaching } from "@ducanh2912/next-pwa";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 import createNextIntlPlugin from "next-intl/plugin";
-import runtimeCaching from "next-pwa/cache";
-import withPWAInit from "next-pwa";
 
 const withNextIntl = createNextIntlPlugin();
 const withPWA = withPWAInit({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
   register: false,
-  skipWaiting: true,
-  runtimeCaching,
-  buildExcludes: [/middleware-manifest\.json$/],
   fallbacks: {
     document: "/offline",
+  },
+  workboxOptions: {
+    exclude: [/middleware-manifest\.json$/],
+    runtimeCaching,
+    skipWaiting: true,
   },
 });
 

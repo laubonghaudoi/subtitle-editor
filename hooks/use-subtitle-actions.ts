@@ -32,6 +32,7 @@ interface UseSubtitleActionsParams {
   setSubtitlesWithHistory: (
     action: Subtitle[] | ((prev: Subtitle[]) => Subtitle[]),
   ) => void;
+  addSpaceOnMerge: boolean;
 }
 
 export interface SubtitleActions {
@@ -98,6 +99,7 @@ export const useSubtitleActions = ({
   setHistorySnapshot,
   activeSubtitles,
   setSubtitlesWithHistory,
+  addSpaceOnMerge,
 }: UseSubtitleActionsParams): SubtitleActions =>
   useMemo(() => {
     const handleTrackedStateChange = (newSubtitles: Subtitle[]) => {
@@ -232,7 +234,11 @@ export const useSubtitleActions = ({
     };
 
     const mergeSubtitlesAction = (id1: number, id2: number) => {
-      handleTrackedStateChange(mergeSubtitles(activeSubtitles, id1, id2));
+      handleTrackedStateChange(
+        mergeSubtitles(activeSubtitles, id1, id2, {
+          addSpaceBetweenTexts: addSpaceOnMerge,
+        }),
+      );
     };
 
     const splitSubtitleAction = (
@@ -393,9 +399,10 @@ export const useSubtitleActions = ({
           if (offsetSeconds < 0) {
             nextEnd = Math.max(proposedEnd, nextStart);
           } else {
-            const upperBound = nextIsTarget || !Number.isFinite(nextStartSeconds)
-              ? proposedEnd
-              : Math.max(nextStartSeconds, nextStart);
+            const upperBound =
+              nextIsTarget || !Number.isFinite(nextStartSeconds)
+                ? proposedEnd
+                : Math.max(nextStartSeconds, nextStart);
             nextEnd = Math.min(proposedEnd, upperBound);
           }
           nextEnd = Math.max(nextStart, nextEnd);
@@ -407,12 +414,15 @@ export const useSubtitleActions = ({
           }
         } else if (target === "both") {
           const minOffset = Math.max(
-            previousIsTarget ? -startSeconds : previousEndSeconds - startSeconds,
+            previousIsTarget
+              ? -startSeconds
+              : previousEndSeconds - startSeconds,
             -startSeconds,
           );
-          const maxOffset = nextSubtitle && !nextIsTarget
-            ? nextStartSeconds - endSeconds
-            : Number.POSITIVE_INFINITY;
+          const maxOffset =
+            nextSubtitle && !nextIsTarget
+              ? nextStartSeconds - endSeconds
+              : Number.POSITIVE_INFINITY;
           const clampedOffset = Math.min(
             Math.max(offsetSeconds, minOffset),
             maxOffset,
@@ -460,4 +470,5 @@ export const useSubtitleActions = ({
     setTracks,
     trackHistoriesRef,
     tracks,
+    addSpaceOnMerge,
   ]);
