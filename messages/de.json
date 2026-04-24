@@ -65,6 +65,36 @@
     "noMatches": "Keine Übereinstimmungen gefunden",
     "replace": "Ersetzen"
   },
+  "subtitleQuality": {
+    "title": "QA",
+    "tooltip": "Häufige Untertitelprobleme prüfen",
+    "dialogTitle": "Untertitel-QA für aktuelle Spur: {track}",
+    "summary": "{issues} Probleme · {selected} ausgewählt · {fixable} automatisch korrigierbar",
+    "rules": "Regeln",
+    "minDuration": "Mindestdauer (s)",
+    "maxDuration": "Höchstdauer (s)",
+    "maxChars": "Max. Zeichen / Zeile",
+    "maxLines": "Max. Zeilen",
+    "cue": "Cue",
+    "issue": "Problem",
+    "original": "Original",
+    "preview": "Vorschau",
+    "manualReview": "Manuell prüfen",
+    "deleteCue": "Cue löschen",
+    "timingFix": "Timing-Korrektur",
+    "textFix": "Textkorrektur",
+    "selectVisible": "Sichtbare Korrekturen auswählen",
+    "selectIssue": "Problem für Cue {id} auswählen",
+    "selectFixes": "Korrekturen auswählen",
+    "apply": "Korrekturen anwenden",
+    "noIssues": "Keine Probleme gefunden",
+    "noFilteredIssues": "Keine Probleme passen zu den aktuellen Filtern",
+    "severity": {
+      "error": "Fehler",
+      "warning": "Warnung",
+      "info": "Info"
+    }
+  },
   "bulkOffset": {
     "title": "Untertitel für die Stapelverschiebung der Zeitstempel auswählen. Aktuelle Spur: {track}",
     "emptyState": "Lade Untertitel, um Sammelverschiebungen zu aktivieren.",
