@@ -8,16 +8,12 @@ type PreconnectTarget = {
 };
 
 const GOOGLE_ADS_ID = "AW-10839665138";
-const UMAMI_SCRIPT_SRC = "https://cloud.umami.is/script.js";
-const UMAMI_WEBSITE_ID = "505c9992-e14c-483a-aa4c-542fb097c809";
 
 const PRECONNECT_TARGETS: PreconnectTarget[] = [
   { href: "https://www.googletagmanager.com", crossOrigin: "anonymous" },
   { href: "https://www.google-analytics.com", crossOrigin: "anonymous" },
   { href: "https://www.google.com", crossOrigin: "anonymous" },
   { href: "https://googleads.g.doubleclick.net", crossOrigin: "anonymous" },
-  { href: "https://cloud.umami.is", crossOrigin: "anonymous" },
-  { href: "https://api-gateway.umami.dev", crossOrigin: "anonymous" },
 ];
 
 const injectLink = ({ href, crossOrigin }: PreconnectTarget) => {
@@ -109,14 +105,6 @@ gtag('js', new Date());
 gtag('config', '${GOOGLE_ADS_ID}');
 `.trim(),
       );
-
-      injectScript(UMAMI_SCRIPT_SRC, {
-        id: "umami-script",
-        defer: true,
-        attributes: {
-          "data-website-id": UMAMI_WEBSITE_ID,
-        },
-      });
     };
 
     const onTrigger = () => {

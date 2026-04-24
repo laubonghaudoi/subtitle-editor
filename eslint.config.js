@@ -6,6 +6,7 @@ module.exports = [
   {
     ignores: [
       ".next/",
+      ".open-next/",
       ".vercel/",
       "node_modules/",
       "public/",

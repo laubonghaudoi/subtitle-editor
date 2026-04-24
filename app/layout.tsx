@@ -1,6 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import AnalyticsLoader from "@/components/analytics-loader";
-import WebVitalsReporter from "@/components/web-vitals-reporter";
 import ServiceWorkerRegister from "@/components/service-worker-register";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata, Viewport } from "next";
@@ -95,7 +94,6 @@ export default function RootLayout({
             {children}
           </main>
           <Toaster />
-          <WebVitalsReporter />
           <ServiceWorkerRegister />
           <AnalyticsLoader />
         </ThemeProvider>
