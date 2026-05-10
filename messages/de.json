@@ -24,7 +24,8 @@
     "downloadAsSrt": ".srt",
     "downloadAsVtt": ".vtt",
     "downloadAsTxt": ".txt",
-    "downloadAsCsv": ".csv"
+    "downloadAsCsv": ".csv",
+    "importTranscript": "Transkript importieren"
   },
   "controls": {
     "play": "Abspielen",
@@ -36,7 +37,8 @@
   "labels": {
     "loadSrtFile": "Eine .srt/.vtt-Datei laden",
     "or": "oder",
-    "startFromScratch": "Von vorne beginnen"
+    "startFromScratch": "Von vorne beginnen",
+    "importTranscript": "Transkript importieren"
   },
   "videoPlayer": {
     "loadFile": "Video- / Audiodatei laden",
@@ -98,6 +100,38 @@
       "increaseTenMs": "Versatz um 10 Millisekunden erhöhen",
       "increaseHundredMs": "Versatz um 0,1 Sekunden erhöhen",
       "increaseOneSecond": "Versatz um 1 Sekunde erhöhen"
+    }
+  },
+  "transcriptImport": {
+    "title": "Transkript importieren",
+    "description": "Fügen Sie Transkripttext ein oder laden Sie eine .txt-Datei, und prüfen Sie die erzeugten Untertitel vor dem Import.",
+    "defaultTrackName": "Transkript",
+    "fileLabel": "Textdatei",
+    "chooseFile": ".txt-Datei wählen",
+    "fileHint": "Transkriptdateien bleiben in Ihrem Browser.",
+    "pasteLabel": "Transkripttext",
+    "pastePlaceholder": "Transkripttext hier einfügen...",
+    "trackNameLabel": "Spurname",
+    "modeLabel": "Aufteilen nach",
+    "modeLines": "Zeilen",
+    "modeSentences": "Sätzen",
+    "modeMaxCharacters": "Max. Zeichen",
+    "durationLabel": "Untertiteldauer",
+    "gapLabel": "Abstand",
+    "startOffsetLabel": "Startversatz",
+    "maxCharactersLabel": "Max. Zeichen",
+    "destinationReplace": "Der Import ersetzt die leere Spur „{track}“.",
+    "destinationNewTrack": "Der Import erstellt eine neue Untertitelspur.",
+    "trackLimitReached": "Sie haben bereits 4 Spuren. Löschen Sie eine Spur oder wechseln Sie vor dem Import zu einer leeren Spur.",
+    "previewTitle": "Vorschau",
+    "cueCount": "{count, plural, =0 {Keine Untertitel} =1 {# Untertitel} other {# Untertitel}}",
+    "emptyPreview": "Fügen Sie Text ein oder wählen Sie eine .txt-Datei, um erzeugte Untertitel zu sehen.",
+    "importButton": "Untertitel importieren",
+    "table": {
+      "id": "ID",
+      "start": "Start",
+      "end": "Ende",
+      "text": "Text"
     }
   },
   "instructions": {
