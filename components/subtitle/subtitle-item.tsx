@@ -4,7 +4,7 @@ import {
   useSubtitleState,
   useSubtitleTimings,
 } from "@/context/subtitle-context";
-import { timeToSeconds } from "@/lib/utils";
+import { cn, timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
@@ -20,8 +20,13 @@ interface SubtitleItemProps {
   previousSubtitle: Subtitle | null;
   isLastItem: boolean;
   currentTime: number;
+  isSelected: boolean;
   editingSubtitleUuid: string | null;
   onScrollToRegion: (uuid: string) => void;
+  onSelectSubtitle: (
+    uuid: string,
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => void;
   isPlaying: boolean;
   resumePlayback: () => void;
   setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,8 +41,10 @@ const SubtitleItem = memo(function SubtitleItem({
   previousSubtitle,
   isLastItem,
   currentTime,
+  isSelected,
   editingSubtitleUuid,
   onScrollToRegion,
+  onSelectSubtitle,
   isPlaying,
   resumePlayback,
   setIsPlaying,
@@ -85,6 +92,7 @@ const SubtitleItem = memo(function SubtitleItem({
   const characterCount = Array.from(subtitle.text).length;
 
   const isEditing = editingSubtitleUuid === subtitle.uuid;
+  const isCurrentCue = startSeconds <= currentTime && endSeconds > currentTime;
 
   return (
     <motion.div
@@ -98,9 +106,11 @@ const SubtitleItem = memo(function SubtitleItem({
         {/* biome-ignore lint/a11y/noStaticElementInteractions: Interactive div */}
         <div
           id={`subtitle-${subtitle.uuid}`}
+          role="option"
           tabIndex={-1}
           onPointerDown={() => onPrepareSubtitleInteraction(subtitle.uuid)}
-          onClick={() => onScrollToRegion(subtitle.uuid)}
+          aria-selected={isSelected}
+          onClick={(event) => onSelectSubtitle(subtitle.uuid, event)}
           onFocus={() => {
             if (isPlaying) {
               return;
@@ -115,15 +125,18 @@ const SubtitleItem = memo(function SubtitleItem({
               resumePlayback();
             }
           }}
-          className={`px-4 py-2 border-b border-black dark:border-white hover:bg-yellow-200 cursor-pointer grid gap-4 items-center ${
-            startSeconds <= currentTime && endSeconds > currentTime
-              ? "bg-sky-400"
-              : ""
-          } ${
+          className={cn(
+            "px-4 py-2 border-b border-black dark:border-white hover:bg-yellow-200 cursor-pointer grid gap-4 items-center",
+            isCurrentCue && "bg-sky-400 dark:bg-sky-700",
+            isSelected &&
+              "bg-yellow-100 ring-2 ring-inset ring-yellow-500 dark:bg-yellow-900/40",
+            isCurrentCue &&
+              isSelected &&
+              "bg-sky-300 ring-2 ring-inset ring-yellow-500 dark:bg-sky-800",
             showSubtitleDuration
               ? "grid-cols-[1rem_7rem_5rem_1fr]"
-              : "grid-cols-[1rem_7rem_1fr]"
-          }`}
+              : "grid-cols-[1rem_7rem_1fr]",
+          )}
         >
           <div className="text-sm font-mono">{subtitle.id}</div>
 

@@ -1,5 +1,6 @@
 import {
   useSubtitleActionsContext,
+  useSubtitleSelection,
   useSubtitles,
   useSubtitleState,
   useSubtitleTimings,
@@ -68,7 +69,13 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       loadSubtitlesIntoTrack,
       renameTrack,
       deleteSubtitleAction,
+      deleteSubtitlesByUuidAction,
     } = useSubtitleActionsContext();
+    const {
+      selectedSubtitleUuids,
+      selectSubtitleWithModifiers,
+      clearSubtitleSelection,
+    } = useSubtitleSelection();
     const { activeTrackId } = useSubtitleState();
     const { list: subtitleTimings } = useSubtitleTimings();
 
@@ -93,6 +100,9 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       setPlaybackTime,
       mergeSubtitlesAction,
       deleteSubtitleAction,
+      deleteSubtitlesByUuidAction,
+      selectedSubtitleUuids,
+      clearSubtitleSelection,
       manualScrollRequestUuidRef,
     });
 
@@ -190,8 +200,16 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
       suppressAutoCenterUuidRef.current = uuid;
     };
 
-    const handleSubtitleItemClick = (uuid: string) => {
+    const handleSubtitleItemClick = (
+      uuid: string,
+      event: React.MouseEvent<HTMLDivElement>,
+    ) => {
       suppressAutoCenterUuidRef.current = uuid;
+      selectSubtitleWithModifiers(uuid, {
+        shiftKey: event.shiftKey,
+        metaKey: event.metaKey,
+        ctrlKey: event.ctrlKey,
+      });
       onScrollToRegion(uuid);
     };
 
@@ -205,7 +223,12 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
     }
 
     return (
-      <div ref={listRef} className="h-full overflow-y-scroll">
+      <div
+        ref={listRef}
+        className="h-full overflow-y-scroll"
+        role="listbox"
+        aria-multiselectable="true"
+      >
         <AnimatePresence>
           {subtitles.map((subtitle: Subtitle, index: number) => {
             const isLastItem = index === subtitles.length - 1;
@@ -220,8 +243,10 @@ const SubtitleList = forwardRef<SubtitleListRef, SubtitleListProps>(
                 isLastItem={isLastItem}
                 currentTime={currentTime}
                 isPlaying={isPlaying}
+                isSelected={selectedSubtitleUuids.has(subtitle.uuid)}
                 editingSubtitleUuid={editingSubtitleUuid}
-                onScrollToRegion={handleSubtitleItemClick}
+                onScrollToRegion={onScrollToRegion}
+                onSelectSubtitle={handleSubtitleItemClick}
                 onPrepareSubtitleInteraction={prepareSubtitleInteraction}
                 setEditingSubtitleUuid={setEditingSubtitleUuid}
                 resumePlayback={resumePlayback}

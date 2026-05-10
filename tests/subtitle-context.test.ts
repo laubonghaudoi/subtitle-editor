@@ -59,6 +59,17 @@ const baseSubtitles = [
   },
 ];
 
+const threeSubtitles = [
+  ...baseSubtitles,
+  {
+    uuid: "base-3",
+    id: 3,
+    startTime: "00:00:07,000",
+    endTime: "00:00:09,000",
+    text: "You are a bold one",
+  },
+];
+
 test("subtitle actions push history and support undo/redo cycles", async () => {
   const { result } = renderHook(() => useSubtitleContext(), { wrapper });
 
@@ -211,6 +222,118 @@ test("undo stacks remain isolated per track when switching focus", async () => {
     assert.equal(result.current.activeTrackId, trackB);
   });
   assert.equal(result.current.subtitles[0].text, "Second track line");
+});
+
+test("deleteSubtitlesByUuidAction removes selected cues in one undo step", async () => {
+  const { result } = renderHook(() => useSubtitleContext(), { wrapper });
+
+  await act(async () => {
+    result.current.setInitialSubtitles([...threeSubtitles], "Track Delete");
+  });
+
+  await waitFor(() => {
+    assert.equal(result.current.subtitles.length, 3);
+  });
+
+  await act(async () => {
+    result.current.selectSubtitleWithModifiers("base-1");
+    result.current.selectSubtitleWithModifiers("base-3", { ctrlKey: true });
+  });
+
+  assert.deepEqual(Array.from(result.current.selectedSubtitleUuids), [
+    "base-1",
+    "base-3",
+  ]);
+
+  await act(async () => {
+    result.current.deleteSubtitlesByUuidAction(
+      Array.from(result.current.selectedSubtitleUuids),
+    );
+  });
+
+  await waitFor(() => {
+    assert.equal(result.current.subtitles.length, 1);
+  });
+
+  assert.equal(result.current.subtitles[0].uuid, "base-2");
+  assert.equal(result.current.subtitles[0].id, 1);
+
+  await waitFor(() => {
+    assert.equal(result.current.selectedSubtitleUuids.size, 0);
+  });
+
+  await act(async () => {
+    result.current.undoSubtitles();
+  });
+
+  assert.deepEqual(
+    result.current.subtitles.map((subtitle) => subtitle.uuid),
+    ["base-1", "base-2", "base-3"],
+  );
+});
+
+test("selection clears on track switch and prunes on active track reload", async () => {
+  const { result } = renderHook(() => useSubtitleContext(), { wrapper });
+
+  await act(async () => {
+    result.current.setInitialSubtitles([...threeSubtitles], "Track Alpha");
+  });
+
+  await waitFor(() => {
+    assert.ok(result.current.activeTrackId);
+  });
+  const trackA = result.current.activeTrackId!;
+
+  await act(async () => {
+    result.current.selectSubtitleWithModifiers("base-2");
+  });
+  assert.deepEqual(Array.from(result.current.selectedSubtitleUuids), [
+    "base-2",
+  ]);
+
+  await act(async () => {
+    result.current.addTrack("Track Beta", [
+      {
+        uuid: "beta-1",
+        id: 1,
+        startTime: "00:00:10,000",
+        endTime: "00:00:12,000",
+        text: "Beta cue",
+      },
+    ]);
+  });
+  const trackB = result.current.tracks.find((track) => track.id !== trackA)?.id;
+  assert.ok(trackB);
+
+  await act(async () => {
+    result.current.setActiveTrackId(trackB!);
+  });
+
+  await waitFor(() => {
+    assert.equal(result.current.activeTrackId, trackB);
+    assert.equal(result.current.selectedSubtitleUuids.size, 0);
+  });
+
+  await act(async () => {
+    result.current.setActiveTrackId(trackA);
+  });
+  await waitFor(() => {
+    assert.equal(result.current.activeTrackId, trackA);
+  });
+
+  await act(async () => {
+    result.current.selectSubtitleWithModifiers("base-1");
+    result.current.selectSubtitleWithModifiers("base-3", { ctrlKey: true });
+  });
+
+  await act(async () => {
+    result.current.loadSubtitlesIntoTrack(trackA, [threeSubtitles[1]]);
+  });
+
+  await waitFor(() => {
+    assert.equal(result.current.subtitles.length, 1);
+    assert.equal(result.current.selectedSubtitleUuids.size, 0);
+  });
 });
 
 test("splitSubtitleAction respects pending text before splitting", async () => {
