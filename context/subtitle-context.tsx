@@ -22,6 +22,12 @@ import {
   type LocalSessionPreferences,
   type LocalSessionSnapshot,
 } from "@/lib/local-session";
+import {
+  applySubtitleSelectionInteraction,
+  pruneSubtitleSelection,
+  type SubtitleSelectionModifiers,
+  type SubtitleSelectionState,
+} from "@/lib/subtitle-selection";
 import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
 import React, {
@@ -62,11 +68,21 @@ interface SubtitleHistoryValue {
   canRedoSubtitles: boolean;
 }
 
+interface SubtitleSelectionValue {
+  selectedSubtitleUuids: Set<string>;
+  selectionAnchorUuid: string | null;
+  selectSubtitleWithModifiers: (
+    uuid: string,
+    modifiers?: SubtitleSelectionModifiers,
+  ) => void;
+  clearSubtitleSelection: () => void;
+}
+
 type SubtitleContextType = SubtitleStateValue &
   SubtitleActions &
   SubtitleHistoryValue & {
     subtitles: Subtitle[];
-  };
+  } & SubtitleSelectionValue;
 
 interface LocalSessionValue {
   pendingLocalSession: LocalSessionSnapshot | null;
@@ -74,9 +90,7 @@ interface LocalSessionValue {
   restoreLocalSession: () => void;
   discardLocalSession: () => void;
   clearLocalSession: () => void;
-  downloadLocalSessionBackup: (
-    snapshot?: LocalSessionSnapshot | null,
-  ) => void;
+  downloadLocalSessionBackup: (snapshot?: LocalSessionSnapshot | null) => void;
 }
 
 interface SubtitleTimingEntry {
@@ -106,6 +120,9 @@ const SubtitleTimingContext = createContext<SubtitleTimingState | undefined>(
 const LocalSessionContext = createContext<LocalSessionValue | undefined>(
   undefined,
 );
+const SubtitleSelectionContext = createContext<
+  SubtitleSelectionValue | undefined
+>(undefined);
 
 interface SubtitleProviderProps {
   children: ReactNode;
@@ -137,6 +154,11 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const [hasLocalSession, setHasLocalSession] = useState(
     () => readRecoverableLocalSession() !== null,
   );
+  const [subtitleSelection, setSubtitleSelection] =
+    useState<SubtitleSelectionState>({
+      selectedUuids: new Set(),
+      anchorUuid: null,
+    });
   const previousActiveTrackId = useRef<string | null>(null);
   const suppressedAutosaveFingerprintRef = useRef<string | null>(null);
   const trackHistoriesRef = useRef<Map<string, UndoHistory<Subtitle[]>>>(
@@ -275,7 +297,8 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
 
   const downloadLocalSessionBackup = useCallback(
     (snapshot?: LocalSessionSnapshot | null) => {
-      const session = snapshot ?? pendingLocalSession ?? createCurrentLocalSession();
+      const session =
+        snapshot ?? pendingLocalSession ?? createCurrentLocalSession();
       if (!session || !shouldAutosaveLocalSession(session)) {
         return;
       }
@@ -362,6 +385,33 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     });
   }, [activeTrackId, activeSubtitles]);
 
+  useEffect(() => {
+    setSubtitleSelection((prev) => {
+      if (prev.selectedUuids.size === 0 && prev.anchorUuid === null) {
+        return prev;
+      }
+      return { selectedUuids: new Set(), anchorUuid: null };
+    });
+  }, [activeTrackId]);
+
+  useEffect(() => {
+    const orderedUuids = activeSubtitles.map((subtitle) => subtitle.uuid);
+    setSubtitleSelection((prev) => {
+      const pruned = pruneSubtitleSelection(
+        prev.selectedUuids,
+        prev.anchorUuid,
+        orderedUuids,
+      );
+      if (
+        pruned.selectedUuids === prev.selectedUuids &&
+        pruned.anchorUuid === prev.anchorUuid
+      ) {
+        return prev;
+      }
+      return pruned;
+    });
+  }, [activeSubtitles]);
+
   const subtitleActions = useSubtitleActions({
     tracks,
     activeTrackId,
@@ -441,6 +491,41 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     [undoSubtitles, redoSubtitles, canUndoSubtitles, canRedoSubtitles],
   );
 
+  const clearSubtitleSelection = useCallback(() => {
+    setSubtitleSelection((prev) => {
+      if (prev.selectedUuids.size === 0 && prev.anchorUuid === null) {
+        return prev;
+      }
+      return { selectedUuids: new Set(), anchorUuid: null };
+    });
+  }, []);
+
+  const selectSubtitleWithModifiers = useCallback(
+    (uuid: string, modifiers?: SubtitleSelectionModifiers) => {
+      const orderedUuids = activeSubtitles.map((subtitle) => subtitle.uuid);
+      setSubtitleSelection((prev) =>
+        applySubtitleSelectionInteraction({
+          orderedUuids,
+          selectedUuids: prev.selectedUuids,
+          anchorUuid: prev.anchorUuid,
+          targetUuid: uuid,
+          modifiers,
+        }),
+      );
+    },
+    [activeSubtitles],
+  );
+
+  const selectionValue = useMemo<SubtitleSelectionValue>(
+    () => ({
+      selectedSubtitleUuids: subtitleSelection.selectedUuids,
+      selectionAnchorUuid: subtitleSelection.anchorUuid,
+      selectSubtitleWithModifiers,
+      clearSubtitleSelection,
+    }),
+    [subtitleSelection, selectSubtitleWithModifiers, clearSubtitleSelection],
+  );
+
   const timingState = useMemo<SubtitleTimingState>(() => {
     const list = activeSubtitles.map((subtitle) => ({
       uuid: subtitle.uuid,
@@ -475,11 +560,13 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       <SubtitleActionsContext.Provider value={subtitleActions}>
         <SubtitleHistoryContext.Provider value={historyValue}>
           <SubtitleStateContext.Provider value={stateValue}>
-            <SubtitleTimingContext.Provider value={timingState}>
-              <SubtitleDataContext.Provider value={activeSubtitles}>
-                {children}
-              </SubtitleDataContext.Provider>
-            </SubtitleTimingContext.Provider>
+            <SubtitleSelectionContext.Provider value={selectionValue}>
+              <SubtitleTimingContext.Provider value={timingState}>
+                <SubtitleDataContext.Provider value={activeSubtitles}>
+                  {children}
+                </SubtitleDataContext.Provider>
+              </SubtitleTimingContext.Provider>
+            </SubtitleSelectionContext.Provider>
           </SubtitleStateContext.Provider>
         </SubtitleHistoryContext.Provider>
       </SubtitleActionsContext.Provider>
@@ -524,11 +611,17 @@ export const useSubtitleTimings = (): SubtitleTimingState => {
   return ensureContext(ctx, "useSubtitleTimings");
 };
 
+export const useSubtitleSelection = (): SubtitleSelectionValue => {
+  const ctx = useContext(SubtitleSelectionContext);
+  return ensureContext(ctx, "useSubtitleSelection");
+};
+
 export const useSubtitleContext = (): SubtitleContextType => {
   const state = useSubtitleState();
   const actions = useSubtitleActionsContext();
   const history = useSubtitleHistory();
   const subtitles = useSubtitles();
+  const selection = useSubtitleSelection();
 
   return useMemo(
     () => ({
@@ -536,7 +629,8 @@ export const useSubtitleContext = (): SubtitleContextType => {
       ...actions,
       ...history,
       subtitles,
+      ...selection,
     }),
-    [actions, history, state, subtitles],
+    [actions, history, state, subtitles, selection],
   );
 };
