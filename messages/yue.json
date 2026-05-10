@@ -24,7 +24,8 @@
     "downloadAsSrt": ".srt",
     "downloadAsVtt": ".vtt",
     "downloadAsTxt": ".txt",
-    "downloadAsCsv": ".csv"
+    "downloadAsCsv": ".csv",
+    "importTranscript": "匯入逐字稿"
   },
   "controls": {
     "play": "播放",
@@ -36,7 +37,8 @@
   "labels": {
     "loadSrtFile": "載入 .srt/.vtt 檔案",
     "or": "或",
-    "startFromScratch": "由頭開始"
+    "startFromScratch": "由頭開始",
+    "importTranscript": "匯入逐字稿"
   },
   "videoPlayer": {
     "loadFile": "載入影片 / 音訊檔案",
@@ -98,6 +100,38 @@
       "increaseTenMs": "遲 10 毫秒",
       "increaseHundredMs": "遲 0.1 秒",
       "increaseOneSecond": "遲 1 秒"
+    }
+  },
+  "transcriptImport": {
+    "title": "匯入逐字稿",
+    "description": "貼上逐字稿文字，或者載入 .txt 檔案，匯入前可以預覽產生嘅字幕。",
+    "defaultTrackName": "逐字稿",
+    "fileLabel": "文字檔案",
+    "chooseFile": "揀 .txt 檔案",
+    "fileHint": "逐字稿檔案只會留喺你嘅瀏覽器。",
+    "pasteLabel": "逐字稿文字",
+    "pastePlaceholder": "喺度貼上逐字稿文字...",
+    "trackNameLabel": "字幕軌名",
+    "modeLabel": "分段方式",
+    "modeLines": "按行",
+    "modeSentences": "按句",
+    "modeMaxCharacters": "按最多字數",
+    "durationLabel": "字幕時長",
+    "gapLabel": "間隔",
+    "startOffsetLabel": "起始偏移",
+    "maxCharactersLabel": "最多字數",
+    "destinationReplace": "匯入會取代空白字幕軌「{track}」。",
+    "destinationNewTrack": "匯入會建立一條新字幕軌。",
+    "trackLimitReached": "你已經有 4 條字幕軌。匯入前請先刪除一條，或者切換到空白字幕軌。",
+    "previewTitle": "預覽",
+    "cueCount": "{count} 條字幕",
+    "emptyPreview": "貼上文字或者揀 .txt 檔案，就可以預覽產生嘅字幕。",
+    "importButton": "匯入字幕",
+    "table": {
+      "id": "ID",
+      "start": "起點",
+      "end": "終點",
+      "text": "文字"
     }
   },
   "instructions": {

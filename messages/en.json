@@ -24,7 +24,8 @@
     "downloadAsSrt": ".srt",
     "downloadAsVtt": ".vtt",
     "downloadAsTxt": ".txt",
-    "downloadAsCsv": ".csv"
+    "downloadAsCsv": ".csv",
+    "importTranscript": "Import transcript"
   },
   "controls": {
     "play": "Play",
@@ -36,7 +37,8 @@
   "labels": {
     "loadSrtFile": "Load a .srt/.vtt file",
     "or": "or",
-    "startFromScratch": "Start from scratch"
+    "startFromScratch": "Start from scratch",
+    "importTranscript": "Import transcript"
   },
   "videoPlayer": {
     "loadFile": "Load a video / audio file",
@@ -98,6 +100,38 @@
       "increaseTenMs": "Increase offset by 10 milliseconds",
       "increaseHundredMs": "Increase offset by 0.1 seconds",
       "increaseOneSecond": "Increase offset by 1 second"
+    }
+  },
+  "transcriptImport": {
+    "title": "Import transcript",
+    "description": "Paste transcript text or load a .txt file, then preview draft subtitle cues before importing.",
+    "defaultTrackName": "Transcript",
+    "fileLabel": "Text file",
+    "chooseFile": "Choose .txt file",
+    "fileHint": "Transcript files stay in your browser.",
+    "pasteLabel": "Transcript text",
+    "pastePlaceholder": "Paste transcript text here...",
+    "trackNameLabel": "Track name",
+    "modeLabel": "Split by",
+    "modeLines": "Lines",
+    "modeSentences": "Sentences",
+    "modeMaxCharacters": "Max characters",
+    "durationLabel": "Cue duration",
+    "gapLabel": "Gap",
+    "startOffsetLabel": "Start offset",
+    "maxCharactersLabel": "Max characters",
+    "destinationReplace": "Import will replace the empty track “{track}”.",
+    "destinationNewTrack": "Import will create a new subtitle track.",
+    "trackLimitReached": "You already have 4 tracks. Delete a track or switch to an empty track before importing.",
+    "previewTitle": "Preview",
+    "cueCount": "{count, plural, =0 {No cues} =1 {# cue} other {# cues}}",
+    "emptyPreview": "Paste text or choose a .txt file to preview generated cues.",
+    "importButton": "Import cues",
+    "table": {
+      "id": "ID",
+      "start": "Start",
+      "end": "End",
+      "text": "Text"
     }
   },
   "instructions": {

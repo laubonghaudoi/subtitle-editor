@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import TranscriptImportDialog from "@/components/transcript-import-dialog";
 import {
   Dialog,
   DialogClose,
@@ -39,6 +40,7 @@ import { getReadableTextColor, getTrackHandleColor } from "@/lib/track-colors";
 import {
   IconBadgeCc,
   IconFile,
+  IconFileText,
   IconPencilPlus,
   IconPlus,
   IconTrash,
@@ -250,6 +252,16 @@ export default function LoadSrt() {
               </div>
             );
           })}
+
+          <TranscriptImportDialog>
+            <Button
+              variant="secondary"
+              className="w-full cursor-pointer rounded-sm"
+            >
+              <IconFileText />
+              {t("buttons.importTranscript")}
+            </Button>
+          </TranscriptImportDialog>
 
           <Button
             variant="outline"
