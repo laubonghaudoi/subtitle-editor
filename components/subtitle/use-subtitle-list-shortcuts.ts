@@ -12,6 +12,9 @@ interface SubtitleListShortcutsOptions {
   setPlaybackTime: (time: number) => void;
   mergeSubtitlesAction: (previousId: number, currentId: number) => void;
   deleteSubtitleAction: (id: number) => void;
+  deleteSubtitlesByUuidAction: (uuids: string[]) => void;
+  selectedSubtitleUuids: Set<string>;
+  clearSubtitleSelection: () => void;
   manualScrollRequestUuidRef: React.MutableRefObject<string | null>;
 }
 
@@ -24,6 +27,9 @@ export function useSubtitleListShortcuts({
   setPlaybackTime,
   mergeSubtitlesAction,
   deleteSubtitleAction,
+  deleteSubtitlesByUuidAction,
+  selectedSubtitleUuids,
+  clearSubtitleSelection,
   manualScrollRequestUuidRef,
 }: SubtitleListShortcutsOptions) {
   useEffect(() => {
@@ -51,6 +57,12 @@ export function useSubtitleListShortcuts({
       }
 
       if (isEditing) {
+        return;
+      }
+
+      if (event.key === "Escape" && selectedSubtitleUuids.size > 0) {
+        event.preventDefault();
+        clearSubtitleSelection();
         return;
       }
 
@@ -106,6 +118,36 @@ export function useSubtitleListShortcuts({
       if (event.key === "Delete") {
         event.preventDefault();
 
+        if (selectedSubtitleUuids.size > 0) {
+          const firstSelectedIndex = subtitles.findIndex((subtitle) =>
+            selectedSubtitleUuids.has(subtitle.uuid),
+          );
+          const nextSubtitle = subtitles.find(
+            (subtitle, index) =>
+              index >= firstSelectedIndex &&
+              !selectedSubtitleUuids.has(subtitle.uuid),
+          );
+          const previousSubtitle =
+            firstSelectedIndex > 0
+              ? subtitles
+                  .slice(0, firstSelectedIndex)
+                  .findLast(
+                    (subtitle) => !selectedSubtitleUuids.has(subtitle.uuid),
+                  )
+              : undefined;
+
+          deleteSubtitlesByUuidAction(Array.from(selectedSubtitleUuids));
+          clearSubtitleSelection();
+
+          const targetSubtitle = nextSubtitle ?? previousSubtitle;
+          if (targetSubtitle) {
+            setPlaybackTime(timeToSeconds(targetSubtitle.startTime));
+          } else {
+            setPlaybackTime(0);
+          }
+          return;
+        }
+
         let currentIndex = subtitleTimings.findIndex(
           (timing) => timing.start <= currentTime && timing.end > currentTime,
         );
@@ -152,6 +194,9 @@ export function useSubtitleListShortcuts({
     onTimeJump,
     jumpDuration,
     deleteSubtitleAction,
+    deleteSubtitlesByUuidAction,
+    selectedSubtitleUuids,
+    clearSubtitleSelection,
     manualScrollRequestUuidRef,
   ]);
 }

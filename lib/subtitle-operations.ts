@@ -300,6 +300,25 @@ export const deleteSubtitle = (
   return reorderSubtitleIds(updatedSubtitles);
 };
 
+export const deleteSubtitlesByUuid = (
+  subtitles: Subtitle[],
+  uuids: readonly string[],
+): Subtitle[] => {
+  const targetUuids = new Set(uuids);
+  if (targetUuids.size === 0) {
+    return subtitles;
+  }
+
+  const updatedSubtitles = subtitles.filter(
+    (sub) => !targetUuids.has(sub.uuid),
+  );
+  if (updatedSubtitles.length === subtitles.length) {
+    return subtitles;
+  }
+
+  return reorderSubtitleIds(updatedSubtitles);
+};
+
 export const addSubtitle = (
   subtitles: Subtitle[],
   beforeId: number,

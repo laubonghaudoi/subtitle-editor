@@ -15,7 +15,11 @@ export default function SubtitleItemDeleteButton({
     <Tooltip>
       <TooltipTrigger
         type="button"
-        onClick={onDelete}
+        onPointerDown={(event) => event.stopPropagation()}
+        onClick={(event) => {
+          event.stopPropagation();
+          onDelete();
+        }}
         className="mx-4 my-auto px-2 py-1 text-sm rounded bg-red-300 hover:bg-red-400 text-red-800 dark:bg-red-800 dark:hover:bg-red-900 dark:text-red-300 cursor-pointer"
         aria-label={t("tooltips.delete")}
       >

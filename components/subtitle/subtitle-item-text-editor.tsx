@@ -186,6 +186,9 @@ export default function SubtitleTextEditor({
           : "Edit subtitle (empty)"
       }
       onClick={(event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey) {
+          return;
+        }
         if (event.detail === 0) {
           event.stopPropagation();
           event.preventDefault();
@@ -193,6 +196,9 @@ export default function SubtitleTextEditor({
         setEditingSubtitleUuid(subtitle.uuid);
       }}
       onKeyUp={(event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey) {
+          return;
+        }
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           event.stopPropagation();
