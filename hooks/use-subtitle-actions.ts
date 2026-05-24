@@ -6,6 +6,7 @@ import type { UndoHistory } from "@/hooks/use-undoable-state";
 import {
   addSubtitle,
   deleteSubtitle,
+  deleteSubtitlesByUuid,
   mergeSubtitles,
   splitSubtitle,
   updateSubtitle,
@@ -59,6 +60,7 @@ export interface SubtitleActions {
     newSubtitleText?: string,
   ) => void;
   deleteSubtitleAction: (id: number) => void;
+  deleteSubtitlesByUuidAction: (uuids: string[]) => void;
   mergeSubtitlesAction: (id1: number, id2: number) => void;
   splitSubtitleAction: (
     id: number,
@@ -231,6 +233,10 @@ export const useSubtitleActions = ({
 
     const deleteSubtitleAction = (id: number) => {
       handleTrackedStateChange(deleteSubtitle(activeSubtitles, id));
+    };
+
+    const deleteSubtitlesByUuidAction = (uuids: string[]) => {
+      handleTrackedStateChange(deleteSubtitlesByUuid(activeSubtitles, uuids));
     };
 
     const mergeSubtitlesAction = (id1: number, id2: number) => {
@@ -450,6 +456,7 @@ export const useSubtitleActions = ({
       setInitialSubtitles,
       addSubtitleAction,
       deleteSubtitleAction,
+      deleteSubtitlesByUuidAction,
       mergeSubtitlesAction,
       splitSubtitleAction,
       updateSubtitleTextAction,

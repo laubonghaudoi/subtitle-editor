@@ -21,6 +21,7 @@ export interface BulkOffsetDrawerProps {
   subtitles: Subtitle[];
   trackIndex: number;
   currentTrackName?: string | null;
+  initialSelectedUuids?: string[];
   onPreviewChange?: (preview: Record<string, BulkOffsetPreviewState>) => void;
   onApplyOffset: (
     selectedUuids: string[],
@@ -34,6 +35,7 @@ export function BulkOffsetDrawer({
   subtitles,
   trackIndex,
   currentTrackName,
+  initialSelectedUuids,
   onPreviewChange,
   onApplyOffset,
 }: BulkOffsetDrawerProps) {
@@ -42,6 +44,7 @@ export function BulkOffsetDrawer({
   const [selectedUuids, setSelectedUuids] = useState<Set<string>>(new Set());
   const [shiftTarget, setShiftTarget] = useState<BulkShiftTarget>("both");
   const lastInteractedIndexRef = useRef<number | null>(null);
+  const hasInitializedSelectionRef = useRef(false);
   const normalizedTrackIndex = trackIndex >= 0 ? trackIndex : 0;
   const trackHandleColor = getTrackHandleColor(normalizedTrackIndex);
   const trackBackgroundColor = getTrackColor(normalizedTrackIndex);
@@ -53,20 +56,32 @@ export function BulkOffsetDrawer({
 
   useEffect(() => {
     if (!isOpen) {
+      hasInitializedSelectionRef.current = false;
       return;
     }
     const available = new Set(subtitles.map((subtitle) => subtitle.uuid));
+    if (!hasInitializedSelectionRef.current) {
+      const initialSelection = (initialSelectedUuids ?? []).filter((uuid) =>
+        available.has(uuid),
+      );
+      const nextSelection =
+        initialSelection.length > 0
+          ? new Set(initialSelection)
+          : new Set(available);
+      setSelectedUuids(nextSelection);
+      const lastSelectedUuid = Array.from(nextSelection).at(-1);
+      lastInteractedIndexRef.current = lastSelectedUuid
+        ? subtitles.findIndex((subtitle) => subtitle.uuid === lastSelectedUuid)
+        : null;
+      hasInitializedSelectionRef.current = true;
+      return;
+    }
+
     setSelectedUuids((prev) => {
-      if (prev.size === 0) {
-        return available;
-      }
       const filtered = new Set([...prev].filter((uuid) => available.has(uuid)));
-      if (filtered.size === 0) {
-        return available;
-      }
       return filtered;
     });
-  }, [isOpen, subtitles]);
+  }, [initialSelectedUuids, isOpen, subtitles]);
 
   useEffect(() => {
     if (isOpen) {

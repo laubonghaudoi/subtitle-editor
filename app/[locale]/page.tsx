@@ -19,6 +19,7 @@ import {
   SubtitleProvider,
   useSubtitleActionsContext,
   useSubtitleHistory,
+  useSubtitleSelection,
   useSubtitleState,
   useSubtitles,
 } from "@/context/subtitle-context";
@@ -38,7 +39,7 @@ import type {
   ForwardRefExoticComponent,
   RefAttributes,
 } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const VideoPlayer = dynamic<VideoPlayerProps>(
@@ -92,6 +93,7 @@ function MainContent() {
   } = useSubtitleActionsContext();
   const { undoSubtitles, redoSubtitles, canUndoSubtitles, canRedoSubtitles } =
     useSubtitleHistory();
+  const { selectedSubtitleUuids } = useSubtitleSelection();
   // Keep page-specific state here
 
   const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -133,6 +135,10 @@ function MainContent() {
   const activeTrackSubtitles = activeTrack?.subtitles ?? [];
   const allowSubtitleDrop = tracks.length === 0 || activeTrackIsEmpty;
   const bulkOffsetDisabled = !activeTrack || activeTrackSubtitles.length === 0;
+  const initialBulkOffsetSelection = useMemo(
+    () => Array.from(selectedSubtitleUuids),
+    [selectedSubtitleUuids],
+  );
   const loadMediaFile = (file: File) => {
     setMediaFile(null);
     if (mediaFileInputRef.current) {
@@ -423,6 +429,7 @@ function MainContent() {
                 subtitles={activeTrackSubtitles}
                 trackIndex={activeTrackIndex}
                 currentTrackName={activeTrack?.name ?? null}
+                initialSelectedUuids={initialBulkOffsetSelection}
                 onPreviewChange={setBulkOffsetPreview}
                 onApplyOffset={(selection, offsetSeconds, target) => {
                   bulkShiftSubtitlesAction(selection, offsetSeconds, target);
