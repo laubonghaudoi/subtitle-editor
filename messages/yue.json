@@ -150,6 +150,22 @@
     "playInBackgroundLabel": "背景播放",
     "playInBackgroundDescription": "就算個分頁唔喺前景都繼續播放。"
   },
+  "localSession": {
+    "title": "還原自動儲存嘅工作？",
+    "description": "呢個瀏覽器入面有一份本機儲存嘅字幕工作。",
+    "summary": "{tracks} 條字幕軌 · {subtitles} 條字幕",
+    "savedAt": "{time} 儲存",
+    "privacy": "自動儲存只會保留字幕同編輯設定，唔會儲存或上載媒體檔案。",
+    "restore": "還原",
+    "downloadBackup": "下載備份",
+    "discard": "放棄",
+    "settingsClearLabel": "本機自動儲存",
+    "settingsClearDescription": "清除呢個瀏覽器入面嘅自動儲存字幕工作。",
+    "clear": "清除自動儲存",
+    "noAutosave": "冇自動儲存",
+    "clearedTitle": "已清除自動儲存",
+    "clearedDescription": "已經由呢個瀏覽器移除本機自動儲存快照。"
+  },
   "subtitle": {
     "newSubtitle": "新字幕",
     "subtitleCount": "{count} 條字幕",
