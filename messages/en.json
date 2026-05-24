@@ -150,6 +150,22 @@
     "playInBackgroundLabel": "Play in background",
     "playInBackgroundDescription": "Keep playback running when this tab is not active."
   },
+  "localSession": {
+    "title": "Restore autosaved session?",
+    "description": "A subtitle project was saved locally in this browser.",
+    "summary": "{tracks, plural, =1 {# track} other {# tracks}} · {subtitles, plural, =1 {# subtitle} other {# subtitles}}",
+    "savedAt": "Saved {time}",
+    "privacy": "Autosave stores subtitles and editor preferences only. Media files are not stored or uploaded.",
+    "restore": "Restore",
+    "downloadBackup": "Download backup",
+    "discard": "Discard",
+    "settingsClearLabel": "Local autosave",
+    "settingsClearDescription": "Clear the autosaved subtitle session stored in this browser.",
+    "clear": "Clear autosave",
+    "noAutosave": "No autosave",
+    "clearedTitle": "Autosave cleared",
+    "clearedDescription": "The local autosave snapshot was removed from this browser."
+  },
   "subtitle": {
     "newSubtitle": "New subtitle",
     "subtitleCount": "{count, plural, =1 {# subtitle} other {# subtitles}}",

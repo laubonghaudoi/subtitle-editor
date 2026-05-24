@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,9 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useSubtitleState } from "@/context/subtitle-context";
+import {
+  useLocalSession,
+  useSubtitleState,
+} from "@/context/subtitle-context";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { IconMoon, IconSun } from "@tabler/icons-react";
+import { IconMoon, IconSun, IconTrash } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
@@ -28,6 +33,8 @@ export default function SettingsDialog({
 }: SettingsDialogProps) {
   const t = useTranslations();
   const { resolvedTheme, setTheme } = useTheme();
+  const { toast } = useToast();
+  const { hasLocalSession, clearLocalSession } = useLocalSession();
   const [isThemeMounted, setIsThemeMounted] = useState(false);
   const {
     clampOverlaps,
@@ -43,6 +50,14 @@ export default function SettingsDialog({
   const subtitleDurationId = useId();
   const addSpaceOnMergeId = useId();
   const playInBackgroundId = useId();
+
+  const handleClearLocalSession = () => {
+    clearLocalSession();
+    toast({
+      title: t("localSession.clearedTitle"),
+      description: t("localSession.clearedDescription"),
+    });
+  };
 
   useEffect(() => {
     setIsThemeMounted(true);
@@ -180,6 +195,29 @@ export default function SettingsDialog({
               checked={playInBackground}
               onCheckedChange={(value) => setPlayInBackground(value)}
             />
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-1">
+              <Label className="text-sm">
+                {t("localSession.settingsClearLabel")}
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                {t("localSession.settingsClearDescription")}
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={!hasLocalSession}
+              onClick={handleClearLocalSession}
+            >
+              <IconTrash size={16} />
+              {hasLocalSession
+                ? t("localSession.clear")
+                : t("localSession.noAutosave")}
+            </Button>
           </div>
         </div>
       </DialogContent>

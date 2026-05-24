@@ -11,6 +11,17 @@ import {
   subtitlesAreEqual,
   EMPTY_HISTORY,
 } from "@/lib/subtitle-history";
+import {
+  buildLocalSessionBackup,
+  clearLocalSessionSnapshot,
+  createLocalSessionSnapshot,
+  getLocalSessionBackupFilename,
+  readLocalSessionSnapshot,
+  shouldAutosaveLocalSession,
+  writeLocalSessionSnapshot,
+  type LocalSessionPreferences,
+  type LocalSessionSnapshot,
+} from "@/lib/local-session";
 import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
 import React, {
@@ -57,6 +68,17 @@ type SubtitleContextType = SubtitleStateValue &
     subtitles: Subtitle[];
   };
 
+interface LocalSessionValue {
+  pendingLocalSession: LocalSessionSnapshot | null;
+  hasLocalSession: boolean;
+  restoreLocalSession: () => void;
+  discardLocalSession: () => void;
+  clearLocalSession: () => void;
+  downloadLocalSessionBackup: (
+    snapshot?: LocalSessionSnapshot | null,
+  ) => void;
+}
+
 interface SubtitleTimingEntry {
   uuid: string;
   start: number;
@@ -81,10 +103,25 @@ const SubtitleDataContext = createContext<Subtitle[] | undefined>(undefined);
 const SubtitleTimingContext = createContext<SubtitleTimingState | undefined>(
   undefined,
 );
+const LocalSessionContext = createContext<LocalSessionValue | undefined>(
+  undefined,
+);
 
 interface SubtitleProviderProps {
   children: ReactNode;
 }
+
+const readRecoverableLocalSession = (): LocalSessionSnapshot | null => {
+  const snapshot = readLocalSessionSnapshot();
+  return snapshot && shouldAutosaveLocalSession(snapshot) ? snapshot : null;
+};
+
+const getLocalSessionFingerprint = (snapshot: LocalSessionSnapshot): string =>
+  JSON.stringify({
+    tracks: snapshot.tracks,
+    activeTrackId: snapshot.activeTrackId,
+    preferences: snapshot.preferences,
+  });
 
 export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const [tracks, setTracks] = useState<SubtitleTrack[]>([]);
@@ -95,7 +132,13 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const [addSpaceOnMerge, setAddSpaceOnMerge] = useState<boolean>(false);
   const [clampOverlaps, setClampOverlaps] = useState<boolean>(true);
   const [playInBackground, setPlayInBackground] = useState<boolean>(false);
+  const [pendingLocalSession, setPendingLocalSession] =
+    useState<LocalSessionSnapshot | null>(() => readRecoverableLocalSession());
+  const [hasLocalSession, setHasLocalSession] = useState(
+    () => readRecoverableLocalSession() !== null,
+  );
   const previousActiveTrackId = useRef<string | null>(null);
+  const suppressedAutosaveFingerprintRef = useRef<string | null>(null);
   const trackHistoriesRef = useRef<Map<string, UndoHistory<Subtitle[]>>>(
     new Map(),
   );
@@ -113,6 +156,144 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
   ] = useUndoableState<Subtitle[]>([], {
     isEqual: subtitlesAreEqual,
   });
+
+  const localSessionPreferences = useMemo<LocalSessionPreferences>(
+    () => ({
+      showTrackLabels,
+      showSubtitleDuration,
+      addSpaceOnMerge,
+      clampOverlaps,
+      playInBackground,
+    }),
+    [
+      showTrackLabels,
+      showSubtitleDuration,
+      addSpaceOnMerge,
+      clampOverlaps,
+      playInBackground,
+    ],
+  );
+
+  const createCurrentLocalSession = useCallback(
+    () =>
+      createLocalSessionSnapshot({
+        tracks,
+        activeTrackId,
+        preferences: localSessionPreferences,
+      }),
+    [activeTrackId, localSessionPreferences, tracks],
+  );
+
+  useEffect(() => {
+    if (pendingLocalSession) {
+      return;
+    }
+
+    const snapshot = createCurrentLocalSession();
+    const snapshotFingerprint = getLocalSessionFingerprint(snapshot);
+    const timeoutId = window.setTimeout(() => {
+      if (suppressedAutosaveFingerprintRef.current === snapshotFingerprint) {
+        return;
+      }
+
+      if (shouldAutosaveLocalSession(snapshot)) {
+        const didWrite = writeLocalSessionSnapshot(snapshot);
+        if (didWrite) {
+          suppressedAutosaveFingerprintRef.current = null;
+          setHasLocalSession(true);
+        }
+        return;
+      }
+
+      const didClear = clearLocalSessionSnapshot();
+      if (didClear) {
+        setHasLocalSession(false);
+      }
+    }, 750);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [createCurrentLocalSession, pendingLocalSession]);
+
+  const restoreLocalSession = useCallback(() => {
+    if (!pendingLocalSession) {
+      return;
+    }
+
+    const nextHistories = new Map<string, UndoHistory<Subtitle[]>>();
+    const nextTracks = pendingLocalSession.tracks.map((track) => {
+      const history = createTrackHistory(track.id, track.subtitles);
+      nextHistories.set(track.id, history);
+      return {
+        ...track,
+        subtitles: history.present,
+        vttPrologue: track.vttPrologue ? [...track.vttPrologue] : undefined,
+      };
+    });
+    const nextActiveTrackId =
+      pendingLocalSession.activeTrackId &&
+      nextTracks.some((track) => track.id === pendingLocalSession.activeTrackId)
+        ? pendingLocalSession.activeTrackId
+        : (nextTracks[0]?.id ?? null);
+
+    trackHistoriesRef.current = nextHistories;
+    setTracks(nextTracks);
+    setActiveTrackId(nextActiveTrackId);
+    setShowTrackLabels(pendingLocalSession.preferences.showTrackLabels);
+    setShowSubtitleDuration(
+      pendingLocalSession.preferences.showSubtitleDuration,
+    );
+    setAddSpaceOnMerge(pendingLocalSession.preferences.addSpaceOnMerge);
+    setClampOverlaps(pendingLocalSession.preferences.clampOverlaps);
+    setPlayInBackground(pendingLocalSession.preferences.playInBackground);
+    setHistorySnapshot(
+      nextActiveTrackId
+        ? (nextHistories.get(nextActiveTrackId) ?? EMPTY_HISTORY)
+        : EMPTY_HISTORY,
+    );
+    suppressedAutosaveFingerprintRef.current = null;
+    setPendingLocalSession(null);
+    setHasLocalSession(true);
+  }, [pendingLocalSession, setHistorySnapshot]);
+
+  const discardLocalSession = useCallback(() => {
+    clearLocalSessionSnapshot();
+    suppressedAutosaveFingerprintRef.current = null;
+    setPendingLocalSession(null);
+    setHasLocalSession(false);
+  }, []);
+
+  const clearLocalSession = useCallback(() => {
+    suppressedAutosaveFingerprintRef.current = getLocalSessionFingerprint(
+      createCurrentLocalSession(),
+    );
+    clearLocalSessionSnapshot();
+    setPendingLocalSession(null);
+    setHasLocalSession(false);
+  }, [createCurrentLocalSession]);
+
+  const downloadLocalSessionBackup = useCallback(
+    (snapshot?: LocalSessionSnapshot | null) => {
+      const session = snapshot ?? pendingLocalSession ?? createCurrentLocalSession();
+      if (!session || !shouldAutosaveLocalSession(session)) {
+        return;
+      }
+
+      const blob = new Blob([buildLocalSessionBackup(session)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = getLocalSessionBackupFilename(session);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    },
+    [createCurrentLocalSession, pendingLocalSession],
+  );
 
   useEffect(() => {
     const snapshot = getHistorySnapshot();
@@ -270,18 +451,39 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     return { list, byUuid };
   }, [activeSubtitles]);
 
+  const localSessionValue = useMemo<LocalSessionValue>(
+    () => ({
+      pendingLocalSession,
+      hasLocalSession,
+      restoreLocalSession,
+      discardLocalSession,
+      clearLocalSession,
+      downloadLocalSessionBackup,
+    }),
+    [
+      pendingLocalSession,
+      hasLocalSession,
+      restoreLocalSession,
+      discardLocalSession,
+      clearLocalSession,
+      downloadLocalSessionBackup,
+    ],
+  );
+
   return (
-    <SubtitleActionsContext.Provider value={subtitleActions}>
-      <SubtitleHistoryContext.Provider value={historyValue}>
-        <SubtitleStateContext.Provider value={stateValue}>
-          <SubtitleTimingContext.Provider value={timingState}>
-            <SubtitleDataContext.Provider value={activeSubtitles}>
-              {children}
-            </SubtitleDataContext.Provider>
-          </SubtitleTimingContext.Provider>
-        </SubtitleStateContext.Provider>
-      </SubtitleHistoryContext.Provider>
-    </SubtitleActionsContext.Provider>
+    <LocalSessionContext.Provider value={localSessionValue}>
+      <SubtitleActionsContext.Provider value={subtitleActions}>
+        <SubtitleHistoryContext.Provider value={historyValue}>
+          <SubtitleStateContext.Provider value={stateValue}>
+            <SubtitleTimingContext.Provider value={timingState}>
+              <SubtitleDataContext.Provider value={activeSubtitles}>
+                {children}
+              </SubtitleDataContext.Provider>
+            </SubtitleTimingContext.Provider>
+          </SubtitleStateContext.Provider>
+        </SubtitleHistoryContext.Provider>
+      </SubtitleActionsContext.Provider>
+    </LocalSessionContext.Provider>
   );
 }
 
@@ -305,6 +507,11 @@ export const useSubtitleActionsContext = (): SubtitleActions => {
 export const useSubtitleHistory = (): SubtitleHistoryValue => {
   const ctx = useContext(SubtitleHistoryContext);
   return ensureContext(ctx, "useSubtitleHistory");
+};
+
+export const useLocalSession = (): LocalSessionValue => {
+  const ctx = useContext(LocalSessionContext);
+  return ensureContext(ctx, "useLocalSession");
 };
 
 export const useSubtitles = (): Subtitle[] => {

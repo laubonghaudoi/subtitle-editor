@@ -7,6 +7,7 @@ import type {
   BulkOffsetPreviewState,
 } from "@/components/bulk-offset/drawer";
 import CustomControls from "@/components/custom-controls";
+import LocalSessionRecovery from "@/components/local-session-recovery";
 import SkipLinks from "@/components/skip-links";
 import type { SubtitleListRef } from "@/components/subtitle/subtitle-list";
 import TrackTabs from "@/components/subtitle/track-tabs";
@@ -514,6 +515,7 @@ function MainContent() {
 export default function Home() {
   return (
     <SubtitleProvider>
+      <LocalSessionRecovery />
       <MainContent />
     </SubtitleProvider>
   );

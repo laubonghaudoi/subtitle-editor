@@ -1,13 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { renderHook, act, waitFor, cleanup } from "@testing-library/react";
 import { createElement } from "react";
 import type { ReactNode } from "react";
 import {
   SubtitleProvider,
+  useLocalSession,
   useSubtitleContext,
 } from "../context/subtitle-context";
+import {
+  LOCAL_SESSION_STORAGE_KEY,
+  createLocalSessionSnapshot,
+} from "../lib/local-session";
 
 // Minimal DOM environment for React Testing Library
 const dom = new JSDOM("<!doctype html><html><body></body></html>", {
@@ -42,6 +47,21 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 const wrapper = ({ children }: { children: ReactNode }) =>
   createElement(SubtitleProvider, null, children);
 
+const renderSubtitleSession = () =>
+  renderHook(
+    () => ({
+      subtitles: useSubtitleContext(),
+      localSession: useLocalSession(),
+    }),
+    { wrapper },
+  );
+
+const waitForAutosave = async () => {
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 800));
+  });
+};
+
 const baseSubtitles = [
   {
     uuid: "base-1",
@@ -58,6 +78,25 @@ const baseSubtitles = [
     text: "General Kenobi",
   },
 ];
+
+const savedTracks = [
+  {
+    id: "track-1",
+    name: "Saved Track",
+    subtitles: baseSubtitles.map((subtitle) => ({
+      ...subtitle,
+      trackId: "track-1",
+    })),
+  },
+];
+
+test.beforeEach(() => {
+  window.localStorage.clear();
+});
+
+test.afterEach(() => {
+  cleanup();
+});
 
 test("subtitle actions push history and support undo/redo cycles", async () => {
   const { result } = renderHook(() => useSubtitleContext(), { wrapper });
@@ -251,6 +290,172 @@ test("addSpaceOnMerge defaults to off and can be toggled", async () => {
   });
 
   assert.equal(result.current.addSpaceOnMerge, true);
+});
+
+test("provider debounces recoverable subtitle projects into localStorage", async () => {
+  const { result } = renderSubtitleSession();
+
+  await act(async () => {
+    result.current.subtitles.setInitialSubtitles(
+      [...baseSubtitles],
+      "Autosaved Track",
+      {
+        vttHeader: "WEBVTT",
+        vttPrologue: ["NOTE recovered"],
+      },
+    );
+    result.current.subtitles.setShowTrackLabels(true);
+    result.current.subtitles.setShowSubtitleDuration(true);
+    result.current.subtitles.setAddSpaceOnMerge(true);
+    result.current.subtitles.setClampOverlaps(false);
+    result.current.subtitles.setPlayInBackground(true);
+  });
+
+  await waitForAutosave();
+
+  const raw = window.localStorage.getItem(LOCAL_SESSION_STORAGE_KEY);
+  assert.ok(raw);
+  const parsed = JSON.parse(raw);
+  assert.equal(parsed.tracks[0].name, "Autosaved Track");
+  assert.equal(parsed.tracks[0].vttHeader, "WEBVTT");
+  assert.equal(parsed.tracks[0].vttPrologue[0], "NOTE recovered");
+  assert.equal(parsed.preferences.showTrackLabels, true);
+  assert.equal(parsed.preferences.showSubtitleDuration, true);
+  assert.equal(parsed.preferences.addSpaceOnMerge, true);
+  assert.equal(parsed.preferences.clampOverlaps, false);
+  assert.equal(parsed.preferences.playInBackground, true);
+});
+
+test("provider exposes pending local session and restores it on request", async () => {
+  const snapshot = createLocalSessionSnapshot({
+    tracks: [
+      {
+        id: "restored-track",
+        name: "Recovered Track",
+        subtitles: [
+          {
+            uuid: "restored-cue",
+            id: 1,
+            startTime: "00:00:02,000",
+            endTime: "00:00:05,000",
+            text: "Recovered line",
+            trackId: "restored-track",
+          },
+        ],
+      },
+    ],
+    activeTrackId: "restored-track",
+    preferences: {
+      showTrackLabels: true,
+      showSubtitleDuration: true,
+      addSpaceOnMerge: true,
+      clampOverlaps: false,
+      playInBackground: true,
+    },
+    now: () => 1234,
+  });
+  window.localStorage.setItem(
+    LOCAL_SESSION_STORAGE_KEY,
+    JSON.stringify(snapshot),
+  );
+
+  const { result } = renderSubtitleSession();
+
+  await waitFor(() => {
+    assert.equal(
+      result.current.localSession.pendingLocalSession?.tracks[0].name,
+      "Recovered Track",
+    );
+  });
+  assert.equal(result.current.subtitles.tracks.length, 0);
+
+  await act(async () => {
+    result.current.localSession.restoreLocalSession();
+  });
+
+  await waitFor(() => {
+    assert.equal(result.current.subtitles.tracks.length, 1);
+    assert.equal(result.current.subtitles.subtitles[0].text, "Recovered line");
+  });
+  assert.equal(result.current.localSession.pendingLocalSession, null);
+  assert.equal(result.current.subtitles.activeTrackId, "restored-track");
+  assert.equal(result.current.subtitles.showTrackLabels, true);
+  assert.equal(result.current.subtitles.showSubtitleDuration, true);
+  assert.equal(result.current.subtitles.addSpaceOnMerge, true);
+  assert.equal(result.current.subtitles.clampOverlaps, false);
+  assert.equal(result.current.subtitles.playInBackground, true);
+});
+
+test("provider discards and clears local autosave snapshots", async () => {
+  const snapshot = createLocalSessionSnapshot({
+    tracks: savedTracks,
+    activeTrackId: "track-1",
+    preferences: {
+      showTrackLabels: false,
+      showSubtitleDuration: false,
+      addSpaceOnMerge: false,
+      clampOverlaps: true,
+      playInBackground: false,
+    },
+    now: () => 1234,
+  });
+  window.localStorage.setItem(
+    LOCAL_SESSION_STORAGE_KEY,
+    JSON.stringify(snapshot),
+  );
+
+  const { result, unmount } = renderSubtitleSession();
+
+  await waitFor(() => {
+    assert.ok(result.current.localSession.pendingLocalSession);
+  });
+
+  await act(async () => {
+    result.current.localSession.discardLocalSession();
+  });
+
+  assert.equal(result.current.localSession.pendingLocalSession, null);
+  assert.equal(window.localStorage.getItem(LOCAL_SESSION_STORAGE_KEY), null);
+  unmount();
+
+  const second = renderSubtitleSession();
+
+  await act(async () => {
+    second.result.current.subtitles.setInitialSubtitles(
+      [...baseSubtitles],
+      "Clearable Track",
+    );
+  });
+
+  await waitForAutosave();
+  assert.ok(window.localStorage.getItem(LOCAL_SESSION_STORAGE_KEY));
+
+  await act(async () => {
+    second.result.current.localSession.clearLocalSession();
+  });
+
+  assert.equal(window.localStorage.getItem(LOCAL_SESSION_STORAGE_KEY), null);
+  assert.equal(second.result.current.localSession.hasLocalSession, false);
+});
+
+test("clearLocalSession cancels a pending autosave for the unchanged project", async () => {
+  const { result } = renderSubtitleSession();
+
+  await act(async () => {
+    result.current.subtitles.setInitialSubtitles(
+      [...baseSubtitles],
+      "Pending Clear Track",
+    );
+  });
+
+  await act(async () => {
+    result.current.localSession.clearLocalSession();
+  });
+
+  await waitForAutosave();
+
+  assert.equal(window.localStorage.getItem(LOCAL_SESSION_STORAGE_KEY), null);
+  assert.equal(result.current.localSession.hasLocalSession, false);
 });
 
 test("subtitles remain chronologically sorted after imports and edits", async () => {

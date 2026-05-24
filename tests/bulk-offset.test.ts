@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { renderHook, act, waitFor, cleanup } from "@testing-library/react";
 import { createElement } from "react";
 import type { ReactNode } from "react";
 
@@ -64,6 +64,11 @@ const baseSubtitles = [
     text: "Third",
   },
 ];
+
+test.afterEach(() => {
+  cleanup();
+  window.localStorage.clear();
+});
 
 test("bulkShiftSubtitlesAction adjusts start times without crossing neighbours", async () => {
   const { result } = renderHook(() => useSubtitleContext(), { wrapper });

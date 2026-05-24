@@ -150,6 +150,22 @@
     "playInBackgroundLabel": "Im Hintergrund abspielen",
     "playInBackgroundDescription": "Lässt die Wiedergabe weiterlaufen, wenn dieser Tab nicht aktiv ist."
   },
+  "localSession": {
+    "title": "Automatisch gespeicherte Sitzung wiederherstellen?",
+    "description": "Ein Untertitelprojekt wurde lokal in diesem Browser gespeichert.",
+    "summary": "{tracks, plural, =1 {# Spur} other {# Spuren}} · {subtitles, plural, =1 {# Untertitel} other {# Untertitel}}",
+    "savedAt": "Gespeichert {time}",
+    "privacy": "Autosave speichert nur Untertitel und Editor-Einstellungen. Mediendateien werden nicht gespeichert oder hochgeladen.",
+    "restore": "Wiederherstellen",
+    "downloadBackup": "Backup herunterladen",
+    "discard": "Verwerfen",
+    "settingsClearLabel": "Lokaler Autosave",
+    "settingsClearDescription": "Löscht die in diesem Browser gespeicherte Untertitelsitzung.",
+    "clear": "Autosave löschen",
+    "noAutosave": "Kein Autosave",
+    "clearedTitle": "Autosave gelöscht",
+    "clearedDescription": "Der lokale Autosave-Snapshot wurde aus diesem Browser entfernt."
+  },
   "subtitle": {
     "newSubtitle": "Neuer Untertitel",
     "subtitleCount": "{count, plural, =1 {# Untertitel} other {# Untertitel}}",
