@@ -1,4 +1,4 @@
-export const locales = ["de", "en", "yue"] as const;
+export const locales = ["de", "en", "pl", "yue"] as const;
 
 export type Locale = (typeof locales)[number];
 
@@ -22,6 +22,12 @@ export const localeConfig: Record<
     nativeName: "English",
     openGraphLocale: "en",
     url: "https://subtitle-editor.org",
+  },
+  pl: {
+    name: "Polish",
+    nativeName: "Polski",
+    openGraphLocale: "pl",
+    url: "https://subtitle-editor.org/pl",
   },
   yue: {
     name: "Cantonese",

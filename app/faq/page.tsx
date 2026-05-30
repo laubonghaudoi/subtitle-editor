@@ -84,9 +84,9 @@ export default function FaqPage() {
           </Link>{" "}
           offers a free online subtitle editor. No account registration is
           required. Editing subtitles and previewing with the video is very
-          easy. It is the closest to what I need. Unfortunately, it&apos;s missing
-          waveform visualization, which is deal breaker for me. It is not open
-          sourced either and we can&apos;t customize it.
+          easy. It is the closest to what I need. Unfortunately, it&apos;s
+          missing waveform visualization, which is deal breaker for me. It is
+          not open sourced either and we can&apos;t customize it.
         </li>
         <li>
           <Link
@@ -98,8 +98,8 @@ export default function FaqPage() {
           is a great option and has all features I need. It supports waveform
           visualization, easy preview and editing, and even AI transcriptions.
           But it is a desktop software which requires installation, and it
-          doesn&apos;t support Mac. I have to use a Windows or Linux device to edit
-          subtitles.
+          doesn&apos;t support Mac. I have to use a Windows or Linux device to
+          edit subtitles.
         </li>
         <li>
           <Link
@@ -164,6 +164,25 @@ export default function FaqPage() {
         these days so I may not have time to develop new features. This is a
         community project and your contributions are always welcomed!
       </p>
+      <h2 className="text-xl font-bold my-4">
+        Can you support more video / audio file formats?
+      </h2>
+      <p>
+        This app relies on the browser&apos;s built-in media player to decode
+        the video / audio file you load. So the supported formats are determined
+        by your browser and there is nothing I can do about it. For example,
+        Safari and Microsoft Edge support the AC3 format, while Chrome and
+        Firefox do not. That said, you can still use{" "}
+        <Link
+          href="https://ffmpeg.org/"
+          target="_blank"
+          className="hover:underline text-blue-800 hover:text-blue-900"
+        >
+          ffmpeg
+        </Link>{" "}
+        to convert your media files to a supported format before loading them
+        into the editor.
+      </p>
       <h2 className="text-xl font-bold my-4">Have feedback?</h2>
       <p>
         Feel free to{" "}
@@ -204,9 +223,9 @@ export default function FaqPage() {
       <p>
         Yes I recommend generating the srt file with an AI transcriber first,
         then editing it with this editor. That&apos;s why I listed &quot;AI
-        transcriptions&quot; as a non-goal above. It&apos;s much easier to just use a
-        specialized tool for that than building it into this editor. There are
-        many free srt generators available on huggingface, such as:
+        transcriptions&quot; as a non-goal above. It&apos;s much easier to just
+        use a specialized tool for that than building it into this editor. There
+        are many free srt generators available on huggingface, such as:
       </p>
       <ul className="list-disc mx-6 my-2">
         <li>
