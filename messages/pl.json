@@ -1,0 +1,227 @@
+{
+  "navigation": {
+    "title": "Edytor Napisów",
+    "faq": "Często zadawane pytania",
+    "undo": "Cofnij",
+    "redo": "Ponów",
+    "github": "Open-source na GitHub (Licencja MIT)",
+    "bulkOffset": "Masowe przesunięcie",
+    "showBulkOffset": "Otwórz panel masowego przesunięcia czasu",
+    "hideBulkOffset": "Zamknij panel masowego przesunięcia czasu",
+    "toggleTheme": "Przełącz tryb jasny/ciemny",
+    "settings": "Ustawienia"
+  },
+  "buttons": {
+    "loadMedia": "Wczytaj media",
+    "loadSrt": "Wczytaj napisy",
+    "saveSrt": "Zapisz",
+    "loadSrtFile": "Wczytaj plik .srt / .vtt",
+    "newTrack": "Dodaj nową ścieżkę",
+    "maxTracksReached": "Możesz dodać maksymalnie 4 ścieżki",
+    "reloadSrt": "Przeładuj plik .srt / .vtt",
+    "fromScratch": "Od nowa",
+    "download": "Pobierz",
+    "downloadAsSrt": ".srt",
+    "downloadAsVtt": ".vtt",
+    "downloadAsTxt": ".txt",
+    "downloadAsCsv": ".csv"
+  },
+  "controls": {
+    "play": "Odtwórz",
+    "pause": "Pauza",
+    "jumpBack": "Cofnij o {seconds, plural, =1 {# sekundę} few {# sekundy} many {# sekund} other {# sekund}}",
+    "jumpForward": "Przewiń do przodu o {seconds, plural, =1 {# sekundę} few {# sekundy} many {# sekund} other {# sekund}}",
+    "waveformLabel": "Oś czasu wykresu falowego"
+  },
+  "labels": {
+    "loadSrtFile": "Wczytaj plik .srt/.vtt",
+    "or": "lub",
+    "startFromScratch": "Zacznij od nowa"
+  },
+  "videoPlayer": {
+    "loadFile": "Wczytaj plik wideo / audio",
+    "supportedFormats": "Wspierane w Twojej przeglądarce:",
+    "supportedFormatsChecking": "Wykrywanie obsługiwanych formatów mediów...",
+    "supportedFormatsAudio": "Audio",
+    "supportedFormatsVideo": "Wideo",
+    "supportedFormatsNone": "Nie wykryto",
+    "supportedFormatsMaybe": "może",
+    "supportedFormatsNote": "Ta lista opiera się na natywnej obsłudze mediów Twojej przeglądarki. Rzeczywiste wczytanie zależy również od kodeków w pliku.",
+    "supportedFormatsUnsupported": "Manifesty streamingu (.m3u8, .mpd) oraz format FLV nie są obecnie obsługiwane przez tę aplikację.",
+    "subtitles": "Napisy"
+  },
+  "findReplace": {
+    "title": "Znajdź / Zamień",
+    "dialogTitle": "Znajdź i zamień w bieżącej ścieżce: {track}",
+    "find": "Znajdź",
+    "replaceWith": "Zamień na",
+    "caseSensitive": "Uwzględnij wielkość liter",
+    "matchFullWord": "Dopasuj całe słowa",
+    "useRegex": "Użyj wyrażeń regularnych",
+    "selected": "zaznaczono",
+    "id": "ID",
+    "original": "Oryginał",
+    "preview": "Podgląd",
+    "noMatches": "Brak dopasowań",
+    "replace": "Zamień"
+  },
+  "bulkOffset": {
+    "title": "Wybierz napisy, aby masowo przesunąć czas na ścieżce: {track}",
+    "emptyState": "Wczytaj napisy, aby włączyć masowe przesunięcie.",
+    "noCaptions": "Nie znaleziono napisów",
+    "selectionSummary": "Wybrano {selected} / {total}",
+    "chooseTarget": "Wybierz element do przesunięcia",
+    "targetStart": "Czas rozpoczęcia",
+    "targetBoth": "Cały napis",
+    "targetEnd": "Czas zakończenia",
+    "offsetLabel": "Przesunięcie (w sekundach)",
+    "offsetInputLabel": "Przesunięcie w sekundach",
+    "reset": "Resetuj",
+    "apply": "Zastosuj przesunięcie",
+    "selectAll": "Zaznacz wszystkie napisy",
+    "selectCaption": "Zaznacz napis {id}",
+    "table": {
+      "id": "ID",
+      "start": "Początek",
+      "previewStart": "Podgląd początku",
+      "end": "Koniec",
+      "previewEnd": "Podgląd końca",
+      "text": "Tekst",
+      "empty": "Puste"
+    },
+    "aria": {
+      "decreaseOneSecond": "Zmniejsz przesunięcie o 1 sekundę",
+      "decreaseHundredMs": "Zmniejsz przesunięcie o 0.1 sekundy",
+      "decreaseTenMs": "Zmniejsz przesunięcie o 10 milisekund",
+      "decreaseOneMs": "Zmniejsz przesunięcie o 1 milisekundę",
+      "increaseOneMs": "Zwiększ przesunięcie o 1 milisekundę",
+      "increaseTenMs": "Zwiększ przesunięcie o 10 milisekund",
+      "increaseHundredMs": "Zwiększ przesunięcie o 0.1 sekundy",
+      "increaseOneSecond": "Zwiększ przesunięcie o 1 sekundę"
+    }
+  },
+  "instructions": {
+    "afterLoading": "Po wczytaniu napisów i pliku multimedialnego:",
+    "editText": "Kliknij tekst napisu lub znaczniki czasu, aby edytować.",
+    "icons": "Kliknij ikony, aby dodać, połączyć lub usunąć napisy.",
+    "dragBorders": "Przeciągnij przerywane krawędzie na wykresie falowym, aby zmienić czas trwania.",
+    "rememberSave": "Pamiętaj, aby kliknąć \"Zapisz\", by pobrać plik jako .srt / .vtt / .txt / .csv po zakończeniu edycji!"
+  },
+  "shortcuts": {
+    "title": "Skróty klawiszowe",
+    "space": "aby odtworzyć/zatrzymać wideo;",
+    "shiftSpace": "aby odtworzyć/zatrzymać podczas edycji napisu.",
+    "tab": "aby edytować bieżący tekst napisu.",
+    "arrows": "i",
+    "arrowsAction": "aby przejść do poprzedniego/następnego napisu.",
+    "splitSubtitle": "aby podzielić tekst napisu w miejscu kursora podczas edycji.",
+    "mergeSubtitle": "aby połączyć bieżący napis z poprzednim.",
+    "switchTrack": "aby przełączać ścieżki napisów (jeśli jest ich więcej).",
+    "undoRedo": "aby cofnąć,",
+    "undoRedoAction": "aby ponowić."
+  },
+  "dialog": {
+    "discardTitle": "Odrzucić zmiany?",
+    "discardDescription": "Masz niezapisane zmiany. Czy na pewno chcesz je odrzucić, wczytując nowy plik z napisami?",
+    "switchTitle": "Zmień język",
+    "switchDescription": "Zmiana języka spowoduje odrzucenie bieżących napisów. Upewnij się, że pobrałeś bieżące napisy.",
+    "cancel": "Anuluj",
+    "yes": "Tak, odrzuć",
+    "srtTitle": "Zarządzaj ścieżkami napisów",
+    "srtDescription": "Możesz dodać maksymalnie 4 ścieżki. Możesz zmieniać nazwy ścieżek.",
+    "saveTitle": "Wybierz format",
+    "saveDescription": "Wybierz ścieżkę do pobrania w formacie .srt, .vtt, .txt lub .csv.",
+    "deleteTrackTitle": "Usunąć tę ścieżkę?",
+    "deleteTrackDescription": "Tej operacji nie można cofnąć. Ścieżka oraz wszystkie jej napisy zostaną trwale usunięte.",
+    "delete": "Usuń",
+    "done": "Gotowe",
+    "showTrackLabels": "Pokaż etykiety ścieżek na wykresie falowym",
+    "settingsTitle": "Ustawienia",
+    "settingsDescription": "Wygląd i preferencje edytora.",
+    "themeLabel": "Motyw",
+    "themeLight": "Jasny",
+    "themeDark": "Ciemny",
+    "overlapClampLabel": "Zapobiegaj częściowemu nakładaniu się",
+    "overlapClampDescription": "Regiony są blokowane, aby nie nakładały się podczas przeciągania. Przeciągnięcie poza sąsiedni element jest zawsze zablokowane.",
+    "subtitleDurationLabel": "Pokaż czas trwania napisu oraz liczbę słów i znaków",
+    "subtitleDurationDescription": "Dodaje kolumnę statystyk między czasem a tekstem.",
+    "addSpaceOnMergeLabel": "Dodaj spację podczas łączenia napisów",
+    "addSpaceOnMergeDescription": "Wstaw pojedynczą spację między połączonymi tekstami napisów, chyba że spacja już tam jest.",
+    "playInBackgroundLabel": "Odtwarzaj w tle",
+    "playInBackgroundDescription": "Kontynuuj odtwarzanie, gdy ta karta nie jest aktywna."
+  },
+  "localSession": {
+    "title": "Przywrócić zapisaną sesję?",
+    "description": "Projekt z napisami został automatycznie zapisany lokalnie w tej przeglądarce.",
+    "summary": "{tracks, plural, =1 {# ścieżka} few {# ścieżki} many {# ścieżek} other {# ścieżek}} · {subtitles, plural, =1 {# napis} few {# napisy} many {# napisów} other {# napisów}}",
+    "savedAt": "Zapisano: {time}",
+    "privacy": "Autozapis przechowuje tylko napisy i preferencje edytora. Pliki multimedialne nie są zapisywane ani przesyłane.",
+    "restore": "Przywróć",
+    "downloadBackup": "Pobierz kopię zapasową",
+    "discard": "Odrzuć",
+    "settingsClearLabel": "Lokalny autozapis",
+    "settingsClearDescription": "Wyczyść automatycznie zapisaną sesję napisów przechowywaną w tej przeglądarce.",
+    "clear": "Wyczyść autozapis",
+    "noAutosave": "Brak autozapisu",
+    "clearedTitle": "Autozapis wyczyszczony",
+    "clearedDescription": "Lokalna migawka autozapisu została usunięta z tej przeglądarki."
+  },
+  "subtitle": {
+    "newSubtitle": "Nowy napis",
+    "subtitleCount": "{count, plural, =1 {# napis} few {# napisy} many {# napisów} other {# napisów}}",
+    "newTrackName": "Ścieżka {number}"
+  },
+  "subtitleStats": {
+    "wordUnit": "sł",
+    "charUnit": "z"
+  },
+  "tooltips": {
+    "add": "Dodaj",
+    "merge": "Połącz",
+    "delete": "Usuń",
+    "noRoom": "Brak miejsca na dodanie"
+  },
+  "validation": {
+    "invalidTimeTitle": "Nieprawidłowy format czasu",
+    "invalidTimeDescription": "Proszę użyć formatu GG:MM:SS,MS (np. 00:00:20,450).",
+    "invalidStartTitle": "Nieprawidłowy czas rozpoczęcia",
+    "invalidStartDescription": "Czas rozpoczęcia nie może być późniejszy niż czas zakończenia napisu.",
+    "invalidEndTitle": "Nieprawidłowy czas zakończenia",
+    "invalidEndDescription": "Czas zakończenia nie może być wcześniejszy niż czas rozpoczęcia napisu."
+  },
+  "metadata": {
+    "title": "Edytor Napisów - Otwartoźródłowy edytor SRT/VTT w przeglądarce",
+    "description": "Edytuj, twórz i dopasowuj napisy SRT/VTT za pomocą tego darmowego, otwartoźródłowego edytora. Posiada podgląd wideo i wykres falowy. Nie wymaga rejestracji.",
+    "keywords": [
+      "edytor napisów",
+      "edytor srt",
+      "edytor vtt",
+      "tworzenie napisów",
+      "darmowy edytor napisów",
+      "edytor napisów online",
+      "edytor napisów w przeglądarce",
+      "otwartoźródłowy edytor napisów",
+      "napisy do wideo",
+      "wykres falowy",
+      "synchronizacja napisów",
+      "edytor plików SRT",
+      "edytor plików VTT",
+      "edytor napisów filmowych",
+      "tworzenie napisów filmowych",
+      "narzędzie do napisów",
+      "dodawanie napisów do wideo"
+    ]
+  },
+  "skipLinks": {
+    "toMain": "Przejdź do głównej treści",
+    "toSubtitles": "Przejdź do napisów",
+    "toVideo": "Przejdź do wideo"
+  },
+  "waveform": {
+    "instructions": "Zogniskowano na wykresie falowym. Naciśnij Spację, aby odtworzyć lub zatrzymać, oraz używaj strzałek w lewo i w prawo, aby przesunąć o jedną sekundę.",
+    "keyboardHint": "Spacja: odtwórz/pauza · ←/→: przewiń ±1s",
+    "regionSummary": "Napis od {start} do {end} na ścieżce {track}",
+    "regionAnnouncement": "Zaznaczono napis od {start} do {end} na ścieżce {track}.",
+    "untitledTrack": "Ścieżka bez nazwy"
+  }
+}
