@@ -14,3 +14,19 @@ test("load subtitle dialog gives localized file buttons more room than the subti
   assert.match(loadSrtSource, /className="min-w-0 truncate"/);
   assert.doesNotMatch(loadSrtSource, /col-span-6 grid grid-cols-2 gap-2/);
 });
+
+test("load subtitle track delete button uses the shared red outlined delete style", () => {
+  const deleteTriggerMatch = loadSrtSource.match(
+    /<AlertDialogTrigger asChild>[\s\S]*?<Button[\s\S]*?>/,
+  );
+
+  assert.ok(deleteTriggerMatch);
+  const [deleteTriggerSource] = deleteTriggerMatch;
+  assert.match(deleteTriggerSource, /ring-1/);
+  assert.match(deleteTriggerSource, /ring-inset/);
+  assert.match(deleteTriggerSource, /ring-red-800/);
+  assert.match(deleteTriggerSource, /bg-red-200/);
+  assert.match(deleteTriggerSource, /hover:bg-red-300/);
+  assert.match(deleteTriggerSource, /text-\[color:var\(--red-11\)\]/);
+  assert.doesNotMatch(deleteTriggerSource, /bg-red-300 cursor-pointer/);
+});

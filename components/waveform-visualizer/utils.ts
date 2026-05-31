@@ -52,7 +52,7 @@ export const applyRegionHandleStyles = (
   ) as HTMLDivElement | null;
   if (leftHandleDiv) {
     leftHandleDiv.style.cssText += `
-      border-left: 2px dashed ${handleColor};
+      border-left: 2px solid ${handleColor};
       width: 4px;
     `;
     if (!leftHandleDiv.querySelector('[data-arrow="left"]')) {
@@ -78,7 +78,7 @@ export const applyRegionHandleStyles = (
   ) as HTMLDivElement | null;
   if (rightHandleDiv) {
     rightHandleDiv.style.cssText += `
-      border-right: 2px dashed ${handleColor};
+      border-right: 2px solid ${handleColor};
       width: 4px;
     `;
     if (!rightHandleDiv.querySelector('[data-arrow="right"]')) {

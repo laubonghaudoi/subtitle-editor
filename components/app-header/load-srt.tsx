@@ -226,7 +226,8 @@ export default function LoadSrt() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-red-900 hover:bg-red-900 hover:text-red-300 bg-red-300 cursor-pointer"
+                        className="rounded-xs ring-1 ring-inset ring-red-800 bg-red-200 hover:bg-red-300 text-[color:var(--red-11)] cursor-pointer"
+                        aria-label={t("dialog.deleteTrackTitle")}
                       >
                         <IconTrash />
                       </Button>
