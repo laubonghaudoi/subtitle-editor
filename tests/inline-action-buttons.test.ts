@@ -11,29 +11,27 @@ const deleteButtonSource = readFileSync(
   "utf8",
 );
 
-test("subtitle inline action buttons use the original compact utility styles", () => {
-  assert.match(deleteButtonSource, /bg-red-300/);
-  assert.match(deleteButtonSource, /hover:bg-red-400/);
-  assert.match(deleteButtonSource, /text-red-800/);
-  assert.match(deleteButtonSource, /dark:bg-red-800/);
-  assert.match(deleteButtonSource, /dark:text-red-300/);
+test("subtitle inline action buttons use compact tokenized utility styles", () => {
+  assert.match(deleteButtonSource, /ring-1 ring-inset ring-red-800/);
+  assert.match(deleteButtonSource, /bg-red-200/);
+  assert.match(deleteButtonSource, /hover:bg-red-300/);
+  assert.match(deleteButtonSource, /text-\[color:var\(--red-11\)\]/);
 
+  assert.match(mergeActionsSource, /ring-1 ring-inset ring-amber-700/);
   assert.match(mergeActionsSource, /bg-amber-200/);
   assert.match(mergeActionsSource, /hover:bg-amber-300/);
-  assert.match(mergeActionsSource, /text-amber-800/);
-  assert.match(mergeActionsSource, /dark:bg-amber-800/);
-  assert.match(mergeActionsSource, /dark:text-amber-700/);
+  assert.match(mergeActionsSource, /text-\[color:var\(--amber-11\)\]/);
 
-  assert.match(mergeActionsSource, /bg-grass-300/);
-  assert.match(mergeActionsSource, /hover:bg-grass-400/);
-  assert.match(mergeActionsSource, /text-grass-800/);
-  assert.match(mergeActionsSource, /dark:bg-grass-800/);
-  assert.match(mergeActionsSource, /dark:text-grass-300/);
+  assert.match(mergeActionsSource, /ring-1 ring-inset ring-green-800/);
+  assert.match(mergeActionsSource, /bg-green-200/);
+  assert.match(mergeActionsSource, /hover:bg-green-300/);
+  assert.match(mergeActionsSource, /text-\[color:var\(--green-11\)\]/);
 
-  assert.match(mergeActionsSource, /bg-gray-200/);
-  assert.match(mergeActionsSource, /text-gray-700/);
-  assert.match(mergeActionsSource, /dark:bg-gray-700/);
+  assert.match(mergeActionsSource, /ring-1 ring-inset ring-slate-700/);
+  assert.match(mergeActionsSource, /bg-slate-200/);
+  assert.match(mergeActionsSource, /text-slate-900/);
 
   assert.doesNotMatch(mergeActionsSource, /bg-\[#fff3c4\]|bg-\[#e6f6eb\]/);
+  assert.doesNotMatch(mergeActionsSource, /bg-grass-|text-grass-/);
   assert.doesNotMatch(deleteButtonSource, /bg-\[#feebec\]/);
 });

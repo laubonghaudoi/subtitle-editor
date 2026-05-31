@@ -24,9 +24,10 @@ test("subtitle row current state follows the active track color", () => {
   assert.doesNotMatch(subtitleItemSource, /bg-iris-300/);
 });
 
-test("subtitle row hover state uses the Option B warm yellow values", () => {
-  assert.match(globalsSource, /--subtitle-row-hover-bg:\s*#fef0c0/);
-  assert.match(globalsSource, /--subtitle-row-hover-bg:\s*#3a2e08/);
+test("subtitle row hover state uses the iris accent token", () => {
+  assert.match(globalsSource, /--subtitle-row-hover-bg:\s*var\(--iris-4\)/);
+  assert.doesNotMatch(globalsSource, /--subtitle-row-hover-bg:\s*#fef0c0/);
+  assert.doesNotMatch(globalsSource, /--subtitle-row-hover-bg:\s*#3a2e08/);
   assert.doesNotMatch(subtitleItemSource, /hover:bg-accent/);
 });
 
