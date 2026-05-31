@@ -129,7 +129,7 @@ const SubtitleItem = memo(function SubtitleItem({
               resumePlayback();
             }
           }}
-          className={`subtitle-row px-4 py-2 border-b border-l-[3px] border-b-black dark:border-b-white cursor-pointer grid gap-4 items-center ${
+          className={`subtitle-row px-4 py-2 border-b border-b-black dark:border-b-white cursor-pointer grid gap-4 items-center ${
             showSubtitleDuration
               ? "grid-cols-[1rem_7rem_5rem_1fr]"
               : "grid-cols-[1rem_7rem_1fr]"

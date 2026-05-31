@@ -627,19 +627,16 @@
 
 @layer components {
   .subtitle-row {
-    --subtitle-row-hover-bg: #fef0c0;
+    /* hover = iris accent (one step up from the edit field's iris-3 so the bare fill reads clearly indigo, not pale blue); theme-aware */
+    --subtitle-row-hover-bg: var(--iris-4);
     background-color: transparent;
-    border-left-color: transparent;
     transition: background-color 120ms ease;
   }
 
-  .dark .subtitle-row {
-    --subtitle-row-hover-bg: #3a2e08;
-  }
-
+  /* playing row: track-tinted background + bold 4px left bar in the track color */
   .subtitle-row[data-current="true"] {
     background-color: var(--subtitle-row-current-bg);
-    border-left-color: var(--subtitle-row-current-bar);
+    box-shadow: inset 4px 0 0 var(--subtitle-row-current-bar);
   }
 
   .subtitle-row:hover {

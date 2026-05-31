@@ -102,19 +102,37 @@ gray border overrides in components (see §4); no token change needed.
 | `components/app-header/save-srt.tsx:102,110,118,126` (download btns) | `bg-slate-950 hover:bg-mauve-900 … rounded-sm` | `bg-slate-950 hover:bg-slate-800 … rounded-xs` (drop mauve) |
 | `app/faq/page.tsx` (14 links) | `text-blue-800 hover:text-blue-900` | `text-accent-ink hover:underline` |
 | `components/subtitle/track-tabs.tsx:58,75`, `components/subtitle/subtitle-list-empty.tsx:19,32`, `components/video-player.tsx:253` | `hover:text-blue-800` | `hover:text-accent-ink` |
-| `components/subtitle/subtitle-item.tsx:118` (row hover) | `hover:bg-yellow-200` | warm butter-yellow tint: light `#fef0c0`, dark `#3a2e08` |
-| `components/subtitle/subtitle-item.tsx:120` (playing row) | `bg-sky-400` | **Option B — active-track-colored**: bg `getTrackColor(activeTrackIndex, 0.22)` + 3px left bar `getTrackHandleColor(activeTrackIndex)`. Pass `activeTrackIndex` into `SubtitleItem` (or read `activeTrackId`+`tracks` from `useSubtitleState` and compute it). Helpers already in `lib/track-colors.ts`. |
+| `subtitle-item.tsx` row **hover** | `hover:bg-yellow-200` | 🔒 **LOCKED** — `var(--iris-4)` (`#e6e7ff` / `#262a65`), the iris accent, same family as the edit fields. Set as `--subtitle-row-hover-bg` on `.subtitle-row` in globals.css; applied by `.subtitle-row:hover`. |
+| `subtitle-item.tsx` **playing** row (`.subtitle-row[data-current="true"]`) | `bg-sky-400` | 🔒 **LOCKED** — active **track color**: bg `getTrackColor(activeTrackIndex, 0.22)` (set inline as `--subtitle-row-current-bg`) + **bold 4px left bar** `getTrackHandleColor(activeTrackIndex)` via `box-shadow: inset 4px 0 0 var(--subtitle-row-current-bar)` — **left bar only**, no top/right/bottom box. |
 | `components/subtitle/subtitle-time-fields.tsx:118,169` (editing inputs) | `bg-blue-300` | `bg-iris-200 border border-iris-700` |
 | `components/subtitle/subtitle-item-text-editor.tsx:67` (editing textarea) | `bg-blue-300` | `bg-iris-200` |
 | `components/subtitle/subtitle-time-fields.tsx:53,66,76` (invalid time) | `bg-orange-200 text-red-700` | `bg-red-200 text-red-950` |
-| `components/subtitle/subtitle-item-merge-actions.tsx:71,81` (add) | `bg-grass-300…text-grass-800 / bg-grass-800` | `bg-green-300…text-green-900 / bg-green-800` (unify grass→green; **keep it green**) |
-| `components/subtitle/subtitle-item-merge-actions.tsx:44,49` (merge) | amber | **keep amber** (already intuitive) |
-| `components/subtitle/subtitle-item-delete-button.tsx` (delete) | red | **keep red** (already intuitive) |
+| `subtitle-item-merge-actions.tsx` **add** | `bg-grass-300 text-grass-800` (borderless, grass) | **green bordered chip** (see "Inline action chips" below). Unify grass→green. |
+| `subtitle-item-merge-actions.tsx` **merge** | `bg-amber-200 text-amber-800` (borderless; `text-amber-800`=`--amber-9` bright yellow = low contrast) | **amber bordered chip** (see below) — fixes the text contrast |
+| `subtitle-item-delete-button.tsx` **delete** | `bg-red-300 text-red-800` (borderless) | **red bordered chip** (see below) |
 | `components/find-replace/table.tsx:58` (match highlight) | `bg-red-500 text-white` | `bg-amber-200 text-amber-950` |
 | `components/find-replace/table.tsx:101` (replace highlight) | `bg-green-500 text-white` | `bg-green-200 text-green-950` |
 | `components/find-replace/index.tsx:267` (Replace btn) | `bg-slate-800 hover:bg-slate-600 dark:bg-slate-100…` | `bg-iris-800 hover:bg-iris-900 text-white` |
 | `app/[locale]/page.tsx:382` (subtitle drop zone) | `bg-yellow-50` | `bg-iris-100` |
 | `app/[locale]/page.tsx:438` (media drop zone) | `bg-blue-50` | `bg-iris-100` |
+
+### Inline action chips (delete / add / merge) — bordered tint chips
+🔒 The mockup's "Inline actions & highlights" panel shows these as small
+**bordered** chips — tint background + readable **hue-11** text + **hue-9** border
+— NOT borderless fills (GPT's first pass shipped them borderless and with
+low-contrast text). Apply one consistent treatment, roughly
+`px-2 py-1 rounded-xs border text-sm`:
+
+| Verb | bg | text | border |
+|------|----|------|--------|
+| Delete | `bg-red-200` (`--red-3`) | `text-[color:var(--red-11)]` `#ce2c31` | `border-red-800` (`--red-9`) |
+| Add (green) | `bg-green-200` (`--green-3`) | `text-[color:var(--green-11)]` `#218358` | `border-green-800` (`--green-9`) |
+| Merge (amber) | `bg-amber-200` (`--amber-3`) | `text-[color:var(--amber-11)]` `#ab6400` | `border-amber-700` (`--amber-8` — `--amber-9` is too light for a border) |
+| Disabled | `bg-slate-200` | `text-slate-900` | `border-slate-700` |
+
+- **Why the arbitrary value for text:** this repo's `@theme` maps `-50…-950` to Radix steps 1–10 + 12 but **skips step 11**, so `text-{hue}-11` doesn't exist. Use `text-[color:var(--{hue}-11)]`.
+- Radix **step-3 bg + step-11 text** is contrast-safe in BOTH light and dark (the Radix vars are theme-aware), so the same classes work for dark mode — no `dark:` overrides needed.
+- **Highlights** (find/replace) are already correct: match = `bg-amber-200 text-amber-950`, replace = `bg-green-200 text-green-950`. Drop zones = `bg-iris-100`. ✅
 
 ### Track colors — `lib/track-colors.ts`
 Replace `TRACK_BASE_COLORS` with the brightened quartet (set light = dark = the
