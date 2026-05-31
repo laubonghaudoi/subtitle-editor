@@ -2,7 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const loadSrtSource = readFileSync("components/app-header/load-srt.tsx", "utf8");
+const loadSrtSource = readFileSync(
+  "components/app-header/load-srt.tsx",
+  "utf8",
+);
 
 test("load subtitle dialog gives localized file buttons more room than the subtitle count", () => {
   assert.match(
@@ -28,5 +31,6 @@ test("load subtitle track delete button uses the shared red outlined delete styl
   assert.match(deleteTriggerSource, /bg-red-200/);
   assert.match(deleteTriggerSource, /hover:bg-red-300/);
   assert.match(deleteTriggerSource, /text-\[color:var\(--red-11\)\]/);
+  assert.match(deleteTriggerSource, /hover:text-\[color:var\(--red-11\)\]/);
   assert.doesNotMatch(deleteTriggerSource, /bg-red-300 cursor-pointer/);
 });

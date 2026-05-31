@@ -52,17 +52,19 @@ export default function LocalSessionRecovery() {
   return (
     <Dialog open>
       <DialogContent
-        className="max-w-[calc(100vw-2rem)] sm:max-w-xl"
+        className="max-w-[calc(100vw-2rem)] text-base sm:max-w-xl"
         hideClose
       >
         <DialogHeader className="min-w-0">
-          <DialogTitle className="leading-tight">
+          <DialogTitle className="text-xl leading-tight">
             {t("localSession.title")}
           </DialogTitle>
-          <DialogDescription>{t("localSession.description")}</DialogDescription>
+          <DialogDescription className="text-base leading-relaxed">
+            {t("localSession.description")}
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="min-w-0 space-y-3 overflow-hidden rounded-lg border-2 border-foreground bg-neutral-50 p-4 text-sm dark:bg-neutral-900">
+        <div className="min-w-0 space-y-3 overflow-hidden rounded-lg border-2 border-foreground bg-neutral-50 p-4 text-base leading-relaxed dark:bg-neutral-900">
           <p className="break-words font-medium">
             {t("localSession.summary", {
               tracks: sessionSummary.trackCount,
@@ -81,7 +83,7 @@ export default function LocalSessionRecovery() {
           <Button
             type="button"
             variant="outline"
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto text-base"
             onClick={() => downloadLocalSessionBackup(pendingLocalSession)}
           >
             <IconDownload />
@@ -90,7 +92,7 @@ export default function LocalSessionRecovery() {
           <Button
             type="button"
             variant="destructive"
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto text-base"
             onClick={discardLocalSession}
           >
             <IconTrash />
@@ -98,7 +100,7 @@ export default function LocalSessionRecovery() {
           </Button>
           <Button
             type="button"
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto text-base"
             onClick={restoreLocalSession}
           >
             <IconRestore />
