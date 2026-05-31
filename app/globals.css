@@ -495,6 +495,7 @@
 
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-ink: var(--iris-11);
 
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
@@ -510,8 +511,8 @@
   --color-chart-5: var(--chart-5);
 
   --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: 0.125rem;
+  --radius-sm: 0.125rem;
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -579,7 +580,7 @@
     --chart-3: var(--green-9);
     --chart-4: var(--amber-9);
     --chart-5: var(--purple-9);
-    --radius: 0.5rem;
+    --radius: 0.25rem;
   }
   .dark {
     --background: var(--slate-1);
@@ -621,6 +622,28 @@
     font-family: "Chiron Hei HK", sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
+  }
+}
+
+@layer components {
+  .subtitle-row {
+    --subtitle-row-hover-bg: #fef0c0;
+    background-color: transparent;
+    border-left-color: transparent;
+    transition: background-color 120ms ease;
+  }
+
+  .dark .subtitle-row {
+    --subtitle-row-hover-bg: #3a2e08;
+  }
+
+  .subtitle-row[data-current="true"] {
+    background-color: var(--subtitle-row-current-bg);
+    border-left-color: var(--subtitle-row-current-bar);
+  }
+
+  .subtitle-row:hover {
+    background-color: var(--subtitle-row-hover-bg);
   }
 }
 

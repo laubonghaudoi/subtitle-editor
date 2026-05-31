@@ -7,10 +7,10 @@ type TrackBaseColor = {
 };
 
 const TRACK_BASE_COLORS: TrackBaseColor[] = [
-  { tokenLight: "--amber-10", tokenDark: "--amber-9", fallback: "#efb100" }, // Amber
-  { tokenLight: "--blue-10", tokenDark: "--blue-9", fallback: "#3b82f6" }, // Blue
-  { tokenLight: "--crimson-10", tokenDark: "--crimson-9", fallback: "#c70036" }, // Crimson
-  { tokenLight: "--green-10", tokenDark: "--green-9", fallback: "#009966" }, // Green
+  { tokenLight: "#ffc83d", tokenDark: "#ffc83d", fallback: "#ffc83d" }, // T1 yellow
+  { tokenLight: "#4dabf7", tokenDark: "#4dabf7", fallback: "#4dabf7" }, // T2 blue
+  { tokenLight: "#ff6b6b", tokenDark: "#ff6b6b", fallback: "#ff6b6b" }, // T3 red
+  { tokenLight: "#51cf66", tokenDark: "#51cf66", fallback: "#51cf66" }, // T4 green
 ];
 const FALLBACK_HANDLE_COLOR = TRACK_BASE_COLORS[0]?.fallback ?? "#fcd34d";
 
@@ -60,7 +60,7 @@ const getBaseColor = (index: number): string => {
   const entry = TRACK_BASE_COLORS[normalizedIndex];
   const theme = getThemeKey();
   const token =
-    theme === "dark" ? entry.tokenDark ?? entry.tokenLight : entry.tokenLight;
+    theme === "dark" ? (entry.tokenDark ?? entry.tokenLight) : entry.tokenLight;
   return resolveTokenColor(token, entry.fallback);
 };
 
@@ -98,7 +98,10 @@ const parseRgbString = (value: string) => {
   const match = value.match(/rgba?\\(([^)]+)\\)/i);
   if (!match) return null;
   const [rgbPart] = match[1].split("/");
-  const parts = rgbPart.trim().split(/[\\s,]+/).filter(Boolean);
+  const parts = rgbPart
+    .trim()
+    .split(/[\\s,]+/)
+    .filter(Boolean);
   if (parts.length < 3) return null;
   const r = Number.parseFloat(parts[0]);
   const g = Number.parseFloat(parts[1]);
@@ -119,8 +122,7 @@ const parseColorFunction = (value: string) => {
   if (!coords || coords.length < 3) return null;
   const [r, g, b] = coords.map((channel) => Number.parseFloat(channel));
   if ([r, g, b].some((channel) => Number.isNaN(channel))) return null;
-  const clamp = (channel: number) =>
-    Math.min(1, Math.max(0, channel)) * 255;
+  const clamp = (channel: number) => Math.min(1, Math.max(0, channel)) * 255;
   return { r: clamp(r), g: clamp(g), b: clamp(b) };
 };
 

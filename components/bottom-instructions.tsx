@@ -7,8 +7,8 @@ export default function BottomInstructions() {
   const t = useTranslations();
 
   return (
-    <div className="grid grid-cols-2 items-start h-full text-foreground px-8 py-4 border-t-2 border-black dark:border-white">
-      <div className="text-lg text-foreground p-2">
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 items-start h-full text-foreground px-4 md:px-8 py-4 border-t-2 border-black dark:border-white">
+      <div className="text-base md:text-lg text-foreground p-2">
         <p className="">{t("instructions.afterLoading")}</p>
         <ul className="list-disc list-inside my-2">
           <li>{t("instructions.editText")}</li>
@@ -18,14 +18,14 @@ export default function BottomInstructions() {
         </ul>
       </div>
       <div className="p-2">
-        <h2 className="text-lg inline-flex items-center text-foreground">
+        <h2 className="text-base md:text-lg inline-flex items-center text-foreground">
           <IconKeyboard className="mr-2" />
           {t("shortcuts.title")}
         </h2>
         <ul className="list-disc list-inside px-2">
           <li>
-            <kbd>space</kbd> {t("shortcuts.space")} {" "}
-            <kbd>shift</kbd> + <kbd>space</kbd> {t("shortcuts.shiftSpace")}
+            <kbd>space</kbd> {t("shortcuts.space")} <kbd>shift</kbd> +{" "}
+            <kbd>space</kbd> {t("shortcuts.shiftSpace")}
           </li>
           <li>
             <kbd>tab</kbd> {t("shortcuts.tab")}

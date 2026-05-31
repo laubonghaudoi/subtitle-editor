@@ -16,7 +16,11 @@ import type { CheckedState } from "@radix-ui/react-checkbox";
 import type { CSSProperties, ReactNode } from "react";
 
 const STICKY_HEAD_CLASS =
-  "sticky top-0 z-20 border-b border-black dark:border-white font-semibold text-sm uppercase tracking-wide";
+  "sticky top-0 z-20 border border-black dark:border-white font-semibold text-sm uppercase tracking-wide";
+const TABLE_CELL_CLASS = "border border-black dark:border-white";
+const TABLE_CHECKBOX_CELL_CLASS = `${TABLE_CELL_CLASS} w-10 min-w-10 !p-0 text-center align-middle`;
+const TABLE_CHECKBOX_WRAPPER_CLASS =
+  "flex min-h-10 items-center justify-center";
 
 type MatchHighlightProps = {
   text: string;
@@ -55,7 +59,10 @@ function renderMatchHighlights({
     }
 
     fragments.push(
-      <span key={`match-${start}-${index}`} className="bg-red-500 text-white">
+      <span
+        key={`match-${start}-${index}`}
+        className="bg-amber-200 text-amber-950"
+      >
         {text.slice(start, end)}
       </span>,
     );
@@ -98,7 +105,7 @@ function renderReplacementHighlights({
 
     if (index < segments.length - 1) {
       fragments.push(
-        <span key={`replace-${index}`} className="bg-green-500 text-white">
+        <span key={`replace-${index}`} className="bg-green-200 text-green-950">
           {replacement}
         </span>,
       );
@@ -131,6 +138,23 @@ export type FindReplaceTableProps = {
 
 const isChecked = (state: CheckedState) => state !== false;
 
+type TableCheckboxProps = {
+  checked: boolean;
+  onCheckedChange: (state: CheckedState) => void;
+};
+
+function TableCheckbox({ checked, onCheckedChange }: TableCheckboxProps) {
+  return (
+    <div className={TABLE_CHECKBOX_WRAPPER_CLASS}>
+      <Checkbox
+        checked={checked}
+        className="translate-y-0"
+        onCheckedChange={onCheckedChange}
+      />
+    </div>
+  );
+}
+
 export function FindReplaceTable({
   matchedSubtitles,
   compiledRegex,
@@ -141,14 +165,15 @@ export function FindReplaceTable({
   labels,
   onToggleRow,
   onToggleAll,
-  headerColor = "rgba(243, 244, 246, 0.5)",
-  headerTextColor = "#111827",
+  headerColor = "var(--muted)",
+  headerTextColor = "var(--foreground)",
 }: FindReplaceTableProps) {
   const allSelected =
     matchedSubtitles.length > 0 &&
     matchedSubtitles.every((subtitle) => selectedIds.has(subtitle.id));
   const stickyStyle: CSSProperties = {
     backgroundColor: headerColor,
+    boxShadow: "inset 0 1px 0 var(--foreground)",
     color: headerTextColor,
   };
 
@@ -158,12 +183,12 @@ export function FindReplaceTable({
       className="w-full border-collapse text-base"
     >
       <TableHeader>
-        <TableRow className="border-black">
+        <TableRow>
           <TableHead
-            className={`${STICKY_HEAD_CLASS} w-8 text-center`}
+            className={`${STICKY_HEAD_CLASS} ${TABLE_CHECKBOX_CELL_CLASS}`}
             style={stickyStyle}
           >
-            <Checkbox
+            <TableCheckbox
               checked={allSelected}
               onCheckedChange={(state) => onToggleAll(isChecked(state))}
             />
@@ -197,20 +222,22 @@ export function FindReplaceTable({
             return (
               <TableRow
                 key={subtitle.id}
-                className="border-black hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="hover:bg-accent"
               >
-                <TableCell className="text-center">
-                  <Checkbox
+                <TableCell className={TABLE_CHECKBOX_CELL_CLASS}>
+                  <TableCheckbox
                     checked={selectedIds.has(subtitle.id)}
                     onCheckedChange={(state) =>
                       onToggleRow(subtitle.id, isChecked(state))
                     }
                   />
                 </TableCell>
-                <TableCell className="border-r border-black">
+                <TableCell className={TABLE_CELL_CLASS}>
                   {subtitle.id}
                 </TableCell>
-                <TableCell className="whitespace-pre-wrap wrap-break-word">
+                <TableCell
+                  className={`${TABLE_CELL_CLASS} whitespace-pre-wrap wrap-break-word`}
+                >
                   {compiledRegex
                     ? renderMatchHighlights({
                         text: subtitle.text,
@@ -220,7 +247,9 @@ export function FindReplaceTable({
                       })
                     : subtitle.text}
                 </TableCell>
-                <TableCell className="whitespace-pre-wrap wrap-break-word">
+                <TableCell
+                  className={`${TABLE_CELL_CLASS} whitespace-pre-wrap wrap-break-word`}
+                >
                   {compiledRegex
                     ? renderReplacementHighlights({
                         text: previewText,
@@ -234,7 +263,10 @@ export function FindReplaceTable({
           })
         ) : (
           <TableRow>
-            <TableCell colSpan={4} className="py-4 text-center text-gray-500">
+            <TableCell
+              colSpan={4}
+              className={`${TABLE_CELL_CLASS} py-4 text-center text-muted-foreground`}
+            >
               {labels.noMatches}
             </TableCell>
           </TableRow>

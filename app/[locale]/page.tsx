@@ -356,7 +356,7 @@ function MainContent() {
   }, [bulkOffsetDisabled, isBulkOffsetOpen]);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen md:h-screen">
       <SkipLinks />
       <AppHeader
         canUndo={canUndoSubtitles}
@@ -374,12 +374,12 @@ function MainContent() {
       {/* Main content area */}
       <div className="flex-1 flex flex-col">
         {/* Top section - Split panels */}
-        <div className="flex h-[64vh]">
+        <div className="flex flex-col md:flex-row min-h-[64vh] md:h-[64vh]">
           {/* Left panel - Subtitle list */}
           <div
             className={cn(
-              "relative w-1/2 transition-colors",
-              isSubtitleDragActive && allowSubtitleDrop && "bg-yellow-50",
+              "relative w-full md:w-1/2 min-h-[32vh] md:min-h-0 transition-colors",
+              isSubtitleDragActive && allowSubtitleDrop && "bg-iris-100",
             )}
             {...subtitleDropHandlers}
           >
@@ -434,8 +434,8 @@ function MainContent() {
           {/* Right panel - Media player */}
           <div
             className={cn(
-              "w-1/2 border-l-2 border-black dark:border-white transition-colors",
-              isMediaDragActive && "bg-blue-50",
+              "w-full md:w-1/2 min-h-[32vh] md:min-h-0 border-t-2 md:border-t-0 md:border-l-2 border-black dark:border-white transition-colors",
+              isMediaDragActive && "bg-iris-100",
             )}
             {...mediaDropHandlers}
           >
@@ -460,7 +460,7 @@ function MainContent() {
         </div>
 
         {/* Bottom section - Waveform */}
-        <div className="h-[21vh]">
+        <div className="min-h-[21vh] md:h-[21vh]">
           {/* Custom Controls */}
 
           {mediaFile ? (

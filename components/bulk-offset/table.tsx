@@ -45,7 +45,7 @@ export function BulkOffsetTable({
   const shiftPressedRef = useRef(false);
   return (
     <table className="min-w-full text-base">
-      <thead className="sticky top-0 z-20 bg-background shadow-sm">
+      <thead className="sticky top-0 z-20 bg-background">
         <tr className="border-b">
           <th className="h-10 px-4 text-center font-semibold flex items-center">
             <Checkbox
@@ -55,7 +55,7 @@ export function BulkOffsetTable({
                 borderColor: trackColor,
                 backgroundColor:
                   headerCheckboxState === true ? trackColor : "transparent",
-                color: headerCheckboxState === true ? "#fff" : trackColor,
+                color: headerCheckboxState === true ? "#000" : trackColor,
               }}
               onCheckedChange={onToggleAll}
             />
@@ -110,7 +110,7 @@ export function BulkOffsetTable({
                   style={{
                     borderColor: trackColor,
                     backgroundColor: isChecked ? trackColor : "transparent",
-                    color: isChecked ? "#fff" : trackColor,
+                    color: isChecked ? "#000" : trackColor,
                   }}
                   onPointerDown={(event) => {
                     shiftPressedRef.current = event.shiftKey;

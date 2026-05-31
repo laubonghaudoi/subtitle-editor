@@ -10,11 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLocalSession } from "@/context/subtitle-context";
-import {
-  IconDownload,
-  IconRestore,
-  IconTrash,
-} from "@tabler/icons-react";
+import { IconDownload, IconRestore, IconTrash } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
@@ -58,12 +54,10 @@ export default function LocalSessionRecovery() {
       <DialogContent className="sm:max-w-lg" hideClose>
         <DialogHeader>
           <DialogTitle>{t("localSession.title")}</DialogTitle>
-          <DialogDescription>
-            {t("localSession.description")}
-          </DialogDescription>
+          <DialogDescription>{t("localSession.description")}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3 rounded-sm border border-black/10 bg-neutral-50 p-4 text-sm dark:border-white/10 dark:bg-neutral-900">
+        <div className="space-y-3 rounded-lg border-2 border-foreground bg-neutral-50 p-4 text-sm dark:bg-neutral-900">
           <p className="font-medium">
             {t("localSession.summary", {
               tracks: sessionSummary.trackCount,
@@ -73,9 +67,7 @@ export default function LocalSessionRecovery() {
           <p className="text-muted-foreground">
             {t("localSession.savedAt", { time: sessionSummary.savedAt })}
           </p>
-          <p className="text-muted-foreground">
-            {t("localSession.privacy")}
-          </p>
+          <p className="text-muted-foreground">{t("localSession.privacy")}</p>
         </div>
 
         <DialogFooter>

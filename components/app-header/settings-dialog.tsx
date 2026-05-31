@@ -10,10 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  useLocalSession,
-  useSubtitleState,
-} from "@/context/subtitle-context";
+import { useLocalSession, useSubtitleState } from "@/context/subtitle-context";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { IconMoon, IconSun, IconTrash } from "@tabler/icons-react";
@@ -92,14 +89,14 @@ export default function SettingsDialog({
           <div className="flex items-center justify-between gap-4">
             <Label className="text-sm">{t("dialog.themeLabel")}</Label>
             <div
-              className="relative grid grid-cols-2 rounded-lg border border-black/10 bg-neutral-100 p-0.5 dark:border-white/10 dark:bg-neutral-900"
+              className="relative grid grid-cols-2 rounded-md border-2 border-foreground bg-neutral-100 p-0.5 dark:bg-neutral-900"
               role="tablist"
               aria-label={t("dialog.themeLabel")}
             >
               {isThemeMounted ? (
                 <motion.div
                   aria-hidden="true"
-                  className="absolute inset-y-0.5 left-0.5 w-[calc(50%-0.125rem)] rounded-md bg-white shadow-sm dark:bg-neutral-950"
+                  className="absolute inset-y-0.5 left-0.5 w-[calc(50%-0.125rem)] rounded-xs bg-white dark:bg-neutral-950"
                   animate={{ x: activeTheme === "dark" ? "100%" : "0%" }}
                   transition={{ type: "spring", stiffness: 420, damping: 32 }}
                 />
@@ -118,7 +115,7 @@ export default function SettingsDialog({
                     tabIndex={isActive ? 0 : -1}
                     disabled={!isThemeMounted}
                     className={cn(
-                      "relative z-10 inline-flex min-w-[6.25rem] items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+                      "relative z-10 inline-flex min-w-[6.25rem] items-center justify-center gap-1.5 rounded-xs px-2.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
                       isActive
                         ? "text-foreground"
                         : "text-muted-foreground hover:text-foreground",
