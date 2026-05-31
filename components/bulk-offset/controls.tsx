@@ -255,7 +255,8 @@ export function BulkOffsetControls({
             step={STEP_FINE}
             value={formattedOffset}
             onChange={(event) => handleInputChange(event.target.value)}
-            className="w-24 py-1 px-2 rounded-xs border-none text-center text-base"
+            className="w-24 py-1 px-2 rounded-xs border-none text-center text-base font-bold"
+            style={{ color: accentColor }}
             aria-label={t("bulkOffset.offsetInputLabel")}
           />
           <span>s</span>

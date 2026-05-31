@@ -163,6 +163,23 @@ Ambient muted-steel duotone (NOT flat gray) + warm playhead. These are theme-awa
 - Region fills/handles already use `getTrackHandleColor`/`getTrackColor` → update automatically from `track-colors.ts`.
 - Rationale: low-chroma steel reads ambient yet still lets the saturated track regions pop. (Alternative if you want it closer to the old mint→blue: `waveColor` light `#a9e1d7` / dark `#173f3a`, `progressColor` light `#3ba0c0` / dark `#2789a6` — more atmospheric but the blue/green regions compete slightly.)
 
+### Bulk-offset preview region — `components/waveform-visualizer/use-preview-regions.ts`
+The dashed preview overlay (where selected regions will move) must contrast the track's
+OWN solid region — including the blue track. Use a **vivid per-track complement** — NOT a
+fixed color, and NOT the old `createContrastColor` + `mix-blend-mode: screen` (which
+desaturated + lightened every preview toward a pale, low-contrast tint). Added
+`getPreviewContrastColor(index)` in `lib/track-colors.ts`:
+
+| Track | Region | Preview overlay (complement) |
+|-------|--------|------------------------------|
+| T1 yellow `#ffc83d` | | indigo `#5b5bd6` |
+| T2 blue `#4dabf7` | | orange `#f76b15` |
+| T3 red `#ff6b6b` | | teal `#12a594` |
+| T4 green `#51cf66` | | magenta `#d6409f` |
+
+Overlay = 2px **dashed solid-color border** + fill `hexToRgba(color, 0.25)`. **Remove
+`element.style.mixBlendMode = "screen"`** — it washed the hue out. ✅ implemented.
+
 ---
 
 ## 5. Shape sweep — borders, radius, shadows

@@ -75,6 +75,22 @@ export function getTrackColor(
   return hexToRgba(getBaseColor(index), alpha);
 }
 
+// Vivid complement of each track color — used for the bulk-offset preview
+// overlay so the dashed preview always contrasts its own (solid) track region,
+// including on the blue track. Order matches TRACK_BASE_COLORS.
+const PREVIEW_CONTRAST_COLORS = [
+  "#5b5bd6", // T1 yellow  → indigo
+  "#f76b15", // T2 blue    → orange
+  "#12a594", // T3 red     → teal
+  "#d6409f", // T4 green   → magenta
+];
+
+export function getPreviewContrastColor(index: number): string {
+  if (PREVIEW_CONTRAST_COLORS.length === 0) return FALLBACK_HANDLE_COLOR;
+  const i = normalizeIndex(index, PREVIEW_CONTRAST_COLORS.length);
+  return PREVIEW_CONTRAST_COLORS[i] ?? FALLBACK_HANDLE_COLOR;
+}
+
 const hexToRgb = (hex: string) => {
   let normalized = hex.replace("#", "");
   if (normalized.length === 3) {

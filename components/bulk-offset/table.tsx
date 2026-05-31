@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
@@ -46,37 +46,58 @@ export function BulkOffsetTable({
   return (
     <table className="min-w-full text-base">
       <thead className="sticky top-0 z-20 bg-background">
-        <tr className="border-b">
-          <th className="h-10 px-4 text-center font-semibold flex items-center">
-            <Checkbox
-              aria-label={t("bulkOffset.selectAll")}
-              checked={headerCheckboxState}
-              style={{
-                borderColor: trackColor,
-                backgroundColor:
-                  headerCheckboxState === true ? trackColor : "transparent",
-                color: headerCheckboxState === true ? "#000" : trackColor,
-              }}
-              onCheckedChange={onToggleAll}
-            />
+        <tr>
+          <th
+            className="h-12 bg-background px-4 text-center align-middle text-sm font-semibold leading-tight"
+            rowSpan={2}
+          >
+            <div className="flex items-center justify-center">
+              <Checkbox
+                aria-label={t("bulkOffset.selectAll")}
+                checked={headerCheckboxState}
+                style={{
+                  borderColor: trackColor,
+                  backgroundColor:
+                    headerCheckboxState === true ? trackColor : "transparent",
+                  color: headerCheckboxState === true ? "#000" : trackColor,
+                }}
+                onCheckedChange={onToggleAll}
+              />
+            </div>
           </th>
-          <th className="h-10 px-2 text-left font-semibold">
+          <th
+            className="h-12 bg-background px-2 text-left align-middle text-sm font-semibold leading-tight"
+            rowSpan={2}
+          >
             {t("bulkOffset.table.id")}
           </th>
-          <th className="h-10 px-2 text-center font-semibold">
+          <th className="relative h-6 bg-background px-2 py-0 text-center text-sm font-semibold leading-tight">
             {t("bulkOffset.table.start")}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-[repeating-linear-gradient(to_right,currentColor_0_5px,transparent_5px_8px)]"
+            />
           </th>
-          <th className="h-10 px-2 text-center font-semibold">
+          <th className="relative h-6 bg-background px-2 py-0 text-center text-sm font-semibold leading-tight">
+            {t("bulkOffset.table.end")}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-[repeating-linear-gradient(to_right,currentColor_0_5px,transparent_5px_8px)]"
+            />
+          </th>
+          <th
+            className="h-12 bg-background px-2 text-center align-middle text-sm font-semibold leading-tight"
+            rowSpan={2}
+          >
+            {t("bulkOffset.table.text")}
+          </th>
+        </tr>
+        <tr className="border-b">
+          <th className="h-6 bg-background px-2 py-0 text-center text-sm font-semibold leading-tight">
             {t("bulkOffset.table.previewStart")}
           </th>
-          <th className="h-10 px-2 text-center font-semibold">
-            {t("bulkOffset.table.end")}
-          </th>
-          <th className="h-10 px-2 text-center font-semibold">
+          <th className="h-6 bg-background px-2 py-0 text-center text-sm font-semibold leading-tight">
             {t("bulkOffset.table.previewEnd")}
-          </th>
-          <th className="h-10 px-2 text-center font-semibold">
-            {t("bulkOffset.table.text")}
           </th>
         </tr>
       </thead>
@@ -94,63 +115,73 @@ export function BulkOffsetTable({
             ? { backgroundColor: trackBackgroundColor }
             : undefined;
           return (
-            <tr
-              key={subtitle.uuid}
-              className={cn(
-                "border-b border-dashed transition-colors hover:bg-muted/50 last:border-b-0",
-              )}
-              style={rowStyle}
-            >
-              <td className="px-4 align-middle">
-                <Checkbox
-                  aria-label={t("bulkOffset.selectCaption", {
-                    id: subtitle.id,
-                  })}
-                  checked={isChecked}
-                  style={{
-                    borderColor: trackColor,
-                    backgroundColor: isChecked ? trackColor : "transparent",
-                    color: isChecked ? "#000" : trackColor,
-                  }}
-                  onPointerDown={(event) => {
-                    shiftPressedRef.current = event.shiftKey;
-                  }}
-                  onCheckedChange={(checked) => {
-                    onToggleRow(
-                      index,
-                      subtitle.uuid,
-                      checked === true,
-                      shiftPressedRef.current,
-                    );
-                    shiftPressedRef.current = false;
-                  }}
-                />
-              </td>
-              <td className="px-2 py-1 text-left text-sm">{subtitle.id}</td>
-              <td className="px-2 py-1 align-middle font-mono text-center">
-                {subtitle.startTime}
-              </td>
-              <td
-                className="px-2 py-1 align-middle font-mono text-center"
-                style={previewStartStyle}
+            <Fragment key={subtitle.uuid}>
+              <tr
+                className={cn("transition-colors hover:bg-muted/50")}
+                style={rowStyle}
               >
-                {preview.previewStart}
-              </td>
-              <td className="px-2 py-1 align-middle font-mono text-center">
-                {subtitle.endTime}
-              </td>
-              <td
-                className="px-2 py-1 align-middle font-mono text-center"
-                style={previewEndStyle}
-              >
-                {preview.previewEnd}
-              </td>
-              <td className="px-4 py-1 align-middle">
-                {subtitle.text || (
-                  <span className="italic">{t("bulkOffset.table.empty")}</span>
+                <td className="px-4 align-middle" rowSpan={2}>
+                  <Checkbox
+                    aria-label={t("bulkOffset.selectCaption", {
+                      id: subtitle.id,
+                    })}
+                    checked={isChecked}
+                    style={{
+                      borderColor: trackColor,
+                      backgroundColor: isChecked ? trackColor : "transparent",
+                      color: isChecked ? "#000" : trackColor,
+                    }}
+                    onPointerDown={(event) => {
+                      shiftPressedRef.current = event.shiftKey;
+                    }}
+                    onCheckedChange={(checked) => {
+                      onToggleRow(
+                        index,
+                        subtitle.uuid,
+                        checked === true,
+                        shiftPressedRef.current,
+                      );
+                      shiftPressedRef.current = false;
+                    }}
+                  />
+                </td>
+                <td className="px-2 py-1 text-left text-sm" rowSpan={2}>
+                  {subtitle.id}
+                </td>
+                <td className="px-2 pt-1 pb-0 align-middle font-mono text-center">
+                  {subtitle.startTime}
+                </td>
+                <td className="px-2 pt-1 pb-0 align-middle font-mono text-center">
+                  {subtitle.endTime}
+                </td>
+                <td className="px-4 py-1 align-middle" rowSpan={2}>
+                  {subtitle.text || (
+                    <span className="italic">
+                      {t("bulkOffset.table.empty")}
+                    </span>
+                  )}
+                </td>
+              </tr>
+              <tr
+                className={cn(
+                  "border-b border-dashed transition-colors hover:bg-muted/50 last:border-b-0",
                 )}
-              </td>
-            </tr>
+                style={rowStyle}
+              >
+                <td
+                  className="px-2 pt-0 pb-1 align-middle font-mono text-center"
+                  style={previewStartStyle}
+                >
+                  {preview.previewStart}
+                </td>
+                <td
+                  className="px-2 pt-0 pb-1 align-middle font-mono text-center"
+                  style={previewEndStyle}
+                >
+                  {preview.previewEnd}
+                </td>
+              </tr>
+            </Fragment>
           );
         })}
       </tbody>
