@@ -16,7 +16,7 @@ export default function SubtitleListEmpty({
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-muted-foreground rounded-sm">
-      <Label className="cursor-pointer text-xl hover:text-blue-800 underline">
+      <Label className="cursor-pointer text-xl hover:text-accent-ink underline">
         <span>{t("labels.loadSrtFile")}</span>
         <Input
           type="file"
@@ -29,7 +29,7 @@ export default function SubtitleListEmpty({
       <Button
         variant="link"
         onClick={onStartFromScratch}
-        className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-800"
+        className="cursor-pointer text-xl text-muted-foreground underline hover:text-accent-ink"
       >
         {t("labels.startFromScratch")}
       </Button>

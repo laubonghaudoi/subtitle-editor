@@ -35,7 +35,7 @@ import {
   parseSRT,
   parseVTT,
 } from "@/lib/subtitle-operations";
-import { getReadableTextColor, getTrackHandleColor } from "@/lib/track-colors";
+import { getTrackHandleColor } from "@/lib/track-colors";
 import {
   IconBadgeCc,
   IconFile,
@@ -49,11 +49,9 @@ import { v4 as uuidv4 } from "uuid";
 
 const getTrackButtonStyle = (trackIndex: number): CSSProperties => {
   const backgroundColor = getTrackHandleColor(trackIndex);
-  const color = getReadableTextColor(backgroundColor);
   return {
     backgroundColor,
-    color,
-    borderColor: backgroundColor,
+    color: "#000000",
   };
 };
 
@@ -133,10 +131,13 @@ export default function LoadSrt() {
       <DialogTrigger asChild>
         <Button
           variant="secondary"
-          className="text-black bg-yellow-900 hover:bg-yellow-800 dark:bg-amber-800 dark:hover:bg-amber-900 rounded-sm cursor-pointer"
+          className="text-white bg-iris-800 hover:bg-iris-900 rounded-xs border-2 border-black dark:border-white cursor-pointer"
+          aria-label={t("buttons.loadSrt")}
         >
           <IconBadgeCc />
-          <span className="leading-none truncate">{t("buttons.loadSrt")}</span>
+          <span className="hidden leading-none truncate sm:inline">
+            {t("buttons.loadSrt")}
+          </span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-3xl" hideClose>
@@ -155,12 +156,12 @@ export default function LoadSrt() {
                 <Input
                   value={track.name}
                   onChange={(e) => renameTrack(track.id, e.target.value)}
-                  className="px-2 py-2 col-span-5 border-neutral-500 rounded-sm"
+                  className="px-2 py-2 col-span-5 border-foreground rounded-xs"
                 />
-                <div className="col-span-6 grid grid-cols-2 gap-2">
+                <div className="col-span-6 grid grid-cols-[minmax(5rem,0.75fr)_minmax(0,1.25fr)] gap-2">
                   {track.subtitles.length > 0 ? (
                     <>
-                      <Label className="w-full p-0 flex items-center justify-center">
+                      <Label className="w-full min-w-0 p-0 flex items-center justify-center">
                         {t("subtitle.subtitleCount", {
                           count: track.subtitles.length,
                         })}
@@ -168,12 +169,14 @@ export default function LoadSrt() {
                       <Button
                         asChild
                         variant="secondary"
-                        className="w-full border hover:opacity-90"
+                        className="w-full min-w-0 border-2 border-black hover:opacity-90 dark:border-white"
                         style={fileButtonStyle}
                       >
-                        <Label className="cursor-pointer">
+                        <Label className="min-w-0 cursor-pointer">
                           <IconFile />
-                          {t("buttons.reloadSrt")}
+                          <span className="min-w-0 truncate">
+                            {t("buttons.reloadSrt")}
+                          </span>
                           <Input
                             type="file"
                             className="hidden"
@@ -187,21 +190,25 @@ export default function LoadSrt() {
                     <>
                       <Button
                         variant="secondary"
-                        className="w-full cursor-pointer"
+                        className="w-full min-w-0 cursor-pointer"
                         onClick={() => handleStartFromScratch(track.id)}
                       >
                         <IconPencilPlus />
-                        {t("buttons.fromScratch")}
+                        <span className="min-w-0 truncate">
+                          {t("buttons.fromScratch")}
+                        </span>
                       </Button>
                       <Button
                         asChild
                         variant="secondary"
-                        className="w-full border hover:opacity-90"
+                        className="w-full min-w-0 border-2 border-black hover:opacity-90 dark:border-white"
                         style={fileButtonStyle}
                       >
-                        <Label className="cursor-pointer">
+                        <Label className="min-w-0 cursor-pointer">
                           <IconFile />
-                          {t("buttons.loadSrtFile")}
+                          <span className="min-w-0 truncate">
+                            {t("buttons.loadSrtFile")}
+                          </span>
                           <Input
                             type="file"
                             className="hidden"
@@ -219,7 +226,8 @@ export default function LoadSrt() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-red-900 hover:bg-red-900 hover:text-red-300 bg-red-300 cursor-pointer"
+                        className="rounded-xs ring-1 ring-inset ring-red-800 bg-red-200 hover:bg-red-300 text-[color:var(--red-11)] hover:text-[color:var(--red-11)] cursor-pointer"
+                        aria-label={t("dialog.deleteTrackTitle")}
                       >
                         <IconTrash />
                       </Button>

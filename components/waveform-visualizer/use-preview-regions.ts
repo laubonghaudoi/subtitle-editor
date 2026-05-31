@@ -1,9 +1,5 @@
 import type { BulkOffsetPreviewState } from "@/components/bulk-offset/drawer";
-import {
-  createContrastColor,
-  getTrackHandleColor,
-  hexToRgba,
-} from "@/lib/track-colors";
+import { getPreviewContrastColor, hexToRgba } from "@/lib/track-colors";
 import { useCallback, useRef } from "react";
 import type WaveSurfer from "wavesurfer.js";
 import type { Region } from "wavesurfer.js/dist/plugins/regions.esm.js";
@@ -60,10 +56,9 @@ export function usePreviewRegions(
           return;
         }
         const { region: baseRegion, trackIndex } = baseRegionEntry;
-        const handleColor = getTrackHandleColor(trackIndex);
-        const contrast = createContrastColor(handleColor);
-        const overlayFill = hexToRgba(contrast, 0.18);
-        const overlayBorder = hexToRgba(contrast, 0.82);
+        const contrast = getPreviewContrastColor(trackIndex);
+        const overlayFill = hexToRgba(contrast, 0.25);
+        const overlayBorder = contrast;
 
         let overlay = previewRegionMap.current.get(uuid);
         if (!overlay) {
@@ -90,7 +85,6 @@ export function usePreviewRegions(
           element.style.zIndex = "5";
           element.style.border = `2px dashed ${overlayBorder}`;
           element.style.backgroundColor = overlayFill;
-          element.style.mixBlendMode = "screen";
           element.setAttribute("data-preview-region", "true");
 
           const baseElement = baseRegion.element;

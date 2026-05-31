@@ -17,7 +17,7 @@ import {
   useSubtitleActionsContext,
   useSubtitleState,
 } from "@/context/subtitle-context";
-import { getTrackHandleColor, hexToRgba } from "@/lib/track-colors";
+import { getTrackHandleColor } from "@/lib/track-colors";
 import { useWaveformRegions } from "./use-waveform-regions";
 import type { BulkOffsetPreviewState } from "@/components/bulk-offset/drawer";
 import { useTheme } from "next-themes";
@@ -51,10 +51,10 @@ export default forwardRef(function WaveformVisualizer(
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const { resolvedTheme } = useTheme();
-  const theme: "light" | "dark" =
-    resolvedTheme === "dark" ? "dark" : "light";
-  const waveColor = theme === "dark" ? "#0f766e" : "#A7F3D0";
-  const progressColor = theme === "dark" ? "#0ea5e9" : "#00d4ff";
+  const theme: "light" | "dark" = resolvedTheme === "dark" ? "dark" : "light";
+  const waveColor = theme === "dark" ? "#2ab3d6" : "#34bfe0";
+  const progressColor = theme === "dark" ? "#d95cb0" : "#cf4fa6";
+  const cursorColor = theme === "dark" ? "#ff7a30" : "#e8590c";
 
   const {
     tracks,
@@ -65,9 +65,9 @@ export default forwardRef(function WaveformVisualizer(
   } = useSubtitleState();
   const { updateSubtitleTimeByUuidAction } = useSubtitleActionsContext();
 
-/****************************************************************
- *  Load media file into wavesurfer
- * */
+  /****************************************************************
+   *  Load media file into wavesurfer
+   * */
   useEffect(() => {
     if (!mediaFile) {
       setMediaUrl("");
@@ -100,7 +100,7 @@ export default forwardRef(function WaveformVisualizer(
     height: "auto",
     waveColor,
     progressColor,
-    cursorColor: "#b91c1c",
+    cursorColor,
     url: mediaUrl,
     minPxPerSec: 100,
     fillParent: true,
@@ -118,7 +118,7 @@ export default forwardRef(function WaveformVisualizer(
         },
       }),
       Hover.create({
-        lineColor: "#ff0000",
+        lineColor: cursorColor,
         lineWidth: 2,
         labelBackground: "#555",
         labelColor: "#fff",
@@ -151,31 +151,29 @@ export default forwardRef(function WaveformVisualizer(
     wavesurfer.setOptions({
       waveColor,
       progressColor,
+      cursorColor,
     });
-  }, [wavesurfer, waveColor, progressColor]);
+  }, [wavesurfer, waveColor, progressColor, cursorColor]);
   /****************************************************************
    *  Hook the region lifecycle and track overlays into a standalone hook
    * */
-  const {
-    subtitleToRegionMap,
-    labelsOffsetTop,
-    labelsAreaHeight,
-  } = useWaveformRegions({
-    wavesurfer: wavesurfer ?? null,
-    containerRef,
-    tracks,
-    activeTrackId,
-    setActiveTrackId,
-    onRegionClick,
-    onPlayPause,
-    updateSubtitleTimeByUuidAction,
-    previewOffsets,
-    setIsLoading,
-    showTrackLabels,
-    theme,
-    clampOverlaps,
-    playInBackground,
-  });
+  const { subtitleToRegionMap, labelsOffsetTop, labelsAreaHeight } =
+    useWaveformRegions({
+      wavesurfer: wavesurfer ?? null,
+      containerRef,
+      tracks,
+      activeTrackId,
+      setActiveTrackId,
+      onRegionClick,
+      onPlayPause,
+      updateSubtitleTimeByUuidAction,
+      previewOffsets,
+      setIsLoading,
+      showTrackLabels,
+      theme,
+      clampOverlaps,
+      playInBackground,
+    });
 
   /****************************************************************
    * Scrolling and zooming the waveform
@@ -362,16 +360,16 @@ export default forwardRef(function WaveformVisualizer(
         >
           {tracks.map((track, idx) => {
             const trackColor = getTrackHandleColor(idx);
-            const labelBackground = hexToRgba(trackColor, 0.2);
             return (
               <div
                 key={track.id}
-                className="absolute left-2 px-2 py-0.5 rounded text-sm font-semibold"
+                className="absolute left-2 px-2 py-0.5 rounded-xs border-2 text-sm font-semibold"
                 style={{
                   top: `${((idx + 0.5) * 100) / tracks.length}%`,
                   transform: "translateY(-50%)",
-                  backgroundColor: labelBackground,
-                  color: trackColor,
+                  backgroundColor: trackColor,
+                  color: "#000000",
+                  borderColor: theme === "dark" ? "#ffffff" : "#000000",
                 }}
               >
                 {track.name}

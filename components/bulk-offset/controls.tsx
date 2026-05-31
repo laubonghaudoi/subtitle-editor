@@ -200,10 +200,9 @@ export function BulkOffsetControls({
             />
           </SliderPrimitive.Track>
           <SliderPrimitive.Thumb
-            className="block h-4 w-4 rounded-full border-2 bg-background shadow transition-transform focus-visible:outline-hidden focus-visible:ring-2 data-[state=active]:scale-110 disabled:pointer-events-none disabled:opacity-50"
+            className="block h-4 w-4 rounded-full border-2 bg-background transition-transform focus-visible:outline-hidden focus-visible:ring-2 data-[state=active]:scale-110 disabled:pointer-events-none disabled:opacity-50"
             style={{
               borderColor: accentColor,
-              boxShadow: `0 1px 2px ${hexToRgba(accentColor, 0.35)}`,
             }}
           />
         </SliderPrimitive.Root>
@@ -256,7 +255,8 @@ export function BulkOffsetControls({
             step={STEP_FINE}
             value={formattedOffset}
             onChange={(event) => handleInputChange(event.target.value)}
-            className="w-24 py-1 px-2 rounded-xs border-none text-center text-base"
+            className="w-24 py-1 px-2 rounded-xs border-none text-center text-base font-bold"
+            style={{ color: accentColor }}
             aria-label={t("bulkOffset.offsetInputLabel")}
           />
           <span>s</span>

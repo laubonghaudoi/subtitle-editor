@@ -83,7 +83,7 @@ const TimeDisplayAndSlider = memo(
               {hoverTime !== null && (
                 <TooltipContent
                   side="top"
-                  className="bg-white text-black dark:bg-slate-900 dark:text-white py-1 px-2 text-sm rounded border-2 border-black dark:border-white"
+                  className="bg-white text-black dark:bg-slate-900 dark:text-white py-1 px-2 text-sm rounded-xs border-2 border-black dark:border-white"
                   style={{
                     position: "absolute",
                     left: `${tooltipPosition}px`,
@@ -167,7 +167,7 @@ export default function CustomControls({
       </Button>
 
       <TooltipProvider>
-        <div className="flex items-center border-x border-gray-300 dark:border-white/30 px-2">
+        <div className="flex items-center border-x border-foreground px-2">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -182,10 +182,10 @@ export default function CustomControls({
             <TooltipContent>{backwardShortcutLabel}</TooltipContent>
           </Tooltip>
           <DropdownMenu>
-            <DropdownMenuTrigger className="px-2 py-1 cursor-pointer hover:bg-accent rounded-sm border border-transparent">
+            <DropdownMenuTrigger className="px-2 py-1 cursor-pointer hover:bg-accent rounded-xs border border-transparent">
               {jumpDuration}s
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="border border-black dark:border-white">
+            <DropdownMenuContent className="border-2 border-black dark:border-white">
               <DropdownMenuRadioGroup
                 value={jumpDuration.toString()}
                 onValueChange={onChangeJumpDuration}
@@ -224,10 +224,10 @@ export default function CustomControls({
       </TooltipProvider>
 
       <DropdownMenu>
-        <DropdownMenuTrigger className="cursor-pointer hover:bg-accent rounded-sm px-2 py-1 border border-transparent">
+        <DropdownMenuTrigger className="cursor-pointer hover:bg-accent rounded-xs px-2 py-1 border border-transparent">
           {playbackRate}x
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="border border-black dark:border-white">
+        <DropdownMenuContent className="border-2 border-black dark:border-white">
           <DropdownMenuRadioGroup
             value={playbackRate.toString()}
             onValueChange={onChangePlaybackRate}

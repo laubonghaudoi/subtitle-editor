@@ -30,11 +30,7 @@ import type { CheckedState } from "@radix-ui/react-checkbox";
 import { IconReplace, IconSearch } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
-import {
-  getReadableTextColor,
-  getTrackHandleColor,
-  hexToRgba,
-} from "@/lib/track-colors";
+import { getTrackHandleColor } from "@/lib/track-colors";
 
 const coerceCheckedState = (checked: CheckedState) =>
   checked === "indeterminate" ? true : Boolean(checked);
@@ -198,22 +194,23 @@ export default function FindReplace() {
       : -1;
   const resolvedTrackIndex = activeTrackIndex >= 0 ? activeTrackIndex : 0;
   const trackHandleColor = getTrackHandleColor(resolvedTrackIndex);
-  const headerColor = hexToRgba(trackHandleColor, 0.9);
-  const headerTextColor = getReadableTextColor(trackHandleColor);
+  const headerColor = trackHandleColor;
+  const headerTextColor = "#000000";
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="rounded-xs cursor-pointer border-black dark:border-white"
+          className="cursor-pointer rounded-[2px] border-black dark:border-white"
           disabled={isDisabled}
+          aria-label={t("findReplace.title")}
         >
           <IconSearch />
-          <span>{t("findReplace.title")}</span>
+          <span className="hidden sm:inline">{t("findReplace.title")}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-3xl">
+      <DialogContent className="rounded-[4px] sm:max-w-3xl sm:rounded-[4px]">
         <DialogHeader>
           <DialogTitle>
             {t("findReplace.dialogTitle", { track: trackName })}
@@ -226,7 +223,7 @@ export default function FindReplace() {
               id="find"
               value={findText}
               onChange={(event) => setFindText(event.target.value)}
-              className="flex-1 rounded-xs px-2 py-1"
+              className="flex-1 rounded-[2px] px-2 py-1"
             />
           </div>
           <div className="flex gap-4">
@@ -255,16 +252,16 @@ export default function FindReplace() {
               id="replace"
               value={replaceText}
               onChange={(event) => setReplaceText(event.target.value)}
-              className="flex-1 rounded-xs px-2 py-1 text-base"
+              className="flex-1 rounded-[2px] px-2 py-1 text-base"
             />
           </div>
-          <div className="flex items-center justify-between text-gray-600 dark:text-gray-300">
+          <div className="flex items-center justify-between text-muted-foreground">
             <span>
               {selectedCount} / {matchedSubtitles.length}{" "}
               {t("findReplace.selected")}
             </span>
             <Button
-              className="rounded-sm bg-slate-800 hover:bg-slate-600 dark:bg-slate-100 dark:hover:bg-slate-200"
+              className="rounded-[2px] border-2 border-black bg-iris-800 text-white hover:bg-iris-900 dark:border-white"
               onClick={handleReplace}
               disabled={selectedCount === 0}
             >

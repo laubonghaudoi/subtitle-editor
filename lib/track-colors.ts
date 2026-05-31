@@ -7,10 +7,10 @@ type TrackBaseColor = {
 };
 
 const TRACK_BASE_COLORS: TrackBaseColor[] = [
-  { tokenLight: "--amber-10", tokenDark: "--amber-9", fallback: "#efb100" }, // Amber
-  { tokenLight: "--blue-10", tokenDark: "--blue-9", fallback: "#3b82f6" }, // Blue
-  { tokenLight: "--crimson-10", tokenDark: "--crimson-9", fallback: "#c70036" }, // Crimson
-  { tokenLight: "--green-10", tokenDark: "--green-9", fallback: "#009966" }, // Green
+  { tokenLight: "#ffc83d", tokenDark: "#ffc83d", fallback: "#ffc83d" }, // T1 yellow
+  { tokenLight: "#4dabf7", tokenDark: "#4dabf7", fallback: "#4dabf7" }, // T2 blue
+  { tokenLight: "#ff6b6b", tokenDark: "#ff6b6b", fallback: "#ff6b6b" }, // T3 red
+  { tokenLight: "#51cf66", tokenDark: "#51cf66", fallback: "#51cf66" }, // T4 green
 ];
 const FALLBACK_HANDLE_COLOR = TRACK_BASE_COLORS[0]?.fallback ?? "#fcd34d";
 
@@ -60,7 +60,7 @@ const getBaseColor = (index: number): string => {
   const entry = TRACK_BASE_COLORS[normalizedIndex];
   const theme = getThemeKey();
   const token =
-    theme === "dark" ? entry.tokenDark ?? entry.tokenLight : entry.tokenLight;
+    theme === "dark" ? (entry.tokenDark ?? entry.tokenLight) : entry.tokenLight;
   return resolveTokenColor(token, entry.fallback);
 };
 
@@ -73,6 +73,22 @@ export function getTrackColor(
   alpha: number = DEFAULT_TRACK_ALPHA,
 ): string {
   return hexToRgba(getBaseColor(index), alpha);
+}
+
+// Vivid complement of each track color — used for the bulk-offset preview
+// overlay so the dashed preview always contrasts its own (solid) track region,
+// including on the blue track. Order matches TRACK_BASE_COLORS.
+const PREVIEW_CONTRAST_COLORS = [
+  "#5b5bd6", // T1 yellow  → indigo
+  "#f76b15", // T2 blue    → orange
+  "#12a594", // T3 red     → teal
+  "#d6409f", // T4 green   → magenta
+];
+
+export function getPreviewContrastColor(index: number): string {
+  if (PREVIEW_CONTRAST_COLORS.length === 0) return FALLBACK_HANDLE_COLOR;
+  const i = normalizeIndex(index, PREVIEW_CONTRAST_COLORS.length);
+  return PREVIEW_CONTRAST_COLORS[i] ?? FALLBACK_HANDLE_COLOR;
 }
 
 const hexToRgb = (hex: string) => {
@@ -98,7 +114,10 @@ const parseRgbString = (value: string) => {
   const match = value.match(/rgba?\\(([^)]+)\\)/i);
   if (!match) return null;
   const [rgbPart] = match[1].split("/");
-  const parts = rgbPart.trim().split(/[\\s,]+/).filter(Boolean);
+  const parts = rgbPart
+    .trim()
+    .split(/[\\s,]+/)
+    .filter(Boolean);
   if (parts.length < 3) return null;
   const r = Number.parseFloat(parts[0]);
   const g = Number.parseFloat(parts[1]);
@@ -119,8 +138,7 @@ const parseColorFunction = (value: string) => {
   if (!coords || coords.length < 3) return null;
   const [r, g, b] = coords.map((channel) => Number.parseFloat(channel));
   if ([r, g, b].some((channel) => Number.isNaN(channel))) return null;
-  const clamp = (channel: number) =>
-    Math.min(1, Math.max(0, channel)) * 255;
+  const clamp = (channel: number) => Math.min(1, Math.max(0, channel)) * 255;
   return { r: clamp(r), g: clamp(g), b: clamp(b) };
 };
 
