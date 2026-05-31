@@ -89,7 +89,7 @@ export function BulkOffsetControls({
   const activeToggleStyle: CSSProperties = {
     backgroundColor: accentColor,
     borderColor: accentColor,
-    color: "#000",
+    color: "#fff",
   };
 
   const inactiveToggleStyle: CSSProperties = {
@@ -318,7 +318,7 @@ export function BulkOffsetControls({
             style={{
               backgroundColor: accentColor,
               borderColor: accentColor,
-              color: "#000",
+              color: "#fff",
             }}
           >
             {t("bulkOffset.apply")}

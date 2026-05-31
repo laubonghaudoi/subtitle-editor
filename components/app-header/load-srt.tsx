@@ -158,10 +158,10 @@ export default function LoadSrt() {
                   onChange={(e) => renameTrack(track.id, e.target.value)}
                   className="px-2 py-2 col-span-5 border-foreground rounded-xs"
                 />
-                <div className="col-span-6 grid grid-cols-2 gap-2">
+                <div className="col-span-6 grid grid-cols-[minmax(5rem,0.75fr)_minmax(0,1.25fr)] gap-2">
                   {track.subtitles.length > 0 ? (
                     <>
-                      <Label className="w-full p-0 flex items-center justify-center">
+                      <Label className="w-full min-w-0 p-0 flex items-center justify-center">
                         {t("subtitle.subtitleCount", {
                           count: track.subtitles.length,
                         })}
@@ -169,12 +169,14 @@ export default function LoadSrt() {
                       <Button
                         asChild
                         variant="secondary"
-                        className="w-full border-2 border-black hover:opacity-90 dark:border-white"
+                        className="w-full min-w-0 border-2 border-black hover:opacity-90 dark:border-white"
                         style={fileButtonStyle}
                       >
-                        <Label className="cursor-pointer">
+                        <Label className="min-w-0 cursor-pointer">
                           <IconFile />
-                          {t("buttons.reloadSrt")}
+                          <span className="min-w-0 truncate">
+                            {t("buttons.reloadSrt")}
+                          </span>
                           <Input
                             type="file"
                             className="hidden"
@@ -188,21 +190,25 @@ export default function LoadSrt() {
                     <>
                       <Button
                         variant="secondary"
-                        className="w-full cursor-pointer"
+                        className="w-full min-w-0 cursor-pointer"
                         onClick={() => handleStartFromScratch(track.id)}
                       >
                         <IconPencilPlus />
-                        {t("buttons.fromScratch")}
+                        <span className="min-w-0 truncate">
+                          {t("buttons.fromScratch")}
+                        </span>
                       </Button>
                       <Button
                         asChild
                         variant="secondary"
-                        className="w-full border-2 border-black hover:opacity-90 dark:border-white"
+                        className="w-full min-w-0 border-2 border-black hover:opacity-90 dark:border-white"
                         style={fileButtonStyle}
                       >
-                        <Label className="cursor-pointer">
+                        <Label className="min-w-0 cursor-pointer">
                           <IconFile />
-                          {t("buttons.loadSrtFile")}
+                          <span className="min-w-0 truncate">
+                            {t("buttons.loadSrtFile")}
+                          </span>
                           <Input
                             type="file"
                             className="hidden"

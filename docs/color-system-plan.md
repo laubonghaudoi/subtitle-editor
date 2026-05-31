@@ -110,29 +110,32 @@ gray border overrides in components (see §4); no token change needed.
 | `subtitle-item-merge-actions.tsx` **add** | `bg-grass-300 text-grass-800` (borderless, grass) | **green bordered chip** (see "Inline action chips" below). Unify grass→green. |
 | `subtitle-item-merge-actions.tsx` **merge** | `bg-amber-200 text-amber-800` (borderless; `text-amber-800`=`--amber-9` bright yellow = low contrast) | **amber bordered chip** (see below) — fixes the text contrast |
 | `subtitle-item-delete-button.tsx` **delete** | `bg-red-300 text-red-800` (borderless) | **red bordered chip** (see below) |
-| `components/find-replace/table.tsx:58` (match highlight) | `bg-red-500 text-white` | `bg-amber-200 text-amber-950` |
-| `components/find-replace/table.tsx:101` (replace highlight) | `bg-green-500 text-white` | `bg-green-200 text-green-950` |
+| `find-replace/table.tsx` (match / being-removed highlight) | `bg-red-500 text-white` | **`bg-red-800 text-white`** (vivid red-9 + white — a diff highlight must POP; light tints were too subtle) |
+| `find-replace/table.tsx` (replace / new-text highlight) | `bg-green-500 text-white` | **`bg-green-800 text-white`** (vivid green-9 + white) |
 | `components/find-replace/index.tsx:267` (Replace btn) | `bg-slate-800 hover:bg-slate-600 dark:bg-slate-100…` | `bg-iris-800 hover:bg-iris-900 text-white` |
 | `app/[locale]/page.tsx:382` (subtitle drop zone) | `bg-yellow-50` | `bg-iris-100` |
 | `app/[locale]/page.tsx:438` (media drop zone) | `bg-blue-50` | `bg-iris-100` |
 
-### Inline action chips (delete / add / merge) — bordered tint chips
-🔒 The mockup's "Inline actions & highlights" panel shows these as small
-**bordered** chips — tint background + readable **hue-11** text + **hue-9** border
-— NOT borderless fills (GPT's first pass shipped them borderless and with
-low-contrast text). Apply one consistent treatment, roughly
-`px-2 py-1 rounded-xs border text-sm`:
+### Inline action chips (delete / add / merge) — outlined tint chips
+🔒 Small **outlined** chips: tint background + readable **hue-11** text + a 1px **hue-9
+inset ring** — NOT borderless fills (GPT's first pass shipped them borderless with
+low-contrast text). Treatment: `px-2 py-1 rounded-xs ring-1 ring-inset text-sm`.
 
-| Verb | bg | text | border |
+⚠️ **Use `ring-1 ring-inset` (box-shadow), NOT `border`.** The merge/add buttons live in a
+negative-margin strip (`-mt-3 -mb-3` in `subtitle-item-merge-actions.tsx`) tuned to the
+buttons' height; a real `border` adds ~2px, breaks the row-abutting, and leaves a thin
+uncolored gap that's visible once a row is hover/active-colored. A ring has zero layout impact.
+
+| Verb | bg | text | ring (inset, 1px) |
 |------|----|------|--------|
-| Delete | `bg-red-200` (`--red-3`) | `text-[color:var(--red-11)]` `#ce2c31` | `border-red-800` (`--red-9`) |
-| Add (green) | `bg-green-200` (`--green-3`) | `text-[color:var(--green-11)]` `#218358` | `border-green-800` (`--green-9`) |
-| Merge (amber) | `bg-amber-200` (`--amber-3`) | `text-[color:var(--amber-11)]` `#ab6400` | `border-amber-700` (`--amber-8` — `--amber-9` is too light for a border) |
-| Disabled | `bg-slate-200` | `text-slate-900` | `border-slate-700` |
+| Delete | `bg-red-200` (`--red-3`) | `text-[color:var(--red-11)]` `#ce2c31` | `ring-red-800` (`--red-9`) |
+| Add (green) | `bg-green-200` (`--green-3`) | `text-[color:var(--green-11)]` `#218358` | `ring-green-800` (`--green-9`) |
+| Merge (amber) | `bg-amber-200` (`--amber-3`) | `text-[color:var(--amber-11)]` `#ab6400` | `ring-amber-700` (`--amber-8` — `--amber-9` too light) |
+| Disabled | `bg-slate-200` | `text-slate-900` | `ring-slate-700` |
 
 - **Why the arbitrary value for text:** this repo's `@theme` maps `-50…-950` to Radix steps 1–10 + 12 but **skips step 11**, so `text-{hue}-11` doesn't exist. Use `text-[color:var(--{hue}-11)]`.
 - Radix **step-3 bg + step-11 text** is contrast-safe in BOTH light and dark (the Radix vars are theme-aware), so the same classes work for dark mode — no `dark:` overrides needed.
-- **Highlights** (find/replace) are already correct: match = `bg-amber-200 text-amber-950`, replace = `bg-green-200 text-green-950`. Drop zones = `bg-iris-100`. ✅
+- **Highlights** (find/replace) = **sharp diff badges, NOT light tints**: match/removed = `bg-red-800 text-white`, replace/new = `bg-green-800 text-white` (vivid bg + white text so changed characters stand out from the surrounding body text — the whole point of a diff preview). Drop zones = `bg-iris-100`. ✅
 
 ### Track colors — `lib/track-colors.ts`
 Replace `TRACK_BASE_COLORS` with the brightened quartet (set light = dark = the

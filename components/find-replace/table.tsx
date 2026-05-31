@@ -15,8 +15,11 @@ import type { Subtitle } from "@/types/subtitle";
 import type { CheckedState } from "@radix-ui/react-checkbox";
 import type { CSSProperties, ReactNode } from "react";
 
+// NOTE: no CSS `border-top` here — under border-collapse a collapsed top border
+// won't stick with the sticky header (it scrolls away). The sticky top line is
+// drawn via the inset box-shadow in `stickyStyle` instead. Sides + bottom stay as CSS.
 const STICKY_HEAD_CLASS =
-  "sticky top-0 z-20 border border-black dark:border-white font-semibold text-sm uppercase tracking-wide";
+  "sticky top-0 z-20 border-x border-b border-black dark:border-white font-semibold text-sm uppercase tracking-wide";
 const TABLE_CELL_CLASS = "border border-black dark:border-white";
 const TABLE_CHECKBOX_CELL_CLASS = `${TABLE_CELL_CLASS} w-10 min-w-10 !p-0 text-center align-middle`;
 const TABLE_CHECKBOX_WRAPPER_CLASS =
@@ -61,7 +64,7 @@ function renderMatchHighlights({
     fragments.push(
       <span
         key={`match-${start}-${index}`}
-        className="bg-amber-200 text-amber-950"
+        className="bg-red-800 text-white"
       >
         {text.slice(start, end)}
       </span>,
@@ -105,7 +108,7 @@ function renderReplacementHighlights({
 
     if (index < segments.length - 1) {
       fragments.push(
-        <span key={`replace-${index}`} className="bg-green-200 text-green-950">
+        <span key={`replace-${index}`} className="bg-green-800 text-white">
           {replacement}
         </span>,
       );
