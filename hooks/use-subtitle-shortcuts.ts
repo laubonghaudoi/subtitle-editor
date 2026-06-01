@@ -136,10 +136,5 @@ export function useSubtitleShortcuts({
 
     window.addEventListener("keydown", handleUndoRedo);
     return () => window.removeEventListener("keydown", handleUndoRedo);
-  }, [
-    canRedoSubtitles,
-    canUndoSubtitles,
-    redoSubtitles,
-    undoSubtitles,
-  ]);
+  }, [canRedoSubtitles, canUndoSubtitles, redoSubtitles, undoSubtitles]);
 }

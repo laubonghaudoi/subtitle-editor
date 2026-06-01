@@ -23,9 +23,9 @@ test("bulk offset controls expose target state and emit offset changes", () => {
   );
 
   assert.equal(
-    view.getByRole("button", { name: "Whole subtitle" }).getAttribute(
-      "aria-pressed",
-    ),
+    view
+      .getByRole("button", { name: "Whole subtitle" })
+      .getAttribute("aria-pressed"),
     "true",
   );
 

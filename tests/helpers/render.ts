@@ -44,7 +44,8 @@ globalThis.ResizeObserver =
   };
 globalThis.PointerEvent = window.PointerEvent ?? window.MouseEvent;
 globalThis.requestAnimationFrame =
-  window.requestAnimationFrame ?? ((cb: FrameRequestCallback) => setTimeout(cb, 0));
+  window.requestAnimationFrame ??
+  ((cb: FrameRequestCallback) => setTimeout(cb, 0));
 globalThis.cancelAnimationFrame =
   window.cancelAnimationFrame ?? ((id: number) => clearTimeout(id));
 globalThis.getComputedStyle = window.getComputedStyle.bind(window);

@@ -76,15 +76,18 @@ export function useDroppablePanel<TEl extends HTMLElement = HTMLElement>({
     [canDrop, hasFilesPayload],
   );
 
-  const handleDragLeave: DragEventHandler<TEl> = useCallback((event) => {
-    if (!hasFilesPayload(event)) {
-      return;
-    }
-    dragDepthRef.current = Math.max(0, dragDepthRef.current - 1);
-    if (dragDepthRef.current === 0) {
-      setIsDragActive(false);
-    }
-  }, [hasFilesPayload]);
+  const handleDragLeave: DragEventHandler<TEl> = useCallback(
+    (event) => {
+      if (!hasFilesPayload(event)) {
+        return;
+      }
+      dragDepthRef.current = Math.max(0, dragDepthRef.current - 1);
+      if (dragDepthRef.current === 0) {
+        setIsDragActive(false);
+      }
+    },
+    [hasFilesPayload],
+  );
 
   const handleDrop: DragEventHandler<TEl> = useCallback(
     async (event) => {

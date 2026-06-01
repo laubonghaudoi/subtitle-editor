@@ -62,10 +62,7 @@ function renderMatchHighlights({
     }
 
     fragments.push(
-      <span
-        key={`match-${start}-${index}`}
-        className="bg-red-800 text-black"
-      >
+      <span key={`match-${start}-${index}`} className="bg-red-800 text-black">
         {text.slice(start, end)}
       </span>,
     );
@@ -223,10 +220,7 @@ export function FindReplaceTable({
               : subtitle.text;
 
             return (
-              <TableRow
-                key={subtitle.id}
-                className="hover:bg-accent"
-              >
+              <TableRow key={subtitle.id} className="hover:bg-accent">
                 <TableCell className={TABLE_CHECKBOX_CELL_CLASS}>
                   <TableCheckbox
                     checked={selectedIds.has(subtitle.id)}

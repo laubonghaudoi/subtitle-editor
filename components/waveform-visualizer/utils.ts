@@ -282,7 +282,8 @@ export const syncRegionForSubtitle = ({
   const nextStart = timeToSeconds(subtitle.startTime);
   const nextEnd = timeToSeconds(subtitle.endTime);
   const nextRenderKey = getRegionRenderKey(subtitle, theme);
-  const shouldUpdateTiming = region.start !== nextStart || region.end !== nextEnd;
+  const shouldUpdateTiming =
+    region.start !== nextStart || region.end !== nextEnd;
   const shouldUpdateContent = regionData.renderKey !== nextRenderKey;
 
   if (shouldUpdateTiming || shouldUpdateContent) {

@@ -38,7 +38,9 @@ export const computeBulkShift = (
     const previousIsTarget = previousSubtitle
       ? targetSet.has(previousSubtitle.uuid)
       : false;
-    const nextIsTarget = nextSubtitle ? targetSet.has(nextSubtitle.uuid) : false;
+    const nextIsTarget = nextSubtitle
+      ? targetSet.has(nextSubtitle.uuid)
+      : false;
 
     let nextStart = startSeconds;
     let nextEnd = endSeconds;

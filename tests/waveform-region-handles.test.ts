@@ -22,7 +22,10 @@ test("waveform region handles get solid borders and arrow markers", () => {
   ) as HTMLDivElement;
 
   assert.match(left.style.cssText, /border-left: 2px solid rgb\(18, 52, 86\)/);
-  assert.match(right.style.cssText, /border-right: 2px solid rgb\(18, 52, 86\)/);
+  assert.match(
+    right.style.cssText,
+    /border-right: 2px solid rgb\(18, 52, 86\)/,
+  );
   assert.ok(left.querySelector('[data-arrow="left"]'));
   assert.ok(right.querySelector('[data-arrow="right"]'));
 });

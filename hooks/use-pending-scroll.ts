@@ -77,7 +77,10 @@ export const usePendingScroll = (
           } else if (retries < 10) {
             scheduleTimeout(() => attemptScroll(retries + 1), 50);
           } else {
-            warnDev("Could not center subtitle after retries:", pendingScroll.uuid);
+            warnDev(
+              "Could not center subtitle after retries:",
+              pendingScroll.uuid,
+            );
             clearPending();
           }
         });

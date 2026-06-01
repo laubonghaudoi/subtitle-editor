@@ -204,7 +204,7 @@ function MainContent() {
               "relative w-full md:w-1/2 min-h-[32vh] md:min-h-0 transition-colors",
               isSubtitleDragActive && allowSubtitleDrop && "bg-iris-100",
             )}
-              {...baseSubtitleDropHandlers}
+            {...baseSubtitleDropHandlers}
           >
             <div
               className={cn(

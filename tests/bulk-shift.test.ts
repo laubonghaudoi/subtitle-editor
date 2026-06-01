@@ -88,7 +88,10 @@ test("computeBulkShift lets the last subtitle extend past its previous end", () 
 });
 
 test("computeBulkShift returns the original array for no-op requests", () => {
-  assert.equal(computeBulkShift(baseSubtitles, ["s2"], 0, "both"), baseSubtitles);
+  assert.equal(
+    computeBulkShift(baseSubtitles, ["s2"], 0, "both"),
+    baseSubtitles,
+  );
   assert.equal(computeBulkShift(baseSubtitles, [], 1, "both"), baseSubtitles);
   assert.equal(computeBulkShift([], ["s2"], 1, "both").length, 0);
 });
