@@ -4,6 +4,7 @@ import {
   useSubtitleState,
   useSubtitleTimings,
 } from "@/context/subtitle-context";
+import { getCuePreviewSeekTime } from "@/lib/subtitle-playback";
 import { getTrackColor, getTrackHandleColor } from "@/lib/track-colors";
 import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
@@ -77,6 +78,7 @@ const SubtitleItem = memo(function SubtitleItem({
 
   const startSeconds = resolveStartSeconds(subtitle) ?? 0;
   const endSeconds = resolveEndSeconds(subtitle) ?? startSeconds;
+  const previewStartSeconds = getCuePreviewSeekTime(startSeconds, endSeconds);
   const nextStartSeconds = resolveStartSeconds(nextSubtitle);
   const durationSeconds = Math.max(0, endSeconds - startSeconds);
   const durationLabel = `${durationSeconds.toFixed(3)}s`;
@@ -119,12 +121,12 @@ const SubtitleItem = memo(function SubtitleItem({
             if (isPlaying) {
               return;
             }
-            setPlaybackTime(startSeconds);
+            setPlaybackTime(previewStartSeconds);
           }}
           onKeyDown={(e) => {
             if (e.key === "Tab") {
               e.preventDefault();
-              setPlaybackTime(startSeconds);
+              setPlaybackTime(previewStartSeconds);
               setIsPlaying(true);
               resumePlayback();
             }

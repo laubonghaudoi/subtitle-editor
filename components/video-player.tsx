@@ -6,6 +6,7 @@ import {
   type BrowserMediaSupport,
   type MediaFormatSupport,
 } from "@/lib/media-support";
+import { CUE_PREVIEW_SEEK_OFFSET_SECONDS } from "@/lib/subtitle-playback";
 import { subtitlesToVttString } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import {
@@ -121,7 +122,11 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     if (playerRef.current && typeof seekTime === "number") {
       const player = playerRef.current;
       const currentTime = player.currentTime ?? 0;
-      if (Math.abs(currentTime - seekTime) > 0.5) {
+      const seekDelta = Math.abs(currentTime - seekTime);
+      if (
+        seekDelta > 0.5 ||
+        (seekDelta > 0 && seekDelta <= CUE_PREVIEW_SEEK_OFFSET_SECONDS * 2)
+      ) {
         player.currentTime = seekTime;
         timeToRestore.current = seekTime;
       }

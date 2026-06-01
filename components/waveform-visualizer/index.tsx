@@ -17,6 +17,7 @@ import {
   useSubtitleActionsContext,
   useSubtitleState,
 } from "@/context/subtitle-context";
+import { getCuePreviewSeekTime } from "@/lib/subtitle-playback";
 import { getTrackHandleColor } from "@/lib/track-colors";
 import { useWaveformRegions } from "./use-waveform-regions";
 import type { BulkOffsetPreviewState } from "@/components/bulk-offset/drawer";
@@ -197,9 +198,10 @@ export default forwardRef(function WaveformVisualizer(
             : containerWidth;
           const scrollPosition =
             region.start * pixelsPerSecond - containerWidth / 2;
+          const previewTime = getCuePreviewSeekTime(region.start, region.end);
           wavesurfer.setScroll(Math.max(0, scrollPosition));
-          wavesurfer.setTime(region.start);
-          onSeek(region.start);
+          wavesurfer.setTime(previewTime);
+          onSeek(previewTime);
         }
       },
       setWaveformTime: (time: number) => {
