@@ -17,7 +17,10 @@ const PRECONNECT_TARGETS: PreconnectTarget[] = [
 ];
 
 const injectLink = ({ href, crossOrigin }: PreconnectTarget) => {
-  if (!document.head || document.querySelector(`link[data-preconnect="${href}"]`)) {
+  if (
+    !document.head ||
+    document.querySelector(`link[data-preconnect="${href}"]`)
+  ) {
     return;
   }
   const link = document.createElement("link");
@@ -32,7 +35,12 @@ const injectLink = ({ href, crossOrigin }: PreconnectTarget) => {
 
 const injectScript = (
   src: string,
-  options: { id?: string; async?: boolean; defer?: boolean; attributes?: Record<string, string> } = {},
+  options: {
+    id?: string;
+    async?: boolean;
+    defer?: boolean;
+    attributes?: Record<string, string>;
+  } = {},
 ) => {
   if (!document.head) return;
   if (options.id && document.getElementById(options.id)) return;
@@ -70,7 +78,10 @@ export default function AnalyticsLoader() {
     let timeoutHandle: number | null = null;
 
     const triggerEvents = ["pointerdown", "keydown", "touchstart"] as const;
-    const listenerOptions: AddEventListenerOptions = { once: true, passive: true };
+    const listenerOptions: AddEventListenerOptions = {
+      once: true,
+      passive: true,
+    };
 
     const scheduleCleanup = () => {
       const enhancedWindow = window as typeof window & {
@@ -82,7 +93,9 @@ export default function AnalyticsLoader() {
       if (timeoutHandle !== null) {
         window.clearTimeout(timeoutHandle);
       }
-      triggerEvents.forEach((event) => window.removeEventListener(event, onTrigger, listenerOptions));
+      triggerEvents.forEach((event) =>
+        window.removeEventListener(event, onTrigger, listenerOptions),
+      );
     };
 
     const loadAnalytics = () => {
@@ -91,10 +104,13 @@ export default function AnalyticsLoader() {
 
       PRECONNECT_TARGETS.forEach(injectLink);
 
-      injectScript("https://www.googletagmanager.com/gtag/js?id=" + GOOGLE_ADS_ID, {
-        id: "gtag-script",
-        async: true,
-      });
+      injectScript(
+        "https://www.googletagmanager.com/gtag/js?id=" + GOOGLE_ADS_ID,
+        {
+          id: "gtag-script",
+          async: true,
+        },
+      );
 
       injectInlineScript(
         "gtag-inline-script",

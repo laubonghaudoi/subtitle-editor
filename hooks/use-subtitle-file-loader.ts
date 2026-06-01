@@ -1,7 +1,11 @@
 "use client";
 
 import type { SubtitleActions } from "@/hooks/use-subtitle-actions";
-import { extractVttPrologue, parseSRT, parseVTT } from "@/lib/subtitle-operations";
+import {
+  extractVttPrologue,
+  parseSRT,
+  parseVTT,
+} from "@/lib/subtitle-operations";
 import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 

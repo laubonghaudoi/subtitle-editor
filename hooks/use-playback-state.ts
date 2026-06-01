@@ -11,7 +11,9 @@ export const usePlaybackState = () => {
 
   const jumpBy = useCallback(
     (seconds: number) => {
-      setPlaybackTime((time) => Math.min(duration, Math.max(0, time + seconds)));
+      setPlaybackTime((time) =>
+        Math.min(duration, Math.max(0, time + seconds)),
+      );
     },
     [duration],
   );

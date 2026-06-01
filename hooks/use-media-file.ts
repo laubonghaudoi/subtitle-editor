@@ -5,9 +5,8 @@ import { useCallback, useRef, useState } from "react";
 export const useMediaFile = (defaultMediaFileName: string) => {
   const mediaFileInputRef = useRef<HTMLInputElement | null>(null);
   const [mediaFile, setMediaFile] = useState<File | null>(null);
-  const [mediaFileName, setMediaFileName] = useState<string>(
-    defaultMediaFileName,
-  );
+  const [mediaFileName, setMediaFileName] =
+    useState<string>(defaultMediaFileName);
 
   const loadMediaFile = useCallback((file: File) => {
     setMediaFile(null);

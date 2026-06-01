@@ -2,10 +2,7 @@ import type { Subtitle } from "@/types/subtitle";
 
 const flattenSubtitleText = (subtitle: Subtitle): string => {
   const text = stripVttStyling(subtitle.text, false);
-  return text
-    .replace(/\r?\n/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  return text.replace(/\r?\n/g, " ").replace(/\s+/g, " ").trim();
 };
 
 const toCsvCell = (value: string | number): string => {
@@ -45,9 +42,7 @@ export const subtitlesToVttString = (
 };
 
 export const buildPlainTextContent = (subtitles: Subtitle[]): string => {
-  return subtitles
-    .map((subtitle) => flattenSubtitleText(subtitle))
-    .join("\n");
+  return subtitles.map((subtitle) => flattenSubtitleText(subtitle)).join("\n");
 };
 
 export const buildCsvContent = (subtitles: Subtitle[]): string => {

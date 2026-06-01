@@ -13,9 +13,9 @@ export const useBulkOffsetState = ({
   disabled,
 }: UseBulkOffsetStateOptions) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [preview, setPreview] = useState<Record<string, BulkOffsetPreviewState>>(
-    {},
-  );
+  const [preview, setPreview] = useState<
+    Record<string, BulkOffsetPreviewState>
+  >({});
 
   useEffect(() => {
     if (trackCount === 0) {

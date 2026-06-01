@@ -36,7 +36,11 @@ const AUDIO_FORMAT_PROBES: readonly MediaFormatProbe[] = [
   { key: "wav", label: "wav", mimeType: "audio/wave" },
   { key: "flac", label: "flac", mimeType: "audio/flac" },
   { key: "flac", label: "flac", mimeType: "audio/x-flac" },
-  { key: "ogg-oga", label: "ogg / oga", mimeType: 'audio/ogg; codecs="vorbis"' },
+  {
+    key: "ogg-oga",
+    label: "ogg / oga",
+    mimeType: 'audio/ogg; codecs="vorbis"',
+  },
   { key: "ogg-oga", label: "ogg / oga", mimeType: "audio/ogg" },
   { key: "opus", label: "opus", mimeType: "audio/opus" },
   { key: "opus", label: "opus", mimeType: 'audio/ogg; codecs="opus"' },
@@ -105,9 +109,7 @@ export interface BrowserMediaSupport {
   video: MediaFormatSupport[];
 }
 
-export function normalizeCanPlayType(
-  value: string,
-): MediaSupportLevel | null {
+export function normalizeCanPlayType(value: string): MediaSupportLevel | null {
   const normalized = value.trim().toLowerCase();
   if (normalized === "maybe" || normalized === "probably") {
     return normalized;

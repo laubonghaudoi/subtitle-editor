@@ -59,7 +59,8 @@ test("subtitle merge actions invoke merge and add actions when there is room", (
         nextStartSeconds: 3,
         endSeconds: 2,
         onMerge: (currentId, nextId) => merges.push([currentId, nextId]),
-        onAdd: (currentId, nextId, text) => adds.push([currentId, nextId, text]),
+        onAdd: (currentId, nextId, text) =>
+          adds.push([currentId, nextId, text]),
       }),
     ),
   );

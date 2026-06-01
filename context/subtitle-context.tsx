@@ -75,9 +75,7 @@ interface LocalSessionValue {
   restoreLocalSession: () => void;
   discardLocalSession: () => void;
   clearLocalSession: () => void;
-  downloadLocalSessionBackup: (
-    snapshot?: LocalSessionSnapshot | null,
-  ) => void;
+  downloadLocalSessionBackup: (snapshot?: LocalSessionSnapshot | null) => void;
 }
 
 interface SubtitleTimingEntry {
@@ -192,7 +190,9 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     }
 
     const timeoutId = window.setTimeout(() => {
-      if (suppressedAutosaveSignatureRef.current === currentLocalSessionSignature) {
+      if (
+        suppressedAutosaveSignatureRef.current === currentLocalSessionSignature
+      ) {
         return;
       }
 
@@ -278,7 +278,8 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
 
   const downloadLocalSessionBackup = useCallback(
     (snapshot?: LocalSessionSnapshot | null) => {
-      const session = snapshot ?? pendingLocalSession ?? createCurrentLocalSession();
+      const session =
+        snapshot ?? pendingLocalSession ?? createCurrentLocalSession();
       if (!session || !shouldAutosaveLocalSession(session)) {
         return;
       }

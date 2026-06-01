@@ -29,7 +29,11 @@ export function findActiveSubtitleIndex(
     }
 
     if (time >= timings[previousIndex].end) {
-      for (let forward = previousIndex + 1; forward < timings.length; forward += 1) {
+      for (
+        let forward = previousIndex + 1;
+        forward < timings.length;
+        forward += 1
+      ) {
         const timing = timings[forward];
         if (time < timing.start) {
           break;

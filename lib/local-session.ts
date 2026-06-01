@@ -319,7 +319,9 @@ export function clearLocalSessionSnapshot(
   }
 }
 
-export function buildLocalSessionBackup(snapshot: LocalSessionSnapshot): string {
+export function buildLocalSessionBackup(
+  snapshot: LocalSessionSnapshot,
+): string {
   return `${JSON.stringify(snapshot, null, 2)}\n`;
 }
 

@@ -22,9 +22,8 @@ const registerServiceWorker = async () => {
     if (!("serviceWorker" in navigator)) {
       return;
     }
-    const registration = await navigator.serviceWorker.register(
-      SERVICE_WORKER_URL,
-    );
+    const registration =
+      await navigator.serviceWorker.register(SERVICE_WORKER_URL);
     registration.update().catch((error) => {
       warnDev("[pwa] Unable to update service worker", error);
     });

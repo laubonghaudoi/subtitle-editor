@@ -1,4 +1,8 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Subtitle } from "@/types/subtitle";
 import { IconFold, IconPlus } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
@@ -70,9 +74,7 @@ export default function SubtitleItemMergeActions({
               ? "ring-1 ring-inset ring-slate-700 bg-slate-200 text-slate-900 cursor-not-allowed"
               : "ring-1 ring-inset ring-green-800 bg-green-200 hover:bg-green-300 text-[color:var(--green-11)] cursor-pointer"
           }`}
-          aria-label={
-            isAddDisabled ? t("tooltips.noRoom") : t("tooltips.add")
-          }
+          aria-label={isAddDisabled ? t("tooltips.noRoom") : t("tooltips.add")}
         >
           <IconPlus size={16} />
         </TooltipTrigger>

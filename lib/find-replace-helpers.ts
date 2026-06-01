@@ -83,8 +83,7 @@ export const analyzeRegexSource = (regex: RegExp): RegexFeatures => {
       if (
         lookType === "=" ||
         lookType === "!" ||
-        (lookType === "<" &&
-          (source[i + 3] === "=" || source[i + 3] === "!"))
+        (lookType === "<" && (source[i + 3] === "=" || source[i + 3] === "!"))
       ) {
         usesLookaround = true;
       }

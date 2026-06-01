@@ -64,11 +64,8 @@ export const useWaveformRegions = ({
 
   const { labelsOffsetTop, labelsAreaHeight, measureLabelsOverlay } =
     useLabelMeasurements(containerRef, tracks, subtitleToRegionMap);
-  const {
-    previewOffsetsRef,
-    updatePreviewRegions,
-    clearPreviewRegions,
-  } = usePreviewRegions(wavesurfer, subtitleToRegionMap);
+  const { previewOffsetsRef, updatePreviewRegions, clearPreviewRegions } =
+    usePreviewRegions(wavesurfer, subtitleToRegionMap);
 
   /**
    * Recreates all regions from scratch. Used when structural changes happen
@@ -224,12 +221,12 @@ export const useWaveformRegions = ({
           ? currentTrack.subtitles[orderedIndex + 1]
           : null;
       const prevOrderedRegion = prevOrderedSubtitle
-        ? subtitleToRegionMap.current.get(prevOrderedSubtitle.uuid)?.region ??
-          null
+        ? (subtitleToRegionMap.current.get(prevOrderedSubtitle.uuid)?.region ??
+          null)
         : null;
       const nextOrderedRegion = nextOrderedSubtitle
-        ? subtitleToRegionMap.current.get(nextOrderedSubtitle.uuid)?.region ??
-          null
+        ? (subtitleToRegionMap.current.get(nextOrderedSubtitle.uuid)?.region ??
+          null)
         : null;
 
       if (

@@ -25,10 +25,7 @@ export const ensureTrackMetadata = (
   return sortSubtitlesChronologically(withTrack);
 };
 
-export const subtitlesAreEqual = (
-  a: Subtitle[],
-  b: Subtitle[],
-): boolean => {
+export const subtitlesAreEqual = (a: Subtitle[], b: Subtitle[]): boolean => {
   if (a === b) return true;
   if (a.length !== b.length) return false;
   for (let i = 0; i < a.length; i++) {
