@@ -64,7 +64,7 @@ function renderMatchHighlights({
     fragments.push(
       <span
         key={`match-${start}-${index}`}
-        className="bg-red-800 text-white"
+        className="bg-red-800 text-black"
       >
         {text.slice(start, end)}
       </span>,
@@ -108,7 +108,7 @@ function renderReplacementHighlights({
 
     if (index < segments.length - 1) {
       fragments.push(
-        <span key={`replace-${index}`} className="bg-green-800 text-white">
+        <span key={`replace-${index}`} className="bg-green-800 text-black">
           {replacement}
         </span>,
       );

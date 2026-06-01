@@ -115,7 +115,7 @@ export default function SubtitleTimeFields({
               setEditingStartTimeId(null);
             }
           }}
-          className="py-1 bg-iris-200 h-fit text-center text-sm min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border border-iris-700"
+          className="py-1 bg-iris-200 h-fit text-center text-sm min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border border-iris-800"
         />
       ) : (
         <Button
@@ -166,7 +166,7 @@ export default function SubtitleTimeFields({
               setEditingEndTimeId(null);
             }
           }}
-          className="py-1 bg-iris-200 h-fit min-h-0 text-center text-sm resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border border-iris-700"
+          className="py-1 bg-iris-200 h-fit min-h-0 text-center text-sm resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border border-iris-800"
         />
       ) : (
         <Button

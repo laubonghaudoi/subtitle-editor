@@ -29,6 +29,7 @@ interface BulkOffsetControlsProps {
   shiftTarget: BulkShiftTarget;
   onShiftTargetChange: (target: BulkShiftTarget) => void;
   accentColor: string;
+  inkColor: string;
 }
 
 export function BulkOffsetControls({
@@ -40,6 +41,7 @@ export function BulkOffsetControls({
   onShiftTargetChange,
   selectionSummary,
   accentColor,
+  inkColor,
 }: BulkOffsetControlsProps) {
   const t = useTranslations();
   const [sliderLimit, setSliderLimit] = useState(INITIAL_SLIDER_LIMIT_SECONDS);
@@ -86,16 +88,18 @@ export function BulkOffsetControls({
     ensureSliderLimit(offsetSeconds);
   }, [offsetSeconds, ensureSliderLimit]);
 
+  // Active = solid track fill with black text (>=7.6:1); inactive = transparent
+  // with the standard ink (foreground) text. Both keep the outline variant's
+  // ink border so the control boundary stays visible (the bright track color as
+  // a thin border/text was only ~1.5:1 on white).
   const activeToggleStyle: CSSProperties = {
     backgroundColor: accentColor,
-    borderColor: accentColor,
-    color: "#fff",
+    color: "#000",
   };
 
   const inactiveToggleStyle: CSSProperties = {
     backgroundColor: "transparent",
-    borderColor: accentColor,
-    color: accentColor,
+    color: "var(--foreground)",
   };
 
   const handleDelta = (delta: number) => {
@@ -202,7 +206,9 @@ export function BulkOffsetControls({
           <SliderPrimitive.Thumb
             className="block h-4 w-4 rounded-full border-2 bg-background transition-transform focus-visible:outline-hidden focus-visible:ring-2 data-[state=active]:scale-110 disabled:pointer-events-none disabled:opacity-50"
             style={{
-              borderColor: accentColor,
+              // ink (not the raw track color) so the handle's 2px ring stays
+              // visible on the light page (yellow/green were ~1.5:1 on white)
+              borderColor: inkColor,
             }}
           />
         </SliderPrimitive.Root>
@@ -256,7 +262,7 @@ export function BulkOffsetControls({
             value={formattedOffset}
             onChange={(event) => handleInputChange(event.target.value)}
             className="w-24 py-1 px-2 rounded-xs border-none text-center text-base font-bold"
-            style={{ color: accentColor }}
+            style={{ color: inkColor }}
             aria-label={t("bulkOffset.offsetInputLabel")}
           />
           <span>s</span>
@@ -316,10 +322,10 @@ export function BulkOffsetControls({
             variant="secondary"
             onClick={onApply}
             disabled={isApplyDisabled}
+            className="border-2 border-black dark:border-white"
             style={{
               backgroundColor: accentColor,
-              borderColor: accentColor,
-              color: "#fff",
+              color: "#000",
             }}
           >
             {t("bulkOffset.apply")}

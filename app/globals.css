@@ -570,11 +570,15 @@
     --muted-foreground: var(--slate-11);
     --accent: var(--slate-4);
     --accent-foreground: var(--slate-12);
-    --destructive: var(--red-9);
-    --destructive-foreground: var(--red-1);
+    /* Deep red, darkened from red-9 so WHITE text clears AA (6.25:1) in both
+       themes; the /90 hover stays >=5.5:1. Distinct from the bright track-3
+       coral (#ff6b6b) and the find/replace match red (red-9). */
+    --destructive: #c01030;
+    --destructive-foreground: white;
     --border: black;
     --input: var(--slate-7);
-    --ring: var(--slate-8);
+    /* Iris accent focus ring (per color plan); 5.24:1 light / 3.51:1 dark vs page */
+    --ring: var(--iris-9);
     --chart-1: var(--tomato-9);
     --chart-2: var(--blue-9);
     --chart-3: var(--green-9);
@@ -597,11 +601,12 @@
     --muted-foreground: var(--slate-11);
     --accent: var(--slate-4);
     --accent-foreground: var(--slate-12);
-    --destructive: var(--red-9);
-    --destructive-foreground: var(--red-1);
+    /* same fixed deep red/teal as light — both are theme-stable */
+    --destructive: #c01030;
+    --destructive-foreground: white;
     --border: white;
     --input: var(--slate-7);
-    --ring: var(--slate-8);
+    --ring: var(--iris-9);
     --chart-1: var(--tomato-9);
     --chart-2: var(--blue-9);
     --chart-3: var(--green-9);

@@ -21,7 +21,7 @@ export default function SubtitleItemDeleteButton({
       >
         <IconTrash size={16} />
       </TooltipTrigger>
-      <TooltipContent className="bg-red-900 px-2 py-1 text-sm">
+      <TooltipContent className="bg-red-900 text-black px-2 py-1 text-sm">
         {t("tooltips.delete")}
       </TooltipContent>
     </Tooltip>

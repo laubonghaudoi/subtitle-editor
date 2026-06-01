@@ -95,7 +95,14 @@ export default function TrackTabs({
             const backgroundColor = isActive
               ? handleColor
               : getTrackColor(trackIndex, inactiveAlpha);
-            const color = isActive ? "#000000" : "#111827";
+            // Active = black on the solid track fill. Inactive sits on a
+            // translucent track tint: dark text works on the light (light-mode)
+            // tint, but the dark-mode tint needs white text (was #111827 → ~2.4:1).
+            const color = isActive
+              ? "#000000"
+              : theme === "dark"
+                ? "#ffffff"
+                : "#111827";
             const borderColor = isActive
               ? theme === "dark"
                 ? "#ffffff"

@@ -68,6 +68,21 @@ export function getTrackHandleColor(index: number): string {
   return getBaseColor(index);
 }
 
+// The bright track quartet is a *fill* palette: on a light page each hue is
+// only ~1.5–2.7:1 against white, so it must never be used as text/thin lines in
+// light mode. These darkened "ink" variants give each track an AA-compliant
+// (>=4.5:1 on white) text color for light mode. In dark mode the bright hue
+// itself already clears 4.5:1 on the near-black page, so we reuse it directly.
+// Order matches TRACK_BASE_COLORS: yellow, blue, red, green.
+const TRACK_INK_LIGHT = ["#7c5e00", "#1063b0", "#b23330", "#16783f"];
+
+export function getTrackInkColor(index: number): string {
+  if (TRACK_BASE_COLORS.length === 0) return FALLBACK_HANDLE_COLOR;
+  if (getThemeKey() === "dark") return getBaseColor(index);
+  const i = normalizeIndex(index, TRACK_BASE_COLORS.length);
+  return TRACK_INK_LIGHT[i] ?? getBaseColor(index);
+}
+
 export function getTrackColor(
   index: number,
   alpha: number = DEFAULT_TRACK_ALPHA,
