@@ -123,29 +123,34 @@ export function BulkOffsetTable({
                 style={rowStyle}
               >
                 <td className="px-4 align-middle" rowSpan={2}>
-                  <Checkbox
-                    aria-label={t("bulkOffset.selectCaption", {
-                      id: subtitle.id,
-                    })}
-                    checked={isChecked}
-                    style={{
-                      borderColor: inkColor,
-                      backgroundColor: isChecked ? trackColor : "transparent",
-                      color: isChecked ? "#000" : inkColor,
-                    }}
-                    onPointerDown={(event) => {
-                      shiftPressedRef.current = event.shiftKey;
-                    }}
-                    onCheckedChange={(checked) => {
-                      onToggleRow(
-                        index,
-                        subtitle.uuid,
-                        checked === true,
-                        shiftPressedRef.current,
-                      );
-                      shiftPressedRef.current = false;
-                    }}
-                  />
+                  {/* flex wrapper centers by the box (not the text baseline) so
+                      the checkbox doesn't shift ~1px when Radix mounts the
+                      checkmark Indicator on check — matches the header cell */}
+                  <div className="flex items-center justify-center">
+                    <Checkbox
+                      aria-label={t("bulkOffset.selectCaption", {
+                        id: subtitle.id,
+                      })}
+                      checked={isChecked}
+                      style={{
+                        borderColor: inkColor,
+                        backgroundColor: isChecked ? trackColor : "transparent",
+                        color: isChecked ? "#000" : inkColor,
+                      }}
+                      onPointerDown={(event) => {
+                        shiftPressedRef.current = event.shiftKey;
+                      }}
+                      onCheckedChange={(checked) => {
+                        onToggleRow(
+                          index,
+                          subtitle.uuid,
+                          checked === true,
+                          shiftPressedRef.current,
+                        );
+                        shiftPressedRef.current = false;
+                      }}
+                    />
+                  </div>
                 </td>
                 <td className="px-2 py-1 text-left text-sm" rowSpan={2}>
                   {subtitle.id}
