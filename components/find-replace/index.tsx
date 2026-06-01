@@ -210,23 +210,25 @@ export default function FindReplace() {
           <span className="hidden sm:inline">{t("findReplace.title")}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="rounded-[4px] sm:max-w-3xl sm:rounded-[4px]">
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent className="max-w-[calc(100vw-2rem)] rounded-[4px] sm:max-w-3xl sm:rounded-[4px]">
+        <DialogHeader className="min-w-0">
+          <DialogTitle className="min-w-0 leading-tight break-words">
             {t("findReplace.dialogTitle", { track: trackName })}
           </DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2">
-            <Label htmlFor="find">{t("findReplace.find")}</Label>
+        <div className="flex min-w-0 flex-col gap-4">
+          <div className="flex min-w-0 items-center gap-2">
+            <Label htmlFor="find" className="shrink-0">
+              {t("findReplace.find")}
+            </Label>
             <Input
               id="find"
               value={findText}
               onChange={(event) => setFindText(event.target.value)}
-              className="flex-1 rounded-[2px] px-2 py-1"
+              className="min-w-0 flex-1 rounded-[2px] px-2 py-1"
             />
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <OptionToggle
               id="case-sensitive"
               checked={isCaseSensitive}
@@ -246,16 +248,18 @@ export default function FindReplace() {
               onChange={setIsRegexMode}
             />
           </div>
-          <div className="flex items-center gap-2">
-            <Label htmlFor="replace">{t("findReplace.replaceWith")}</Label>
+          <div className="flex min-w-0 items-center gap-2">
+            <Label htmlFor="replace" className="shrink-0">
+              {t("findReplace.replaceWith")}
+            </Label>
             <Input
               id="replace"
               value={replaceText}
               onChange={(event) => setReplaceText(event.target.value)}
-              className="flex-1 rounded-[2px] px-2 py-1 text-base"
+              className="min-w-0 flex-1 rounded-[2px] px-2 py-1 text-base"
             />
           </div>
-          <div className="flex items-center justify-between text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-muted-foreground">
             <span>
               {selectedCount} / {matchedSubtitles.length}{" "}
               {t("findReplace.selected")}
