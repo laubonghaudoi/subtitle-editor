@@ -15,6 +15,7 @@ import {
   buildLocalSessionBackup,
   clearLocalSessionSnapshot,
   createLocalSessionSnapshot,
+  getLocalSessionSignature,
   getLocalSessionBackupFilename,
   readLocalSessionSnapshot,
   shouldAutosaveLocalSession,
@@ -116,13 +117,6 @@ const readRecoverableLocalSession = (): LocalSessionSnapshot | null => {
   return snapshot && shouldAutosaveLocalSession(snapshot) ? snapshot : null;
 };
 
-const getLocalSessionFingerprint = (snapshot: LocalSessionSnapshot): string =>
-  JSON.stringify({
-    tracks: snapshot.tracks,
-    activeTrackId: snapshot.activeTrackId,
-    preferences: snapshot.preferences,
-  });
-
 export function SubtitleProvider({ children }: SubtitleProviderProps) {
   const [tracks, setTracks] = useState<SubtitleTrack[]>([]);
   const [activeTrackId, setActiveTrackId] = useState<string | null>(null);
@@ -138,7 +132,7 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     () => readRecoverableLocalSession() !== null,
   );
   const previousActiveTrackId = useRef<string | null>(null);
-  const suppressedAutosaveFingerprintRef = useRef<string | null>(null);
+  const suppressedAutosaveSignatureRef = useRef<string | null>(null);
   const trackHistoriesRef = useRef<Map<string, UndoHistory<Subtitle[]>>>(
     new Map(),
   );
@@ -182,23 +176,31 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
       }),
     [activeTrackId, localSessionPreferences, tracks],
   );
+  const currentLocalSessionSignature = useMemo(
+    () =>
+      getLocalSessionSignature({
+        tracks,
+        activeTrackId,
+        preferences: localSessionPreferences,
+      }),
+    [activeTrackId, localSessionPreferences, tracks],
+  );
 
   useEffect(() => {
     if (pendingLocalSession) {
       return;
     }
 
-    const snapshot = createCurrentLocalSession();
-    const snapshotFingerprint = getLocalSessionFingerprint(snapshot);
     const timeoutId = window.setTimeout(() => {
-      if (suppressedAutosaveFingerprintRef.current === snapshotFingerprint) {
+      if (suppressedAutosaveSignatureRef.current === currentLocalSessionSignature) {
         return;
       }
 
+      const snapshot = createCurrentLocalSession();
       if (shouldAutosaveLocalSession(snapshot)) {
         const didWrite = writeLocalSessionSnapshot(snapshot);
         if (didWrite) {
-          suppressedAutosaveFingerprintRef.current = null;
+          suppressedAutosaveSignatureRef.current = null;
           setHasLocalSession(true);
         }
         return;
@@ -213,7 +215,11 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [createCurrentLocalSession, pendingLocalSession]);
+  }, [
+    createCurrentLocalSession,
+    currentLocalSessionSignature,
+    pendingLocalSession,
+  ]);
 
   const restoreLocalSession = useCallback(() => {
     if (!pendingLocalSession) {
@@ -251,26 +257,24 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
         ? (nextHistories.get(nextActiveTrackId) ?? EMPTY_HISTORY)
         : EMPTY_HISTORY,
     );
-    suppressedAutosaveFingerprintRef.current = null;
+    suppressedAutosaveSignatureRef.current = null;
     setPendingLocalSession(null);
     setHasLocalSession(true);
   }, [pendingLocalSession, setHistorySnapshot]);
 
   const discardLocalSession = useCallback(() => {
     clearLocalSessionSnapshot();
-    suppressedAutosaveFingerprintRef.current = null;
+    suppressedAutosaveSignatureRef.current = null;
     setPendingLocalSession(null);
     setHasLocalSession(false);
   }, []);
 
   const clearLocalSession = useCallback(() => {
-    suppressedAutosaveFingerprintRef.current = getLocalSessionFingerprint(
-      createCurrentLocalSession(),
-    );
+    suppressedAutosaveSignatureRef.current = currentLocalSessionSignature;
     clearLocalSessionSnapshot();
     setPendingLocalSession(null);
     setHasLocalSession(false);
-  }, [createCurrentLocalSession]);
+  }, [currentLocalSessionSignature]);
 
   const downloadLocalSessionBackup = useCallback(
     (snapshot?: LocalSessionSnapshot | null) => {

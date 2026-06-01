@@ -181,6 +181,14 @@
     "delete": "刪除",
     "noRoom": "冇位再加"
   },
+  "validation": {
+    "invalidTimeTitle": "時間格式無效",
+    "invalidTimeDescription": "請使用 HH:MM:SS,MS 格式（例如：00:00:20,450）。",
+    "invalidStartTitle": "開始時間無效",
+    "invalidStartDescription": "開始時間唔可以遲過字幕嘅結束時間。",
+    "invalidEndTitle": "結束時間無效",
+    "invalidEndDescription": "結束時間唔可以早過字幕嘅開始時間。"
+  },
   "metadata": {
     "title": "字幕編輯器 - 免費開源，全網頁 SRT/VTT 字幕編輯器",
     "description": "永久免費開源，完全網頁毋須安裝，毋須註冊賬户，直接載入編輯字幕，帶埋聲波可視化。",
