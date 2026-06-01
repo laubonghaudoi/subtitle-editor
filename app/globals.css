@@ -500,6 +500,9 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
+  --color-save: var(--save);
+  --color-save-hover: var(--save-hover);
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -570,9 +573,15 @@
     --muted-foreground: var(--slate-11);
     --accent: var(--slate-4);
     --accent-foreground: var(--slate-12);
-    --destructive: var(--red-9);
-    /* Black text on the brand red (#e5484d) = 5.37:1 (AA). White would be 3.91:1. */
-    --destructive-foreground: black;
+    /* Deep red, darkened from red-9 so WHITE text clears AA (6.25:1) in both
+       themes; the /90 hover stays >=5.5:1. Distinct from the bright track-3
+       coral (#ff6b6b) and the find/replace match red (red-9). */
+    --destructive: #c01030;
+    --destructive-foreground: white;
+    /* Output/commit teal, darkened from teal-9 so WHITE text clears AA
+       (5.98:1 base / 8.59:1 hover) in both themes. */
+    --save: #067064;
+    --save-hover: #04564d;
     --border: black;
     --input: var(--slate-7);
     /* Iris accent focus ring (per color plan); 5.24:1 light / 3.51:1 dark vs page */
@@ -599,9 +608,11 @@
     --muted-foreground: var(--slate-11);
     --accent: var(--slate-4);
     --accent-foreground: var(--slate-12);
-    --destructive: var(--red-9);
-    /* red-9 (#e5484d) is theme-stable, so black text keeps 5.37:1 in dark too */
-    --destructive-foreground: black;
+    /* same fixed deep red/teal as light — both are theme-stable */
+    --destructive: #c01030;
+    --destructive-foreground: white;
+    --save: #067064;
+    --save-hover: #04564d;
     --border: white;
     --input: var(--slate-7);
     --ring: var(--iris-9);
