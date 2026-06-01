@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DragEvent, DragEventHandler } from "react";
 
 interface UseDroppablePanelOptions {
   acceptFile: (file: File) => boolean;
+  canDrop?: boolean;
   onDropFile: (file: File) => void | Promise<void>;
 }
 
@@ -17,10 +18,18 @@ interface PanelHandlers<TEl extends HTMLElement> {
 
 export function useDroppablePanel<TEl extends HTMLElement = HTMLElement>({
   acceptFile,
+  canDrop = true,
   onDropFile,
 }: UseDroppablePanelOptions) {
   const [isDragActive, setIsDragActive] = useState(false);
   const dragDepthRef = useRef(0);
+
+  useEffect(() => {
+    if (!canDrop) {
+      dragDepthRef.current = 0;
+      setIsDragActive(false);
+    }
+  }, [canDrop]);
 
   const hasFilesPayload = useCallback((event: DragEvent<TEl>) => {
     const types = event.dataTransfer?.types;
@@ -45,10 +54,10 @@ export function useDroppablePanel<TEl extends HTMLElement = HTMLElement>({
     (event) => {
       if (hasFilesPayload(event)) {
         event.preventDefault();
-        event.dataTransfer.dropEffect = "copy";
+        event.dataTransfer.dropEffect = canDrop ? "copy" : "none";
       }
     },
-    [hasFilesPayload],
+    [canDrop, hasFilesPayload],
   );
 
   const handleDragEnter: DragEventHandler<TEl> = useCallback(
@@ -57,10 +66,14 @@ export function useDroppablePanel<TEl extends HTMLElement = HTMLElement>({
         return;
       }
       event.preventDefault();
+      if (!canDrop) {
+        event.dataTransfer.dropEffect = "none";
+        return;
+      }
       dragDepthRef.current += 1;
       setIsDragActive(true);
     },
-    [hasFilesPayload],
+    [canDrop, hasFilesPayload],
   );
 
   const handleDragLeave: DragEventHandler<TEl> = useCallback((event) => {
@@ -81,13 +94,17 @@ export function useDroppablePanel<TEl extends HTMLElement = HTMLElement>({
       event.preventDefault();
       dragDepthRef.current = 0;
       setIsDragActive(false);
+      if (!canDrop) {
+        event.dataTransfer.dropEffect = "none";
+        return;
+      }
       const file = getMatchingFile(event);
       if (!file) {
         return;
       }
       await onDropFile(file);
     },
-    [getMatchingFile, hasFilesPayload, onDropFile],
+    [canDrop, getMatchingFile, hasFilesPayload, onDropFile],
   );
 
   const panelProps = useMemo<PanelHandlers<TEl>>(

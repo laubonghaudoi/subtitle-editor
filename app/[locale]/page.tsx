@@ -1,11 +1,8 @@
-"use client"; // Ensure this is the very first line
+"use client";
 
 import { AppHeader } from "@/components/app-header";
 import BottomInstructions from "@/components/bottom-instructions";
-import type {
-  BulkOffsetDrawerProps,
-  BulkOffsetPreviewState,
-} from "@/components/bulk-offset/drawer";
+import type { BulkOffsetDrawerProps } from "@/components/bulk-offset/drawer";
 import CustomControls from "@/components/custom-controls";
 import LocalSessionRecovery from "@/components/local-session-recovery";
 import SkipLinks from "@/components/skip-links";
@@ -22,24 +19,22 @@ import {
   useSubtitleState,
   useSubtitles,
 } from "@/context/subtitle-context";
+import { useActiveTrackDetails } from "@/hooks/use-active-track-details";
+import { useBeforeUnloadGuard } from "@/hooks/use-beforeunload-guard";
+import { useBulkOffsetState } from "@/hooks/use-bulk-offset-state";
 import { useDroppablePanel } from "@/hooks/use-droppable-panel";
+import { useMediaFile } from "@/hooks/use-media-file";
+import { usePendingScroll } from "@/hooks/use-pending-scroll";
+import { usePlaybackState } from "@/hooks/use-playback-state";
+import { useSubtitleFileLoader } from "@/hooks/use-subtitle-file-loader";
 import { useSubtitleShortcuts } from "@/hooks/use-subtitle-shortcuts";
+import { usePlaybackVisibilityCoordinator } from "@/hooks/use-visibility-playback";
 import { isMediaFile, isSubtitleFile } from "@/lib/file-utils";
-import {
-  extractVttPrologue,
-  parseSRT,
-  parseVTT,
-} from "@/lib/subtitle-operations";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import type {
-  DragEvent,
-  ForwardRefExoticComponent,
-  RefAttributes,
-} from "react";
-import { useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import type { ForwardRefExoticComponent, RefAttributes } from "react";
+import { useRef, useState } from "react";
 
 const VideoPlayer = dynamic<VideoPlayerProps>(
   () => import("@/components/video-player"),
@@ -69,168 +64,102 @@ const BulkOffsetDrawer = dynamic<BulkOffsetDrawerProps>(
 );
 
 interface WaveformRef {
+  resumePlayback: () => void;
   scrollToRegion: (uuid: string) => void;
   setWaveformTime: (time: number) => void;
 }
 
-// Define the main content component that will consume the context
 function MainContent() {
   const t = useTranslations();
   const waveformRef = useRef<WaveformRef>(null);
   const subtitleListRef = useRef<SubtitleListRef>(null);
   const videoPlayerRef = useRef<VideoPlayerHandle | null>(null);
-  const mediaFileInputRef = useRef<HTMLInputElement | null>(null);
-  // Get subtitle state and actions from context
   const { tracks, activeTrackId, setActiveTrackId, playInBackground } =
     useSubtitleState();
   const subtitles = useSubtitles();
   const {
-    setInitialSubtitles, // Use this instead of setSubtitlesWithHistory
+    setInitialSubtitles,
     loadSubtitlesIntoTrack,
     renameTrack,
     bulkShiftSubtitlesAction,
   } = useSubtitleActionsContext();
   const { undoSubtitles, redoSubtitles, canUndoSubtitles, canRedoSubtitles } =
     useSubtitleHistory();
-  // Keep page-specific state here
 
-  const [mediaFile, setMediaFile] = useState<File | null>(null);
-  const [mediaFileName, setMediaFileName] = useState<string>(
-    t("buttons.loadMedia"),
-  );
-  const [playbackTime, setPlaybackTime] = useState<number>(0);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [duration, setDuration] = useState<number>(0);
-  const [playbackRate, setPlaybackRate] = useState(1);
-  const [jumpDuration, setJumpDuration] = useState(5);
-  // State to track which subtitle is being edited
+  const {
+    mediaFile,
+    setMediaFile,
+    mediaFileName,
+    setMediaFileName,
+    mediaFileInputRef,
+    loadMediaFile,
+  } = useMediaFile(t("buttons.loadMedia"));
+  const {
+    playbackTime,
+    setPlaybackTime,
+    isPlaying,
+    setIsPlaying,
+    duration,
+    setDuration,
+    playbackRate,
+    setPlaybackRate,
+    jumpDuration,
+    setJumpDuration,
+    jumpBy,
+  } = usePlaybackState();
+  const { requestScroll } = usePendingScroll(subtitleListRef);
+
   const [editingSubtitleUuid, setEditingSubtitleUuid] = useState<string | null>(
     null,
   );
-
-  // State to track pending scroll-to-region after track switch
-  const [pendingScrollToUuid, setPendingScrollToUuid] = useState<string | null>(
-    null,
-  );
-  // Whether the pending scroll should be instant (used for cross-track clicks)
-  const [pendingScrollInstant, setPendingScrollInstant] =
-    useState<boolean>(false);
-  const [isBulkOffsetOpen, setIsBulkOffsetOpen] = useState<boolean>(false);
-  const [bulkOffsetPreview, setBulkOffsetPreview] = useState<
-    Record<string, BulkOffsetPreviewState>
-  >({});
   const resumeMediaPlayback = () => {
     videoPlayerRef.current?.resumePlayback();
   };
 
-  const activeTrackIndex = activeTrackId
-    ? tracks.findIndex((track) => track.id === activeTrackId)
-    : -1;
-  const activeTrack =
-    activeTrackIndex >= 0 ? (tracks[activeTrackIndex] ?? null) : null;
-  const activeTrackIsEmpty =
-    activeTrack !== null && activeTrack.subtitles.length === 0;
-  const activeTrackSubtitles = activeTrack?.subtitles ?? [];
-  const allowSubtitleDrop = tracks.length === 0 || activeTrackIsEmpty;
-  const bulkOffsetDisabled = !activeTrack || activeTrackSubtitles.length === 0;
-  const loadMediaFile = (file: File) => {
-    setMediaFile(null);
-    if (mediaFileInputRef.current) {
-      mediaFileInputRef.current.value = "";
-    }
-    setTimeout(() => {
-      setMediaFile(file);
-      setMediaFileName(file.name);
-    }, 0);
-  };
+  const {
+    activeTrackIndex,
+    activeTrack,
+    activeTrackSubtitles,
+    activeTrackIsEmpty,
+    allowSubtitleDrop,
+    bulkOffsetDisabled,
+  } = useActiveTrackDetails(tracks, activeTrackId);
+  const {
+    isBulkOffsetOpen,
+    toggleBulkOffset,
+    bulkOffsetPreview,
+    setBulkOffsetPreview,
+  } = useBulkOffsetState({
+    trackCount: tracks.length,
+    disabled: bulkOffsetDisabled,
+  });
+  const { loadSubtitleFile, handleStartFromScratch } = useSubtitleFileLoader({
+    activeTrackId,
+    activeTrackIsEmpty,
+    newSubtitleText: t("subtitle.newSubtitle"),
+    newTrackName: t("subtitle.newTrackName", { number: 1 }),
+    loadSubtitlesIntoTrack,
+    renameTrack,
+    setInitialSubtitles,
+  });
 
-  const loadSubtitleFile = async (file: File) => {
-    const text = await file.text();
-    const firstLine =
-      text.split(/\r?\n/).find((l) => l.trim().length > 0) || "";
-    const isVtt =
-      file.name.toLowerCase().endsWith(".vtt") ||
-      /^WEBVTT( |$)/.test(firstLine);
-    const parsedSubtitles = isVtt ? parseVTT(text) : parseSRT(text);
-    const meta = isVtt ? extractVttPrologue(text) : undefined;
-    const safeTrackName = file.name.replace(/\.(srt|vtt)$/i, "") || file.name;
-
-    if (activeTrackId && activeTrackIsEmpty) {
-      loadSubtitlesIntoTrack(
-        activeTrackId,
-        parsedSubtitles,
-        meta
-          ? { vttHeader: meta.header, vttPrologue: meta.prologue }
-          : undefined,
-      );
-      renameTrack(activeTrackId, safeTrackName);
-      return;
-    }
-
-    setInitialSubtitles(
-      parsedSubtitles,
-      safeTrackName,
-      meta ? { vttHeader: meta.header, vttPrologue: meta.prologue } : undefined,
-    );
-  };
-
-  const handleStartFromScratch = () => {
-    setInitialSubtitles(
-      [
-        {
-          uuid: uuidv4(),
-          id: 1,
-          startTime: "00:00:00,000",
-          endTime: "00:00:03,000",
-          text: t("subtitle.newSubtitle"),
-        },
-      ],
-      t("subtitle.newTrackName", { number: 1 }),
-    );
-  };
+  useBeforeUnloadGuard(canUndoSubtitles);
+  usePlaybackVisibilityCoordinator({
+    playInBackground,
+    isPlaying,
+    setIsPlaying,
+    videoPlayerRef,
+    waveformRef,
+  });
 
   const {
     isDragActive: isSubtitleDragActive,
     panelProps: baseSubtitleDropHandlers,
   } = useDroppablePanel<HTMLDivElement>({
     acceptFile: (file: File) => allowSubtitleDrop && isSubtitleFile(file),
+    canDrop: allowSubtitleDrop,
     onDropFile: loadSubtitleFile,
   });
-
-  const subtitleDropHandlers = {
-    onDragEnter: (event: DragEvent<HTMLDivElement>) => {
-      if (!allowSubtitleDrop) {
-        if (event.dataTransfer) {
-          event.dataTransfer.dropEffect = "none";
-        }
-        return;
-      }
-      baseSubtitleDropHandlers.onDragEnter(event);
-    },
-    onDragLeave: (event: DragEvent<HTMLDivElement>) => {
-      baseSubtitleDropHandlers.onDragLeave(event);
-    },
-    onDragOver: (event: DragEvent<HTMLDivElement>) => {
-      if (!allowSubtitleDrop) {
-        event.preventDefault();
-        if (event.dataTransfer) {
-          event.dataTransfer.dropEffect = "none";
-        }
-        return;
-      }
-      baseSubtitleDropHandlers.onDragOver(event);
-    },
-    onDrop: (event: DragEvent<HTMLDivElement>) => {
-      if (!allowSubtitleDrop) {
-        event.preventDefault();
-        if (event.dataTransfer) {
-          event.dataTransfer.dropEffect = "none";
-        }
-        return;
-      }
-      baseSubtitleDropHandlers.onDrop(event);
-    },
-  };
 
   const { isDragActive: isMediaDragActive, panelProps: mediaDropHandlers } =
     useDroppablePanel<HTMLDivElement>({
@@ -252,109 +181,6 @@ function MainContent() {
     redoSubtitles,
   });
 
-  // --- Old Subtitle Modification Callbacks Removed ---
-  // Actions are now handled by context provider and consumed directly by child components
-
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (canUndoSubtitles) {
-        event.preventDefault();
-        // Setting returnValue is required for most modern browsers
-        event.returnValue = "";
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [canUndoSubtitles]);
-
-  useEffect(() => {
-    if (playInBackground || typeof document === "undefined") {
-      return;
-    }
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        setIsPlaying(false);
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [playInBackground]);
-
-  // Effect to handle pending scroll-to-subtitle
-  useEffect(() => {
-    if (pendingScrollToUuid && subtitleListRef.current) {
-      // Function to attempt scroll with retry logic
-      const attemptScroll = (retries = 0) => {
-        const subtitleElement = document.getElementById(
-          `subtitle-${pendingScrollToUuid}`,
-        );
-        if (subtitleElement) {
-          // Element found, use requestAnimationFrame to ensure layout has settled
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              const ok = subtitleListRef.current?.scrollToSubtitle(
-                pendingScrollToUuid,
-                {
-                  instant: pendingScrollInstant,
-                  center: true,
-                  focus: pendingScrollInstant,
-                },
-              );
-              if (ok) {
-                // The subtitle will be highlighted naturally by the existing playback time logic
-                setPendingScrollToUuid(null);
-                setPendingScrollInstant(false);
-              } else if (retries < 10) {
-                setTimeout(() => attemptScroll(retries + 1), 50);
-              } else {
-                console.warn(
-                  "Could not center subtitle after retries:",
-                  pendingScrollToUuid,
-                );
-                setPendingScrollToUuid(null);
-                setPendingScrollInstant(false);
-              }
-            });
-          });
-        } else if (retries < 10) {
-          // Element not found yet, retry after a short delay
-          setTimeout(() => attemptScroll(retries + 1), 50);
-        } else {
-          // Max retries reached, give up
-          console.warn(
-            "Could not find subtitle element after retries:",
-            pendingScrollToUuid,
-          );
-          setPendingScrollToUuid(null);
-          setPendingScrollInstant(false);
-        }
-      };
-
-      // Start the retry process
-      attemptScroll();
-    }
-  }, [pendingScrollToUuid, pendingScrollInstant]);
-
-  useEffect(() => {
-    if (tracks.length === 0) {
-      setIsBulkOffsetOpen(false);
-    }
-  }, [tracks.length]);
-
-  useEffect(() => {
-    if (bulkOffsetDisabled && isBulkOffsetOpen) {
-      setIsBulkOffsetOpen(false);
-    }
-  }, [bulkOffsetDisabled, isBulkOffsetOpen]);
-
   return (
     <div className="flex flex-col min-h-screen md:h-screen">
       <SkipLinks />
@@ -367,21 +193,18 @@ function MainContent() {
         onSelectMediaFile={loadMediaFile}
         mediaFileName={mediaFileName}
         isBulkOffsetOpen={isBulkOffsetOpen}
-        onToggleBulkOffset={() => setIsBulkOffsetOpen((previous) => !previous)}
+        onToggleBulkOffset={toggleBulkOffset}
         bulkOffsetDisabled={bulkOffsetDisabled}
       />
 
-      {/* Main content area */}
       <div className="flex-1 flex flex-col">
-        {/* Top section - Split panels */}
         <div className="flex flex-col md:flex-row min-h-[64vh] md:h-[64vh]">
-          {/* Left panel - Subtitle list */}
           <div
             className={cn(
               "relative w-full md:w-1/2 min-h-[32vh] md:min-h-0 transition-colors",
               isSubtitleDragActive && allowSubtitleDrop && "bg-iris-100",
             )}
-            {...subtitleDropHandlers}
+              {...baseSubtitleDropHandlers}
           >
             <div
               className={cn(
@@ -406,11 +229,7 @@ function MainContent() {
                     waveformRef.current.scrollToRegion(uuid);
                   }
                 }}
-                onTimeJump={(seconds) =>
-                  setPlaybackTime(
-                    Math.min(duration, Math.max(0, playbackTime + seconds)),
-                  )
-                }
+                onTimeJump={jumpBy}
                 jumpDuration={jumpDuration}
                 onLoadSubtitleFile={loadSubtitleFile}
                 onStartFromScratch={handleStartFromScratch}
@@ -431,7 +250,6 @@ function MainContent() {
             )}
           </div>
 
-          {/* Right panel - Media player */}
           <div
             className={cn(
               "w-full md:w-1/2 min-h-[32vh] md:min-h-0 border-t-2 md:border-t-0 md:border-l-2 border-black dark:border-white transition-colors",
@@ -439,7 +257,6 @@ function MainContent() {
             )}
             {...mediaDropHandlers}
           >
-            {/* VideoPlayer will get subtitles from context */}
             <VideoPlayer
               ref={videoPlayerRef}
               mediaFile={mediaFile}
@@ -459,10 +276,7 @@ function MainContent() {
           </div>
         </div>
 
-        {/* Bottom section - Waveform */}
         <div className="min-h-[21vh] md:h-[21vh]">
-          {/* Custom Controls */}
-
           {mediaFile ? (
             <>
               <CustomControls
@@ -470,11 +284,7 @@ function MainContent() {
                 playbackTime={playbackTime}
                 duration={duration}
                 onPlayPause={() => setIsPlaying(!isPlaying)}
-                onTimeJump={(seconds) =>
-                  setPlaybackTime(
-                    Math.min(duration, Math.max(0, playbackTime + seconds)),
-                  )
-                }
+                onTimeJump={jumpBy}
                 jumpDuration={jumpDuration}
                 onChangeJumpDuration={(seconds) =>
                   setJumpDuration(Number.parseInt(seconds))
@@ -494,12 +304,8 @@ function MainContent() {
                 onPlayPause={setIsPlaying}
                 previewOffsets={bulkOffsetPreview}
                 onRegionClick={(uuid, opts) => {
-                  // Set pending scroll to be handled after track switch completes
-                  setPendingScrollToUuid(uuid);
-                  // If cross-track, use instant scroll and focus; otherwise keep smooth animation
-                  setPendingScrollInstant(Boolean(opts?.crossTrack));
+                  requestScroll(uuid, { instant: Boolean(opts?.crossTrack) });
                 }}
-                // Subtitle action props removed (will use context)
               />
             </>
           ) : (
@@ -511,7 +317,6 @@ function MainContent() {
   );
 }
 
-// Default export wraps MainContent with the provider
 export default function Home() {
   return (
     <SubtitleProvider>

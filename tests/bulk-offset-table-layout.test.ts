@@ -1,51 +1,72 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { createElement } from "react";
+import { BulkOffsetTable } from "../components/bulk-offset/table";
+import type { Subtitle } from "../types/subtitle";
+import { cleanup, fireEvent, renderWithIntl, within } from "./helpers/render";
 
-const tableSource = readFileSync("components/bulk-offset/table.tsx", "utf8");
+const subtitles: Subtitle[] = [
+  {
+    uuid: "s1",
+    id: 1,
+    startTime: "00:00:00,000",
+    endTime: "00:00:02,000",
+    text: "First caption",
+  },
+  {
+    uuid: "s2",
+    id: 2,
+    startTime: "00:00:03,000",
+    endTime: "00:00:05,000",
+    text: "",
+  },
+];
 
-const getSection = (source: string, start: string, end: string) => {
-  const startIndex = source.indexOf(start);
-  assert.notEqual(startIndex, -1);
-  const endIndex = source.indexOf(end, startIndex);
-  assert.notEqual(endIndex, -1);
-  return source.slice(startIndex, endIndex + end.length);
-};
+test.afterEach(() => cleanup());
 
-test("bulk offset table stacks preview timing under original timing", () => {
-  const theadSource = getSection(tableSource, "<thead", "</thead>");
-  const headerRows = theadSource.match(/<tr[\s\S]*?<\/tr>/g) ?? [];
+test("bulk offset table renders original and preview rows with accessible selection", () => {
+  const toggles: Array<[number, string, boolean, boolean]> = [];
 
-  assert.equal(headerRows.length, 2);
-  assert.match(headerRows[0], /rowSpan=\{2\}[\s\S]*<Checkbox/);
-  assert.match(headerRows[0], /rowSpan=\{2\}[\s\S]*bulkOffset\.table\.id/);
-  assert.match(headerRows[0], /bulkOffset\.table\.start/);
-  assert.match(headerRows[0], /bulkOffset\.table\.end/);
-  assert.match(headerRows[0], /rowSpan=\{2\}[\s\S]*bulkOffset\.table\.text/);
-  assert.doesNotMatch(headerRows[0], /border-b border-dashed/);
-  assert.match(headerRows[0], /repeating-linear-gradient/);
-  assert.match(headerRows[0], /aria-hidden="true"/);
-  assert.equal((theadSource.match(/bg-background/g) ?? []).length, 8);
-  assert.doesNotMatch(theadSource, /h-10/);
-  assert.doesNotMatch(headerRows[0], /bulkOffset\.table\.previewStart/);
-  assert.doesNotMatch(headerRows[0], /bulkOffset\.table\.previewEnd/);
-  assert.match(headerRows[1], /bulkOffset\.table\.previewStart/);
-  assert.match(headerRows[1], /bulkOffset\.table\.previewEnd/);
-});
-
-test("bulk offset table renders each subtitle as original and preview rows", () => {
-  const bodySource = getSection(tableSource, "<tbody>", "</tbody>");
-
-  assert.match(bodySource, /<Fragment key=\{subtitle\.uuid\}>\s*<tr/);
-  assert.match(bodySource, /<td className="px-4 align-middle" rowSpan=\{2\}>/);
-  assert.match(
-    bodySource,
-    /<td className="px-2 py-1 text-left text-sm" rowSpan=\{2\}>/,
+  const view = renderWithIntl(
+    createElement(BulkOffsetTable, {
+      subtitles,
+      previewSubtitles: [
+        {
+          previewStart: "00:00:01,000",
+          previewEnd: "00:00:03,000",
+          startChanged: true,
+          endChanged: true,
+        },
+        {
+          previewStart: "00:00:04,000",
+          previewEnd: "00:00:06,000",
+          startChanged: true,
+          endChanged: true,
+        },
+      ],
+      selectedUuids: new Set(["s1"]),
+      onToggleRow: (index, uuid, shouldSelect, shiftKey) => {
+        toggles.push([index, uuid, shouldSelect, shiftKey]);
+      },
+      onToggleAll: () => undefined,
+      headerCheckboxState: false,
+      trackColor: "#facc15",
+      trackBackgroundColor: "rgba(250,204,21,0.2)",
+      inkColor: "#713f12",
+    }),
   );
-  assert.match(
-    bodySource,
-    /<td className="px-4 py-1 align-middle" rowSpan=\{2\}>/,
-  );
-  assert.match(bodySource, /subtitle\.startTime[\s\S]*subtitle\.endTime/);
-  assert.match(bodySource, /preview\.previewStart[\s\S]*preview\.previewEnd/);
+
+  const table = view.getByRole("table");
+  assert.equal(within(table).getAllByRole("row").length, 6);
+  assert.ok(view.getByText("Start"));
+  assert.ok(view.getByText("Preview start"));
+  assert.ok(view.getByText("First caption"));
+  assert.ok(view.getByText("Empty"));
+
+  fireEvent.pointerDown(view.getByLabelText("Select caption 2"), {
+    shiftKey: true,
+  });
+  fireEvent.click(view.getByLabelText("Select caption 2"));
+
+  assert.deepEqual(toggles, [[1, "s2", true, true]]);
 });

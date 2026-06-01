@@ -23,10 +23,10 @@ I talked about my design principles in the [FAQ](https://subtitle-editor.org/faq
 
 ### Tech stacks
 
-- NextJS 15 + React 19
+- NextJS 16 + React 19
 - shadcn + radix-ui + Tailwind CSS
 - wavesurfer.js
-- react-player
+- Native HTML media elements
 - Tabler icons
 - Motion
 
@@ -35,7 +35,7 @@ I talked about my design principles in the [FAQ](https://subtitle-editor.org/faq
 ### Setup
 
 ```bash
-git clone https://github.com/laufei/subtitle-editor.git
+git clone https://github.com/laubonghaudoi/subtitle-editor.git
 cd subtitle-editor
 npm install
 # Run the development server with Turbopack.
@@ -48,7 +48,7 @@ npm run start
 
 ### Project Structure
 
-- `app/` – Next.js 15 routing, including the localized editor in `app/[locale]/` and static pages such as `app/faq`.
+- `app/` – Next.js 16 routing, including the localized editor in `app/[locale]/` and static pages such as `app/faq`.
 - `components/` – UI building blocks, with `components/ui/` holding shadcn-based primitives and domain widgets like `subtitle-list.tsx`.
 - `context/` – Global state, including the undoable subtitle store.
 - `hooks/` – Reusable client hooks (`use-undoable-state`, toast helpers).
@@ -65,6 +65,15 @@ npm test -- parse-vtt.test.ts  # Focus on a single file
 ```
 
 Tests rely on Node’s built-in `node:test` runner and cover parsing, time conversions, and multi-track behavior. Add fixtures under `tests/fixtures/` when validating new subtitle edge cases.
+
+### Linting and Formatting
+
+```bash
+npm run lint          # ESLint owns code-quality linting
+npm run format        # Apply Biome formatting
+```
+
+Biome is intentionally configured as the formatter only; ESLint owns lint rules.
 
 ## Internationalization
 

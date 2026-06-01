@@ -1,37 +1,98 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { createElement } from "react";
+import { TooltipProvider } from "../components/ui/tooltip";
+import SubtitleItemDeleteButton from "../components/subtitle/subtitle-item-delete-button";
+import SubtitleItemMergeActions from "../components/subtitle/subtitle-item-merge-actions";
+import type { Subtitle } from "../types/subtitle";
+import { cleanup, fireEvent, renderWithIntl } from "./helpers/render";
 
-const mergeActionsSource = readFileSync(
-  "components/subtitle/subtitle-item-merge-actions.tsx",
-  "utf8",
-);
-const deleteButtonSource = readFileSync(
-  "components/subtitle/subtitle-item-delete-button.tsx",
-  "utf8",
-);
+const subtitle: Subtitle = {
+  uuid: "s1",
+  id: 1,
+  startTime: "00:00:00,000",
+  endTime: "00:00:02,000",
+  text: "First",
+};
 
-test("subtitle inline action buttons use compact tokenized utility styles", () => {
-  assert.match(deleteButtonSource, /ring-1 ring-inset ring-red-800/);
-  assert.match(deleteButtonSource, /bg-red-200/);
-  assert.match(deleteButtonSource, /hover:bg-red-300/);
-  assert.match(deleteButtonSource, /text-\[color:var\(--red-11\)\]/);
+const nextSubtitle: Subtitle = {
+  uuid: "s2",
+  id: 2,
+  startTime: "00:00:03,000",
+  endTime: "00:00:05,000",
+  text: "Second",
+};
 
-  assert.match(mergeActionsSource, /ring-1 ring-inset ring-amber-700/);
-  assert.match(mergeActionsSource, /bg-amber-200/);
-  assert.match(mergeActionsSource, /hover:bg-amber-300/);
-  assert.match(mergeActionsSource, /text-\[color:var\(--amber-11\)\]/);
+test.afterEach(() => cleanup());
 
-  assert.match(mergeActionsSource, /ring-1 ring-inset ring-green-800/);
-  assert.match(mergeActionsSource, /bg-green-200/);
-  assert.match(mergeActionsSource, /hover:bg-green-300/);
-  assert.match(mergeActionsSource, /text-\[color:var\(--green-11\)\]/);
+test("subtitle delete button invokes the delete action", () => {
+  let deleteCount = 0;
+  const view = renderWithIntl(
+    createElement(
+      TooltipProvider,
+      null,
+      createElement(SubtitleItemDeleteButton, {
+        onDelete: () => {
+          deleteCount += 1;
+        },
+      }),
+    ),
+  );
 
-  assert.match(mergeActionsSource, /ring-1 ring-inset ring-slate-700/);
-  assert.match(mergeActionsSource, /bg-slate-200/);
-  assert.match(mergeActionsSource, /text-slate-900/);
+  fireEvent.click(view.getByRole("button", { name: "Delete" }));
 
-  assert.doesNotMatch(mergeActionsSource, /bg-\[#fff3c4\]|bg-\[#e6f6eb\]/);
-  assert.doesNotMatch(mergeActionsSource, /bg-grass-|text-grass-/);
-  assert.doesNotMatch(deleteButtonSource, /bg-\[#feebec\]/);
+  assert.equal(deleteCount, 1);
+});
+
+test("subtitle merge actions invoke merge and add actions when there is room", () => {
+  const merges: Array<[number, number]> = [];
+  const adds: Array<[number, number | null, string]> = [];
+
+  const view = renderWithIntl(
+    createElement(
+      TooltipProvider,
+      null,
+      createElement(SubtitleItemMergeActions, {
+        subtitle,
+        nextSubtitle,
+        isLastItem: false,
+        nextStartSeconds: 3,
+        endSeconds: 2,
+        onMerge: (currentId, nextId) => merges.push([currentId, nextId]),
+        onAdd: (currentId, nextId, text) => adds.push([currentId, nextId, text]),
+      }),
+    ),
+  );
+
+  fireEvent.click(view.getByRole("button", { name: "Merge" }));
+  fireEvent.click(view.getByRole("button", { name: "Add" }));
+
+  assert.deepEqual(merges, [[1, 2]]);
+  assert.deepEqual(adds, [[1, 2, "New subtitle"]]);
+});
+
+test("subtitle add action is disabled when adjacent subtitles leave no room", () => {
+  const view = renderWithIntl(
+    createElement(
+      TooltipProvider,
+      null,
+      createElement(SubtitleItemMergeActions, {
+        subtitle,
+        nextSubtitle,
+        isLastItem: false,
+        nextStartSeconds: 2.0005,
+        endSeconds: 2,
+        onMerge: () => undefined,
+        onAdd: () => {
+          throw new Error("add should not run");
+        },
+      }),
+    ),
+  );
+
+  assert.equal(
+    (view.getByRole("button", { name: "No room to add" }) as HTMLButtonElement)
+      .disabled,
+    true,
+  );
 });

@@ -156,9 +156,9 @@ export default function LoadSrt() {
                 <Input
                   value={track.name}
                   onChange={(e) => renameTrack(track.id, e.target.value)}
-                  className="px-2 py-2 col-span-5 border-foreground rounded-xs"
+                  className="px-2 py-2 col-span-4 border-foreground rounded-xs"
                 />
-                <div className="col-span-6 grid grid-cols-[minmax(5rem,0.75fr)_minmax(0,1.25fr)] gap-2">
+                <div className="col-span-7 grid grid-cols-[minmax(8rem,1fr)_minmax(0,1.2fr)] gap-2">
                   {track.subtitles.length > 0 ? (
                     <>
                       <Label className="w-full min-w-0 p-0 flex items-center justify-center">
@@ -189,8 +189,8 @@ export default function LoadSrt() {
                   ) : (
                     <>
                       <Button
-                        variant="secondary"
-                        className="w-full min-w-0 cursor-pointer"
+                        variant="outline"
+                        className="w-full min-w-0 cursor-pointer border-black hover:bg-[var(--iris-4)] dark:border-white"
                         onClick={() => handleStartFromScratch(track.id)}
                       >
                         <IconPencilPlus />

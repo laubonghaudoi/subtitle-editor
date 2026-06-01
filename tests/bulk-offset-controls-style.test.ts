@@ -1,44 +1,39 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { createElement } from "react";
+import { BulkOffsetControls } from "../components/bulk-offset/controls";
+import { cleanup, fireEvent, renderWithIntl } from "./helpers/render";
 
-const controlsSource = readFileSync(
-  "components/bulk-offset/controls.tsx",
-  "utf8",
-);
+test.afterEach(() => cleanup());
 
-test("bulk offset active target button uses black text on the active track color", () => {
-  const activeStyleMatch = controlsSource.match(
-    /const activeToggleStyle: CSSProperties = \{[\s\S]*?\n  \};/,
+test("bulk offset controls expose target state and emit offset changes", () => {
+  const targetChanges: string[] = [];
+  const offsetChanges: number[] = [];
+
+  const view = renderWithIntl(
+    createElement(BulkOffsetControls, {
+      offsetSeconds: 0.123,
+      onOffsetChange: (value) => offsetChanges.push(value),
+      onApply: () => undefined,
+      shiftTarget: "both",
+      onShiftTargetChange: (target) => targetChanges.push(target),
+      accentColor: "#facc15",
+      inkColor: "#713f12",
+    }),
   );
 
-  assert.ok(activeStyleMatch);
-  const [activeToggleStyleSource] = activeStyleMatch;
-  // Black on the bright track quartet is >=7.6:1; white was 1.5–2.8:1 (fails AA)
-  assert.match(activeToggleStyleSource, /color:\s*"#000"/);
-  assert.doesNotMatch(activeToggleStyleSource, /color:\s*"#fff"/);
-});
-
-test("bulk offset apply button uses black text on the active track color", () => {
-  const applyButtonMatch = controlsSource.match(
-    /onClick=\{onApply\}[\s\S]*?style=\{\{[\s\S]*?\}\}/,
+  assert.equal(
+    view.getByRole("button", { name: "Whole subtitle" }).getAttribute(
+      "aria-pressed",
+    ),
+    "true",
   );
 
-  assert.ok(applyButtonMatch);
-  const [applyButtonSource] = applyButtonMatch;
-  assert.match(applyButtonSource, /color:\s*"#000"/);
-  assert.doesNotMatch(applyButtonSource, /color:\s*"#fff"/);
-});
-
-test("bulk offset numeric value uses the AA track ink color and bold weight", () => {
-  const offsetInputMatch = controlsSource.match(
-    /value=\{formattedOffset\}[\s\S]*?aria-label=\{t\("bulkOffset\.offsetInputLabel"\)\}/,
+  fireEvent.click(view.getByRole("button", { name: "Start time" }));
+  fireEvent.click(
+    view.getByRole("button", { name: "Increase offset by 1 second" }),
   );
 
-  assert.ok(offsetInputMatch);
-  const [offsetInputSource] = offsetInputMatch;
-  assert.match(offsetInputSource, /font-bold/);
-  // inkColor is the darkened, AA-compliant per-track text color (raw track
-  // color as text was only ~1.5:1 on white).
-  assert.match(offsetInputSource, /style=\{\{\s*color:\s*inkColor\s*\}\}/);
+  assert.deepEqual(targetChanges, ["start"]);
+  assert.deepEqual(offsetChanges, [1.123]);
 });

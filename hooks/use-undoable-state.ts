@@ -11,32 +11,27 @@ export interface UndoHistory<T> {
 // Type for the action passed to the state setter, similar to React's useState setter
 type SetStateAction<T> = T | ((prevState: T) => T);
 
+export interface UndoableState<T> {
+  present: T;
+  setState: (newState: SetStateAction<T>) => void;
+  replaceState: (nextState: T) => void;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  getSnapshot: () => UndoHistory<T>;
+  setSnapshot: (history: UndoHistory<T>) => void;
+}
+
 /**
  * A custom hook to manage state with undo/redo capabilities.
  * @param initialState The initial state value.
- * @returns A tuple containing:
- *  - The current state.
- *  - A function to set the state (tracks history).
- *  - A function to replace the state without recording history.
- *  - An undo function.
- *  - A redo function.
- *  - A boolean indicating if undo is possible.
- *  - A boolean indicating if redo is possible.
+ * @returns Named state, mutation, history, and undo/redo controls.
  */
 export function useUndoableState<T>(
   initialState: T,
   options?: { isEqual?: (a: T, b: T) => boolean },
-): [
-  T,
-  (newState: SetStateAction<T>) => void,
-  (nextState: T) => void,
-  () => void,
-  () => void,
-  boolean,
-  boolean,
-  () => UndoHistory<T>,
-  (history: UndoHistory<T>) => void,
-] {
+): UndoableState<T> {
   const [history, setHistory] = useState<UndoHistory<T>>({
     past: [],
     present: initialState,
@@ -122,7 +117,6 @@ export function useUndoableState<T>(
     });
   };
 
-  // Return the state, setter, raw replace, undo/redo functions, and flags
   const getHistorySnapshot = useCallback(() => history, [history]);
   const setHistorySnapshot = useCallback((nextHistory: UndoHistory<T>) => {
     setHistory({
@@ -132,15 +126,15 @@ export function useUndoableState<T>(
     });
   }, []);
 
-  return [
-    history.present,
+  return {
+    present: history.present,
     setState,
     replaceState,
     undo,
     redo,
     canUndo,
     canRedo,
-    getHistorySnapshot,
-    setHistorySnapshot,
-  ];
+    getSnapshot: getHistorySnapshot,
+    setSnapshot: setHistorySnapshot,
+  };
 }
