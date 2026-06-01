@@ -25,6 +25,7 @@ import {
 import { useDroppablePanel } from "@/hooks/use-droppable-panel";
 import { useSubtitleShortcuts } from "@/hooks/use-subtitle-shortcuts";
 import { isMediaFile, isSubtitleFile } from "@/lib/file-utils";
+import { warnDev } from "@/lib/log";
 import {
   extractVttPrologue,
   parseSRT,
@@ -252,9 +253,6 @@ function MainContent() {
     redoSubtitles,
   });
 
-  // --- Old Subtitle Modification Callbacks Removed ---
-  // Actions are now handled by context provider and consumed directly by child components
-
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (canUndoSubtitles) {
@@ -315,7 +313,7 @@ function MainContent() {
               } else if (retries < 10) {
                 setTimeout(() => attemptScroll(retries + 1), 50);
               } else {
-                console.warn(
+                warnDev(
                   "Could not center subtitle after retries:",
                   pendingScrollToUuid,
                 );
@@ -329,7 +327,7 @@ function MainContent() {
           setTimeout(() => attemptScroll(retries + 1), 50);
         } else {
           // Max retries reached, give up
-          console.warn(
+          warnDev(
             "Could not find subtitle element after retries:",
             pendingScrollToUuid,
           );
@@ -499,7 +497,6 @@ function MainContent() {
                   // If cross-track, use instant scroll and focus; otherwise keep smooth animation
                   setPendingScrollInstant(Boolean(opts?.crossTrack));
                 }}
-                // Subtitle action props removed (will use context)
               />
             </>
           ) : (

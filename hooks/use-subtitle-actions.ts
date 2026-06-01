@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import type { MutableRefObject, Dispatch, SetStateAction } from "react";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
 import type { UndoHistory } from "@/hooks/use-undoable-state";
+import { warnDev } from "@/lib/log";
 import {
   addSubtitle,
   deleteSubtitle,
@@ -125,7 +126,7 @@ export const useSubtitleActions = ({
       meta?: { vttHeader?: string; vttPrologue?: string[] },
     ): string | null => {
       if (tracks.length >= TRACK_LIMIT) {
-        console.warn("Maximum number of tracks (4) reached.");
+        warnDev("Maximum number of tracks (4) reached.");
         return null;
       }
 

@@ -6,8 +6,9 @@ import {
   type BrowserMediaSupport,
   type MediaFormatSupport,
 } from "@/lib/media-support";
+import { subtitlesToVttString } from "@/lib/format";
+import { warnDev } from "@/lib/log";
 import { CUE_PREVIEW_SEEK_OFFSET_SECONDS } from "@/lib/subtitle-playback";
-import { subtitlesToVttString } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import {
   Fragment,
@@ -106,11 +107,11 @@ const VideoPlayer = forwardRef(function VideoPlayer(
           ) {
             return;
           }
-          console.warn("Failed to resume media playback:", error);
+          warnDev("Failed to resume media playback:", error);
         });
       }
     } catch (error) {
-      console.warn("Failed to resume media playback:", error);
+      warnDev("Failed to resume media playback:", error);
     }
   }, []);
 

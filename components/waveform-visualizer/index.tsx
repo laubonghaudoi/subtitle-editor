@@ -17,6 +17,7 @@ import {
   useSubtitleActionsContext,
   useSubtitleState,
 } from "@/context/subtitle-context";
+import { warnDev } from "@/lib/log";
 import { getCuePreviewSeekTime } from "@/lib/subtitle-playback";
 import { getTrackHandleColor } from "@/lib/track-colors";
 import { useWaveformRegions } from "./use-waveform-regions";
@@ -215,7 +216,7 @@ export default forwardRef(function WaveformVisualizer(
             try {
               wavesurfer.setTime(time);
             } catch (error) {
-              console.warn("wavesurfer.setTime failed:", error);
+              warnDev("wavesurfer.setTime failed:", error);
             }
           }
         }
@@ -324,7 +325,7 @@ export default forwardRef(function WaveformVisualizer(
         wavesurfer.pause();
       }
     } catch (error) {
-      console.warn("Play/pause operation failed:", error);
+      warnDev("Play/pause operation failed:", error);
     }
   }, [isPlaying, wavesurfer]);
 
@@ -338,7 +339,7 @@ export default forwardRef(function WaveformVisualizer(
         try {
           wavesurfer.play();
         } catch (error) {
-          console.warn("Failed to resume waveform playback:", error);
+          warnDev("Failed to resume waveform playback:", error);
         }
       }
     };

@@ -1,5 +1,6 @@
 "use client";
 
+import { errorDev, warnDev } from "@/lib/log";
 import { useEffect } from "react";
 
 const SERVICE_WORKER_URL = "/sw.js";
@@ -25,10 +26,10 @@ const registerServiceWorker = async () => {
       SERVICE_WORKER_URL,
     );
     registration.update().catch((error) => {
-      console.warn("[pwa] Unable to update service worker", error);
+      warnDev("[pwa] Unable to update service worker", error);
     });
   } catch (error) {
-    console.error("[pwa] Service worker registration failed", error);
+    errorDev("[pwa] Service worker registration failed", error);
   }
 };
 
