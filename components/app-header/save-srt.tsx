@@ -71,10 +71,26 @@ export default function SaveSrt() {
   // .srt leads (solid teal, like the Save button); the rest are teal-tint
   // alternates. Teal is our single "export / get data out" color.
   const formats = [
-    { format: "srt" as const, label: t("buttons.downloadAsSrt"), primary: true },
-    { format: "vtt" as const, label: t("buttons.downloadAsVtt"), primary: false },
-    { format: "txt" as const, label: t("buttons.downloadAsTxt"), primary: false },
-    { format: "csv" as const, label: t("buttons.downloadAsCsv"), primary: false },
+    {
+      format: "srt" as const,
+      label: t("buttons.downloadAsSrt"),
+      primary: true,
+    },
+    {
+      format: "vtt" as const,
+      label: t("buttons.downloadAsVtt"),
+      primary: false,
+    },
+    {
+      format: "txt" as const,
+      label: t("buttons.downloadAsTxt"),
+      primary: false,
+    },
+    {
+      format: "csv" as const,
+      label: t("buttons.downloadAsCsv"),
+      primary: false,
+    },
   ];
 
   return (
@@ -83,14 +99,14 @@ export default function SaveSrt() {
         <Button
           onClick={openDialog}
           disabled={isDisabled}
-          className="cursor-pointer text-white bg-save hover:bg-save-hover rounded-xs border-2 border-black dark:border-white"
+          className="cursor-pointer text-black bg-teal-800 hover:bg-teal-900 rounded-xs border-2 border-black dark:border-white"
           aria-label={t("buttons.saveSrt")}
         >
           <IconDownload size={20} />
           <span className="hidden sm:inline">{t("buttons.saveSrt")}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-160">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-160">
         <DialogHeader>
           <DialogTitle>{t("dialog.saveTitle")}</DialogTitle>
           <DialogDescription>{t("dialog.saveDescription")}</DialogDescription>
@@ -102,18 +118,23 @@ export default function SaveSrt() {
             return (
               <div
                 key={track.id}
-                className="flex items-center justify-between pl-4"
+                className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center pl-4"
                 style={{ boxShadow: `inset 4px 0 0 ${barColor}` }}
               >
-                <div className="flex flex-col">
-                  <span className="font-medium">{track.name}</span>
+                <div className="min-w-0">
+                  <span
+                    className="block truncate font-medium"
+                    title={track.name}
+                  >
+                    {track.name}
+                  </span>
                   <span className="text-sm text-neutral-600 dark:text-neutral-300">
                     {t("subtitle.subtitleCount", {
                       count: track.subtitles.length,
                     })}
                   </span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2 sm:justify-end">
                   {formats.map(({ format, label, primary }) => (
                     <Button
                       key={format}
@@ -121,7 +142,7 @@ export default function SaveSrt() {
                       onClick={() => downloadTrackById(track.id, format)}
                       className={
                         primary
-                          ? "cursor-pointer text-white bg-save hover:bg-save-hover rounded-xs border-2 border-black dark:border-white"
+                          ? "cursor-pointer text-black bg-teal-800 hover:bg-teal-900 rounded-xs border-2 border-black dark:border-white"
                           : "cursor-pointer text-[color:var(--teal-12)] bg-teal-200 hover:bg-teal-300 rounded-xs border-2 border-black dark:border-white"
                       }
                     >
