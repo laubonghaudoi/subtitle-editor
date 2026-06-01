@@ -9,6 +9,7 @@ import {
 import { subtitlesToVttString } from "@/lib/format";
 import { warnDev } from "@/lib/log";
 import { CUE_PREVIEW_SEEK_OFFSET_SECONDS } from "@/lib/subtitle-playback";
+import { shouldIgnorePauseWhileHidden } from "@/hooks/use-visibility-playback";
 import { useTranslations } from "next-intl";
 import {
   Fragment,
@@ -152,23 +153,6 @@ const VideoPlayer = forwardRef(function VideoPlayer(
       playerRef.current.playbackRate = playbackRate;
     }
   }, [playbackRate]);
-
-  useEffect(() => {
-    if (!playInBackground || typeof document === "undefined") {
-      return;
-    }
-
-    const handleVisibilityChange = () => {
-      if (!document.hidden && isPlaying) {
-        resumePlayback();
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [isPlaying, playInBackground, resumePlayback]);
 
   useEffect(() => {
     if (!mediaFile) {
@@ -325,8 +309,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
         }}
         onPlay={() => onPlayPause(true)}
         onPause={() => {
-          const isHidden = typeof document !== "undefined" && document.hidden;
-          if (playInBackground && isHidden) {
+          if (shouldIgnorePauseWhileHidden(playInBackground)) {
             return;
           }
           onPlayPause(false);

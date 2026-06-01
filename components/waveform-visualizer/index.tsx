@@ -5,6 +5,7 @@ import { useWavesurfer } from "@wavesurfer/react";
 import type { ForwardedRef } from "react";
 import {
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -45,6 +46,7 @@ export default forwardRef(function WaveformVisualizer(
     previewOffsets = {},
   }: WaveformVisualizerProps,
   ref: ForwardedRef<{
+    resumePlayback: () => void;
     scrollToRegion: (uuid: string) => void;
     setWaveformTime: (time: number) => void;
   }>,
@@ -178,6 +180,18 @@ export default forwardRef(function WaveformVisualizer(
       playInBackground,
     });
 
+  const resumePlayback = useCallback(() => {
+    if (!wavesurfer) {
+      return;
+    }
+
+    try {
+      wavesurfer.play();
+    } catch (error) {
+      warnDev("Failed to resume waveform playback:", error);
+    }
+  }, [wavesurfer]);
+
   /****************************************************************
    * Scrolling and zooming the waveform
    */
@@ -185,6 +199,7 @@ export default forwardRef(function WaveformVisualizer(
   useImperativeHandle(
     ref,
     () => ({
+      resumePlayback,
       // Accept uuid instead of id
       // Expose methods via ref
       scrollToRegion: (uuid: string) => {
@@ -222,7 +237,7 @@ export default forwardRef(function WaveformVisualizer(
         }
       },
     }),
-    [wavesurfer, onSeek, subtitleToRegionMap],
+    [resumePlayback, wavesurfer, onSeek, subtitleToRegionMap],
   );
 
   // Handle zoom level based on duration
@@ -328,27 +343,6 @@ export default forwardRef(function WaveformVisualizer(
       warnDev("Play/pause operation failed:", error);
     }
   }, [isPlaying, wavesurfer]);
-
-  useEffect(() => {
-    if (!wavesurfer || !playInBackground || typeof document === "undefined") {
-      return;
-    }
-
-    const handleVisibilityChange = () => {
-      if (!document.hidden && isPlaying) {
-        try {
-          wavesurfer.play();
-        } catch (error) {
-          warnDev("Failed to resume waveform playback:", error);
-        }
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [wavesurfer, playInBackground, isPlaying]);
 
   return (
     <div className="relative w-full h-full border-black">

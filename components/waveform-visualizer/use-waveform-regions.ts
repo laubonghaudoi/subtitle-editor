@@ -1,4 +1,5 @@
 import type { BulkOffsetPreviewState } from "@/components/bulk-offset/drawer";
+import { shouldIgnorePauseWhileHidden } from "@/hooks/use-visibility-playback";
 import { getTrackColor, getTrackHandleColor } from "@/lib/track-colors";
 import { secondsToTime, timeToSeconds } from "@/lib/utils";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
@@ -228,8 +229,7 @@ export const useWaveformRegions = ({
     };
 
     const handlePause = () => {
-      const isHidden = typeof document !== "undefined" && document.hidden;
-      if (playInBackground && isHidden) {
+      if (shouldIgnorePauseWhileHidden(playInBackground)) {
         return;
       }
       onPlayPause(false);

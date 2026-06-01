@@ -143,17 +143,16 @@ export function SubtitleProvider({ children }: SubtitleProviderProps) {
     new Map(),
   );
 
-  const [
-    activeSubtitles,
-    setSubtitlesWithHistory,
-    ,
-    /* skip replaceState */ undoSubtitles,
-    redoSubtitles,
-    canUndoSubtitles,
-    canRedoSubtitles,
-    getHistorySnapshot,
-    setHistorySnapshot,
-  ] = useUndoableState<Subtitle[]>([], {
+  const {
+    present: activeSubtitles,
+    setState: setSubtitlesWithHistory,
+    undo: undoSubtitles,
+    redo: redoSubtitles,
+    canUndo: canUndoSubtitles,
+    canRedo: canRedoSubtitles,
+    getSnapshot: getHistorySnapshot,
+    setSnapshot: setHistorySnapshot,
+  } = useUndoableState<Subtitle[]>([], {
     isEqual: subtitlesAreEqual,
   });
 
