@@ -73,7 +73,7 @@ export default function SaveSrt() {
         <Button
           onClick={openDialog}
           disabled={isDisabled}
-          className="cursor-pointer text-white bg-teal-800 hover:bg-teal-900 rounded-xs border-2 border-black dark:border-white"
+          className="cursor-pointer text-black bg-teal-800 hover:bg-teal-900 rounded-xs border-2 border-black dark:border-white"
           aria-label={t("buttons.saveSrt")}
         >
           <IconDownload size={20} />
@@ -100,7 +100,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "srt")}
-                  className="cursor-pointer bg-slate-950 hover:bg-slate-800 text-white dark:text-black rounded-xs"
+                  className="cursor-pointer bg-slate-950 hover:opacity-90 text-white dark:text-black rounded-xs"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsSrt")}</span>
@@ -108,7 +108,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "vtt")}
-                  className="cursor-pointer bg-slate-950 hover:bg-slate-800 text-white dark:text-black rounded-xs"
+                  className="cursor-pointer bg-slate-950 hover:opacity-90 text-white dark:text-black rounded-xs"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsVtt")}</span>
@@ -116,7 +116,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "txt")}
-                  className="cursor-pointer bg-slate-950 hover:bg-slate-800 text-white dark:text-black rounded-xs"
+                  className="cursor-pointer bg-slate-950 hover:opacity-90 text-white dark:text-black rounded-xs"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsTxt")}</span>
@@ -124,7 +124,7 @@ export default function SaveSrt() {
                 <Button
                   disabled={track.subtitles.length === 0}
                   onClick={() => downloadTrackById(track.id, "csv")}
-                  className="cursor-pointer bg-slate-950 hover:bg-slate-800 text-white dark:text-black rounded-xs"
+                  className="cursor-pointer bg-slate-950 hover:opacity-90 text-white dark:text-black rounded-xs"
                 >
                   <IconDownload size={18} />
                   <span className="ml-1">{t("buttons.downloadAsCsv")}</span>

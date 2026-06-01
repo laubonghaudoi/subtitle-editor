@@ -64,7 +64,7 @@ export default function SubtitleTextEditor({
   if (isEditing) {
     return (
       <Textarea
-        className="w-full h-fit bg-iris-200 min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border border-iris-700 field-sizing-content"
+        className="w-full h-fit bg-iris-200 min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border border-iris-800 field-sizing-content"
         rows={1}
         ref={textAreaRef}
         value={editText}

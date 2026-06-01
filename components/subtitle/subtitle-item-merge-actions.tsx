@@ -46,7 +46,7 @@ export default function SubtitleItemMergeActions({
           >
             <IconFold size={16} />
           </TooltipTrigger>
-          <TooltipContent className="bg-amber-900 dark:bg-amber-800 px-2 py-1 text-sm">
+          <TooltipContent className="bg-amber-900 dark:bg-amber-800 text-black px-2 py-1 text-sm">
             {t("tooltips.merge")}
           </TooltipContent>
         </Tooltip>
@@ -78,7 +78,7 @@ export default function SubtitleItemMergeActions({
         </TooltipTrigger>
         <TooltipContent
           className={`px-2 py-1 text-sm ${
-            isAddDisabled ? "bg-slate-800 dark:text-white" : "bg-green-800"
+            isAddDisabled ? "" : "bg-green-800 text-black"
           }`}
         >
           {addTooltipContent}

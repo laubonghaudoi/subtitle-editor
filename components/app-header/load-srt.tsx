@@ -131,7 +131,7 @@ export default function LoadSrt() {
       <DialogTrigger asChild>
         <Button
           variant="secondary"
-          className="text-white bg-iris-800 hover:bg-iris-900 rounded-xs border-2 border-black dark:border-white cursor-pointer"
+          className="text-white bg-iris-800 hover:bg-iris-900 dark:hover:bg-iris-700 rounded-xs border-2 border-black dark:border-white cursor-pointer"
           aria-label={t("buttons.loadSrt")}
         >
           <IconBadgeCc />
@@ -247,7 +247,7 @@ export default function LoadSrt() {
                         </AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => deleteTrack(track.id)}
-                          className="bg-red-800 hover:bg-red-900 dark:text-white cursor-pointer"
+                          className="bg-red-800 hover:bg-red-900 text-black cursor-pointer"
                         >
                           {t("dialog.delete")}
                         </AlertDialogAction>

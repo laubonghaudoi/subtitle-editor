@@ -33,6 +33,7 @@ test("subtitle row hover state uses the iris accent token", () => {
 
 test("subtitle text editing field keeps the iris active-input treatment", () => {
   assert.match(subtitleTextEditorSource, /bg-iris-200/);
-  assert.match(subtitleTextEditorSource, /border border-iris-700/);
+  // iris-800 (iris-9) border clears 3:1 against the page (iris-700/iris-8 was 2.4:1)
+  assert.match(subtitleTextEditorSource, /border border-iris-800/);
   assert.doesNotMatch(subtitleTextEditorSource, /border-none/);
 });

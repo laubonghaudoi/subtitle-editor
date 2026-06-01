@@ -52,7 +52,8 @@ export default forwardRef(function WaveformVisualizer(
   const [isLoading, setIsLoading] = useState(false);
   const { resolvedTheme } = useTheme();
   const theme: "light" | "dark" = resolvedTheme === "dark" ? "dark" : "light";
-  const waveColor = theme === "dark" ? "#2ab3d6" : "#34bfe0";
+  // Light wave deepened from #34bfe0 (2.1:1 on white) to clear 3:1 (1.4.11)
+  const waveColor = theme === "dark" ? "#2ab3d6" : "#1690b5";
   const progressColor = theme === "dark" ? "#d95cb0" : "#cf4fa6";
   const cursorColor = theme === "dark" ? "#ff7a30" : "#e8590c";
 

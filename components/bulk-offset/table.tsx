@@ -29,6 +29,7 @@ interface BulkOffsetTableProps {
   headerCheckboxState: CheckedState;
   trackColor: string;
   trackBackgroundColor: string;
+  inkColor: string;
 }
 
 export function BulkOffsetTable({
@@ -40,6 +41,7 @@ export function BulkOffsetTable({
   headerCheckboxState,
   trackColor,
   trackBackgroundColor,
+  inkColor,
 }: BulkOffsetTableProps) {
   const t = useTranslations();
   const shiftPressedRef = useRef(false);
@@ -56,10 +58,10 @@ export function BulkOffsetTable({
                 aria-label={t("bulkOffset.selectAll")}
                 checked={headerCheckboxState}
                 style={{
-                  borderColor: trackColor,
+                  borderColor: inkColor,
                   backgroundColor:
                     headerCheckboxState === true ? trackColor : "transparent",
-                  color: headerCheckboxState === true ? "#000" : trackColor,
+                  color: headerCheckboxState === true ? "#000" : inkColor,
                 }}
                 onCheckedChange={onToggleAll}
               />
@@ -106,10 +108,10 @@ export function BulkOffsetTable({
           const isChecked = selectedUuids.has(subtitle.uuid);
           const preview = previewSubtitles[index];
           const previewStartStyle = preview.startChanged
-            ? { color: trackColor }
+            ? { color: inkColor }
             : undefined;
           const previewEndStyle = preview.endChanged
-            ? { color: trackColor }
+            ? { color: inkColor }
             : undefined;
           const rowStyle = isChecked
             ? { backgroundColor: trackBackgroundColor }
@@ -127,9 +129,9 @@ export function BulkOffsetTable({
                     })}
                     checked={isChecked}
                     style={{
-                      borderColor: trackColor,
+                      borderColor: inkColor,
                       backgroundColor: isChecked ? trackColor : "transparent",
-                      color: isChecked ? "#000" : trackColor,
+                      color: isChecked ? "#000" : inkColor,
                     }}
                     onPointerDown={(event) => {
                       shiftPressedRef.current = event.shiftKey;

@@ -211,7 +211,7 @@ export function AppHeader({
             onClick={() => {
               mediaFileInputRef.current?.click();
             }}
-            className="text-white bg-iris-800 hover:bg-iris-900 rounded-xs border-2 border-black dark:border-white cursor-pointer"
+            className="text-white bg-iris-800 hover:bg-iris-900 dark:hover:bg-iris-700 rounded-xs border-2 border-black dark:border-white cursor-pointer"
             aria-label={mediaFileName}
           >
             <IconMovie size={20} />
