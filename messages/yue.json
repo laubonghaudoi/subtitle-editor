@@ -65,6 +65,36 @@
     "noMatches": "揾唔到匹配項",
     "replace": "替換"
   },
+  "subtitleQuality": {
+    "title": "QA",
+    "tooltip": "檢查常見字幕問題",
+    "dialogTitle": "當前字幕軌 QA：{track}",
+    "summary": "{issues} 個問題 · 已揀 {selected} · {fixable} 個可自動修正",
+    "rules": "規則",
+    "minDuration": "最短時長（秒）",
+    "maxDuration": "最長時長（秒）",
+    "maxChars": "每行最多字元",
+    "maxLines": "最多行數",
+    "cue": "字幕",
+    "issue": "問題",
+    "original": "當前",
+    "preview": "預覽",
+    "manualReview": "人手檢查",
+    "deleteCue": "刪除字幕",
+    "timingFix": "時間修正",
+    "textFix": "文字修正",
+    "selectVisible": "揀可見修正",
+    "selectIssue": "揀字幕 {id} 嘅問題",
+    "selectFixes": "揀修正",
+    "apply": "套用修正",
+    "noIssues": "冇搵到問題",
+    "noFilteredIssues": "目前篩選冇相符問題",
+    "severity": {
+      "error": "錯誤",
+      "warning": "警告",
+      "info": "資訊"
+    }
+  },
   "bulkOffset": {
     "title": "揀字幕批量位移當前字幕軌：{track}",
     "emptyState": "載入字幕先可以批量位移時間。",

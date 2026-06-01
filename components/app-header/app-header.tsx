@@ -1,6 +1,7 @@
 "use client";
 
 import FindReplace from "@/components/find-replace";
+import SubtitleQuality from "@/components/subtitle-quality";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -189,6 +190,8 @@ export function AppHeader({
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+
+        <SubtitleQuality />
 
         <FindReplace />
 

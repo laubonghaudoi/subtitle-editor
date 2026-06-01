@@ -65,6 +65,36 @@
     "noMatches": "No matches found",
     "replace": "Replace"
   },
+  "subtitleQuality": {
+    "title": "QA",
+    "tooltip": "Review common subtitle issues",
+    "dialogTitle": "Subtitle QA for current track: {track}",
+    "summary": "{issues} issues · {selected} selected · {fixable} fixable",
+    "rules": "Rules",
+    "minDuration": "Min duration (s)",
+    "maxDuration": "Max duration (s)",
+    "maxChars": "Max chars / line",
+    "maxLines": "Max lines",
+    "cue": "Cue",
+    "issue": "Issue",
+    "original": "Original",
+    "preview": "Preview",
+    "manualReview": "Review manually",
+    "deleteCue": "Delete cue",
+    "timingFix": "Timing fix",
+    "textFix": "Text fix",
+    "selectVisible": "Select visible fixes",
+    "selectIssue": "Select issue for cue {id}",
+    "selectFixes": "Select fixes",
+    "apply": "Apply fixes",
+    "noIssues": "No issues found",
+    "noFilteredIssues": "No issues match the current filters",
+    "severity": {
+      "error": "error",
+      "warning": "warning",
+      "info": "info"
+    }
+  },
   "bulkOffset": {
     "title": "Select subtitles to bulk offset timestamps of current track: {track}",
     "emptyState": "Load subtitles to enable bulk offsets.",
