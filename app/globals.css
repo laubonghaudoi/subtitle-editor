@@ -70,6 +70,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  /* Keep in sync with EDITOR_MIN_WIDTH_PX in components/editor/viewport.ts. */
+  --breakpoint-editor: 64rem;
+
   /* Radix palette mappings (exact-name matches + Radix-only palettes) */
   /* gray */
   --color-gray-50: var(--gray-1);
