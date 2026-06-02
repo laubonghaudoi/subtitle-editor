@@ -11,6 +11,12 @@
     "toggleTheme": "Hell- und Dunkelmodus umschalten",
     "settings": "Einstellungen"
   },
+  "narrowScreen": {
+    "title": "Nutze einen breiteren Bildschirm",
+    "description": "Die Untertitelbearbeitung braucht Platz für Video, Zeitleiste und Untertitelsteuerung. Öffne diesen Editor auf einem Desktop, Laptop oder Tablet im Querformat.",
+    "minimum": "Empfohlene Mindestbreite: {width}px",
+    "loading": "Editor wird geladen..."
+  },
   "buttons": {
     "loadMedia": "Medien laden",
     "loadSrt": "Untertitel laden",

@@ -11,6 +11,12 @@
     "toggleTheme": "Toggle light and dark mode",
     "settings": "Settings"
   },
+  "narrowScreen": {
+    "title": "Use a wider screen",
+    "description": "Subtitle editing needs room for video, timeline, and caption controls. Open this editor on a desktop, laptop, or tablet in landscape.",
+    "minimum": "Minimum recommended width: {width}px",
+    "loading": "Loading editor..."
+  },
   "buttons": {
     "loadMedia": "Load Media",
     "loadSrt": "Load Subtitles",

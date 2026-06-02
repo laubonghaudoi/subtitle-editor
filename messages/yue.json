@@ -11,6 +11,12 @@
     "toggleTheme": "切換明暗模式",
     "settings": "設定"
   },
+  "narrowScreen": {
+    "title": "請使用較闊嘅畫面",
+    "description": "字幕編輯需要足夠空間顯示影片、時間軸同字幕控制。請喺桌面電腦、手提電腦，或者橫向平板打開呢個編輯器。",
+    "minimum": "建議最少闊度：{width}px",
+    "loading": "載入編輯器..."
+  },
   "buttons": {
     "loadMedia": "載入媒體",
     "loadSrt": "載入 .srt/.vtt",

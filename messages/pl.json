@@ -11,6 +11,12 @@
     "toggleTheme": "Przełącz tryb jasny/ciemny",
     "settings": "Ustawienia"
   },
+  "narrowScreen": {
+    "title": "Użyj szerszego ekranu",
+    "description": "Edycja napisów wymaga miejsca na wideo, oś czasu i kontrolki napisów. Otwórz ten edytor na komputerze, laptopie albo tablecie w orientacji poziomej.",
+    "minimum": "Zalecana minimalna szerokość: {width}px",
+    "loading": "Ładowanie edytora..."
+  },
   "buttons": {
     "loadMedia": "Wczytaj media",
     "loadSrt": "Wczytaj napisy",
