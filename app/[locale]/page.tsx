@@ -1,5 +1,23 @@
-import EditorApp from "@/components/editor/editor-app";
+import { NarrowScreenNotice } from "@/components/editor/narrow-screen-notice";
+import ResponsiveEditorEntry from "@/components/editor/responsive-editor-entry";
+import { EDITOR_MIN_WIDTH_PX } from "@/components/editor/viewport";
+import { getTranslations } from "next-intl/server";
 
-export default function Home() {
-  return <EditorApp />;
+export default async function Home() {
+  const narrowScreen = await getTranslations("narrowScreen");
+  const navigation = await getTranslations("navigation");
+
+  return (
+    <>
+      <NarrowScreenNotice
+        eyebrow={navigation("title")}
+        title={narrowScreen("title")}
+        description={narrowScreen("description")}
+        minimum={narrowScreen("minimum", { width: EDITOR_MIN_WIDTH_PX })}
+        faqHref="/faq"
+        faqLabel={navigation("faq")}
+      />
+      <ResponsiveEditorEntry loadingLabel={narrowScreen("loading")} />
+    </>
+  );
 }
