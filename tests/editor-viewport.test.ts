@@ -28,10 +28,7 @@ test("editor breakpoint contract stays aligned across TS and Tailwind", () => {
 
   const cssMinWidthPx = Number(match[1]) * 16;
   assert.equal(cssMinWidthPx, EDITOR_MIN_WIDTH_PX);
-  assert.equal(
-    EDITOR_WIDE_VIEWPORT_QUERY,
-    `(min-width: ${cssMinWidthPx}px)`,
-  );
+  assert.equal(EDITOR_WIDE_VIEWPORT_QUERY, `(min-width: ${cssMinWidthPx}px)`);
 });
 
 test("isWideEditorViewport reads the configured media query", () => {
