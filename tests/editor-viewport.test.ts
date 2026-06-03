@@ -2,12 +2,16 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
+  NARROW_SCREEN_PROCEED_SESSION_KEY,
   EDITOR_MIN_WIDTH_PX,
   EDITOR_MIN_WIDTH_REM,
   EDITOR_WIDE_VIEWPORT_QUERY,
   INITIAL_EDITOR_VIEWPORT_STATE,
+  createEditorViewportState,
   isWideEditorViewport,
   nextEditorViewportState,
+  persistNarrowScreenProceed,
+  readNarrowScreenProceed,
   type MatchMediaLike,
 } from "../components/editor/viewport";
 
@@ -45,18 +49,55 @@ test("editor viewport state latches after the first wide viewport", () => {
   );
   assert.deepEqual(firstNarrow, {
     isWide: false,
+    hasNarrowScreenProceed: false,
     shouldMountEditor: false,
   });
 
   const firstWide = nextEditorViewportState(firstNarrow, true);
   assert.deepEqual(firstWide, {
     isWide: true,
+    hasNarrowScreenProceed: false,
     shouldMountEditor: true,
   });
 
   const narrowedAfterMount = nextEditorViewportState(firstWide, false);
   assert.deepEqual(narrowedAfterMount, {
     isWide: false,
+    hasNarrowScreenProceed: false,
     shouldMountEditor: true,
   });
+});
+
+test("narrow screen proceed latches editor mounting", () => {
+  const proceeded = createEditorViewportState(false, true);
+  assert.deepEqual(proceeded, {
+    isWide: false,
+    hasNarrowScreenProceed: true,
+    shouldMountEditor: true,
+  });
+
+  const stillNarrow = nextEditorViewportState(proceeded, false);
+  assert.deepEqual(stillNarrow, {
+    isWide: false,
+    hasNarrowScreenProceed: true,
+    shouldMountEditor: true,
+  });
+});
+
+test("narrow screen proceed storage tolerates unavailable sessionStorage", () => {
+  assert.equal(readNarrowScreenProceed(undefined), false);
+  assert.doesNotThrow(() => persistNarrowScreenProceed(undefined));
+
+  const stored = new Map<string, string>();
+  const storage = {
+    getItem: (key: string) => stored.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      stored.set(key, value);
+    },
+  };
+
+  assert.equal(readNarrowScreenProceed(storage), false);
+  persistNarrowScreenProceed(storage);
+  assert.equal(stored.get(NARROW_SCREEN_PROCEED_SESSION_KEY), "true");
+  assert.equal(readNarrowScreenProceed(storage), true);
 });

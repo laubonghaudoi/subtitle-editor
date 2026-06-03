@@ -5,6 +5,8 @@ interface NarrowScreenNoticeProps {
   minimum: string;
   faqHref: string;
   faqLabel: string;
+  proceedLabel: string;
+  onProceed: () => void;
 }
 
 export function NarrowScreenNotice({
@@ -14,6 +16,8 @@ export function NarrowScreenNotice({
   minimum,
   faqHref,
   faqLabel,
+  proceedLabel,
+  onProceed,
 }: NarrowScreenNoticeProps) {
   return (
     <section
@@ -32,12 +36,21 @@ export function NarrowScreenNotice({
         </h1>
         <p className="text-base leading-7 text-slate-200">{description}</p>
         <p className="text-sm text-slate-400">{minimum}</p>
-        <a
-          href={faqHref}
-          className="inline-flex min-h-10 items-center justify-center rounded-xs border border-teal-300 px-4 text-sm font-medium text-teal-100 transition hover:bg-teal-300 hover:text-slate-950"
-        >
-          {faqLabel}
-        </a>
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <button
+            type="button"
+            onClick={onProceed}
+            className="inline-flex min-h-10 items-center justify-center rounded-xs bg-teal-300 px-4 text-sm font-semibold text-slate-950 transition hover:bg-teal-200"
+          >
+            {proceedLabel}
+          </button>
+          <a
+            href={faqHref}
+            className="inline-flex min-h-10 items-center justify-center rounded-xs border border-teal-300 px-4 text-sm font-medium text-teal-100 transition hover:bg-teal-300 hover:text-slate-950"
+          >
+            {faqLabel}
+          </a>
+        </div>
       </div>
     </section>
   );

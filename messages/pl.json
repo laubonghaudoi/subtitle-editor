@@ -13,9 +13,10 @@
   },
   "narrowScreen": {
     "title": "Użyj szerszego ekranu",
-    "description": "Edycja napisów wymaga miejsca na wideo, oś czasu i kontrolki napisów. Otwórz ten edytor na komputerze, laptopie albo tablecie w orientacji poziomej.",
+    "description": "Ten edytor jest zaprojektowany dla ekranów o rozmiarze desktopowym. Możesz kontynuować tutaj, ale wideo, oś czasu i kontrolki napisów mogą być ciasne albo trudne w obsłudze.",
     "minimum": "Zalecana minimalna szerokość: {width}px",
-    "loading": "Ładowanie edytora..."
+    "loading": "Ładowanie edytora...",
+    "proceed": "Kontynuuj mimo to"
   },
   "buttons": {
     "loadMedia": "Wczytaj media",
