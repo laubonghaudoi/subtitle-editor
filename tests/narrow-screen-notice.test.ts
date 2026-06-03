@@ -42,3 +42,36 @@ test("narrow screen notice tells users to use a wider screen and links to FAQ", 
   });
   assert.equal(link.getAttribute("href"), "/faq");
 });
+
+test("narrow screen notice uses monochrome colors", () => {
+  const view = renderWithIntl(
+    createElement(NarrowScreenNotice, {
+      eyebrow: "Subtitle Editor",
+      title: "Use a wider screen",
+      description:
+        "This editor is built for desktop-size screens. You can continue here, but video, timeline, and caption controls may be cramped or hard to use.",
+      minimum: "Minimum recommended width: 1024px",
+      faqHref: "/faq",
+      faqLabel: "Frequently Asked Questions",
+      proceedLabel: "Proceed anyway",
+      onProceed: () => {},
+    }),
+  );
+
+  const section = view.getByRole("region", { name: "Use a wider screen" });
+  assert.match(section.className, /\bbg-white\b/);
+  assert.match(section.className, /\btext-black\b/);
+  assert.doesNotMatch(section.className, /slate|teal/);
+
+  const proceedButton = view.getByRole("button", { name: "Proceed anyway" });
+  assert.match(proceedButton.className, /\bbg-black\b/);
+  assert.match(proceedButton.className, /\btext-white\b/);
+  assert.doesNotMatch(proceedButton.className, /teal|slate/);
+
+  const faqLink = view.getByRole("link", {
+    name: "Frequently Asked Questions",
+  });
+  assert.match(faqLink.className, /\bborder-black\b/);
+  assert.match(faqLink.className, /\btext-black\b/);
+  assert.doesNotMatch(faqLink.className, /teal|slate/);
+});
