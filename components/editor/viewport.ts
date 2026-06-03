@@ -2,7 +2,7 @@ const CSS_PX_PER_REM = 16;
 
 export const EDITOR_MIN_WIDTH_REM = 64;
 export const EDITOR_MIN_WIDTH_PX = EDITOR_MIN_WIDTH_REM * CSS_PX_PER_REM;
-export const EDITOR_WIDE_VIEWPORT_QUERY = `(min-width: ${EDITOR_MIN_WIDTH_PX}px)`;
+export const EDITOR_WIDE_VIEWPORT_QUERY = `(min-width: ${EDITOR_MIN_WIDTH_REM}rem)`;
 
 export interface EditorViewportState {
   isWide: boolean;

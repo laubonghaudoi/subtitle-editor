@@ -26,9 +26,10 @@ test("editor breakpoint contract stays aligned across TS and Tailwind", () => {
   const match = css.match(/--breakpoint-editor:\s*(\d+(?:\.\d+)?)rem;/);
   assert.ok(match, "missing --breakpoint-editor rem value");
 
-  const cssMinWidthPx = Number(match[1]) * 16;
-  assert.equal(cssMinWidthPx, EDITOR_MIN_WIDTH_PX);
-  assert.equal(EDITOR_WIDE_VIEWPORT_QUERY, `(min-width: ${cssMinWidthPx}px)`);
+  const cssMinWidthRem = Number(match[1]);
+  assert.equal(cssMinWidthRem, EDITOR_MIN_WIDTH_REM);
+  assert.equal(EDITOR_MIN_WIDTH_PX, EDITOR_MIN_WIDTH_REM * 16);
+  assert.equal(EDITOR_WIDE_VIEWPORT_QUERY, `(min-width: ${cssMinWidthRem}rem)`);
 });
 
 test("isWideEditorViewport reads the configured media query", () => {
