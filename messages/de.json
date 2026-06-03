@@ -11,6 +11,13 @@
     "toggleTheme": "Hell- und Dunkelmodus umschalten",
     "settings": "Einstellungen"
   },
+  "narrowScreen": {
+    "title": "Nutze einen breiteren Bildschirm",
+    "description": "Dieser Editor ist für Bildschirme in Desktop-Größe gebaut. Du kannst hier fortfahren, aber Video, Zeitleiste und Untertitelsteuerung können eng oder schwer zu bedienen sein.",
+    "minimum": "Empfohlene Mindestbreite: {width}px",
+    "loading": "Editor wird geladen...",
+    "proceed": "Trotzdem fortfahren"
+  },
   "buttons": {
     "loadMedia": "Medien laden",
     "loadSrt": "Untertitel laden",

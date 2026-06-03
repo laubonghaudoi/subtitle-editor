@@ -11,6 +11,13 @@
     "toggleTheme": "Toggle light and dark mode",
     "settings": "Settings"
   },
+  "narrowScreen": {
+    "title": "Use a wider screen",
+    "description": "This editor is built for desktop-size screens. You can continue here, but video, timeline, and caption controls may be cramped or hard to use.",
+    "minimum": "Minimum recommended width: {width}px",
+    "loading": "Loading editor...",
+    "proceed": "Proceed anyway"
+  },
   "buttons": {
     "loadMedia": "Load Media",
     "loadSrt": "Load Subtitles",
