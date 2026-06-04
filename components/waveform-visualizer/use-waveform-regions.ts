@@ -1,18 +1,23 @@
 import type { BulkOffsetPreviewState } from "@/components/bulk-offset/drawer";
-import { getTrackColor, getTrackHandleColor } from "@/lib/track-colors";
+import { shouldIgnorePauseWhileHidden } from "@/hooks/use-visibility-playback";
 import { secondsToTime, timeToSeconds } from "@/lib/utils";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
 import { useCallback, useEffect, useRef, type RefObject } from "react";
 import type WaveSurfer from "wavesurfer.js";
-import RegionsPlugin, {
-  type Region,
-} from "wavesurfer.js/dist/plugins/regions.esm.js";
+import type { Region } from "wavesurfer.js/dist/plugins/regions.esm.js";
 import {
   useLabelMeasurements,
   type RegionMapEntry,
 } from "./use-label-measurements";
 import { usePreviewRegions } from "./use-preview-regions";
-import { applyRegionHandleStyles, createSubtitleRegionContent } from "./utils";
+import {
+  createRegionForSubtitle,
+  getRegionsPlugin,
+  hasStructuralRegionChange,
+  pruneStaleRegions,
+  renderRegionContent,
+  syncRegionForSubtitle,
+} from "./utils";
 
 interface UseWaveformRegionsParams {
   wavesurfer: WaveSurfer | null;
@@ -55,16 +60,12 @@ export const useWaveformRegions = ({
   // Track drag state to avoid repeated scroll triggers mid-drag
   // Dragging regions should not trigger auto scroll/tab switching
   const lastDraggedSubtitleId = useRef<string | null>(null);
-  const prevTrackCountRef = useRef<number>(tracks.length);
   const prevTracksRef = useRef<SubtitleTrack[]>(tracks);
 
   const { labelsOffsetTop, labelsAreaHeight, measureLabelsOverlay } =
     useLabelMeasurements(containerRef, tracks, subtitleToRegionMap);
-  const {
-    previewOffsetsRef,
-    updatePreviewRegions,
-    clearPreviewRegions,
-  } = usePreviewRegions(wavesurfer, subtitleToRegionMap);
+  const { previewOffsetsRef, updatePreviewRegions, clearPreviewRegions } =
+    usePreviewRegions(wavesurfer, subtitleToRegionMap);
 
   /**
    * Recreates all regions from scratch. Used when structural changes happen
@@ -73,11 +74,7 @@ export const useWaveformRegions = ({
   const regenerateRegions = useCallback(() => {
     if (!wavesurfer || wavesurfer.getDuration() === 0) return;
 
-    const regionsPlugin = wavesurfer
-      .getActivePlugins()
-      .find((plugin) => plugin instanceof RegionsPlugin) as
-      | RegionsPlugin
-      | undefined;
+    const regionsPlugin = getRegionsPlugin(wavesurfer);
     if (!regionsPlugin) return;
 
     regionsPlugin.getRegions().forEach((region) => {
@@ -89,44 +86,14 @@ export const useWaveformRegions = ({
 
     tracks.forEach((track, trackIndex) => {
       track.subtitles.forEach((subtitle) => {
-        const start = timeToSeconds(subtitle.startTime);
-        const end = timeToSeconds(subtitle.endTime);
-
-        const content = createSubtitleRegionContent(
-          subtitle.startTime,
-          subtitle.text,
-          subtitle.endTime,
-          { theme },
-        );
-
-        const regionColor = getTrackColor(trackIndex);
-        const handleColor = getTrackHandleColor(trackIndex);
-
-        const region = regionsPlugin.addRegion({
-          id: subtitle.uuid,
-          start,
-          end,
-          content,
-          color: regionColor,
-          drag: true,
-          resize: true,
-          minLength: 0.1,
-        });
-
-        if (region.element) {
-          const trackHeight = 100 / tracks.length;
-          const trackTop = trackIndex * trackHeight;
-          region.element.style.top = `${trackTop}%`;
-          region.element.style.height = `${trackHeight}%`;
-          region.element.style.position = "absolute";
-        }
-
-        applyRegionHandleStyles(region, handleColor);
-
-        subtitleToRegionMap.current.set(subtitle.uuid, {
-          region,
+        createRegionForSubtitle({
+          regionsPlugin,
+          subtitle,
           trackId: track.id,
           trackIndex,
+          trackCount: tracks.length,
+          theme,
+          subtitleToRegionMap: subtitleToRegionMap.current,
         });
       });
     });
@@ -144,70 +111,45 @@ export const useWaveformRegions = ({
   ]);
 
   useEffect(() => {
-    // When tracks/subtitles change, decide if we can update in place
-    // or if a full regeneration is required.
     if (!wavesurfer) return;
+    const duration = (() => {
+      try {
+        return wavesurfer.getDuration();
+      } catch {
+        return 0;
+      }
+    })();
+    if (!duration) return;
 
     const prevTracks = prevTracksRef.current;
-    const regionsPlugin = wavesurfer
-      .getActivePlugins()
-      .find((plugin) => plugin instanceof RegionsPlugin) as
-      | RegionsPlugin
-      | undefined;
+    const regionsPlugin = getRegionsPlugin(wavesurfer);
     if (!regionsPlugin) return;
 
-    let shouldRecreate = false;
-    if (prevTracks.length !== tracks.length) {
-      shouldRecreate = true;
-    }
-    if (!shouldRecreate) {
-      for (let i = 0; i < tracks.length; i += 1) {
-        const prevTrack = prevTracks[i];
-        const nextTrack = tracks[i];
-        if (!prevTrack || prevTrack.id !== nextTrack.id) {
-          shouldRecreate = true;
-          break;
-        }
-        if (prevTrack.subtitles.length !== nextTrack.subtitles.length) {
-          shouldRecreate = true;
-          break;
-        }
-        for (let j = 0; j < nextTrack.subtitles.length; j += 1) {
-          if (prevTrack.subtitles[j]?.uuid !== nextTrack.subtitles[j]?.uuid) {
-            shouldRecreate = true;
-            break;
-          }
-        }
-        if (shouldRecreate) break;
-      }
-    }
-
-    if (shouldRecreate) {
+    if (hasStructuralRegionChange(prevTracks, tracks)) {
       regenerateRegions();
-      prevTrackCountRef.current = tracks.length;
       prevTracksRef.current = tracks;
       return;
     }
 
     tracks.forEach((track, trackIndex) => {
       track.subtitles.forEach((subtitle) => {
-        const entry = subtitleToRegionMap.current.get(subtitle.uuid);
-        if (!entry) return;
-        const nextStart = timeToSeconds(subtitle.startTime);
-        const nextEnd = timeToSeconds(subtitle.endTime);
-        entry.region.setOptions({ start: nextStart, end: nextEnd });
-        entry.region.setOptions({
-          content: createSubtitleRegionContent(
-            subtitle.startTime,
-            subtitle.text,
-            subtitle.endTime,
-            { theme },
-          ),
+        if (subtitle.uuid === lastDraggedSubtitleId.current) {
+          return;
+        }
+
+        syncRegionForSubtitle({
+          regionsPlugin,
+          subtitleToRegionMap: subtitleToRegionMap.current,
+          subtitle,
+          trackId: track.id,
+          trackIndex,
+          trackCount: tracks.length,
+          theme,
         });
-        applyRegionHandleStyles(entry.region, getTrackHandleColor(trackIndex));
       });
     });
 
+    pruneStaleRegions(tracks, subtitleToRegionMap.current);
     requestAnimationFrame(measureLabelsOverlay);
     prevTracksRef.current = tracks;
   }, [tracks, wavesurfer, regenerateRegions, measureLabelsOverlay, theme]);
@@ -228,8 +170,7 @@ export const useWaveformRegions = ({
     };
 
     const handlePause = () => {
-      const isHidden = typeof document !== "undefined" && document.hidden;
-      if (playInBackground && isHidden) {
+      if (shouldIgnorePauseWhileHidden(playInBackground)) {
         return;
       }
       onPlayPause(false);
@@ -243,7 +184,6 @@ export const useWaveformRegions = ({
       }
       let newStartTime = region.start;
       let newEndTime = region.end;
-      let adjusted = false;
 
       let currentSubtitle: Subtitle | undefined;
       let currentTrack: SubtitleTrack | undefined;
@@ -281,12 +221,12 @@ export const useWaveformRegions = ({
           ? currentTrack.subtitles[orderedIndex + 1]
           : null;
       const prevOrderedRegion = prevOrderedSubtitle
-        ? subtitleToRegionMap.current.get(prevOrderedSubtitle.uuid)?.region ??
-          null
+        ? (subtitleToRegionMap.current.get(prevOrderedSubtitle.uuid)?.region ??
+          null)
         : null;
       const nextOrderedRegion = nextOrderedSubtitle
-        ? subtitleToRegionMap.current.get(nextOrderedSubtitle.uuid)?.region ??
-          null
+        ? (subtitleToRegionMap.current.get(nextOrderedSubtitle.uuid)?.region ??
+          null)
         : null;
 
       if (
@@ -299,25 +239,19 @@ export const useWaveformRegions = ({
         if (originalSubtitle) {
           const originalStartTime = timeToSeconds(originalSubtitle.startTime);
           const originalEndTime = timeToSeconds(originalSubtitle.endTime);
-
-          region.setOptions({
-            start: originalStartTime,
-            end: originalEndTime,
-          });
-          region.setOptions({
-            content: createSubtitleRegionContent(
-              originalSubtitle.startTime,
-              originalSubtitle.text,
-              originalSubtitle.endTime,
-              { theme },
-            ),
-          });
-
           const trackIndex = tracks.findIndex(
             (track) => track.id === currentTrack?.id,
           );
-          const handleColor = getTrackHandleColor(trackIndex);
-          applyRegionHandleStyles(region, handleColor);
+          renderRegionContent({
+            region,
+            subtitle: originalSubtitle,
+            trackIndex,
+            theme,
+            timing: {
+              start: originalStartTime,
+              end: originalEndTime,
+            },
+          });
         }
         return;
       }
@@ -338,14 +272,12 @@ export const useWaveformRegions = ({
 
       if (clampOverlaps) {
         if (prevRegion && newStartTime < prevRegion.end) {
-          adjusted = true;
           newStartTime = prevRegion.end;
           if (newStartTime >= newEndTime) {
             newEndTime = newStartTime + 0.1;
           }
         }
         if (nextRegion && newEndTime > nextRegion.start) {
-          adjusted = true;
           newEndTime = nextRegion.start;
           if (newEndTime <= newStartTime) {
             newStartTime = newEndTime - 0.1;
@@ -353,35 +285,25 @@ export const useWaveformRegions = ({
         }
       }
 
-      if (adjusted) {
-        region.setOptions({
-          start: newStartTime,
-          end: newEndTime,
-        });
-      }
-
       const newStartTimeFormatted = secondsToTime(newStartTime);
       const newEndTimeFormatted = secondsToTime(newEndTime);
-
-      const subtitle = currentTrack.subtitles.find(
-        (item) => item.uuid === subtitleUuid,
+      const trackIndex = tracks.findIndex(
+        (track) => track.id === currentTrack?.id,
       );
-      if (subtitle) {
-        region.setOptions({
-          content: createSubtitleRegionContent(
-            newStartTimeFormatted,
-            subtitle.text,
-            newEndTimeFormatted,
-            { theme },
-          ),
-        });
-
-        const trackIndex = tracks.findIndex(
-          (track) => track.id === currentTrack?.id,
-        );
-        const handleColor = getTrackHandleColor(trackIndex);
-        applyRegionHandleStyles(region, handleColor);
-      }
+      renderRegionContent({
+        region,
+        subtitle: {
+          ...currentSubtitle,
+          startTime: newStartTimeFormatted,
+          endTime: newEndTimeFormatted,
+        },
+        trackIndex,
+        theme,
+        timing: {
+          start: newStartTime,
+          end: newEndTime,
+        },
+      });
 
       // Mark this subtitle as being dragged to avoid re-rendering it
       lastDraggedSubtitleId.current = subtitleUuid;
@@ -420,11 +342,7 @@ export const useWaveformRegions = ({
     wavesurfer.on("play", handlePlay);
     wavesurfer.on("pause", handlePause);
 
-    const regionsPlugin = wavesurfer
-      .getActivePlugins()
-      .find((plugin) => plugin instanceof RegionsPlugin) as
-      | RegionsPlugin
-      | undefined;
+    const regionsPlugin = getRegionsPlugin(wavesurfer);
     if (regionsPlugin) {
       regionsPlugin.on("region-updated", handleRegionUpdate);
       regionsPlugin.on("region-clicked", handleRegionClick);
@@ -479,130 +397,6 @@ export const useWaveformRegions = ({
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, [measureLabelsOverlay]);
-
-  // Update subtitle text requires only updating the target region content
-  useEffect(() => {
-    if (!wavesurfer) return;
-    const duration = (() => {
-      try {
-        return wavesurfer.getDuration();
-      } catch {
-        return 0;
-      }
-    })();
-    if (!duration) return;
-
-    const regionsPlugin = wavesurfer
-      .getActivePlugins()
-      .find((plugin) => plugin instanceof RegionsPlugin) as
-      | RegionsPlugin
-      | undefined;
-    if (!regionsPlugin) return;
-
-    tracks.forEach((track, trackIndex) => {
-      track.subtitles.forEach((subtitle) => {
-        if (subtitle.uuid === lastDraggedSubtitleId.current) {
-          return;
-        }
-
-        const regionData = subtitleToRegionMap.current.get(subtitle.uuid);
-
-        if (!regionData) {
-          const start = timeToSeconds(subtitle.startTime);
-          const end = timeToSeconds(subtitle.endTime);
-          const content = createSubtitleRegionContent(
-            subtitle.startTime,
-            subtitle.text,
-            subtitle.endTime,
-            { theme },
-          );
-
-          const regionColor = getTrackColor(trackIndex);
-          const handleColor = getTrackHandleColor(trackIndex);
-
-          const region = regionsPlugin.addRegion({
-            id: subtitle.uuid,
-            start,
-            end,
-            content,
-            color: regionColor,
-            drag: true,
-            resize: true,
-            minLength: 0.1,
-          });
-
-          if (region.element) {
-            const trackHeight = 100 / tracks.length;
-            const trackTop = trackIndex * trackHeight;
-            region.element.style.top = `${trackTop}%`;
-            region.element.style.height = `${trackHeight}%`;
-            region.element.style.position = "absolute";
-          }
-
-          applyRegionHandleStyles(region, handleColor);
-          subtitleToRegionMap.current.set(subtitle.uuid, {
-            region,
-            trackId: track.id,
-            trackIndex,
-          });
-        } else if (regionData.region.element) {
-          const region = regionData.region;
-          const newStart = timeToSeconds(subtitle.startTime);
-          const newEnd = timeToSeconds(subtitle.endTime);
-
-          if (region.start !== newStart || region.end !== newEnd) {
-            region.setOptions({
-              start: newStart,
-              end: newEnd,
-            });
-          }
-
-          region.setOptions({
-            content: createSubtitleRegionContent(
-              subtitle.startTime,
-              subtitle.text,
-              subtitle.endTime,
-              { theme },
-            ),
-          });
-
-          const handleColor = getTrackHandleColor(trackIndex);
-          applyRegionHandleStyles(region, handleColor);
-
-          const element = region.element as HTMLElement | null;
-          if (element) {
-            const trackHeight = 100 / tracks.length;
-            const trackTop = trackIndex * trackHeight;
-            element.style.top = `${trackTop}%`;
-            element.style.height = `${trackHeight}%`;
-            element.style.position = "absolute";
-          }
-
-          subtitleToRegionMap.current.set(subtitle.uuid, {
-            region,
-            trackId: track.id,
-            trackIndex,
-          });
-        }
-      });
-    });
-
-    const allSubtitleUuids = new Set<string>();
-    tracks.forEach((track) => {
-      track.subtitles.forEach((subtitle) => {
-        allSubtitleUuids.add(subtitle.uuid);
-      });
-    });
-
-    for (const [uuid, regionData] of subtitleToRegionMap.current.entries()) {
-      if (!allSubtitleUuids.has(uuid)) {
-        regionData.region.remove();
-        subtitleToRegionMap.current.delete(uuid);
-      }
-    }
-
-    requestAnimationFrame(measureLabelsOverlay);
-  }, [tracks, wavesurfer, measureLabelsOverlay, theme]);
 
   // Re-measure label overlay when labels are toggled or track count changes
   useEffect(() => {

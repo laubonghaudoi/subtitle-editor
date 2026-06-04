@@ -1,4 +1,3 @@
-import type { Subtitle } from "@/types/subtitle";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -24,34 +23,6 @@ export const secondsToTime = (seconds: number): string => {
     2,
     "0",
   )}:${secs.toFixed(3).padStart(6, "0").replace(".", ",")}`;
-};
-
-// If you store your subtitles in an array, you might do something like:
-export const subtitlesToSrtString = (subtitles: Subtitle[]): string => {
-  return subtitles
-    .map((sub, idx) => {
-      const index = Number.isFinite(sub.id) ? sub.id : 0;
-      const cueId = index > 0 ? index : idx + 1;
-      return `${cueId}\n${sub.startTime} --> ${sub.endTime}\n${sub.text}\n`;
-    })
-    .join("\n");
-};
-
-export const subtitlesToVttString = (
-  subtitles: Subtitle[],
-  header: string = "WEBVTT",
-): string => {
-  const safeHeader = header.trim().length > 0 ? header.trim() : "WEBVTT";
-  const body = subtitles
-    .map((sub, idx) => {
-      const index = Number.isFinite(sub.id) ? sub.id : 0;
-      const cueId = index > 0 ? index : idx + 1;
-      const start = sub.startTime.replace(",", ".");
-      const end = sub.endTime.replace(",", ".");
-      return `${cueId}\n${start} --> ${end}\n${sub.text}\n`;
-    })
-    .join("\n");
-  return `${safeHeader}\n\n${body.endsWith("\n") ? body : `${body}\n`}`;
 };
 
 // Function to validate time format

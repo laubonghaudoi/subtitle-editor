@@ -1,12 +1,8 @@
-import { subtitlesToVttString } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 
 const flattenSubtitleText = (subtitle: Subtitle): string => {
   const text = stripVttStyling(subtitle.text, false);
-  return text
-    .replace(/\r?\n/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  return text.replace(/\r?\n/g, " ").replace(/\s+/g, " ").trim();
 };
 
 const toCsvCell = (value: string | number): string => {
@@ -20,16 +16,33 @@ const toCsvCell = (value: string | number): string => {
 
 export const buildSrtContent = (subtitles: Subtitle[]): string => {
   return subtitles
-    .map((subtitle) => {
-      return `${subtitle.id}\n${subtitle.startTime} --> ${subtitle.endTime}\n${subtitle.text}\n`;
+    .map((subtitle, index) => {
+      const cueIndex = Number.isFinite(subtitle.id) ? subtitle.id : 0;
+      const cueId = cueIndex > 0 ? cueIndex : index + 1;
+      return `${cueId}\n${subtitle.startTime} --> ${subtitle.endTime}\n${subtitle.text}\n`;
     })
     .join("\n");
 };
 
-export const buildPlainTextContent = (subtitles: Subtitle[]): string => {
-  return subtitles
-    .map((subtitle) => flattenSubtitleText(subtitle))
+export const subtitlesToVttString = (
+  subtitles: Subtitle[],
+  header: string = "WEBVTT",
+): string => {
+  const safeHeader = header.trim().length > 0 ? header.trim() : "WEBVTT";
+  const body = subtitles
+    .map((subtitle, index) => {
+      const cueIndex = Number.isFinite(subtitle.id) ? subtitle.id : 0;
+      const cueId = cueIndex > 0 ? cueIndex : index + 1;
+      const start = subtitle.startTime.replace(",", ".");
+      const end = subtitle.endTime.replace(",", ".");
+      return `${cueId}\n${start} --> ${end}\n${subtitle.text}\n`;
+    })
     .join("\n");
+  return `${safeHeader}\n\n${body.endsWith("\n") ? body : `${body}\n`}`;
+};
+
+export const buildPlainTextContent = (subtitles: Subtitle[]): string => {
+  return subtitles.map((subtitle) => flattenSubtitleText(subtitle)).join("\n");
 };
 
 export const buildCsvContent = (subtitles: Subtitle[]): string => {

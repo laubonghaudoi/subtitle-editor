@@ -64,7 +64,7 @@ export default function SubtitleTextEditor({
   if (isEditing) {
     return (
       <Textarea
-        className="w-full h-fit bg-blue-300 min-h-0 resize-none rounded-sm focus-visible:outline-none focus-visible:ring-0 shadow-none border-none field-sizing-content"
+        className="w-full h-fit bg-iris-200 min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border border-iris-800 field-sizing-content"
         rows={1}
         ref={textAreaRef}
         value={editText}
@@ -154,12 +154,7 @@ export default function SubtitleTextEditor({
             const nextText = e.currentTarget.value;
 
             if (e.shiftKey) {
-              onSplitSubtitle(
-                subtitle.id,
-                caretPos,
-                nextText.length,
-                nextText,
-              );
+              onSplitSubtitle(subtitle.id, caretPos, nextText.length, nextText);
             } else if (nextText !== subtitle.text) {
               onUpdateText(subtitle.id, nextText);
             }
@@ -200,9 +195,7 @@ export default function SubtitleTextEditor({
         }
       }}
     >
-      {subtitle.text || (
-        <span className="text-muted-foreground">(Empty)</span>
-      )}
+      {subtitle.text || <span className="text-muted-foreground">(Empty)</span>}
     </button>
   );
 }

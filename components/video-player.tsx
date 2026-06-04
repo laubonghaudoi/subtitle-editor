@@ -6,7 +6,10 @@ import {
   type BrowserMediaSupport,
   type MediaFormatSupport,
 } from "@/lib/media-support";
-import { subtitlesToVttString } from "@/lib/utils";
+import { subtitlesToVttString } from "@/lib/format";
+import { warnDev } from "@/lib/log";
+import { CUE_PREVIEW_SEEK_OFFSET_SECONDS } from "@/lib/subtitle-playback";
+import { shouldIgnorePauseWhileHidden } from "@/hooks/use-visibility-playback";
 import { useTranslations } from "next-intl";
 import {
   Fragment,
@@ -105,11 +108,11 @@ const VideoPlayer = forwardRef(function VideoPlayer(
           ) {
             return;
           }
-          console.warn("Failed to resume media playback:", error);
+          warnDev("Failed to resume media playback:", error);
         });
       }
     } catch (error) {
-      console.warn("Failed to resume media playback:", error);
+      warnDev("Failed to resume media playback:", error);
     }
   }, []);
 
@@ -121,7 +124,11 @@ const VideoPlayer = forwardRef(function VideoPlayer(
     if (playerRef.current && typeof seekTime === "number") {
       const player = playerRef.current;
       const currentTime = player.currentTime ?? 0;
-      if (Math.abs(currentTime - seekTime) > 0.5) {
+      const seekDelta = Math.abs(currentTime - seekTime);
+      if (
+        seekDelta > 0.5 ||
+        (seekDelta > 0 && seekDelta <= CUE_PREVIEW_SEEK_OFFSET_SECONDS * 2)
+      ) {
         player.currentTime = seekTime;
         timeToRestore.current = seekTime;
       }
@@ -146,23 +153,6 @@ const VideoPlayer = forwardRef(function VideoPlayer(
       playerRef.current.playbackRate = playbackRate;
     }
   }, [playbackRate]);
-
-  useEffect(() => {
-    if (!playInBackground || typeof document === "undefined") {
-      return;
-    }
-
-    const handleVisibilityChange = () => {
-      if (!document.hidden && isPlaying) {
-        resumePlayback();
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [isPlaying, playInBackground, resumePlayback]);
 
   useEffect(() => {
     if (!mediaFile) {
@@ -250,7 +240,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   if (!mediaUrl) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-        <Label className="cursor-pointer text-xl hover:text-blue-800 underline">
+        <Label className="cursor-pointer text-xl hover:text-accent-ink underline">
           {t("videoPlayer.loadFile")}
           <Input
             className="hidden"
@@ -319,8 +309,7 @@ const VideoPlayer = forwardRef(function VideoPlayer(
         }}
         onPlay={() => onPlayPause(true)}
         onPause={() => {
-          const isHidden = typeof document !== "undefined" && document.hidden;
-          if (playInBackground && isHidden) {
+          if (shouldIgnorePauseWhileHidden(playInBackground)) {
             return;
           }
           onPlayPause(false);

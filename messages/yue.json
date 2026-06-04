@@ -11,6 +11,13 @@
     "toggleTheme": "切換明暗模式",
     "settings": "設定"
   },
+  "narrowScreen": {
+    "title": "推薦使用寬屏設備",
+    "description": "本字幕編輯器係為桌面大細嘅屏幕設計。你可以繼續使用，只不過界面會好混亂亦比較難用。",
+    "minimum": "建議最少闊度：{width}px",
+    "loading": "載入編輯器...",
+    "proceed": "繼續使用"
+  },
   "buttons": {
     "loadMedia": "載入媒體",
     "loadSrt": "載入 .srt/.vtt",
@@ -180,6 +187,14 @@
     "merge": "合併",
     "delete": "刪除",
     "noRoom": "冇位再加"
+  },
+  "validation": {
+    "invalidTimeTitle": "時間格式無效",
+    "invalidTimeDescription": "請使用 HH:MM:SS,MS 格式（例如：00:00:20,450）。",
+    "invalidStartTitle": "開始時間無效",
+    "invalidStartDescription": "開始時間唔可以遲過字幕嘅結束時間。",
+    "invalidEndTitle": "結束時間無效",
+    "invalidEndDescription": "結束時間唔可以早過字幕嘅開始時間。"
   },
   "metadata": {
     "title": "字幕編輯器 - 免費開源，全網頁 SRT/VTT 字幕編輯器",

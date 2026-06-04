@@ -10,11 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLocalSession } from "@/context/subtitle-context";
-import {
-  IconDownload,
-  IconRestore,
-  IconTrash,
-} from "@tabler/icons-react";
+import { IconDownload, IconRestore, IconTrash } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
@@ -55,33 +51,39 @@ export default function LocalSessionRecovery() {
 
   return (
     <Dialog open>
-      <DialogContent className="sm:max-w-lg" hideClose>
-        <DialogHeader>
-          <DialogTitle>{t("localSession.title")}</DialogTitle>
-          <DialogDescription>
+      <DialogContent
+        className="max-w-[calc(100vw-2rem)] text-base sm:max-w-xl"
+        hideClose
+      >
+        <DialogHeader className="min-w-0">
+          <DialogTitle className="text-xl leading-tight">
+            {t("localSession.title")}
+          </DialogTitle>
+          <DialogDescription className="text-base leading-relaxed">
             {t("localSession.description")}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3 rounded-sm border border-black/10 bg-neutral-50 p-4 text-sm dark:border-white/10 dark:bg-neutral-900">
-          <p className="font-medium">
+        <div className="min-w-0 space-y-3 overflow-hidden rounded-lg border-2 border-foreground bg-neutral-50 p-4 text-base leading-relaxed dark:bg-neutral-900">
+          <p className="break-words font-medium">
             {t("localSession.summary", {
               tracks: sessionSummary.trackCount,
               subtitles: sessionSummary.subtitleCount,
             })}
           </p>
-          <p className="text-muted-foreground">
+          <p className="break-words text-muted-foreground">
             {t("localSession.savedAt", { time: sessionSummary.savedAt })}
           </p>
-          <p className="text-muted-foreground">
+          <p className="break-words text-muted-foreground">
             {t("localSession.privacy")}
           </p>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="sm:flex-wrap">
           <Button
             type="button"
             variant="outline"
+            className="w-full sm:w-auto text-base"
             onClick={() => downloadLocalSessionBackup(pendingLocalSession)}
           >
             <IconDownload />
@@ -90,12 +92,17 @@ export default function LocalSessionRecovery() {
           <Button
             type="button"
             variant="destructive"
+            className="w-full sm:w-auto text-base"
             onClick={discardLocalSession}
           >
             <IconTrash />
             {t("localSession.discard")}
           </Button>
-          <Button type="button" onClick={restoreLocalSession}>
+          <Button
+            type="button"
+            className="w-full sm:w-auto text-base"
+            onClick={restoreLocalSession}
+          >
             <IconRestore />
             {t("localSession.restore")}
           </Button>

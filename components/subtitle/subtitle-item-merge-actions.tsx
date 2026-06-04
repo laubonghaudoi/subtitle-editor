@@ -1,4 +1,8 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Subtitle } from "@/types/subtitle";
 import { IconFold, IconPlus } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
@@ -41,12 +45,12 @@ export default function SubtitleItemMergeActions({
           <TooltipTrigger
             type="button"
             onClick={() => onMerge(subtitle.id, nextSubtitle.id)}
-            className="px-2 py-1 text-xs bg-amber-200 hover:bg-amber-300 text-amber-800 dark:bg-amber-800 dark:hover:bg-amber-900 dark:text-amber-700 rounded cursor-pointer"
+            className="px-2 py-1 text-xs rounded-xs ring-1 ring-inset ring-amber-700 bg-amber-200 hover:bg-amber-300 text-[color:var(--amber-11)] cursor-pointer"
             aria-label={t("tooltips.merge")}
           >
             <IconFold size={16} />
           </TooltipTrigger>
-          <TooltipContent className="bg-amber-900 dark:bg-amber-800 px-2 py-1 text-sm">
+          <TooltipContent className="bg-amber-900 dark:bg-amber-800 text-black px-2 py-1 text-sm">
             {t("tooltips.merge")}
           </TooltipContent>
         </Tooltip>
@@ -65,20 +69,18 @@ export default function SubtitleItemMergeActions({
               );
             }
           }}
-          className={`px-2 py-1 text-sm rounded ${
+          className={`px-2 py-1 text-sm rounded-xs ${
             isAddDisabled
-              ? "bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover-gray dark:text-gray-200 cursor-not-allowed"
-              : "bg-grass-300 hover:bg-grass-400 text-grass-800 dark:bg-grass-800 dark:hover:bg-grass-900 dark:text-grass-300 cursor-pointer"
+              ? "ring-1 ring-inset ring-slate-700 bg-slate-200 text-slate-900 cursor-not-allowed"
+              : "ring-1 ring-inset ring-green-800 bg-green-200 hover:bg-green-300 text-[color:var(--green-11)] cursor-pointer"
           }`}
-          aria-label={
-            isAddDisabled ? t("tooltips.noRoom") : t("tooltips.add")
-          }
+          aria-label={isAddDisabled ? t("tooltips.noRoom") : t("tooltips.add")}
         >
           <IconPlus size={16} />
         </TooltipTrigger>
         <TooltipContent
           className={`px-2 py-1 text-sm ${
-            isAddDisabled ? "bg-gray-800 dark:text-white" : "bg-grass-800"
+            isAddDisabled ? "" : "bg-green-800 text-black"
           }`}
         >
           {addTooltipContent}

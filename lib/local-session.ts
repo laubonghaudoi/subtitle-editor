@@ -28,11 +28,32 @@ export interface CreateLocalSessionSnapshotInput {
   appVersion?: string;
 }
 
+export interface LocalSessionSignatureInput {
+  tracks: SubtitleTrack[];
+  activeTrackId: string | null;
+  preferences: LocalSessionPreferences;
+}
+
 export interface LocalSessionStorage {
   getItem: (key: string) => string | null;
   setItem: (key: string, value: string) => void;
   removeItem: (key: string) => void;
 }
+
+const HASH_OFFSET = 2166136261;
+const HASH_PRIME = 16777619;
+
+const hashString = (hash: number, value: string): number => {
+  let nextHash = hash;
+  for (let index = 0; index < value.length; index += 1) {
+    nextHash ^= value.charCodeAt(index);
+    nextHash = Math.imul(nextHash, HASH_PRIME) >>> 0;
+  }
+  return nextHash;
+};
+
+const hashField = (hash: number, value: string | number | boolean | null) =>
+  hashString(hashString(hash, String(value).length.toString()), String(value));
 
 const cloneSubtitle = (subtitle: Subtitle): Subtitle => ({
   uuid: subtitle.uuid,
@@ -60,6 +81,42 @@ const normalizeActiveTrackId = (
   }
   return tracks[0]?.id ?? null;
 };
+
+export function getLocalSessionSignature({
+  tracks,
+  activeTrackId,
+  preferences,
+}: LocalSessionSignatureInput): string {
+  let hash = HASH_OFFSET;
+  hash = hashField(hash, activeTrackId);
+  hash = hashField(hash, preferences.showTrackLabels);
+  hash = hashField(hash, preferences.showSubtitleDuration);
+  hash = hashField(hash, preferences.addSpaceOnMerge);
+  hash = hashField(hash, preferences.clampOverlaps);
+  hash = hashField(hash, preferences.playInBackground);
+  hash = hashField(hash, tracks.length);
+
+  for (const track of tracks) {
+    hash = hashField(hash, track.id);
+    hash = hashField(hash, track.name);
+    hash = hashField(hash, track.vttHeader ?? null);
+    hash = hashField(hash, track.vttPrologue?.length ?? 0);
+    for (const prologueLine of track.vttPrologue ?? []) {
+      hash = hashField(hash, prologueLine);
+    }
+    hash = hashField(hash, track.subtitles.length);
+    for (const subtitle of track.subtitles) {
+      hash = hashField(hash, subtitle.uuid);
+      hash = hashField(hash, subtitle.id);
+      hash = hashField(hash, subtitle.startTime);
+      hash = hashField(hash, subtitle.endTime);
+      hash = hashField(hash, subtitle.text);
+      hash = hashField(hash, subtitle.trackId ?? null);
+    }
+  }
+
+  return `${tracks.length}:${hash.toString(36)}`;
+}
 
 export function createLocalSessionSnapshot({
   tracks,
@@ -262,7 +319,9 @@ export function clearLocalSessionSnapshot(
   }
 }
 
-export function buildLocalSessionBackup(snapshot: LocalSessionSnapshot): string {
+export function buildLocalSessionBackup(
+  snapshot: LocalSessionSnapshot,
+): string {
   return `${JSON.stringify(snapshot, null, 2)}\n`;
 }
 

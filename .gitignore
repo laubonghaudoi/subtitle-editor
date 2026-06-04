@@ -47,3 +47,5 @@ next-env.d.ts
 
 .open-next
 .wrangler
+# Superpowers brainstorming companion (local mockups)
+.superpowers/

@@ -78,34 +78,34 @@ export default function FaqPage() {
           <Link
             href="https://www.happyscribe.com/subtitle-tools/online-subtitle-editor/free"
             target="_blank"
-            className="hover:underline text-blue-800 hover:text-blue-900"
+            className="text-accent-ink hover:underline"
           >
             Happy Scribe
           </Link>{" "}
           offers a free online subtitle editor. No account registration is
           required. Editing subtitles and previewing with the video is very
-          easy. It is the closest to what I need. Unfortunately, it&apos;s missing
-          waveform visualization, which is deal breaker for me. It is not open
-          sourced either and we can&apos;t customize it.
+          easy. It is the closest to what I need. Unfortunately, it&apos;s
+          missing waveform visualization, which is deal breaker for me. It is
+          not open sourced either and we can&apos;t customize it.
         </li>
         <li>
           <Link
             href="https://www.nikse.dk/subtitleedit"
-            className="hover:underline text-blue-800 hover:text-blue-900"
+            className="text-accent-ink hover:underline"
           >
             Subtitle Edit
           </Link>{" "}
           is a great option and has all features I need. It supports waveform
           visualization, easy preview and editing, and even AI transcriptions.
           But it is a desktop software which requires installation, and it
-          doesn&apos;t support Mac. I have to use a Windows or Linux device to edit
-          subtitles.
+          doesn&apos;t support Mac. I have to use a Windows or Linux device to
+          edit subtitles.
         </li>
         <li>
           <Link
             href="https://aegisub.org/"
             target="_blank"
-            className="hover:underline text-blue-800 hover:text-blue-900"
+            className="text-accent-ink hover:underline"
           >
             Aegisub
           </Link>{" "}
@@ -119,7 +119,7 @@ export default function FaqPage() {
           <Link
             href="https://opensubtitleed.sourceforge.net/"
             target="_blank"
-            className="hover:underline text-blue-800 hover:text-blue-900"
+            className="text-accent-ink hover:underline"
           >
             Open Subtitle Editor
           </Link>{" "}
@@ -127,7 +127,7 @@ export default function FaqPage() {
           <Link
             href="https://www.movavi.com/"
             target="_blank"
-            className="hover:underline text-blue-800 hover:text-blue-900"
+            className="text-accent-ink hover:underline"
           >
             Movavi
           </Link>{" "}
@@ -156,7 +156,7 @@ export default function FaqPage() {
         <Link
           href="https://github.com/laubonghaudoi/subtitle-editor"
           target="_blank"
-          className="hover:underline text-blue-800 hover:text-blue-900"
+          className="text-accent-ink hover:underline"
         >
           laubonghaudoi/subtitle-editor
         </Link>
@@ -164,13 +164,32 @@ export default function FaqPage() {
         these days so I may not have time to develop new features. This is a
         community project and your contributions are always welcomed!
       </p>
+      <h2 className="text-xl font-bold my-4">
+        Can you support more video / audio file formats?
+      </h2>
+      <p>
+        This app relies on the browser&apos;s built-in media player to decode
+        the video / audio file you load. So the supported formats are determined
+        by your browser and there is nothing I can do about it. For example,
+        Safari and Microsoft Edge support the AC3 format, while Chrome and
+        Firefox do not. That said, you can still use{" "}
+        <Link
+          href="https://ffmpeg.org/"
+          target="_blank"
+          className="text-accent-ink hover:underline"
+        >
+          ffmpeg
+        </Link>{" "}
+        to convert your media files to a supported format before loading them
+        into the editor.
+      </p>
       <h2 className="text-xl font-bold my-4">Have feedback?</h2>
       <p>
         Feel free to{" "}
         <Link
           href="https://github.com/laubonghaudoi/subtitle-editor/issues"
           target="_blank"
-          className="hover:underline text-blue-800 hover:text-blue-900"
+          className="text-accent-ink hover:underline"
         >
           open an issue on GitHub
         </Link>
@@ -190,7 +209,7 @@ export default function FaqPage() {
         <Link
           href="https://github.com/laubonghaudoi/subtitle-editor/issues/11#issuecomment-3201949429"
           target="_blank"
-          className="hover:underline text-blue-800 hover:text-blue-900"
+          className="text-accent-ink hover:underline"
         >
           this GitHub issue
         </Link>
@@ -204,16 +223,16 @@ export default function FaqPage() {
       <p>
         Yes I recommend generating the srt file with an AI transcriber first,
         then editing it with this editor. That&apos;s why I listed &quot;AI
-        transcriptions&quot; as a non-goal above. It&apos;s much easier to just use a
-        specialized tool for that than building it into this editor. There are
-        many free srt generators available on huggingface, such as:
+        transcriptions&quot; as a non-goal above. It&apos;s much easier to just
+        use a specialized tool for that than building it into this editor. There
+        are many free srt generators available on huggingface, such as:
       </p>
       <ul className="list-disc mx-6 my-2">
         <li>
           <Link
             href="https://huggingface.co/spaces/k2-fsa/generate-subtitles-for-videos"
             target="_blank"
-            className="hover:underline text-blue-800 hover:text-blue-900"
+            className="text-accent-ink hover:underline"
           >
             k2-fsa/generate-subtitles-for-videos
           </Link>
@@ -222,7 +241,7 @@ export default function FaqPage() {
           <Link
             href="https://huggingface.co/spaces/BatuhanYilmaz/Whisper-Auto-Subtitled-Video-Generator"
             target="_blank"
-            className="hover:underline text-blue-800 hover:text-blue-900"
+            className="text-accent-ink hover:underline"
           >
             BatuhanYilmaz/Whisper-Auto-Subtitled-Video-Generator
           </Link>
@@ -231,7 +250,7 @@ export default function FaqPage() {
           <Link
             href="https://huggingface.co/spaces/NeuralFalcon/Whisper-Turbo-Subtitle"
             target="_blank"
-            className="hover:underline text-blue-800 hover:text-blue-900"
+            className="text-accent-ink hover:underline"
           >
             NeuralFalcon/Whisper-Turbo-Subtitle
           </Link>
@@ -241,7 +260,7 @@ export default function FaqPage() {
         You can also download{" "}
         <Link
           href="https://www.nikse.dk/subtitleedit"
-          className="hover:underline text-blue-800 hover:text-blue-900"
+          className="text-accent-ink hover:underline"
         >
           Subtitle Edit
         </Link>{" "}
@@ -254,7 +273,7 @@ export default function FaqPage() {
         Use{" "}
         <Link
           href="https://github.com/yt-dlp/yt-dlp"
-          className="hover:underline text-blue-800 hover:text-blue-900"
+          className="text-accent-ink hover:underline"
         >
           yt-dlp
         </Link>

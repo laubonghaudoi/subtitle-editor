@@ -50,7 +50,7 @@ export default function SubtitleTimeFields({
       toast({
         title: t("validation.invalidTimeTitle"),
         description: t("validation.invalidTimeDescription"),
-        className: "border-0 bg-orange-200 text-red-700",
+        className: "border-0 bg-red-200 text-red-950",
       });
       setEditingId(null);
       return;
@@ -63,7 +63,7 @@ export default function SubtitleTimeFields({
         toast({
           title: t("validation.invalidStartTitle"),
           description: t("validation.invalidStartDescription"),
-          className: "border-0 bg-orange-200 text-red-700",
+          className: "border-0 bg-red-200 text-red-950",
         });
         setEditingId(null);
         return;
@@ -73,7 +73,7 @@ export default function SubtitleTimeFields({
         toast({
           title: t("validation.invalidEndTitle"),
           description: t("validation.invalidEndDescription"),
-          className: "border-0 bg-orange-200 text-red-700",
+          className: "border-0 bg-red-200 text-red-950",
         });
         setEditingId(null);
         return;
@@ -115,7 +115,7 @@ export default function SubtitleTimeFields({
               setEditingStartTimeId(null);
             }
           }}
-          className="py-1 bg-blue-300 h-fit text-center text-sm min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
+          className="py-1 bg-iris-200 h-fit text-center text-sm min-h-0 resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border border-iris-800"
         />
       ) : (
         <Button
@@ -166,7 +166,7 @@ export default function SubtitleTimeFields({
               setEditingEndTimeId(null);
             }
           }}
-          className="py-1 bg-blue-300 h-fit min-h-0 text-center text-sm resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border-none"
+          className="py-1 bg-iris-200 h-fit min-h-0 text-center text-sm resize-none rounded-xs focus-visible:outline-none focus-visible:ring-0 shadow-none border border-iris-800"
         />
       ) : (
         <Button

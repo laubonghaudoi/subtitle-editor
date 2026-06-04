@@ -5,9 +5,9 @@ import {
   buildPlainTextContent,
   buildSrtContent,
   buildVttContent,
+  subtitlesToVttString,
 } from "../lib/format";
 import { parseVTT } from "../lib/subtitle-operations";
-import { subtitlesToVttString } from "../lib/utils";
 import type { Subtitle } from "../types/subtitle";
 
 const goldenSubtitles: Subtitle[] = [

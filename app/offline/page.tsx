@@ -20,13 +20,13 @@ export default function OfflinePage() {
           You&apos;re offline
         </h1>
         <p className="text-base text-slate-300">
-          Cached assets keep Subtitle Editor running when the network drops.
-          Any subtitles you load are saved locally until you reconnect.
+          Cached assets keep Subtitle Editor running when the network drops. Any
+          subtitles you load are saved locally until you reconnect.
         </p>
       </div>
       <Link
         href="/"
-        className="rounded-full bg-sky-500 px-6 py-2 text-sm font-semibold text-slate-950 transition hover:bg-sky-400"
+        className="rounded-xs border-2 border-white bg-iris-800 px-6 py-2 text-sm font-semibold text-white transition hover:bg-iris-900"
       >
         Return to editor
       </Link>

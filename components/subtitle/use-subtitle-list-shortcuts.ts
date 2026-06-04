@@ -1,3 +1,4 @@
+import { getCuePreviewSeekTime } from "@/lib/subtitle-playback";
 import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import { useEffect } from "react";
@@ -99,7 +100,10 @@ export function useSubtitleListShortcuts({
 
         if (subtitles[targetIndex]) {
           manualScrollRequestUuidRef.current = subtitles[targetIndex].uuid;
-          const targetTime = subtitleTimings[targetIndex]?.start ?? 0;
+          const targetTiming = subtitleTimings[targetIndex];
+          const targetTime = targetTiming
+            ? getCuePreviewSeekTime(targetTiming.start, targetTiming.end)
+            : 0;
           setPlaybackTime(targetTime);
         }
       }
@@ -122,14 +126,24 @@ export function useSubtitleListShortcuts({
 
           const nextSubtitle = subtitles[currentIndex + 1];
           if (nextSubtitle) {
-            const nextSubtitleTime = timeToSeconds(nextSubtitle.startTime);
+            const nextSubtitleTiming = subtitleTimings[currentIndex + 1];
+            const nextSubtitleTime = nextSubtitleTiming
+              ? getCuePreviewSeekTime(
+                  nextSubtitleTiming.start,
+                  nextSubtitleTiming.end,
+                )
+              : timeToSeconds(nextSubtitle.startTime);
             setPlaybackTime(nextSubtitleTime);
           } else {
             const previousSubtitle = subtitles[currentIndex - 1];
             if (previousSubtitle) {
-              const previousSubtitleTime = timeToSeconds(
-                previousSubtitle.startTime,
-              );
+              const previousSubtitleTiming = subtitleTimings[currentIndex - 1];
+              const previousSubtitleTime = previousSubtitleTiming
+                ? getCuePreviewSeekTime(
+                    previousSubtitleTiming.start,
+                    previousSubtitleTiming.end,
+                  )
+                : timeToSeconds(previousSubtitle.startTime);
               setPlaybackTime(previousSubtitleTime);
             } else {
               setPlaybackTime(0);

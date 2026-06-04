@@ -6,6 +6,7 @@ export type RegionMapEntry = {
   region: Region;
   trackId: string;
   trackIndex: number;
+  renderKey?: string;
 };
 
 export interface LabelMeasurementResult {

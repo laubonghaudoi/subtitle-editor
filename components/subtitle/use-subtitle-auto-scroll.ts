@@ -1,4 +1,7 @@
-import { findActiveSubtitleIndex, type SubtitleTiming } from "@/lib/subtitle-lookup";
+import {
+  findActiveSubtitleIndex,
+  type SubtitleTiming,
+} from "@/lib/subtitle-lookup";
 import type { Subtitle } from "@/types/subtitle";
 import { useCallback, useEffect, useRef } from "react";
 

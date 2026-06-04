@@ -55,7 +55,7 @@ export default function TrackTabs({
   if (tracks.length === 0 || !activeTrackId) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground rounded-sm">
-        <Label className="cursor-pointer text-xl hover:text-blue-800 underline">
+        <Label className="cursor-pointer text-xl hover:text-accent-ink underline">
           <span>{t("labels.loadSrtFile")}</span>
           <Input
             type="file"
@@ -72,7 +72,7 @@ export default function TrackTabs({
         <Button
           variant="link"
           onClick={onStartFromScratch}
-          className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-800"
+          className="cursor-pointer text-xl text-muted-foreground underline hover:text-accent-ink"
         >
           {t("labels.startFromScratch")}
         </Button>
@@ -95,13 +95,24 @@ export default function TrackTabs({
             const backgroundColor = isActive
               ? handleColor
               : getTrackColor(trackIndex, inactiveAlpha);
-            const color = isActive ? "#ffffff" : "#111827";
-            const borderColor = isActive ? handleColor : "transparent";
+            // Active = black on the solid track fill. Inactive sits on a
+            // translucent track tint: dark text works on the light (light-mode)
+            // tint, but the dark-mode tint needs white text (was #111827 → ~2.4:1).
+            const color = isActive
+              ? "#000000"
+              : theme === "dark"
+                ? "#ffffff"
+                : "#111827";
+            const borderColor = isActive
+              ? theme === "dark"
+                ? "#ffffff"
+                : "#000000"
+              : "transparent";
             return (
               <TabsTrigger
                 key={track.id}
                 value={track.id}
-                className="shadow-none shrink-0 rounded-sm border px-2 py-1 text-sm font-semibold transition-opacity focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-hidden dark:focus-visible:ring-white"
+                className="shadow-none shrink-0 rounded-xs border-2 px-2 py-1 text-sm font-semibold transition-opacity focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-hidden dark:focus-visible:ring-white"
                 style={{
                   backgroundColor,
                   color,

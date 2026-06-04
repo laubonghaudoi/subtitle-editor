@@ -4,6 +4,8 @@ import {
   useSubtitleState,
   useSubtitleTimings,
 } from "@/context/subtitle-context";
+import { getCuePreviewSeekTime } from "@/lib/subtitle-playback";
+import { getTrackColor, getTrackHandleColor } from "@/lib/track-colors";
 import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle } from "@/types/subtitle";
 import { motion } from "motion/react";
@@ -55,7 +57,7 @@ const SubtitleItem = memo(function SubtitleItem({
     splitSubtitleAction,
   } = useSubtitleActionsContext();
   const { byUuid: subtitleTimingMap } = useSubtitleTimings();
-  const { showSubtitleDuration } = useSubtitleState();
+  const { activeTrackId, showSubtitleDuration, tracks } = useSubtitleState();
   const t = useTranslations();
 
   const resolveStartSeconds = (candidate: Subtitle | null) => {
@@ -76,6 +78,7 @@ const SubtitleItem = memo(function SubtitleItem({
 
   const startSeconds = resolveStartSeconds(subtitle) ?? 0;
   const endSeconds = resolveEndSeconds(subtitle) ?? startSeconds;
+  const previewStartSeconds = getCuePreviewSeekTime(startSeconds, endSeconds);
   const nextStartSeconds = resolveStartSeconds(nextSubtitle);
   const durationSeconds = Math.max(0, endSeconds - startSeconds);
   const durationLabel = `${durationSeconds.toFixed(3)}s`;
@@ -85,6 +88,17 @@ const SubtitleItem = memo(function SubtitleItem({
   const characterCount = Array.from(subtitle.text).length;
 
   const isEditing = editingSubtitleUuid === subtitle.uuid;
+  const isCurrent = startSeconds <= currentTime && endSeconds > currentTime;
+  const activeTrackIndex = Math.max(
+    tracks.findIndex((track) => track.id === activeTrackId),
+    0,
+  );
+  const currentRowStyle = isCurrent
+    ? ({
+        "--subtitle-row-current-bg": getTrackColor(activeTrackIndex, 0.22),
+        "--subtitle-row-current-bar": getTrackHandleColor(activeTrackIndex),
+      } as React.CSSProperties)
+    : undefined;
 
   return (
     <motion.div
@@ -98,6 +112,8 @@ const SubtitleItem = memo(function SubtitleItem({
         {/* biome-ignore lint/a11y/noStaticElementInteractions: Interactive div */}
         <div
           id={`subtitle-${subtitle.uuid}`}
+          data-current={isCurrent ? "true" : undefined}
+          style={currentRowStyle}
           tabIndex={-1}
           onPointerDown={() => onPrepareSubtitleInteraction(subtitle.uuid)}
           onClick={() => onScrollToRegion(subtitle.uuid)}
@@ -105,21 +121,17 @@ const SubtitleItem = memo(function SubtitleItem({
             if (isPlaying) {
               return;
             }
-            setPlaybackTime(startSeconds);
+            setPlaybackTime(previewStartSeconds);
           }}
           onKeyDown={(e) => {
             if (e.key === "Tab") {
               e.preventDefault();
-              setPlaybackTime(startSeconds);
+              setPlaybackTime(previewStartSeconds);
               setIsPlaying(true);
               resumePlayback();
             }
           }}
-          className={`px-4 py-2 border-b border-black dark:border-white hover:bg-yellow-200 cursor-pointer grid gap-4 items-center ${
-            startSeconds <= currentTime && endSeconds > currentTime
-              ? "bg-sky-400"
-              : ""
-          } ${
+          className={`subtitle-row px-4 py-2 border-b border-b-black dark:border-b-white cursor-pointer grid gap-4 items-center ${
             showSubtitleDuration
               ? "grid-cols-[1rem_7rem_5rem_1fr]"
               : "grid-cols-[1rem_7rem_1fr]"
@@ -137,7 +149,7 @@ const SubtitleItem = memo(function SubtitleItem({
           />
 
           {showSubtitleDuration ? (
-            <div className="flex flex-col justify-between text-sm text-gray-900 font-mono tabular-nums text-center">
+            <div className="flex flex-col justify-between text-sm text-foreground font-mono tabular-nums text-center">
               <p>{durationLabel}</p>
               <p>
                 {wordCount}

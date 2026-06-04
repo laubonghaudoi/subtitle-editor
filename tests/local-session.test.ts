@@ -5,6 +5,7 @@ import {
   LOCAL_SESSION_STORAGE_KEY,
   clearLocalSessionSnapshot,
   createLocalSessionSnapshot,
+  getLocalSessionSignature,
   parseLocalSessionSnapshot,
   readLocalSessionSnapshot,
   shouldAutosaveLocalSession,
@@ -111,6 +112,39 @@ test("shouldAutosaveLocalSession skips empty projects", () => {
     ),
     true,
   );
+});
+
+test("getLocalSessionSignature changes when recoverable content changes", () => {
+  const baseline = getLocalSessionSignature({
+    tracks,
+    activeTrackId: "track-1",
+    preferences,
+  });
+
+  const renamedTrack = getLocalSessionSignature({
+    tracks: [{ ...tracks[0], name: "Cantonese" }],
+    activeTrackId: "track-1",
+    preferences,
+  });
+  const editedCue = getLocalSessionSignature({
+    tracks: [
+      {
+        ...tracks[0],
+        subtitles: [{ ...tracks[0].subtitles[0], text: "Changed" }],
+      },
+    ],
+    activeTrackId: "track-1",
+    preferences,
+  });
+  const changedPreferences = getLocalSessionSignature({
+    tracks,
+    activeTrackId: "track-1",
+    preferences: { ...preferences, playInBackground: false },
+  });
+
+  assert.notEqual(renamedTrack, baseline);
+  assert.notEqual(editedCue, baseline);
+  assert.notEqual(changedPreferences, baseline);
 });
 
 test("storage helpers use the autosave namespace and tolerate clearing", () => {

@@ -1,6 +1,7 @@
 "use client";
 
 import FindReplace from "@/components/find-replace";
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,14 +39,12 @@ function getBulkButtonColors(
     return {
       bulkColor: "#334155",
       bulkTextColor: "#ffffff",
-      bulkOutlineColor: "#0f172a",
     };
   }
   const base = getTrackHandleColor(index);
   return {
     bulkColor: base,
-    bulkTextColor: "#ffffff",
-    bulkOutlineColor: base,
+    bulkTextColor: "#000000",
   };
 }
 
@@ -76,7 +75,7 @@ export function AppHeader({
 }: AppHeaderProps) {
   const t = useTranslations();
   const { tracks, activeTrackId } = useSubtitleState();
-  const { bulkColor, bulkTextColor, bulkOutlineColor } = getBulkButtonColors(
+  const { bulkColor, bulkTextColor } = getBulkButtonColors(
     tracks,
     activeTrackId ?? null,
   );
@@ -84,14 +83,16 @@ export function AppHeader({
     ? {
         backgroundColor: bulkColor,
         color: bulkTextColor,
-        borderColor: bulkOutlineColor,
       }
     : undefined;
 
   return (
-    <nav className="h-[6vh] border-b-2 border-black dark:border-white flex items-center px-12 justify-between">
-      <div className="flex items-center">
-        <h1 className="text-lg font-semibold mx-4">{t("navigation.title")}</h1>
+    <nav className="min-h-[6vh] border-b-2 border-black dark:border-white flex flex-wrap items-center gap-2 px-3 py-2 sm:px-6 lg:px-12 justify-between">
+      <div className="flex items-center gap-1">
+        <h1 className="text-lg font-semibold mx-1 sm:mx-4 inline-flex items-center gap-2">
+          <Logo className="h-[1.25em] w-[1.25em] shrink-0" />
+          {t("navigation.title")}
+        </h1>
         <LanguageSwitcher />
 
         <Link href="/faq" target="_blank" aria-label={t("navigation.faq")}>
@@ -121,7 +122,7 @@ export function AppHeader({
         </Link>
       </div>
 
-      <div className="flex gap-4 items-center">
+      <div className="flex flex-wrap justify-end gap-2 sm:gap-4 items-center">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -181,7 +182,7 @@ export function AppHeader({
               style={{
                 backgroundColor: bulkColor,
                 borderColor: bulkColor,
-                color: "#fff",
+                color: bulkTextColor,
               }}
             >
               {isBulkOffsetOpen
@@ -212,10 +213,11 @@ export function AppHeader({
             onClick={() => {
               mediaFileInputRef.current?.click();
             }}
-            className="text-white dark:text-black bg-blue-800 hover:bg-blue-700 dark:bg-sky-800 dark:hover:bg-sky-900 rounded-sm cursor-pointer"
+            className="text-white bg-iris-800 hover:bg-iris-900 dark:hover:bg-iris-700 rounded-xs border-2 border-black dark:border-white cursor-pointer"
+            aria-label={mediaFileName}
           >
             <IconMovie size={20} />
-            <span className="max-w-36 flex-1 overflow-hidden whitespace-nowrap text-ellipsis text-left">
+            <span className="hidden max-w-36 flex-1 overflow-hidden whitespace-nowrap text-ellipsis text-left sm:block">
               {mediaFileName}
             </span>
           </Button>

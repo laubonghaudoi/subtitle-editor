@@ -12,7 +12,7 @@
     "start": "next start",
     "lint": "eslint --max-warnings=0 .",
     "format": "biome format --write .",
-    "format:check": "biome check --write=false --linter-enabled=false --formatter-enabled=true .",
+    "format:check": "biome check --linter-enabled=false --formatter-enabled=true .",
     "test": "tsx --test tests/**/*.test.ts"
   },
   "dependencies": {
