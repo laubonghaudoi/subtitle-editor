@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import TranscriptImportDialog from "@/components/transcript-import-dialog";
 import { getTrackColor, getTrackHandleColor } from "@/lib/track-colors";
 import type { SubtitleTrack } from "@/types/subtitle";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import type { Dispatch, RefObject, SetStateAction } from "react";
+import { IconFileText } from "@tabler/icons-react";
 
 interface TrackTabsProps {
   tracks: SubtitleTrack[];
@@ -76,6 +78,16 @@ export default function TrackTabs({
         >
           {t("labels.startFromScratch")}
         </Button>
+        <p className="text-xl my-4">{t("labels.or")}</p>
+        <TranscriptImportDialog>
+          <Button
+            variant="link"
+            className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-800"
+          >
+            <IconFileText />
+            {t("labels.importTranscript")}
+          </Button>
+        </TranscriptImportDialog>
       </div>
     );
   }

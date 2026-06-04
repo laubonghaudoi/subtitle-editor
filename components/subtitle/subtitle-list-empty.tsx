@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import TranscriptImportDialog from "@/components/transcript-import-dialog";
+import { IconFileText } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 
 interface SubtitleListEmptyProps {
@@ -33,6 +35,16 @@ export default function SubtitleListEmpty({
       >
         {t("labels.startFromScratch")}
       </Button>
+      <p className="text-xl my-4">{t("labels.or")}</p>
+      <TranscriptImportDialog>
+        <Button
+          variant="link"
+          className="cursor-pointer text-xl text-muted-foreground underline hover:text-blue-800"
+        >
+          <IconFileText />
+          {t("labels.importTranscript")}
+        </Button>
+      </TranscriptImportDialog>
     </div>
   );
 }
