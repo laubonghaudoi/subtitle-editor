@@ -48,9 +48,9 @@ export async function generateMetadata({
       siteName: messages.metadata.title,
       images: [
         {
-          url: "/badge-cc.png",
+          url: "/og-image.png",
           width: 1200,
-          height: 1200,
+          height: 630,
           alt: messages.metadata.title,
         },
       ],
@@ -59,13 +59,14 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: messages.metadata.title,
       description: messages.metadata.description,
-      images: ["/badge-cc.png"],
+      images: ["/og-image.png"],
     },
     icons: {
       icon: [
-        { url: "/badge-cc.svg", type: "image/svg+xml" },
-        { url: "/badge-cc.png", sizes: "512x512", type: "image/png" },
+        { url: "/icon.svg", type: "image/svg+xml" },
+        { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
         { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+        { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
       ],
       apple: [{ url: "/icons/icon-apple-180.png", sizes: "180x180" }],
       shortcut: [{ url: "/icons/icon-192.png", sizes: "192x192" }],

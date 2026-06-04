@@ -1,6 +1,7 @@
 "use client";
 
 import FindReplace from "@/components/find-replace";
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -88,7 +89,8 @@ export function AppHeader({
   return (
     <nav className="min-h-[6vh] border-b-2 border-black dark:border-white flex flex-wrap items-center gap-2 px-3 py-2 sm:px-6 lg:px-12 justify-between">
       <div className="flex items-center gap-1">
-        <h1 className="text-lg font-semibold mx-1 sm:mx-4">
+        <h1 className="text-lg font-semibold mx-1 sm:mx-4 inline-flex items-center gap-2">
+          <Logo className="h-[1.25em] w-[1.25em] shrink-0" />
           {t("navigation.title")}
         </h1>
         <LanguageSwitcher />

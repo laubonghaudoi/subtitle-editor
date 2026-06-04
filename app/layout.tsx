@@ -30,9 +30,10 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/badge-cc.svg", type: "image/svg+xml" },
-      { url: "/badge-cc.png", sizes: "512x512", type: "image/png" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
       { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [{ url: "/icons/icon-apple-180.png", sizes: "180x180" }],
     shortcut: [{ url: "/icons/icon-192.png", sizes: "192x192" }],
@@ -53,7 +54,10 @@ export const metadata: Metadata = {
     siteName: "Subtitle Editor",
     images: [
       {
-        url: "/badge-cc.svg", // Placeholder - recommend replacing with PNG/JPG 1200x630 later
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Subtitle Editor",
       },
     ],
     locale: "en_US",
