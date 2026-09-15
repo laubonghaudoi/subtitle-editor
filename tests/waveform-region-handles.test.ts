@@ -10,7 +10,7 @@ test("waveform region handles get solid borders and arrow markers", () => {
     <div part="region-handle region-handle-left"></div>
     <div part="region-handle region-handle-right"></div>
   `;
-  const region = { element } as Region;
+  const region = { element } as unknown as Region;
 
   applyRegionHandleStyles(region, "#123456");
 
