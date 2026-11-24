@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { NarrowScreenNotice } from "./narrow-screen-notice";
 import {
@@ -14,11 +14,15 @@ import {
   type EditorViewportState,
 } from "./viewport";
 
-type EditorAppComponent = ComponentType;
+export interface EditorAppProps {
+  introduction: ReactNode;
+  faqHref: string;
+}
+
+type EditorAppComponent = ComponentType<EditorAppProps>;
 type EditorLoader = () => Promise<{ default: EditorAppComponent }>;
 
 interface NarrowScreenNoticeContent {
-  eyebrow: string;
   title: string;
   description: string;
   minimum: string;
@@ -28,6 +32,7 @@ interface NarrowScreenNoticeContent {
 }
 
 interface ResponsiveEditorEntryProps {
+  introduction: ReactNode;
   loadingLabel: string;
   narrowScreenNotice: NarrowScreenNoticeContent;
   loadEditor?: EditorLoader;
@@ -44,6 +49,7 @@ function getSessionStorage(): Storage | undefined {
 }
 
 export default function ResponsiveEditorEntry({
+  introduction,
   loadingLabel,
   narrowScreenNotice,
   loadEditor = defaultEditorLoader,
@@ -67,6 +73,7 @@ export default function ResponsiveEditorEntry({
   }, [loadEditor]);
 
   useEffect(() => {
+    isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
     };
@@ -118,23 +125,28 @@ export default function ResponsiveEditorEntry({
 
   return (
     <>
-      {shouldShowNotice ? (
-        <NarrowScreenNotice {...narrowScreenNotice} onProceed={handleProceed} />
+      {shouldShowNotice || !EditorApp ? (
+        <div className="mx-auto max-w-3xl px-6 py-10 sm:py-16">
+          {introduction}
+          {shouldShowNotice ? (
+            <NarrowScreenNotice
+              {...narrowScreenNotice}
+              onProceed={handleProceed}
+            />
+          ) : (
+            <p role="status" className="mt-6 text-sm text-muted-foreground">
+              {loadingLabel}
+            </p>
+          )}
+        </div>
       ) : null}
-      {viewportState.shouldMountEditor ? (
-        EditorApp ? (
-          <div hidden={shouldShowNotice} aria-hidden={shouldShowNotice}>
-            <EditorApp />
-          </div>
-        ) : (
-          <div
-            hidden={shouldShowNotice}
-            aria-hidden={shouldShowNotice}
-            className="flex min-h-screen items-center justify-center text-sm text-slate-600 dark:text-slate-300"
-          >
-            {loadingLabel}
-          </div>
-        )
+      {viewportState.shouldMountEditor && EditorApp ? (
+        <div hidden={shouldShowNotice} aria-hidden={shouldShowNotice}>
+          <EditorApp
+            introduction={shouldShowNotice ? null : introduction}
+            faqHref={narrowScreenNotice.faqHref}
+          />
+        </div>
       ) : null}
     </>
   );

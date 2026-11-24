@@ -1,109 +1,44 @@
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
-import { notFound } from "next/navigation";
-import { isValidLocale, localeConfig, locales } from "@/lib/locales";
 import type { Metadata, Viewport } from "next";
+import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { isValidLocale, locales } from "@/lib/locales";
+import { getPageMetadata, siteMetadata } from "@/lib/seo";
+import SiteDocument from "../site-document";
+
+export const dynamicParams = false;
+export const viewport: Viewport = { themeColor: "#0f172a" };
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+type LocaleParams = Promise<{ locale: string }>;
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: LocaleParams;
 }): Promise<Metadata> {
   const { locale } = await params;
-  // Validate that the incoming `locale` parameter is valid
-  if (!isValidLocale(locale)) {
-    notFound();
-  }
-
-  // Get messages for this locale
-  const messages = (await import(`../../messages/${locale}.json`)).default;
-  const config = localeConfig[locale];
-  const otherLocales = locales.filter((l) => l !== locale);
-
+  if (!isValidLocale(locale)) notFound();
+  const t = await getTranslations({ locale, namespace: "metadata" });
   return {
-    metadataBase: new URL("https://subtitle-editor.org"),
-    applicationName: messages.metadata.title,
-    manifest: "/manifest.json",
-    title: {
-      default: messages.metadata.title,
-      template: `%s | ${messages.metadata.title}`,
-    },
-    description: messages.metadata.description,
-    keywords: messages.metadata.keywords,
-    alternates: {
-      canonical: config.url,
-      languages: otherLocales.reduce(
-        (acc, l) => ({
-          ...acc,
-          [l]: localeConfig[l].url,
-        }),
-        {},
-      ),
-    },
-    openGraph: {
-      title: messages.metadata.title,
-      description: messages.metadata.description,
-      url: config.url,
-      locale: config.openGraphLocale,
-      siteName: messages.metadata.title,
-      images: [
-        {
-          url: "/og-image.png",
-          width: 1200,
-          height: 630,
-          alt: messages.metadata.title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: messages.metadata.title,
-      description: messages.metadata.description,
-      images: ["/og-image.png"],
-    },
-    icons: {
-      icon: [
-        { url: "/icon.svg", type: "image/svg+xml" },
-        { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
-        { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-        { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
-      ],
-      apple: [{ url: "/icons/icon-apple-180.png", sizes: "180x180" }],
-      shortcut: [{ url: "/icons/icon-192.png", sizes: "192x192" }],
-    },
-    appleWebApp: {
-      capable: true,
-      statusBarStyle: "black-translucent",
-      title: messages.metadata.title,
-    },
+    ...siteMetadata,
+    ...getPageMetadata(locale, "editor", {
+      title: t("title"),
+      description: t("description"),
+    }),
   };
 }
-
-export const viewport: Viewport = {
-  themeColor: "#0f172a",
-};
 
 export default async function LocaleLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  params: LocaleParams;
 }) {
   const { locale } = await params;
-  // Validate that the incoming `locale` parameter is valid
-  if (!isValidLocale(locale)) {
-    notFound();
-  }
-
-  // Providing all messages to the client side is the easiest way to get started
-  const messages = await getMessages();
-
-  return (
-    <div data-locale={locale}>
-      <NextIntlClientProvider messages={messages}>
-        {children}
-      </NextIntlClientProvider>
-    </div>
-  );
+  if (!isValidLocale(locale)) notFound();
+  return <SiteDocument locale={locale}>{children}</SiteDocument>;
 }

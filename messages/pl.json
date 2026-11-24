@@ -11,6 +11,10 @@
     "toggleTheme": "Przełącz tryb jasny/ciemny",
     "settings": "Ustawienia"
   },
+  "editorIntro": {
+    "heading": "Edytor napisów SRT i VTT online",
+    "description": "Otwórz plik SRT lub WebVTT, popraw napisy i <sync>zsynchronizuj je z filmem lub nagraniem za pomocą wykresu fali dźwiękowej</sync>. Zapisz gotowy plik na swoim urządzeniu lub <convert>przekonwertuj go z SRT na WebVTT albo odwrotnie</convert>. Pliki pozostają w przeglądarce."
+  },
   "narrowScreen": {
     "title": "Użyj szerszego ekranu",
     "description": "Ten edytor został zaprojektowany z myślą o ekranach desktopowych. Możesz kontynuować, ale interfejs może być ciasny lub mniej wygodny w użyciu.",
@@ -202,8 +206,8 @@
     "invalidEndDescription": "Czas zakończenia nie może być wcześniejszy niż czas rozpoczęcia napisu."
   },
   "metadata": {
-    "title": "Edytor Napisów - Otwartoźródłowy edytor SRT/VTT w przeglądarce",
-    "description": "Edytuj, twórz i dopasowuj napisy SRT/VTT za pomocą tego darmowego, otwartoźródłowego edytora. Posiada podgląd wideo i wykres falowy. Nie wymaga rejestracji.",
+    "title": "Darmowy edytor napisów SRT i VTT online",
+    "description": "Edytuj napisy SRT i WebVTT bezpłatnie w przeglądarce. Obejrzyj podgląd filmu, dopasuj czas napisów do wykresu fali dźwiękowej i zapisz plik.",
     "keywords": [
       "edytor napisów",
       "edytor srt",

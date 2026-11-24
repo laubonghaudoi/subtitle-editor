@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function OfflinePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-slate-950 px-6 text-center text-slate-100">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-slate-950 px-6 text-center text-slate-100">
       <div className="max-w-xl space-y-4">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           You&apos;re offline
@@ -30,6 +30,6 @@ export default function OfflinePage() {
       >
         Return to editor
       </Link>
-    </main>
+    </div>
   );
 }

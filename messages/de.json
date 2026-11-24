@@ -11,6 +11,10 @@
     "toggleTheme": "Hell- und Dunkelmodus umschalten",
     "settings": "Einstellungen"
   },
+  "editorIntro": {
+    "heading": "Online-Untertiteleditor für SRT und VTT",
+    "description": "Öffnen Sie eine SRT- oder WebVTT-Datei, bearbeiten Sie die Untertitel und <sync>stimmen Sie sie anhand der Wellenform auf Ihr Video oder Ihre Audiodatei ab</sync>. Speichern Sie die bearbeitete Datei auf Ihrem Gerät oder <convert>wechseln Sie zwischen SRT und WebVTT</convert>. Ihre Dateien bleiben im Browser."
+  },
   "narrowScreen": {
     "title": "Nutze einen breiteren Bildschirm",
     "description": "Dieser Editor ist für Bildschirme in Desktop-Größe konzipiert. Sie können hier fortfahren, jedoch könnte die Benutzeroberfläche beengt wirken oder schwer zu bedienen sein.",
@@ -202,8 +206,8 @@
     "invalidEndDescription": "Die Endzeit darf nicht vor der Startzeit des Untertitels liegen."
   },
   "metadata": {
-    "title": "Untertitel-Editor - Quelloffenes, webbasiertes SRT/VTT-Editor",
-    "description": "Bearbeiten, erstellen und richten Sie Untertiteldateien (SRT/VTT) einfach mit diesem kostenlosen, quelloffenen, webbasierten Editor aus. Bietet Videovorschau und Wellenformvisualisierung. Keine Anmeldung erforderlich.",
+    "title": "Kostenloser Online-Untertiteleditor für SRT und VTT",
+    "description": "Bearbeiten Sie SRT- und WebVTT-Untertitel kostenlos im Browser. Prüfen Sie sie in der Videovorschau, passen Sie Zeitstempel anhand der Wellenform an und speichern Sie die Datei.",
     "keywords": [
       "Untertitel-Editor",
       "SRT-Editor",

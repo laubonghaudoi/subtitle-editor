@@ -21,9 +21,20 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  /* config options here */
   compress: true,
   reactCompiler: true,
+  async redirects() {
+    return [
+      { source: "/en", destination: "/", permanent: true },
+      { source: "/en/faq", destination: "/faq", permanent: true },
+    ];
+  },
+  async rewrites() {
+    return [
+      { source: "/", destination: "/en" },
+      { source: "/faq", destination: "/en/faq" },
+    ];
+  },
 };
 
 if (process.env.NODE_ENV === "development") {

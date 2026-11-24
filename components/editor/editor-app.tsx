@@ -1,5 +1,6 @@
 "use client";
 
+import type { EditorAppProps } from "./responsive-editor-entry";
 import { AppHeader } from "@/components/app-header";
 import BottomInstructions from "@/components/bottom-instructions";
 import type { BulkOffsetDrawerProps } from "@/components/bulk-offset/drawer";
@@ -69,7 +70,7 @@ interface WaveformRef {
   setWaveformTime: (time: number) => void;
 }
 
-function MainContent() {
+function MainContent({ introduction, faqHref }: EditorAppProps) {
   const t = useTranslations();
   const waveformRef = useRef<WaveformRef>(null);
   const subtitleListRef = useRef<SubtitleListRef>(null);
@@ -183,10 +184,15 @@ function MainContent() {
     redoSubtitles,
   });
 
+  const emptyWorkspace =
+    !mediaFile && tracks.every((track) => track.subtitles.length === 0);
+
   return (
     <div className="flex flex-col min-h-screen md:h-screen">
       <SkipLinks />
       <AppHeader
+        faqHref={faqHref}
+        heading={!emptyWorkspace && Boolean(introduction)}
         canUndo={canUndoSubtitles}
         canRedo={canRedoSubtitles}
         onUndo={undoSubtitles}
@@ -210,32 +216,39 @@ function MainContent() {
           >
             <div
               className={cn(
-                "h-full transition",
+                "flex h-full flex-col transition",
                 isBulkOffsetOpen && "pointer-events-none blur-[1px] opacity-40",
               )}
             >
-              <TrackTabs
-                tracks={tracks}
-                activeTrackId={activeTrackId}
-                setActiveTrackId={setActiveTrackId}
-                subtitleListRef={subtitleListRef}
-                playbackTime={playbackTime}
-                isPlaying={isPlaying}
-                resumePlayback={resumeMediaPlayback}
-                setIsPlaying={setIsPlaying}
-                setPlaybackTime={setPlaybackTime}
-                editingSubtitleUuid={editingSubtitleUuid}
-                setEditingSubtitleUuid={setEditingSubtitleUuid}
-                onScrollToRegion={(uuid) => {
-                  if (waveformRef.current) {
-                    waveformRef.current.scrollToRegion(uuid);
-                  }
-                }}
-                onTimeJump={jumpBy}
-                jumpDuration={jumpDuration}
-                onLoadSubtitleFile={loadSubtitleFile}
-                onStartFromScratch={handleStartFromScratch}
-              />
+              {emptyWorkspace && introduction ? (
+                <div className="shrink-0 px-6 pt-6 lg:px-10">
+                  {introduction}
+                </div>
+              ) : null}
+              <div className="min-h-0 flex-1">
+                <TrackTabs
+                  tracks={tracks}
+                  activeTrackId={activeTrackId}
+                  setActiveTrackId={setActiveTrackId}
+                  subtitleListRef={subtitleListRef}
+                  playbackTime={playbackTime}
+                  isPlaying={isPlaying}
+                  resumePlayback={resumeMediaPlayback}
+                  setIsPlaying={setIsPlaying}
+                  setPlaybackTime={setPlaybackTime}
+                  editingSubtitleUuid={editingSubtitleUuid}
+                  setEditingSubtitleUuid={setEditingSubtitleUuid}
+                  onScrollToRegion={(uuid) => {
+                    if (waveformRef.current) {
+                      waveformRef.current.scrollToRegion(uuid);
+                    }
+                  }}
+                  onTimeJump={jumpBy}
+                  jumpDuration={jumpDuration}
+                  onLoadSubtitleFile={loadSubtitleFile}
+                  onStartFromScratch={handleStartFromScratch}
+                />
+              </div>
             </div>
 
             {isBulkOffsetOpen && tracks.length > 0 && (
@@ -319,11 +332,11 @@ function MainContent() {
   );
 }
 
-export default function EditorApp() {
+export default function EditorApp(props: EditorAppProps) {
   return (
     <SubtitleProvider>
       <LocalSessionRecovery />
-      <MainContent />
+      <MainContent {...props} />
     </SubtitleProvider>
   );
 }

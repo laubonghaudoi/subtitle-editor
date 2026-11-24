@@ -10,7 +10,6 @@ test("narrow screen notice tells users to use a wider screen and links to FAQ", 
   let proceedCount = 0;
   const view = renderWithIntl(
     createElement(NarrowScreenNotice, {
-      eyebrow: "Subtitle Editor",
       title: "Use a wider screen",
       description:
         "This editor is built for desktop-size screens. You can continue here, but video, timeline, and caption controls may be cramped or hard to use.",
@@ -26,7 +25,7 @@ test("narrow screen notice tells users to use a wider screen and links to FAQ", 
 
   assert.equal(
     view.getByRole("heading", { name: "Use a wider screen" }).tagName,
-    "H1",
+    "H2",
   );
   view.getByText(
     "This editor is built for desktop-size screens. You can continue here, but video, timeline, and caption controls may be cramped or hard to use.",
@@ -41,12 +40,12 @@ test("narrow screen notice tells users to use a wider screen and links to FAQ", 
     name: "Frequently Asked Questions",
   });
   assert.equal(link.getAttribute("href"), "/faq");
+  assert.equal(link.getAttribute("target"), "_blank");
 });
 
 test("narrow screen notice uses monochrome colors", () => {
   const view = renderWithIntl(
     createElement(NarrowScreenNotice, {
-      eyebrow: "Subtitle Editor",
       title: "Use a wider screen",
       description:
         "This editor is built for desktop-size screens. You can continue here, but video, timeline, and caption controls may be cramped or hard to use.",

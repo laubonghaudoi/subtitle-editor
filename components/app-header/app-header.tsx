@@ -49,6 +49,8 @@ function getBulkButtonColors(
 }
 
 interface AppHeaderProps {
+  faqHref: string;
+  heading: boolean;
   canUndo: boolean;
   canRedo: boolean;
   onUndo: () => void;
@@ -62,6 +64,8 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({
+  faqHref,
+  heading,
   canUndo,
   canRedo,
   onUndo,
@@ -74,6 +78,7 @@ export function AppHeader({
   bulkOffsetDisabled,
 }: AppHeaderProps) {
   const t = useTranslations();
+  const Brand = heading ? "h1" : "span";
   const { tracks, activeTrackId } = useSubtitleState();
   const { bulkColor, bulkTextColor } = getBulkButtonColors(
     tracks,
@@ -89,22 +94,22 @@ export function AppHeader({
   return (
     <nav className="min-h-[6vh] border-b-2 border-black dark:border-white flex flex-wrap items-center gap-2 px-3 py-2 sm:px-6 lg:px-12 justify-between">
       <div className="flex items-center gap-1">
-        <h1 className="text-lg font-semibold mx-1 sm:mx-4 inline-flex items-center gap-2">
+        <Brand className="text-lg font-semibold mx-1 sm:mx-4 inline-flex items-center gap-2">
           <Logo className="h-[1.25em] w-[1.25em] shrink-0" />
           {t("navigation.title")}
-        </h1>
+        </Brand>
         <LanguageSwitcher />
 
-        <Link href="/faq" target="_blank" aria-label={t("navigation.faq")}>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="cursor-pointer"
+        <Button asChild variant="ghost" size="sm" className="cursor-pointer">
+          <Link
+            href={faqHref}
+            target="_blank"
+            rel="noopener noreferrer"
             aria-label={t("navigation.faq")}
           >
             <IconQuestionMark size={20} />
-          </Button>
-        </Link>
+          </Link>
+        </Button>
         <Link
           href="https://github.com/laubonghaudoi/subtitle-editor"
           target="_blank"

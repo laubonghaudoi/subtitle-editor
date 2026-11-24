@@ -1,4 +1,6 @@
 import { getRequestConfig } from "next-intl/server";
+import { locale as getRootLocale } from "next/root-params";
+import { notFound } from "next/navigation";
 import { isValidLocale } from "@/lib/locales";
 import enMessages from "../messages/en.json";
 
@@ -38,13 +40,11 @@ const getRawMessageFallback = ({
   key: string;
 }) => (namespace ? `${namespace}.${key}` : key);
 
-export default getRequestConfig(async ({ requestLocale }) => {
-  // This typically corresponds to the `[locale]` segment
-  const locale = await requestLocale;
-
-  // Ensure that a valid locale is used
-  const resolvedLocale =
-    typeof locale === "string" && isValidLocale(locale) ? locale : "en";
+export default getRequestConfig(async ({ locale }) => {
+  const resolvedLocale = locale ?? (await getRootLocale());
+  if (typeof resolvedLocale !== "string" || !isValidLocale(resolvedLocale)) {
+    notFound();
+  }
 
   const localeMessages = (await import(`../messages/${resolvedLocale}.json`))
     .default as MessageCatalog;

@@ -11,6 +11,10 @@
     "toggleTheme": "切換明暗模式",
     "settings": "設定"
   },
+  "editorIntro": {
+    "heading": "網上 SRT 同 VTT 字幕編輯器",
+    "description": "開啟 SRT 或 WebVTT 字幕檔，改好字幕，再<sync>對住聲波圖校準字幕同影片或錄音嘅時間</sync>。你可以將改好嘅檔案儲存喺自己部機，亦可以<convert>將 SRT 同 WebVTT 互轉</convert>。檔案會留喺你自己嘅瀏覽器入面。"
+  },
   "narrowScreen": {
     "title": "推薦使用寬屏設備",
     "description": "本字幕編輯器係為桌面大細嘅屏幕設計。你可以繼續使用，只不過界面會好混亂亦比較難用。",
@@ -202,8 +206,8 @@
     "invalidEndDescription": "結束時間唔可以早過字幕嘅開始時間。"
   },
   "metadata": {
-    "title": "字幕編輯器 - 免費開源，全網頁 SRT/VTT 字幕編輯器",
-    "description": "永久免費開源，完全網頁毋須安裝，毋須註冊賬户，直接載入編輯字幕，帶埋聲波可視化。",
+    "title": "免費網上 SRT 同 VTT 字幕編輯器",
+    "description": "喺瀏覽器免費編輯 SRT 同 WebVTT 字幕，睇住影片預覽、對住聲波圖校準字幕時間，再儲存字幕檔。影片同字幕都會留喺你部機度。",
     "keywords": [
       "字幕編輯器",
       "SRT 編輯器",

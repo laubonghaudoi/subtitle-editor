@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSubtitleHistory } from "@/context/subtitle-context";
-import { localeConfig, locales } from "@/lib/locales";
+import { getPublicPath, localeConfig, locales } from "@/lib/locales";
 import { IconLanguage } from "@tabler/icons-react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
@@ -33,15 +33,6 @@ export default function LanguageSwitcher() {
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [targetHref, setTargetHref] = useState<string>("");
-
-  // Function to get the path for a different locale
-  const getLocalizedPath = (targetLocale: string) => {
-    if (targetLocale === "en") {
-      return "/";
-    } else {
-      return `/${targetLocale}`;
-    }
-  };
 
   const handleLinkClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
@@ -79,7 +70,7 @@ export default function LanguageSwitcher() {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="shadow-none p-0 rounded-xs border-2 border-foreground">
           {locales.map((loc) => {
-            const href = getLocalizedPath(loc);
+            const href = getPublicPath(loc, "editor");
             return (
               <DropdownMenuItem key={loc} asChild>
                 <Link

@@ -48,7 +48,7 @@ npm run start
 
 ### Project Structure
 
-- `app/` – Next.js 16 routing, including the localized editor in `app/[locale]/` and static pages such as `app/faq`.
+- `app/` – Next.js 16 routing, including the localized editor and FAQ in `app/[locale]/` and the offline fallback.
 - `components/` – UI building blocks, with `components/ui/` holding shadcn-based primitives and domain widgets like `subtitle-list.tsx`.
 - `context/` – Global state, including the undoable subtitle store.
 - `hooks/` – Reusable client hooks (`use-undoable-state`, toast helpers).
@@ -66,6 +66,8 @@ npm test -- parse-vtt.test.ts  # Focus on a single file
 
 Tests rely on Node’s built-in `node:test` runner and cover parsing, time conversions, and multi-track behavior. Add fixtures under `tests/fixtures/` when validating new subtitle edge cases.
 
+To check the public pages, run `npm run build` and `npm start`, then run `npm run test:seo` in another terminal. It checks the HTML, language links, redirects, and sitemap served on localhost:3000. Set `TEST_SITE_ORIGIN` to check another preview.
+
 ### Linting and Formatting
 
 ```bash
@@ -77,7 +79,7 @@ Biome is intentionally configured as the formatter only; ESLint owns lint rules.
 
 ## Internationalization
 
-Locales are configured in `lib/locales.ts`. Add new locales by extending the `locales` array, providing metadata, creating a `messages/<locale>.json` file, and translating keys surfaced in `app/[locale]/page.tsx`. Middleware routes traffic based on locale prefixes while defaulting to English.
+Locales are configured in `lib/locales.ts`. Each language has an editor message catalog and a separate FAQ translation under `app/[locale]/faq/copy/`. The editor and FAQ are pre-rendered for each locale. English uses `/` and `/faq`, and other languages use their locale prefix.
 
 ## Contributing
 

@@ -11,6 +11,10 @@
     "toggleTheme": "Toggle light and dark mode",
     "settings": "Settings"
   },
+  "editorIntro": {
+    "heading": "Online SRT and VTT subtitle editor",
+    "description": "Open an SRT or WebVTT file, edit the captions, and <sync>sync them to your audio or video</sync> using the waveform. Save the edited file to your device or <convert>convert between SRT and WebVTT</convert>. Your files stay in your browser."
+  },
   "narrowScreen": {
     "title": "Use a wider screen",
     "description": "This editor is built for desktop-size screens. You can continue here, but the UI may be cramped or hard to use.",
@@ -202,8 +206,8 @@
     "invalidEndDescription": "End time cannot be earlier than the start time of the subtitle."
   },
   "metadata": {
-    "title": "Subtitle Editor - Open-sourced, Web-based SRT/VTT Editor",
-    "description": "Edit, create, and align SRT/VTT subtitle and captions files easily with this free, open-source, web-based editor. Features video preview and waveform visualization. No signup required.",
+    "title": "Free Online Subtitle Editor for SRT and VTT",
+    "description": "Edit SRT and WebVTT subtitles online for free. Preview your video, align captions with the audio waveform, and save your changes. Your files stay in your browser.",
     "keywords": [
       "subtitle editor",
       "srt editor",
