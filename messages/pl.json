@@ -121,6 +121,7 @@
     "tab": "aby edytować bieżący tekst napisu.",
     "arrows": "i",
     "arrowsAction": "aby przejść do poprzedniego/następnego napisu.",
+    "playFromSubtitle": "aby rozpocząć odtwarzanie od poprzedniego lub następnego napisu.",
     "splitSubtitle": "aby podzielić tekst napisu w miejscu kursora podczas edycji.",
     "mergeSubtitle": "aby połączyć bieżący napis z poprzednim.",
     "switchTrack": "aby przełączać ścieżki napisów (jeśli jest ich więcej).",
@@ -225,8 +226,8 @@
     "toVideo": "Przejdź do wideo"
   },
   "waveform": {
-    "instructions": "Zogniskowano na wykresie falowym. Naciśnij Spację, aby odtworzyć lub zatrzymać, oraz używaj strzałek w lewo i w prawo, aby przesunąć o jedną sekundę.",
-    "keyboardHint": "Spacja: odtwórz/pauza · ←/→: przewiń ±1s",
+    "instructions": "Aktywny jest widok fali dźwiękowej. Spacja wznawia lub wstrzymuje odtwarzanie. Strzałka w lewo odtwarza od poprzedniego napisu, a strzałka w prawo od następnego.",
+    "keyboardHint": "Spacja – odtwórz/pauza · ←/→ – odtwórz od poprzedniego/następnego napisu",
     "regionSummary": "Napis od {start} do {end} na ścieżce {track}",
     "regionAnnouncement": "Zaznaczono napis od {start} do {end} na ścieżce {track}.",
     "untitledTrack": "Ścieżka bez nazwy"

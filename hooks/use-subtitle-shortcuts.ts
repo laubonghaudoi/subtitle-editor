@@ -2,12 +2,14 @@
 
 import { useEffect } from "react";
 import type { Dispatch, SetStateAction } from "react";
+import type { CueDirection } from "@/lib/subtitle-playback";
 import { timeToSeconds } from "@/lib/utils";
 import type { Subtitle, SubtitleTrack } from "@/types/subtitle";
 
 interface SubtitleShortcutsOptions {
   subtitles: Subtitle[];
   playbackTime: number;
+  playAdjacentCue: (direction: CueDirection) => boolean;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   setEditingSubtitleUuid: Dispatch<SetStateAction<string | null>>;
   tracks: SubtitleTrack[];
@@ -22,6 +24,7 @@ interface SubtitleShortcutsOptions {
 export function useSubtitleShortcuts({
   subtitles,
   playbackTime,
+  playAdjacentCue,
   setIsPlaying,
   setEditingSubtitleUuid,
   tracks,
@@ -52,6 +55,27 @@ export function useSubtitleShortcuts({
         return;
       }
 
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        if (
+          event.altKey ||
+          event.ctrlKey ||
+          event.metaKey ||
+          event.shiftKey ||
+          event.isComposing ||
+          (activeElement instanceof HTMLElement &&
+            activeElement.isContentEditable) ||
+          activeElement?.closest(
+            'select, dialog, [role="dialog"], [role="alertdialog"], [role="slider"], [role="tablist"], [role="menu"], [role="listbox"], [role="combobox"]',
+          )
+        ) {
+          return;
+        }
+        if (playAdjacentCue(event.key === "ArrowLeft" ? "previous" : "next")) {
+          event.preventDefault();
+        }
+        return;
+      }
+
       if (event.key === "Tab" || event.key === "Enter") {
         event.preventDefault();
         const currentSubtitle = subtitles.find((sub) => {
@@ -70,7 +94,13 @@ export function useSubtitleShortcuts({
 
     window.addEventListener("keydown", handlePlaybackKeys);
     return () => window.removeEventListener("keydown", handlePlaybackKeys);
-  }, [playbackTime, setEditingSubtitleUuid, setIsPlaying, subtitles]);
+  }, [
+    playAdjacentCue,
+    playbackTime,
+    setEditingSubtitleUuid,
+    setIsPlaying,
+    subtitles,
+  ]);
 
   useEffect(() => {
     const handleTrackSwitch = (event: KeyboardEvent) => {

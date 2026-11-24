@@ -121,6 +121,7 @@
     "tab": "to edit the current subtitle text.",
     "arrows": "and",
     "arrowsAction": "to jump to the previous/next subtitle.",
+    "playFromSubtitle": "to play from the previous or next subtitle.",
     "splitSubtitle": "to split the subtitle text at the cursor position when editing it.",
     "mergeSubtitle": "to merge the current subtitle with the previous one.",
     "switchTrack": "to switch subtitle tracks if you have multiple tracks.",
@@ -225,8 +226,8 @@
     "toVideo": "Skip to video"
   },
   "waveform": {
-    "instructions": "Waveform view focused. Press Space to play or pause, and use the Left and Right arrow keys to move by one second.",
-    "keyboardHint": "Space: play/pause · ←/→: scrub ±1s",
+    "instructions": "Waveform view focused. Press Space to play or pause. Press Left Arrow to play from the previous subtitle or Right Arrow to play from the next.",
+    "keyboardHint": "Space — play/pause · ←/→ — play from previous/next subtitle",
     "regionSummary": "Subtitle from {start} to {end} on track {track}",
     "regionAnnouncement": "Selected subtitle from {start} to {end} on track {track}.",
     "untitledTrack": "Untitled track"

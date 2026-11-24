@@ -121,6 +121,7 @@
     "tab": "zum Bearbeiten des aktuellen Untertiteltextes.",
     "arrows": "und",
     "arrowsAction": "zum Springen zum vorherigen/nächsten Untertitel.",
+    "playFromSubtitle": "starten die Wiedergabe ab dem vorherigen bzw. nächsten Untertitel.",
     "splitSubtitle": "zum Teilen des Untertiteltextes an der Cursorposition während der Bearbeitung.",
     "mergeSubtitle": "zum Zusammenführen des aktuellen Untertitels mit dem vorherigen.",
     "switchTrack": "um zwischen Untertitelspuren zu wechseln, wenn mehrere vorhanden sind.",
@@ -223,8 +224,8 @@
     "toVideo": "Zum Video springen"
   },
   "waveform": {
-    "instructions": "Wellenformansicht fokussiert. Drücke die Leertaste zum Abspielen oder Pausieren und nutze die Pfeiltasten links/rechts, um um eine Sekunde zu springen.",
-    "keyboardHint": "Space: Play/Pause - Pfeil links/rechts: +/-1s",
+    "instructions": "Wellenformansicht fokussiert. Die Leertaste startet oder pausiert die Wiedergabe. Die linke Pfeiltaste spielt ab dem vorherigen Untertitel, die rechte ab dem nächsten.",
+    "keyboardHint": "Leertaste – Wiedergabe/Pause · ←/→ – ab vorherigem/nächstem Untertitel abspielen",
     "regionSummary": "Untertitel von {start} bis {end} in Spur {track}",
     "regionAnnouncement": "Untertitel von {start} bis {end} in Spur {track} ausgewählt.",
     "untitledTrack": "Unbenannte Spur"

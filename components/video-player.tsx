@@ -1,6 +1,6 @@
 "use client";
 
-import { useSubtitles } from "@/context/subtitle-context"; // Import context
+import { useSubtitles, useSubtitleTimings } from "@/context/subtitle-context";
 import {
   detectBrowserMediaSupport,
   type BrowserMediaSupport,
@@ -8,7 +8,12 @@ import {
 } from "@/lib/media-support";
 import { subtitlesToVttString } from "@/lib/format";
 import { warnDev } from "@/lib/log";
-import { CUE_PREVIEW_SEEK_OFFSET_SECONDS } from "@/lib/subtitle-playback";
+import {
+  CUE_PREVIEW_SEEK_OFFSET_SECONDS,
+  type CueDirection,
+  getAdjacentCue,
+  getCuePreviewSeekTime,
+} from "@/lib/subtitle-playback";
 import { shouldIgnorePauseWhileHidden } from "@/hooks/use-visibility-playback";
 import { useTranslations } from "next-intl";
 import {
@@ -40,6 +45,7 @@ export interface VideoPlayerProps {
 
 export interface VideoPlayerHandle {
   resumePlayback: () => void;
+  playAdjacentCue: (direction: CueDirection) => boolean;
 }
 
 const VideoPlayer = forwardRef(function VideoPlayer(
@@ -58,8 +64,8 @@ const VideoPlayer = forwardRef(function VideoPlayer(
   ref: ForwardedRef<VideoPlayerHandle>,
 ) {
   const t = useTranslations();
-  // Get subtitles from context
   const subtitles = useSubtitles();
+  const { list: subtitleTimings } = useSubtitleTimings();
 
   const [mediaUrl, setMediaUrl] = useState<string>("");
   const [vttUrl, setVttUrl] = useState<string | null>(null);
@@ -118,6 +124,25 @@ const VideoPlayer = forwardRef(function VideoPlayer(
 
   useImperativeHandle(ref, () => ({
     resumePlayback,
+    playAdjacentCue(direction) {
+      const player = playerRef.current;
+      if (!player || player.readyState < HTMLMediaElement.HAVE_METADATA) {
+        return false;
+      }
+
+      const cue = getAdjacentCue(
+        subtitleTimings,
+        player.currentTime,
+        direction,
+      );
+      if (!cue || cue.start >= player.duration) return false;
+
+      const time = getCuePreviewSeekTime(cue.start, cue.end);
+      player.currentTime = time;
+      onProgress(time);
+      resumePlayback();
+      return true;
+    },
   }));
 
   useEffect(() => {

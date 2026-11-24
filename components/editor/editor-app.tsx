@@ -170,6 +170,8 @@ function MainContent() {
   useSubtitleShortcuts({
     subtitles,
     playbackTime,
+    playAdjacentCue: (direction) =>
+      videoPlayerRef.current?.playAdjacentCue(direction) ?? false,
     setIsPlaying,
     setEditingSubtitleUuid,
     tracks,

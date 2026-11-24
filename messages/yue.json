@@ -121,6 +121,7 @@
     "tab": "編輯當前字幕文字。",
     "arrows": "同",
     "arrowsAction": "跳到上一條 / 下一條字幕。",
+    "playFromSubtitle": "由上一條或下一條字幕開始播放。",
     "splitSubtitle": "（編輯嗰陣）從光標位置將字幕分成兩條。",
     "mergeSubtitle": "將當前字幕合併到前一條。",
     "switchTrack": "切換字幕軌，如果你有幾條字幕軌。",
@@ -219,5 +220,9 @@
     "toMain": "跳至主要內容",
     "toSubtitles": "跳至字幕",
     "toVideo": "跳至影片"
+  },
+  "waveform": {
+    "instructions": "而家喺波形圖。撳空白掣播放或暫停。撳向左鍵由上一條字幕開始播，撳向右鍵就由下一條開始播。",
+    "keyboardHint": "空白掣：播放／暫停 · ←／→：由上一條／下一條字幕開始播"
   }
 }

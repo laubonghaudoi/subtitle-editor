@@ -35,6 +35,10 @@ export default function BottomInstructions() {
             {t("shortcuts.arrowsAction")}
           </li>
           <li>
+            <kbd>←</kbd> {t("shortcuts.arrows")} <kbd>→</kbd>{" "}
+            {t("shortcuts.playFromSubtitle")}
+          </li>
+          <li>
             <kbd>shift</kbd> + <kbd>enter</kbd> {t("shortcuts.splitSubtitle")}
           </li>
           <li>
