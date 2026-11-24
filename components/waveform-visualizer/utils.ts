@@ -9,6 +9,7 @@ import type { RegionMapEntry } from "./use-label-measurements";
 
 const DEFAULT_HANDLE_COLOR = "#ef4444";
 type Theme = "light" | "dark";
+type RegionsPluginInstance = InstanceType<typeof RegionsPlugin>;
 
 export const createSubtitleRegionContent = (
   startTime: string,
@@ -110,10 +111,13 @@ export const applyRegionHandleStyles = (
 
 export const getRegionsPlugin = (
   wavesurfer: WaveSurfer,
-): RegionsPlugin | undefined =>
+): RegionsPluginInstance | undefined =>
   wavesurfer
     .getActivePlugins()
-    .find((plugin): plugin is RegionsPlugin => plugin instanceof RegionsPlugin);
+    .find(
+      (plugin): plugin is RegionsPluginInstance =>
+        plugin instanceof RegionsPlugin,
+    );
 
 export const hasStructuralRegionChange = (
   previousTracks: SubtitleTrack[],
@@ -211,7 +215,7 @@ export const createRegionForSubtitle = ({
   theme,
   subtitleToRegionMap,
 }: {
-  regionsPlugin: RegionsPlugin;
+  regionsPlugin: RegionsPluginInstance;
   subtitle: Subtitle;
   trackId: string;
   trackIndex: number;
@@ -235,6 +239,7 @@ export const createRegionForSubtitle = ({
     drag: true,
     resize: true,
     minLength: 0.1,
+    avoidOverlapping: false,
   });
   positionRegionElement(region, trackIndex, trackCount);
   applyRegionHandleStyles(region, getTrackHandleColor(trackIndex));
@@ -258,7 +263,7 @@ export const syncRegionForSubtitle = ({
   trackCount,
   theme,
 }: {
-  regionsPlugin: RegionsPlugin;
+  regionsPlugin: RegionsPluginInstance;
   subtitleToRegionMap: Map<string, RegionMapEntry>;
   subtitle: Subtitle;
   trackId: string;

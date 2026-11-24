@@ -6,9 +6,9 @@
 - Fully web-based, no download or installation required
 - No account signup or login required, edit subtitles directly in the landing page
 - Front-end only with zero backend, thus:
-    - Fully extensible and can be plugged in to a custom backend
-    - Completely static, support PWA and works offline
-    - Subtitle and media files stay local in your browser; hosted infrastructure observability and Google tags may process standard operational or analytics metadata
+  - Fully extensible and can be plugged in to a custom backend
+  - Completely static, support PWA and works offline
+  - Subtitle and media files stay local in your browser; hosted infrastructure observability and Google tags may process standard operational or analytics metadata
 - Minimalist UX
 
 I talked about my design principles in the [FAQ](https://subtitle-editor.org/faq) and [this issue](https://github.com/laubonghaudoi/subtitle-editor/issues/11#issuecomment-3201949429).

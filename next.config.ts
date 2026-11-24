@@ -8,6 +8,8 @@ const withPWA = withPWAInit({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
   register: false,
+  // Cloudflare consumes _headers as configuration, so it has no public URL.
+  publicExcludes: ["!_headers", "!noprecache/**/*"],
   fallbacks: {
     document: "/offline",
   },

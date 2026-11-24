@@ -8,6 +8,7 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -88,33 +89,8 @@ export default forwardRef(function WaveformVisualizer(
     };
   }, [mediaFile]);
 
-  const regionPlugin = RegionsPlugin.create();
-  Reflect.set(
-    regionPlugin as unknown as Record<string, unknown>,
-    "avoidOverlapping",
-    () => {
-      // Override the private avoidOverlapping helper to allow intersecting regions
-    },
-  );
-
-  /****************************************************************
-   *  Initialize the wavesurfer with options and plugins
-   * */
-  const { wavesurfer } = useWavesurfer({
-    container: containerRef,
-    height: "auto",
-    waveColor,
-    progressColor,
-    cursorColor,
-    url: mediaUrl,
-    minPxPerSec: 100,
-    fillParent: true,
-    autoCenter: true,
-    backend: "MediaElement",
-    normalize: true,
-    interact: true,
-    hideScrollbar: false,
-    plugins: [
+  const plugins = useMemo(
+    () => [
       Timeline.create({
         timeInterval: 0.1,
         primaryLabelInterval: 1,
@@ -147,8 +123,29 @@ export default forwardRef(function WaveformVisualizer(
           return `${paddedHours}:${paddedMinutes}:${paddedSeconds},${paddedMilliseconds}`;
         },
       }),
-      regionPlugin,
+      RegionsPlugin.create(),
     ],
+    [cursorColor],
+  );
+
+  /****************************************************************
+   *  Initialize the wavesurfer with options and plugins
+   * */
+  const { wavesurfer } = useWavesurfer({
+    container: containerRef,
+    height: "auto",
+    waveColor,
+    progressColor,
+    cursorColor,
+    url: mediaUrl,
+    minPxPerSec: 100,
+    fillParent: true,
+    autoCenter: true,
+    backend: "MediaElement",
+    normalize: true,
+    interact: true,
+    hideScrollbar: false,
+    plugins,
   });
 
   useEffect(() => {

@@ -3,8 +3,8 @@ import { getPreviewContrastColor, hexToRgba } from "@/lib/track-colors";
 import { useCallback, useRef } from "react";
 import type WaveSurfer from "wavesurfer.js";
 import type { Region } from "wavesurfer.js/dist/plugins/regions.esm.js";
-import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.esm.js";
 import type { RegionMapEntry } from "./use-label-measurements";
+import { getRegionsPlugin } from "./utils";
 
 /**
  * Manages the translucent overlay regions shown during bulk offset preview.
@@ -29,11 +29,7 @@ export function usePreviewRegions(
       }
       if (!duration) return;
 
-      const regionsPlugin = wavesurfer
-        .getActivePlugins()
-        .find((plugin) => plugin instanceof RegionsPlugin) as
-        | RegionsPlugin
-        | undefined;
+      const regionsPlugin = getRegionsPlugin(wavesurfer);
       if (!regionsPlugin) return;
 
       previewRegionMap.current.forEach((overlay, uuid) => {
@@ -68,6 +64,7 @@ export function usePreviewRegions(
             end: data.endSeconds,
             drag: false,
             resize: false,
+            avoidOverlapping: false,
             color: overlayFill,
           });
           previewRegionMap.current.set(uuid, overlay);
