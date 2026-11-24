@@ -42,7 +42,6 @@ export const createSubtitleRegionContent = (
                 padding-right: 1rem;
                 padding-bottom: 1rem;
                 font-size: 1rem;
-                font-family: var(--font-subtitle);
                 color: var(--color-foreground, #262626);">
       <span>${text}</span>
     </div>

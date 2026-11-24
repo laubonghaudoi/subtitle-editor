@@ -163,7 +163,7 @@ const SubtitleItem = memo(function SubtitleItem({
           ) : null}
 
           <div className="flex justify-between items-start gap-4">
-            <div className="flex-1">
+            <div className="subtitle-content flex-1">
               <SubtitleTextEditor
                 subtitle={subtitle}
                 isEditing={isEditing}

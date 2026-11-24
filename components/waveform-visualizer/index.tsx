@@ -343,7 +343,7 @@ export default forwardRef(function WaveformVisualizer(
 
   return (
     <div className="relative w-full h-full border-black">
-      <div ref={containerRef} className="w-full h-full" />
+      <div ref={containerRef} className="subtitle-content w-full h-full" />
       {showTrackLabels && tracks.length > 0 && labelsAreaHeight > 0 && (
         <div
           className="absolute left-0 right-0 pointer-events-none"

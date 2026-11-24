@@ -70,13 +70,6 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Explicit CJK faces keep a leading supplementary ideograph out of the
-     system UI font's missing-glyph run. Plangothic loads by Unicode range. */
-  --font-subtitle:
-    system-ui, "Chiron Hei HK", "PingFang HK", "PingFang TC",
-    "Microsoft JhengHei", "Noto Sans CJK HK", "Noto Sans CJK TC", Plangothic,
-    sans-serif;
-
   /* Keep in sync with EDITOR_MIN_WIDTH_REM in components/editor/viewport.ts. */
   --breakpoint-editor: 64rem;
 
@@ -633,18 +626,19 @@
     @apply bg-background text-foreground;
   }
 
-  [data-locale="yue"] * {
+  [data-locale="yue"] {
     font-family: "Chiron Hei HK", sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
   }
+
+  /* Subtitle content follows the editor default regardless of the UI language. */
+  [data-locale="yue"] .subtitle-content {
+    font-family: var(--default-font-family, initial);
+  }
 }
 
 @layer components {
-  video::cue {
-    font-family: var(--font-subtitle);
-  }
-
   .subtitle-row {
     /* hover = iris accent (one step up from the edit field's iris-3 so the bare fill reads clearly indigo, not pale blue); theme-aware */
     --subtitle-row-hover-bg: var(--iris-4);

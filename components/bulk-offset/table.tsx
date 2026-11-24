@@ -162,7 +162,7 @@ export function BulkOffsetTable({
                   {subtitle.endTime}
                 </td>
                 <td
-                  className="font-subtitle px-4 py-1 align-middle"
+                  className="subtitle-content px-4 py-1 align-middle"
                   rowSpan={2}
                 >
                   {subtitle.text || (
