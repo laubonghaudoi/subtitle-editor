@@ -233,7 +233,7 @@ export function FindReplaceTable({
                   {subtitle.id}
                 </TableCell>
                 <TableCell
-                  className={`${TABLE_CELL_CLASS} whitespace-pre-wrap wrap-break-word`}
+                  className={`${TABLE_CELL_CLASS} font-subtitle whitespace-pre-wrap wrap-break-word`}
                 >
                   {compiledRegex
                     ? renderMatchHighlights({
@@ -245,7 +245,7 @@ export function FindReplaceTable({
                     : subtitle.text}
                 </TableCell>
                 <TableCell
-                  className={`${TABLE_CELL_CLASS} whitespace-pre-wrap wrap-break-word`}
+                  className={`${TABLE_CELL_CLASS} font-subtitle whitespace-pre-wrap wrap-break-word`}
                 >
                   {compiledRegex
                     ? renderReplacementHighlights({

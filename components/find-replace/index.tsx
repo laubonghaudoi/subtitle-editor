@@ -225,7 +225,7 @@ export default function FindReplace() {
               id="find"
               value={findText}
               onChange={(event) => setFindText(event.target.value)}
-              className="min-w-0 flex-1 rounded-[2px] px-2 py-1"
+              className="font-subtitle min-w-0 flex-1 rounded-[2px] px-2 py-1"
             />
           </div>
           <div className="flex flex-wrap gap-4">
@@ -256,7 +256,7 @@ export default function FindReplace() {
               id="replace"
               value={replaceText}
               onChange={(event) => setReplaceText(event.target.value)}
-              className="min-w-0 flex-1 rounded-[2px] px-2 py-1 text-base"
+              className="font-subtitle min-w-0 flex-1 rounded-[2px] px-2 py-1 text-base"
             />
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 text-muted-foreground">

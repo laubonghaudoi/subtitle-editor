@@ -3,6 +3,7 @@ import withPWAInit, { runtimeCaching } from "@ducanh2912/next-pwa";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 import createNextIntlPlugin from "next-intl/plugin";
 
+const subtitleFontSubset = /\/PlangothicP[12]-[^/]+\.woff2$/;
 const withNextIntl = createNextIntlPlugin();
 const withPWA = withPWAInit({
   dest: "public",
@@ -14,8 +15,19 @@ const withPWA = withPWAInit({
     document: "/offline",
   },
   workboxOptions: {
-    exclude: [/middleware-manifest\.json$/],
-    runtimeCaching,
+    // Let the font runtime cache store only the Unicode ranges the editor uses.
+    exclude: [/middleware-manifest\.json$/, subtitleFontSubset],
+    runtimeCaching: [
+      {
+        urlPattern: subtitleFontSubset,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "subtitle-fonts",
+          expiration: { maxEntries: 256 },
+        },
+      },
+      ...runtimeCaching,
+    ],
     skipWaiting: true,
   },
 });

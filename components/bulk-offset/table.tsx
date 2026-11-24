@@ -161,7 +161,10 @@ export function BulkOffsetTable({
                 <td className="px-2 pt-1 pb-0 align-middle font-mono text-center">
                   {subtitle.endTime}
                 </td>
-                <td className="px-4 py-1 align-middle" rowSpan={2}>
+                <td
+                  className="font-subtitle px-4 py-1 align-middle"
+                  rowSpan={2}
+                >
                   {subtitle.text || (
                     <span className="italic">
                       {t("bulkOffset.table.empty")}
