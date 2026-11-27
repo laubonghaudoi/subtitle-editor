@@ -7,6 +7,10 @@ import de from "../app/[locale]/faq/copy/de";
 import en from "../app/[locale]/faq/copy/en";
 import pl from "../app/[locale]/faq/copy/pl";
 import yue from "../app/[locale]/faq/copy/yue";
+import deMessages from "../messages/de.json";
+import enMessages from "../messages/en.json";
+import plMessages from "../messages/pl.json";
+import yueMessages from "../messages/yue.json";
 import { FaqDocument } from "../app/[locale]/faq/faq-document";
 import {
   getPublicPath,
@@ -16,12 +20,24 @@ import {
 } from "../lib/locales";
 
 const copies = { de, en, pl, yue };
+const messages = {
+  de: deMessages,
+  en: enMessages,
+  pl: plMessages,
+  yue: yueMessages,
+};
 
 for (const locale of locales) {
   test(`the ${locale} FAQ publishes its visible answers and stable permalinks in JSON-LD`, () => {
     const content = copies[locale];
     const { document } = new JSDOM(
-      renderToStaticMarkup(createElement(FaqDocument, { locale, content })),
+      renderToStaticMarkup(
+        createElement(FaqDocument, {
+          locale,
+          content,
+          productTitle: messages[locale].navigation.title,
+        }),
+      ),
     ).window;
     const canonical = getPublicUrl(locale, "faq");
     const json = document.querySelector(
@@ -33,6 +49,20 @@ for (const locale of locales) {
     assert.equal(schema["@id"], canonical);
     assert.equal(schema.inLanguage, locale);
     assert.equal(schema.name, document.querySelector("h1")?.textContent);
+    assert.equal(
+      document.querySelector("header span")?.textContent,
+      messages[locale].navigation.title,
+    );
+    const jumpLinks = document.querySelectorAll(
+      'nav[aria-labelledby="faq-title"] a',
+    );
+    assert.deepEqual(
+      Array.from(jumpLinks, (a) => [a.getAttribute("href"), a.textContent]),
+      Object.entries(content.questions).map(([id, topic]) => [
+        `#${id}`,
+        topic.question,
+      ]),
+    );
     const sections = Array.from(document.querySelectorAll("section"));
     assert.deepEqual(
       sections.map((section) => section.getAttribute("aria-labelledby")),
@@ -79,7 +109,11 @@ for (const locale of locales) {
 test("the English FAQ keeps the author's original questions and lists in order", () => {
   const { document } = new JSDOM(
     renderToStaticMarkup(
-      createElement(FaqDocument, { locale: "en", content: en }),
+      createElement(FaqDocument, {
+        locale: "en",
+        content: en,
+        productTitle: enMessages.navigation.title,
+      }),
     ),
   ).window;
   assert.equal(

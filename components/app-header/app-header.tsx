@@ -1,7 +1,6 @@
 "use client";
 
 import FindReplace from "@/components/find-replace";
-import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +24,7 @@ import {
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { type RefObject } from "react";
+import { HeaderBrand, HeaderFrame } from "./header-frame";
 import LanguageSwitcher from "./language-switcher";
 import LoadSrt from "./load-srt";
 import SaveSrt from "./save-srt";
@@ -89,12 +89,9 @@ export function AppHeader({
     : undefined;
 
   return (
-    <nav className="min-h-[6vh] border-b-2 border-black dark:border-white flex flex-wrap items-center gap-2 px-3 py-2 sm:px-6 lg:px-12 justify-between">
+    <HeaderFrame as="nav">
       <div className="flex items-center gap-1">
-        <h1 className="text-lg font-semibold mx-1 sm:mx-4 inline-flex items-center gap-2">
-          <Logo className="h-[1.25em] w-[1.25em] shrink-0" />
-          {t("navigation.title")}
-        </h1>
+        <HeaderBrand as="h1" title={t("navigation.title")} />
         <LanguageSwitcher />
 
         <Button asChild variant="ghost" size="sm" className="cursor-pointer">
@@ -227,6 +224,6 @@ export function AppHeader({
 
         <SaveSrt />
       </div>
-    </nav>
+    </HeaderFrame>
   );
 }

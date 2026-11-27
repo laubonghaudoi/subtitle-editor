@@ -1,3 +1,5 @@
+import { HeaderBrand, HeaderFrame } from "@/components/app-header/header-frame";
+import { Button } from "@/components/ui/button";
 import {
   getPublicPath,
   getPublicUrl,
@@ -5,6 +7,7 @@ import {
   localeConfig,
   locales,
 } from "@/lib/locales";
+import { IconArrowLeft, IconLanguage } from "@tabler/icons-react";
 
 const resources = {
   repo: "https://github.com/laubonghaudoi/subtitle-editor",
@@ -49,9 +52,11 @@ export interface FaqContent {
 interface FaqDocumentProps {
   locale: Locale;
   content: FaqContent;
+  productTitle: string;
 }
 
-const linkStyle = "text-accent-ink underline underline-offset-4";
+const linkStyle =
+  "text-accent-ink underline underline-offset-4 hover:decoration-2 focus-visible:outline-ring";
 
 function isList(block: AnswerBlock): block is AnswerList {
   return typeof block === "object" && "list" in block;
@@ -83,7 +88,11 @@ function answerText(answer: AnswerBlock[]) {
     .join("\n");
 }
 
-export function FaqDocument({ locale, content }: FaqDocumentProps) {
+export function FaqDocument({
+  locale,
+  content,
+  productTitle,
+}: FaqDocumentProps) {
   const canonical = getPublicUrl(locale, "faq");
   const editorPath = getPublicPath(locale);
   const topics = Object.entries(content.questions);
@@ -104,69 +113,124 @@ export function FaqDocument({ locale, content }: FaqDocumentProps) {
     })),
   };
 
+  const backLink = (
+    <Button asChild variant="outline">
+      <a href={editorPath}>
+        <IconArrowLeft aria-hidden="true" />
+        {content.backToEditor}
+      </a>
+    </Button>
+  );
+
   return (
-    <article className="mx-auto max-w-3xl px-5 py-8 sm:px-8 sm:py-12">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
         }}
       />
-      <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3">
-        <a href={editorPath} className={linkStyle}>
-          {content.backToEditor}
-        </a>
-        <nav aria-label={content.languageLabel}>
-          <ul className="flex flex-wrap gap-x-3 gap-y-1 text-sm">
-            {locales.map((language) => (
-              <li key={language}>
-                <a
-                  href={getPublicPath(language, "faq")}
-                  lang={language}
-                  hrefLang={localeConfig[language].hrefLang}
-                  aria-current={language === locale ? "page" : undefined}
-                  className={language === locale ? "font-semibold" : linkStyle}
-                >
-                  {localeConfig[language].nativeName}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </header>
-      <h1 className="mt-4 text-3xl font-bold tracking-tight">
-        {content.heading}
-      </h1>
-      {topics.map(([id, { question, answer }]) => (
-        <section key={id} aria-labelledby={id} className="mt-8">
-          <h2 id={id} className="scroll-mt-4 text-xl font-semibold">
-            <a href={`#${id}`}>{question}</a>
-          </h2>
-          {answer.map((block, index) => {
-            if (!isList(block)) {
-              return (
-                <p key={index} className="mt-2 leading-relaxed">
-                  {renderParagraph(block)}
-                </p>
-              );
-            }
-            const List = block.list;
-            return (
-              <List
-                key={index}
-                className={`my-2 ml-6 space-y-1 leading-relaxed ${List === "ol" ? "list-decimal" : "list-disc"}`}
-              >
-                {block.items.map((item, itemIndex) => (
-                  <li key={itemIndex}>{renderParagraph(item)}</li>
+      <HeaderFrame>
+        <HeaderBrand title={productTitle} />
+        {backLink}
+      </HeaderFrame>
+      <article className="lg:grid lg:grid-cols-[20rem_minmax(0,1fr)] xl:grid-cols-[23rem_minmax(0,1fr)]">
+        <div className="border-b-2 lg:border-e-2 lg:border-b-0">
+          <div className="px-4 py-5 sm:px-10 lg:sticky lg:top-0 lg:max-h-screen lg:overflow-y-auto lg:py-8 lg:ps-16 lg:pe-6">
+            <h1 id="faq-title" className="text-2xl font-semibold leading-tight">
+              {content.heading}
+            </h1>
+            <nav
+              aria-label={content.languageLabel}
+              className="mt-3 flex items-center gap-1"
+            >
+              <IconLanguage aria-hidden="true" className="size-4 shrink-0" />
+              <ul className="flex flex-wrap">
+                {locales.map((language) => (
+                  <li key={language}>
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="sm"
+                      className="px-2 aria-[current=page]:bg-accent aria-[current=page]:font-semibold aria-[current=page]:underline aria-[current=page]:underline-offset-4"
+                    >
+                      <a
+                        href={getPublicPath(language, "faq")}
+                        lang={language}
+                        hrefLang={localeConfig[language].hrefLang}
+                        aria-current={language === locale ? "page" : undefined}
+                      >
+                        {localeConfig[language].nativeName}
+                      </a>
+                    </Button>
+                  </li>
                 ))}
-              </List>
-            );
-          })}
-        </section>
-      ))}
-      <a href={editorPath} className={`mt-8 inline-block ${linkStyle}`}>
-        {content.backToEditor}
-      </a>
-    </article>
+              </ul>
+            </nav>
+            <nav
+              aria-labelledby="faq-title"
+              className="mt-5 hidden border-t pt-3 lg:block"
+            >
+              <ul>
+                {topics.map(([id, { question }]) => (
+                  <li key={id}>
+                    <a
+                      href={`#${id}`}
+                      className="block rounded-xs py-2 text-sm font-medium leading-5 underline-offset-4 hover:text-accent-ink hover:underline focus-visible:outline-ring"
+                    >
+                      {question}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <div className="min-w-0 px-4 py-6 sm:px-10 lg:py-8 xl:px-16">
+          <div className="max-w-[72ch] divide-y divide-border/30">
+            {topics.map(([id, { question, answer }]) => (
+              <section
+                key={id}
+                aria-labelledby={id}
+                className="py-7 first:pt-0"
+              >
+                <h2
+                  id={id}
+                  className="scroll-mt-6 text-xl font-semibold leading-tight"
+                >
+                  <a
+                    href={`#${id}`}
+                    className="underline-offset-4 hover:text-accent-ink hover:underline focus-visible:outline-ring"
+                  >
+                    {question}
+                  </a>
+                </h2>
+                {answer.map((block, index) => {
+                  if (!isList(block)) {
+                    return (
+                      <p key={index} className="mt-3 leading-relaxed">
+                        {renderParagraph(block)}
+                      </p>
+                    );
+                  }
+                  const List = block.list;
+                  return (
+                    <List
+                      key={index}
+                      className={`mt-3 space-y-2 ps-6 leading-relaxed ${List === "ol" ? "list-decimal" : "list-disc"}`}
+                    >
+                      {block.items.map((item, itemIndex) => (
+                        <li key={itemIndex}>{renderParagraph(item)}</li>
+                      ))}
+                    </List>
+                  );
+                })}
+              </section>
+            ))}
+          </div>
+          {backLink}
+        </div>
+      </article>
+    </>
   );
 }
