@@ -2,96 +2,179 @@ import type { FaqContent } from "../faq-document";
 
 export default {
   metadata: {
-    title: "Subtitle Editor FAQ | Editing, timing and saving subtitles",
-    description:
-      "Learn how to edit and sync SRT and WebVTT subtitles, work with multiple tracks, and save the finished files from your browser.",
+    title: "FAQ | Subtitle Editor",
+    description: "Frequently asked questions about the subtitle editor.",
   },
-  heading: "Subtitle Editor FAQ",
-  backToEditor: "Back to the subtitle editor",
+  heading: "Frequently Asked Questions",
+  backToEditor: "Back to Editor",
   languageLabel: "FAQ language",
   questions: {
-    "edit-subtitles": {
-      question: "How do I edit an SRT or WebVTT file?",
-      answer:
-        "Choose Load Subtitles and open your .srt or .vtt file. Click a subtitle’s text, make your change and press Enter to confirm. To check the line against the recording, choose Load Media and open the matching video or audio file.",
+    "why-this-editor": {
+      question: "Why another subtitle editor?",
+      answer: [
+        "Yes I know, there are many subtitle editors out there. But I found that none of them is ideal for me so I built this one. Below are the editors that I have tried and what I think are missing in them:",
+        {
+          list: "ul",
+          items: [
+            [
+              {
+                link: "happyScribe",
+                label: "Happy Scribe",
+              },
+              " offers a free online subtitle editor. No account registration is required. Editing subtitles and previewing with the video is very easy. It is the closest to what I need. Unfortunately, it's missing waveform visualization, which is deal breaker for me. It is not open sourced either and we can't customize it.",
+            ],
+            [
+              {
+                link: "subtitleEdit",
+                label: "Subtitle Edit",
+              },
+              " is a great option and has all features I need. It supports waveform visualization, easy preview and editing, and even AI transcriptions. But it is a desktop software which requires installation, and it doesn't support Mac. I have to use a Windows or Linux device to edit subtitles.",
+            ],
+            [
+              {
+                link: "aegisub",
+                label: "Aegisub",
+              },
+              " is similar to Subtitle Edit. It is a desktop software suitable for more complex subtitle editing. Also I found waveform visualizer not very intuitive. (Btw these desktop softwares have 1990s-style UI which really demoralizes me)",
+            ],
+            [
+              "Other options such as ",
+              {
+                link: "openSubtitleEditor",
+                label: "Open Subtitle Editor",
+              },
+              " or ",
+              {
+                link: "movavi",
+                label: "Movavi",
+              },
+              " are either too complex and feature-bloated, or are not free.",
+            ],
+          ],
+        },
+        "None of them is open-sourced, and the UIs are either too ugly or too complex, which really bothers my subtitle editing experience. What I want is an editor that is:",
+        {
+          list: "ol",
+          items: [
+            "Permanently free",
+            "Open-sourced",
+            "Fully web-based, no download or installation required",
+            "No account sign-up or log-in required",
+            "Minimalist UX",
+            "Has waveform visualization",
+          ],
+        },
+        "So I built this one.",
+      ],
     },
-    "sync-subtitles": {
-      question: "How do I sync subtitles that appear too early or too late?",
-      answer:
-        "For one line, drag the left or right edge of its block on the waveform to match the start or end of the speech. If every line in a track is early by the same amount, open Bulk offset, choose Whole subtitle and set a positive offset in seconds. For lines that appear late, use a negative offset. Check the preview, then choose Apply offset.",
-    },
-    "convert-srt-vtt": {
-      question: "How do I convert SRT to WebVTT or WebVTT to SRT?",
-      answer:
-        "Open the source file with Load Subtitles. Choose Save, find the track and select .vtt to make a WebVTT file or .srt to make an SRT file. Both formats contain the subtitle text and timing. Keep your original WebVTT file if you also need its positioning or styling.",
-    },
-    "multiple-tracks": {
-      question: "Can I edit subtitles in two languages for the same video?",
-      answer:
-        "Yes. Open the first subtitle file, then choose Load Subtitles and Add New Track for the other language. You can keep up to four tracks open for the same recording. Switch between their tabs to edit each language and save each track separately.",
-    },
-    "save-subtitles": {
-      question:
-        "Which export format should I choose, and where does the file go?",
-      answer:
-        "Under Save, choose the format for your track. SRT and WebVTT include timestamps for playback. TXT gives you just the lines of text. CSV includes each line’s identifier, start time, end time and text. If your browser opens a save dialog, choose the filename and folder there. Otherwise, enter a filename in the editor and choose Download. Your browser’s download settings determine the destination.",
-    },
-    privacy: {
-      question: "Who can see the video and subtitles I open?",
-      answer:
-        "Your browser reads the media and subtitle files on your device. The editor processes their contents locally without uploading them or asking for an account. It keeps a local recovery copy of your subtitle tracks and settings. The website also uses hosting and analytics services that can receive information about the visit.",
-    },
-    offline: {
-      question: "Can I work offline and resume later?",
-      answer:
-        "Open the editor once while online and allow it to finish loading. Once your browser has cached the app, you can reopen it offline in the same browser. It can restore your subtitle tracks, but you’ll need to open the media file again. Save an exported copy to keep your work if you clear the site’s data.",
+    maintenance: {
+      question: "Will you actively maintain this app?",
+      answer: [
+        [
+          "This app is open sourced on GitHub ",
+          {
+            link: "repo",
+            label: "laubonghaudoi/subtitle-editor",
+          },
+          ". I will check issues and accept PRs regularly, but I am quite busy these days so I may not have time to develop new features. This is a community project and your contributions are always welcomed!",
+        ],
+      ],
     },
     "media-formats": {
-      question: "Why won’t my video or audio file play?",
+      question: "Can you support more video / audio file formats?",
       answer: [
-        "Playback depends on which containers and codecs your browser and operating system can decode. The empty media panel lists the formats your browser reports that it supports. If a file won’t play, you can convert it locally with ",
-        { link: "ffmpeg", label: "FFmpeg" },
-        " and open the converted copy.",
-      ],
-    },
-    transcription: {
-      question: "How do I make subtitles from a recording automatically?",
-      answer: [
-        "Start with a transcription tool such as ",
-        { link: "whisper", label: "Whisper" },
-        " and export the transcript as SRT or WebVTT. Then open that file here to correct the words and adjust their timing. Transcription and automatic translation happen outside this editor.",
-      ],
-    },
-    "youtube-subtitles": {
-      question: "How do I edit captions from a YouTube video?",
-      answer: [
-        "Save a copy of the video’s captions as SRT or WebVTT, then open it with Load Subtitles. If you use yt-dlp, its ",
-        { link: "ytdlp", label: "subtitle options" },
-        " let you list and download available caption tracks. To check the timing here, open a local copy of the video with Load Media.",
-      ],
-    },
-    "why-this-editor": {
-      question: "Why did you build another subtitle editor?",
-      answer: [
-        "I tried ",
-        { link: "happyScribe", label: "Happy Scribe" },
-        ", ",
-        { link: "subtitleEdit", label: "Subtitle Edit" },
-        " and ",
-        { link: "aegisub", label: "Aegisub" },
-        " while working on my own subtitles. What I wanted was to open a file on my Mac, see the waveform and hear whether a line was in sync, without installing software or signing up. I built this editor so anyone could do that for free in a browser and change the source code if they wanted.",
+        [
+          "This app relies on the browser's built-in media player to decode the video / audio file you load. So the supported formats are determined by your browser and there is nothing I can do about it. For example, Safari and Microsoft Edge support the AC3 format, while Chrome and Firefox do not. That said, you can still use ",
+          {
+            link: "ffmpeg",
+            label: "ffmpeg",
+          },
+          " to convert your media files to a supported format before loading them into the editor.",
+        ],
       ],
     },
     contribute: {
-      question: "How can I report a problem or contribute?",
+      question: "Have feedback?",
       answer: [
-        "You can ",
-        { link: "issues", label: "open an issue on GitHub" },
-        ". If something went wrong, tell me which browser you used and what steps led to the problem. I review issues and pull requests when I can. Contributions to the ",
-        { link: "repo", label: "open-source project" },
-        " are welcome. If you’re proposing a new feature, I’ve explained what I want to keep the editor focused on in the ",
-        { link: "scope", label: "project scope discussion" },
-        ".",
+        [
+          "Feel free to ",
+          {
+            link: "issues",
+            label: "open an issue on GitHub",
+          },
+          ". I want to keep this app as minimalistic as possible, so these features are non-goals and I don't plan to add them:",
+        ],
+        {
+          list: "ul",
+          items: [
+            "Account registration",
+            "Cloud storage",
+            "Collaborative editing",
+            "AI transcription",
+            "Translation",
+            "Complex subtitle editing such as VTT files.",
+          ],
+        },
+        [
+          "I discussed my reasoning for not including them in ",
+          {
+            link: "scope",
+            label: "this GitHub issue",
+          },
+          ". If you need any of these advanced features, please use the other options I listed above.",
+        ],
+      ],
+    },
+    transcription: {
+      question:
+        "I need an AI transcriber / srt generator, any recommendations?",
+      answer: [
+        "Yes I recommend generating the srt file with an AI transcriber first, then editing it with this editor. That's why I listed \"AI transcriptions\" as a non-goal above. It's much easier to just use a specialized tool for that than building it into this editor. There are many free srt generators available on huggingface, such as:",
+        {
+          list: "ul",
+          items: [
+            [
+              {
+                link: "hfK2",
+                label: "k2-fsa/generate-subtitles-for-videos",
+              },
+            ],
+            [
+              {
+                link: "hfBatuhan",
+                label: "BatuhanYilmaz/Whisper-Auto-Subtitled-Video-Generator",
+              },
+            ],
+            [
+              {
+                link: "hfNeuralFalcon",
+                label: "NeuralFalcon/Whisper-Turbo-Subtitle",
+              },
+            ],
+          ],
+        },
+        [
+          "You can also download ",
+          {
+            link: "subtitleEdit",
+            label: "Subtitle Edit",
+          },
+          " I mentioned above, which has built-in AI transcription capabilities.",
+        ],
+      ],
+    },
+    "youtube-subtitles": {
+      question:
+        "I want to download a YouTube video and extract the subtitles of it, how?",
+      answer: [
+        [
+          "Use ",
+          {
+            link: "ytdlp",
+            label: "yt-dlp",
+          },
+          ". It's free and the most reliable YouTube video downloader. It also supports downloading subtitles directly if they are available.",
+        ],
       ],
     },
   },

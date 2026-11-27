@@ -42,7 +42,10 @@ for (const locale of locales) {
       schema.mainEntity,
       sections.map((section) => {
         const heading = section.querySelector("h2");
-        const answer = section.querySelector("p")?.textContent;
+        const answer = Array.from(
+          section.querySelectorAll("p, li"),
+          (line) => line.textContent,
+        ).join("\n");
         assert.ok(heading?.id);
         assert.ok(answer);
         assert.equal(
@@ -72,3 +75,41 @@ for (const locale of locales) {
     }
   });
 }
+
+test("the English FAQ keeps the author's original questions and lists in order", () => {
+  const { document } = new JSDOM(
+    renderToStaticMarkup(
+      createElement(FaqDocument, { locale: "en", content: en }),
+    ),
+  ).window;
+  assert.equal(
+    document.querySelector("h1")?.textContent,
+    "Frequently Asked Questions",
+  );
+  assert.deepEqual(
+    Array.from(
+      document.querySelectorAll("h2"),
+      (heading) => heading.textContent,
+    ),
+    [
+      "Why another subtitle editor?",
+      "Will you actively maintain this app?",
+      "Can you support more video / audio file formats?",
+      "Have feedback?",
+      "I need an AI transcriber / srt generator, any recommendations?",
+      "I want to download a YouTube video and extract the subtitles of it, how?",
+    ],
+  );
+  assert.deepEqual(
+    Array.from(document.querySelectorAll("section ul, section ol"), (list) => [
+      list.localName,
+      list.children.length,
+    ]),
+    [
+      ["ul", 4],
+      ["ol", 6],
+      ["ul", 6],
+      ["ul", 3],
+    ],
+  );
+});

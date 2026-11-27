@@ -80,7 +80,7 @@ for (const version of versions) {
         );
       } else {
         const paragraphs = Array.from(
-          document.querySelectorAll("main p"),
+          document.querySelectorAll("main section p, main section li"),
           (p) => p.textContent,
         ).join(" ");
         assert.match(paragraphs, /SRT/i);

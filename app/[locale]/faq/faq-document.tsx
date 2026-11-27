@@ -12,35 +12,38 @@ const resources = {
   scope:
     "https://github.com/laubonghaudoi/subtitle-editor/issues/11#issuecomment-3201949429",
   ffmpeg: "https://ffmpeg.org/",
-  whisper: "https://github.com/openai/whisper",
-  ytdlp: "https://github.com/yt-dlp/yt-dlp#subtitle-options",
+  ytdlp: "https://github.com/yt-dlp/yt-dlp",
   happyScribe:
     "https://www.happyscribe.com/subtitle-tools/online-subtitle-editor/free",
   subtitleEdit: "https://www.nikse.dk/subtitleedit",
   aegisub: "https://aegisub.org/",
+  openSubtitleEditor: "https://opensubtitleed.sourceforge.net/",
+  movavi: "https://www.movavi.com/",
+  hfK2: "https://huggingface.co/spaces/k2-fsa/generate-subtitles-for-videos",
+  hfBatuhan:
+    "https://huggingface.co/spaces/BatuhanYilmaz/Whisper-Auto-Subtitled-Video-Generator",
+  hfNeuralFalcon:
+    "https://huggingface.co/spaces/NeuralFalcon/Whisper-Turbo-Subtitle",
 } as const;
 
 type AnswerPart = string | { link: keyof typeof resources; label: string };
+type Paragraph = string | AnswerPart[];
+type AnswerList = { list: "ol" | "ul"; items: Paragraph[] };
+type AnswerBlock = Paragraph | AnswerList;
 type Topic =
-  | "edit-subtitles"
-  | "sync-subtitles"
-  | "convert-srt-vtt"
-  | "multiple-tracks"
-  | "save-subtitles"
-  | "privacy"
-  | "offline"
-  | "media-formats"
-  | "transcription"
-  | "youtube-subtitles"
   | "why-this-editor"
-  | "contribute";
+  | "maintenance"
+  | "media-formats"
+  | "contribute"
+  | "transcription"
+  | "youtube-subtitles";
 
 export interface FaqContent {
   metadata: { title: string; description: string };
   heading: string;
   backToEditor: string;
   languageLabel: string;
-  questions: Record<Topic, { question: string; answer: string | AnswerPart[] }>;
+  questions: Record<Topic, { question: string; answer: AnswerBlock[] }>;
 }
 
 interface FaqDocumentProps {
@@ -50,31 +53,53 @@ interface FaqDocumentProps {
 
 const linkStyle = "text-accent-ink underline underline-offset-4";
 
+function isList(block: AnswerBlock): block is AnswerList {
+  return typeof block === "object" && "list" in block;
+}
+
+function renderParagraph(paragraph: Paragraph) {
+  if (typeof paragraph === "string") return paragraph;
+  return paragraph.map((part) =>
+    typeof part === "string" ? (
+      part
+    ) : (
+      <a key={part.link} href={resources[part.link]} className={linkStyle}>
+        {part.label}
+      </a>
+    ),
+  );
+}
+
+function answerText(answer: AnswerBlock[]) {
+  return answer
+    .flatMap((block) => (isList(block) ? block.items : [block]))
+    .map((paragraph) =>
+      typeof paragraph === "string"
+        ? paragraph
+        : paragraph
+            .map((part) => (typeof part === "string" ? part : part.label))
+            .join(""),
+    )
+    .join("\n");
+}
+
 export function FaqDocument({ locale, content }: FaqDocumentProps) {
   const canonical = getPublicUrl(locale, "faq");
   const editorPath = getPublicPath(locale);
-  const topics = Object.entries(content.questions).map(
-    ([id, { question, answer }]) => ({
-      id,
-      question,
-      parts: typeof answer === "string" ? [answer] : answer,
-    }),
-  );
+  const topics = Object.entries(content.questions);
   const schema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "@id": canonical,
     inLanguage: locale,
     name: content.heading,
-    mainEntity: topics.map(({ id, question, parts }) => ({
+    mainEntity: topics.map(([id, { question, answer }]) => ({
       "@type": "Question",
       "@id": `${canonical}#${id}`,
       name: question,
       acceptedAnswer: {
         "@type": "Answer",
-        text: parts
-          .map((part) => (typeof part === "string" ? part : part.label))
-          .join(""),
+        text: answerText(answer),
       },
     })),
   };
@@ -112,26 +137,31 @@ export function FaqDocument({ locale, content }: FaqDocumentProps) {
       <h1 className="mt-4 text-3xl font-bold tracking-tight">
         {content.heading}
       </h1>
-      {topics.map(({ id, question, parts }) => (
+      {topics.map(([id, { question, answer }]) => (
         <section key={id} aria-labelledby={id} className="mt-8">
           <h2 id={id} className="scroll-mt-4 text-xl font-semibold">
             <a href={`#${id}`}>{question}</a>
           </h2>
-          <p className="mt-2 leading-relaxed">
-            {parts.map((part) =>
-              typeof part === "string" ? (
-                part
-              ) : (
-                <a
-                  className={linkStyle}
-                  key={part.link}
-                  href={resources[part.link]}
-                >
-                  {part.label}
-                </a>
-              ),
-            )}
-          </p>
+          {answer.map((block, index) => {
+            if (!isList(block)) {
+              return (
+                <p key={index} className="mt-2 leading-relaxed">
+                  {renderParagraph(block)}
+                </p>
+              );
+            }
+            const List = block.list;
+            return (
+              <List
+                key={index}
+                className={`my-2 ml-6 space-y-1 leading-relaxed ${List === "ol" ? "list-decimal" : "list-disc"}`}
+              >
+                {block.items.map((item, itemIndex) => (
+                  <li key={itemIndex}>{renderParagraph(item)}</li>
+                ))}
+              </List>
+            );
+          })}
         </section>
       ))}
       <a href={editorPath} className={`mt-8 inline-block ${linkStyle}`}>

@@ -2,97 +2,142 @@ import type { FaqContent } from "../faq-document";
 
 export default {
   metadata: {
-    title: "Pytania o Subtitle Editor | Edycja, synchronizacja i zapis napisów",
-    description:
-      "Dowiedz się, jak poprawiać i synchronizować napisy SRT i WebVTT, pracować z kilkoma ścieżkami językowymi i zapisywać gotowe pliki w przeglądarce.",
+    title: "FAQ | Edytor napisów",
+    description: "Często zadawane pytania dotyczące edytora napisów.",
   },
-  heading: "Pytania i odpowiedzi o Subtitle Editor",
-  backToEditor: "Wróć do edytora napisów",
+  heading: "Często zadawane pytania",
+  backToEditor: "Wróć do edytora",
   languageLabel: "Język pytań i odpowiedzi",
   questions: {
-    "edit-subtitles": {
-      question: "Jak edytować plik z napisami SRT lub WebVTT?",
-      answer:
-        "Wybierz „Wczytaj napisy” i otwórz plik .srt lub .vtt. Kliknij tekst napisu, popraw go i zatwierdź klawiszem Enter. Aby porównać napis z nagraniem, wybierz „Wczytaj media” i otwórz odpowiedni plik wideo lub audio.",
+    "why-this-editor": {
+      question: "Po co kolejny edytor napisów?",
+      answer: [
+        "Tak, wiem, jest już wiele edytorów napisów. Okazało się jednak, że żaden z nich nie jest dla mnie idealny, więc stworzyłem własny. Poniżej opisuję edytory, które wypróbowałem, i to, czego moim zdaniem w nich brakuje:",
+        {
+          list: "ul",
+          items: [
+            [
+              { link: "happyScribe", label: "Happy Scribe" },
+              " oferuje darmowy edytor napisów online. Nie trzeba zakładać konta. Bardzo łatwo edytuje się w nim napisy i sprawdza, jak wyglądają na filmie. To edytor najbliższy temu, czego potrzebuję. Niestety brakuje w nim wykresu fali dźwiękowej, a to dla mnie przekreśla ten edytor. Nie ma też otwartego kodu źródłowego i nie możemy go dostosować do swoich potrzeb.",
+            ],
+            [
+              { link: "subtitleEdit", label: "Subtitle Edit" },
+              " to świetny wybór. Ma wszystkie funkcje, których potrzebuję. Wyświetla wykres fali dźwiękowej, pozwala łatwo podglądać i edytować napisy, a nawet robić transkrypcje za pomocą AI. To jednak program komputerowy, który wymaga instalacji i nie działa na Macu. Żeby edytować napisy, muszę korzystać z urządzenia z Windowsem lub Linuksem.",
+            ],
+            [
+              { link: "aegisub", label: "Aegisub" },
+              " jest podobny do Subtitle Edit. To program komputerowy, który nadaje się do bardziej zaawansowanej edycji napisów. Poza tym wykres fali dźwiękowej wydał mi się mało intuicyjny. (Swoją drogą, te programy mają interfejsy jak z lat 90., co naprawdę odbiera mi chęć do pracy)",
+            ],
+            [
+              "Inne rozwiązania, takie jak ",
+              { link: "openSubtitleEditor", label: "Open Subtitle Editor" },
+              " czy ",
+              { link: "movavi", label: "Movavi" },
+              ", są albo zbyt skomplikowane i przeładowane funkcjami, albo płatne.",
+            ],
+          ],
+        },
+        "Żaden z nich nie ma otwartego kodu źródłowego, a interfejsy są albo zbyt brzydkie, albo zbyt skomplikowane. Naprawdę przeszkadza mi to przy edycji napisów. Chcę edytora, który:",
+        {
+          list: "ol",
+          items: [
+            "Zawsze będzie darmowy",
+            "Ma otwarty kod źródłowy",
+            "Działa w całości w przeglądarce, bez pobierania ani instalowania",
+            "Nie wymaga zakładania konta ani logowania",
+            "Stawia na prostotę obsługi",
+            "Wyświetla wykres fali dźwiękowej",
+          ],
+        },
+        "Więc stworzyłem ten edytor.",
+      ],
     },
-    "sync-subtitles": {
-      question: "Co zrobić, gdy napisy pojawiają się za wcześnie lub za późno?",
-      answer:
-        "Aby poprawić jedną kwestię, przeciągnij lewą lub prawą krawędź jej bloku na wykresie fali do początku lub końca wypowiedzi. Jeśli cała ścieżka wyprzedza nagranie o ten sam czas, otwórz „Masowe przesunięcie”, wybierz „Cały napis” i ustaw dodatnie przesunięcie w sekundach. Gdy napisy się spóźniają, ustaw wartość ujemną. Sprawdź podgląd i wybierz „Zastosuj przesunięcie”.",
-    },
-    "convert-srt-vtt": {
-      question:
-        "Jak przekonwertować napisy z SRT na WebVTT lub z WebVTT na SRT?",
-      answer:
-        "Otwórz plik źródłowy przez „Wczytaj napisy”. Wybierz „Zapisz”, odszukaj odpowiednią ścieżkę i wybierz .vtt, aby utworzyć plik WebVTT, lub .srt, aby utworzyć plik SRT. Oba formaty przechowują tekst i czasy wyświetlania. Zachowaj oryginalny plik WebVTT, jeśli zależy Ci również na położeniu lub stylu napisów.",
-    },
-    "multiple-tracks": {
-      question:
-        "Czy mogę opracować napisy w dwóch językach do tego samego filmu?",
-      answer:
-        "Tak. Otwórz pierwszy plik z napisami, a następnie w menu „Wczytaj napisy” wybierz „Dodaj nową ścieżkę” dla drugiego języka. Do jednego nagrania możesz otworzyć do czterech ścieżek. Przełączaj się między językami za pomocą kart i zapisuj każdą ścieżkę osobno.",
-    },
-    "save-subtitles": {
-      question: "Który format wybrać i gdzie po zapisaniu znajdę plik?",
-      answer:
-        "W menu „Zapisz” wybierz format dla swojej ścieżki. SRT i WebVTT zawierają znaczniki czasu potrzebne do odtwarzania. TXT zawiera sam tekst. W CSV znajdziesz identyfikator, czas początku, czas końca i tekst każdego napisu. Jeśli przeglądarka otworzy okno zapisu, podaj w nim nazwę i wybierz folder. W pozostałych przypadkach podaj nazwę w edytorze i wybierz „Pobierz”. O miejscu zapisu decydują wtedy ustawienia pobierania w przeglądarce.",
-    },
-    privacy: {
-      question: "Kto ma dostęp do otwieranych przeze mnie filmów i napisów?",
-      answer:
-        "Przeglądarka odczytuje pliki multimedialne i napisy na Twoim urządzeniu. Edytor przetwarza ich zawartość lokalnie, bez wysyłania plików na serwer i bez zakładania konta. Zachowuje w przeglądarce kopię ścieżek napisów i ustawień, aby można było je przywrócić. Witryna korzysta też z usług hostingowych i analitycznych, które mogą otrzymywać informacje o wizycie.",
-    },
-    offline: {
-      question: "Czy mogę pracować bez internetu i wrócić później do edycji?",
-      answer:
-        "Najpierw otwórz edytor z dostępem do internetu i poczekaj, aż się załaduje. Gdy aplikacja znajdzie się w pamięci podręcznej, możesz ponownie otworzyć ją offline w tej samej przeglądarce. Ścieżki napisów można przywrócić, a plik multimedialny trzeba otworzyć ponownie. Przed wyczyszczeniem danych witryny wyeksportuj napisy, aby zachować swoją pracę.",
+    maintenance: {
+      question: "Czy będziesz aktywnie utrzymywać tę aplikację?",
+      answer: [
+        [
+          "Kod źródłowy aplikacji jest otwarty i dostępny na GitHubie w repozytorium ",
+          { link: "repo", label: "laubonghaudoi/subtitle-editor" },
+          ". Będę regularnie przeglądać zgłoszenia i przyjmować pull requesty, ale ostatnio mam sporo zajęć, więc mogę nie mieć czasu na opracowywanie nowych funkcji. To projekt społecznościowy i każda pomoc jest zawsze mile widziana!",
+        ],
+      ],
     },
     "media-formats": {
-      question: "Dlaczego mój plik wideo lub audio się nie odtwarza?",
+      question:
+        "Czy możesz dodać obsługę większej liczby formatów wideo i audio?",
       answer: [
-        "Odtwarzanie zależy od tego, jakie kontenery i kodeki obsługują Twoja przeglądarka i system operacyjny. W pustym panelu multimediów zobaczysz listę formatów, których obsługę zgłasza przeglądarka. Jeśli plik się nie otwiera, możesz przekonwertować go lokalnie za pomocą ",
-        { link: "ffmpeg", label: "FFmpeg" },
-        " i otworzyć nową kopię.",
-      ],
-    },
-    transcription: {
-      question: "Jak automatycznie utworzyć napisy z nagrania?",
-      answer: [
-        "Użyj narzędzia do transkrypcji, na przykład ",
-        { link: "whisper", label: "Whisper" },
-        ", i zapisz wynik jako SRT lub WebVTT. Następnie otwórz plik w edytorze, aby poprawić tekst i czasy wyświetlania. Transkrypcję i tłumaczenie automatyczne wykonuje się poza edytorem.",
-      ],
-    },
-    "youtube-subtitles": {
-      question: "Jak edytować napisy do filmu z YouTube?",
-      answer: [
-        "Zapisz napisy do filmu w formacie SRT lub WebVTT i otwórz je przez „Wczytaj napisy”. Jeśli korzystasz z yt-dlp, jego ",
-        { link: "ytdlp", label: "opcje pobierania napisów" },
-        " pozwalają wyświetlić i pobrać dostępne ścieżki. Aby sprawdzić synchronizację, wybierz „Wczytaj media” i otwórz lokalną kopię filmu.",
-      ],
-    },
-    "why-this-editor": {
-      question: "Skąd pomysł na kolejny edytor napisów?",
-      answer: [
-        "Przy pracy nad własnymi napisami wypróbowałem ",
-        { link: "happyScribe", label: "Happy Scribe" },
-        ", ",
-        { link: "subtitleEdit", label: "Subtitle Edit" },
-        " i ",
-        { link: "aegisub", label: "Aegisub" },
-        ". Chciałem móc otworzyć plik na Macu, zobaczyć falę dźwiękową i posłuchać, czy napis pojawia się we właściwym momencie. Zależało mi też na pracy bez instalacji i rejestracji. Dlatego stworzyłem ten edytor. Każdy może używać go bezpłatnie w przeglądarce i dostosować kod źródłowy do swoich potrzeb.",
+        [
+          "Aplikacja korzysta z odtwarzacza wbudowanego w przeglądarkę, żeby zdekodować wczytany plik wideo lub audio. To od przeglądarki zależy więc, które formaty są obsługiwane, i nic na to nie poradzę. Na przykład Safari i Microsoft Edge obsługują format AC3, a Chrome i Firefox go nie obsługują. Możesz jednak użyć ",
+          { link: "ffmpeg", label: "ffmpeg" },
+          ", żeby przekonwertować pliki multimedialne na obsługiwany format przed wczytaniem ich do edytora.",
+        ],
       ],
     },
     contribute: {
-      question: "Jak zgłosić problem albo pomóc w rozwoju edytora?",
+      question: "Masz jakieś uwagi?",
       answer: [
-        "Możesz ",
-        { link: "issues", label: "zgłosić problem na GitHubie" },
-        ". Podaj nazwę przeglądarki i opisz kolejne kroki, które prowadzą do błędu. W miarę możliwości przeglądam zgłoszenia i proponowane zmiany w kodzie. Zapraszam do współpracy nad ",
-        { link: "repo", label: "otwartym kodem edytora" },
-        ". Jeśli masz pomysł na nową funkcję, w ",
-        { link: "scope", label: "dyskusji o zakresie projektu" },
-        " wyjaśniam, na czym chcę się skupić.",
+        [
+          "Śmiało, ",
+          { link: "issues", label: "otwórz zgłoszenie na GitHubie" },
+          ". Chcę, żeby aplikacja pozostała jak najprostsza, więc poniższe funkcje nie należą do celów projektu i nie planuję ich dodawać:",
+        ],
+        {
+          list: "ul",
+          items: [
+            "Rejestracja kont",
+            "Przechowywanie w chmurze",
+            "Wspólna edycja",
+            "Transkrypcja za pomocą AI",
+            "Tłumaczenie",
+            "Zaawansowana edycja napisów, np. plików VTT.",
+          ],
+        },
+        [
+          "Powody, dla których nie uwzględniam tych funkcji, omówiłem ",
+          { link: "scope", label: "w tym zgłoszeniu na GitHubie" },
+          ". Jeśli potrzebujesz którejś z tych zaawansowanych funkcji, skorzystaj z innych rozwiązań, które wymieniłem wyżej.",
+        ],
+      ],
+    },
+    transcription: {
+      question:
+        "Potrzebuję narzędzia do transkrypcji za pomocą AI lub generatora plików srt. Co polecasz?",
+      answer: [
+        "Tak. Polecam najpierw wygenerować plik srt za pomocą narzędzia do transkrypcji opartego na AI, a potem poprawić go w tym edytorze. Dlatego wyżej wymieniłem „transkrypcję za pomocą AI” wśród funkcji, których nie planuję dodawać. Znacznie łatwiej jest użyć do tego specjalistycznego narzędzia niż wbudować je w ten edytor. Na Hugging Face jest wiele darmowych generatorów plików srt, na przykład:",
+        {
+          list: "ul",
+          items: [
+            [{ link: "hfK2", label: "k2-fsa/generate-subtitles-for-videos" }],
+            [
+              {
+                link: "hfBatuhan",
+                label: "BatuhanYilmaz/Whisper-Auto-Subtitled-Video-Generator",
+              },
+            ],
+            [
+              {
+                link: "hfNeuralFalcon",
+                label: "NeuralFalcon/Whisper-Turbo-Subtitle",
+              },
+            ],
+          ],
+        },
+        [
+          "Możesz też pobrać wspomniany wyżej ",
+          { link: "subtitleEdit", label: "Subtitle Edit" },
+          ", który ma wbudowaną funkcję transkrypcji za pomocą AI.",
+        ],
+      ],
+    },
+    "youtube-subtitles": {
+      question:
+        "Chcę pobrać film z YouTube i wyodrębnić z niego napisy. Jak to zrobić?",
+      answer: [
+        [
+          "Użyj ",
+          { link: "ytdlp", label: "yt-dlp" },
+          ". To darmowe i najbardziej niezawodne narzędzie do pobierania filmów z YouTube. Pozwala też pobrać bezpośrednio napisy, jeśli są dostępne.",
+        ],
       ],
     },
   },
