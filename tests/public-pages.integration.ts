@@ -1,15 +1,48 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { JSDOM } from "jsdom";
+import de from "../messages/de.json";
+import en from "../messages/en.json";
+import pl from "../messages/pl.json";
+import yue from "../messages/yue.json";
 
 // Run against a production build so redirects, generated metadata and HTML are all exercised.
 const preview = process.env.TEST_SITE_ORIGIN || "http://localhost:3000";
 const publicOrigin = "https://subtitle-editor.org";
 const versions = [
-  { lang: "en", alternate: "en", editor: "/", faq: "/faq" },
-  { lang: "de", alternate: "de", editor: "/de", faq: "/de/faq" },
-  { lang: "pl", alternate: "pl", editor: "/pl", faq: "/pl/faq" },
-  { lang: "yue", alternate: "zh-Hant-HK", editor: "/yue", faq: "/yue/faq" },
+  {
+    lang: "en",
+    alternate: "en",
+    editor: "/",
+    faq: "/faq",
+    messages: en,
+    oldIntroLead: "Open an SRT or WebVTT file, edit the captions",
+  },
+  {
+    lang: "de",
+    alternate: "de",
+    editor: "/de",
+    faq: "/de/faq",
+    messages: de,
+    oldIntroLead:
+      "Öffnen Sie eine SRT- oder WebVTT-Datei, bearbeiten Sie die Untertitel",
+  },
+  {
+    lang: "pl",
+    alternate: "pl",
+    editor: "/pl",
+    faq: "/pl/faq",
+    messages: pl,
+    oldIntroLead: "Otwórz plik SRT lub WebVTT, popraw napisy",
+  },
+  {
+    lang: "yue",
+    alternate: "zh-Hant-HK",
+    editor: "/yue",
+    faq: "/yue/faq",
+    messages: yue,
+    oldIntroLead: "開啟 SRT 或 WebVTT 字幕檔，改好字幕",
+  },
 ];
 
 function get(path: string) {
@@ -27,19 +60,34 @@ for (const version of versions) {
       assert.equal(document.documentElement.lang, version.lang);
       assert.equal(document.querySelectorAll("h1").length, 1);
       assert.ok(document.querySelector("h1")?.textContent?.trim());
-      const paragraphs = Array.from(
-        document.querySelectorAll("main p"),
-        (p) => p.textContent,
-      ).join(" ");
-      assert.match(paragraphs, /SRT/i);
-      assert.match(paragraphs, /VTT/i);
-      assert.ok(document.querySelector("title")?.textContent?.trim());
-      assert.ok(
-        document
-          .querySelector('meta[name="description"]')
-          ?.getAttribute("content")
-          ?.trim(),
-      );
+      const title = document.title;
+      const description = document.querySelector<HTMLMetaElement>(
+        'meta[name="description"]',
+      )?.content;
+      if (page === "editor") {
+        const main = document.querySelector("main");
+        assert.ok(main);
+        assert.equal(
+          main.querySelector("h1")?.textContent,
+          version.messages.navigation.title,
+        );
+        assert.equal(title, version.messages.metadata.title);
+        assert.equal(description, version.messages.metadata.description);
+        for (const script of main.querySelectorAll("script")) script.remove();
+        assert.ok(
+          !main.textContent.includes(version.oldIntroLead),
+          "The old introduction should be absent even in hidden elements",
+        );
+      } else {
+        const paragraphs = Array.from(
+          document.querySelectorAll("main p"),
+          (p) => p.textContent,
+        ).join(" ");
+        assert.match(paragraphs, /SRT/i);
+        assert.match(paragraphs, /VTT/i);
+        assert.ok(title.trim());
+        assert.ok(description?.trim());
+      }
       assert.equal(
         document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.href,
         canonical,

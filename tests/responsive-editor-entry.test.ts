@@ -26,18 +26,19 @@ const narrowScreenNotice = {
   proceedLabel: "Proceed anyway",
 };
 
-const introduction = createElement(
-  "header",
-  null,
-  createElement("h1", null, "Online SRT and VTT subtitle editor"),
-  createElement("a", { href: "/faq#sync-subtitles" }, "Sync subtitles"),
-);
+const productTitle = "Subtitle Editor";
+const entryProps = {
+  productTitle,
+  loadingLabel: "Loading editor...",
+  narrowScreenNotice,
+};
 
-function TestEditor({ introduction }: EditorAppProps) {
+function TestEditor({ faqHref }: EditorAppProps) {
   return createElement(
     "main",
     { "aria-label": "Loaded editor" },
-    introduction,
+    createElement("h1", null, productTitle),
+    createElement("a", { href: faqHref }, narrowScreenNotice.faqLabel),
     createElement("p", null, "Loaded editor"),
     createElement("input", { "aria-label": "Draft" }),
   );
@@ -67,26 +68,32 @@ function installMatchMedia(matches: boolean) {
   };
 }
 
-test("server renders one product heading and contextual help before the narrow-screen warning", () => {
-  const markup = renderToString(
+test("server renders the compact product heading and a desktop FAQ link before hydration", () => {
+  const localizedFaqHref = "/pl/faq";
+  const entry = document.createElement("div");
+  entry.innerHTML = renderToString(
     createElement(ResponsiveEditorEntry, {
-      introduction,
-      loadingLabel: "Loading editor...",
-      narrowScreenNotice,
+      ...entryProps,
+      productTitle: "Edytor Napisów",
+      narrowScreenNotice: {
+        ...narrowScreenNotice,
+        faqHref: localizedFaqHref,
+      },
     }),
   );
-  const entry = document.createElement("div");
-  entry.innerHTML = markup;
   assert.equal(entry.querySelectorAll("h1").length, 1);
+  assert.equal(entry.querySelector("h1")?.textContent, "Edytor Napisów");
+  const notice = entry.querySelector("section");
   assert.equal(
-    entry.querySelector("h1")?.textContent,
-    "Online SRT and VTT subtitle editor",
+    notice?.querySelector("h2")?.textContent,
+    narrowScreenNotice.title,
   );
-  assert.equal(
-    entry.querySelector("a")?.getAttribute("href"),
-    "/faq#sync-subtitles",
+  assert.ok(
+    Array.from(entry.querySelectorAll(`a[href="${localizedFaqHref}"]`)).some(
+      (link) => !notice?.contains(link),
+    ),
+    "Desktop readers can reach the FAQ when the narrow-screen notice is hidden",
   );
-  assert.equal(entry.querySelector("h2")?.textContent, "Use a wider screen");
 });
 
 test("narrow entry waits for proceed before loading the editor", async () => {
@@ -95,9 +102,7 @@ test("narrow entry waits for proceed before loading the editor", async () => {
 
   const view = renderWithIntl(
     createElement(ResponsiveEditorEntry, {
-      introduction,
-      loadingLabel: "Loading editor...",
-      narrowScreenNotice,
+      ...entryProps,
       loadEditor: async () => {
         loadCount += 1;
         return { default: TestEditor };
@@ -105,7 +110,8 @@ test("narrow entry waits for proceed before loading the editor", async () => {
     }),
   );
 
-  view.getByRole("heading", { name: "Use a wider screen" });
+  view.getByRole("heading", { level: 1, name: productTitle });
+  view.getByRole("heading", { level: 2, name: narrowScreenNotice.title });
   assert.equal(loadCount, 0);
   assert.equal(view.queryByText("Loaded editor"), null);
 
@@ -130,9 +136,7 @@ test("narrow entry honors proceed consent saved in this tab", async () => {
 
   const view = renderWithIntl(
     createElement(ResponsiveEditorEntry, {
-      introduction,
-      loadingLabel: "Loading editor...",
-      narrowScreenNotice,
+      ...entryProps,
       loadEditor: async () => {
         loadCount += 1;
         return { default: TestEditor };
@@ -157,9 +161,7 @@ test("strict mode loads the editor on desktop and resizes without losing edits",
       StrictMode,
       null,
       createElement(ResponsiveEditorEntry, {
-        introduction,
-        loadingLabel: "Loading editor...",
-        narrowScreenNotice,
+        ...entryProps,
         loadEditor: async () => {
           loadCount += 1;
           return { default: TestEditor };
@@ -181,10 +183,16 @@ test("strict mode loads the editor on desktop and resizes without losing edits",
   resize(false);
   view.getByRole("heading", { level: 2, name: "Use a wider screen" });
   assert.equal(view.queryByRole("textbox"), null);
-  assert.equal(view.container.querySelectorAll("h1").length, 1);
+  assert.equal(
+    view.getByRole("heading", { level: 1 }).textContent,
+    productTitle,
+  );
   resize(true);
   assert.equal(view.getByRole("textbox"), draft);
   assert.equal(draft.value, "Work in progress");
-  assert.equal(view.container.querySelectorAll("h1").length, 1);
+  assert.equal(
+    view.getByRole("heading", { level: 1 }).textContent,
+    productTitle,
+  );
   assert.equal(loadCount, 1);
 });

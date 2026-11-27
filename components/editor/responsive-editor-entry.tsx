@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentType, ReactNode } from "react";
+import type { ComponentType } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { NarrowScreenNotice } from "./narrow-screen-notice";
 import {
@@ -15,7 +15,6 @@ import {
 } from "./viewport";
 
 export interface EditorAppProps {
-  introduction: ReactNode;
   faqHref: string;
 }
 
@@ -32,7 +31,7 @@ interface NarrowScreenNoticeContent {
 }
 
 interface ResponsiveEditorEntryProps {
-  introduction: ReactNode;
+  productTitle: string;
   loadingLabel: string;
   narrowScreenNotice: NarrowScreenNoticeContent;
   loadEditor?: EditorLoader;
@@ -49,7 +48,7 @@ function getSessionStorage(): Storage | undefined {
 }
 
 export default function ResponsiveEditorEntry({
-  introduction,
+  productTitle,
   loadingLabel,
   narrowScreenNotice,
   loadEditor = defaultEditorLoader,
@@ -127,7 +126,15 @@ export default function ResponsiveEditorEntry({
     <>
       {shouldShowNotice || !EditorApp ? (
         <div className="mx-auto max-w-3xl px-6 py-10 sm:py-16">
-          {introduction}
+          <div className="flex items-center gap-4">
+            <h1 className="text-lg font-semibold">{productTitle}</h1>
+            <a
+              href={narrowScreenNotice.faqHref}
+              className="hidden text-sm underline underline-offset-2 editor:inline"
+            >
+              {narrowScreenNotice.faqLabel}
+            </a>
+          </div>
           {shouldShowNotice ? (
             <NarrowScreenNotice
               {...narrowScreenNotice}
@@ -142,10 +149,7 @@ export default function ResponsiveEditorEntry({
       ) : null}
       {viewportState.shouldMountEditor && EditorApp ? (
         <div hidden={shouldShowNotice} aria-hidden={shouldShowNotice}>
-          <EditorApp
-            introduction={shouldShowNotice ? null : introduction}
-            faqHref={narrowScreenNotice.faqHref}
-          />
+          <EditorApp faqHref={narrowScreenNotice.faqHref} />
         </div>
       ) : null}
     </>

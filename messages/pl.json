@@ -11,10 +11,6 @@
     "toggleTheme": "Przełącz tryb jasny/ciemny",
     "settings": "Ustawienia"
   },
-  "editorIntro": {
-    "heading": "Edytor napisów SRT i VTT online",
-    "description": "Otwórz plik SRT lub WebVTT, popraw napisy i <sync>zsynchronizuj je z filmem lub nagraniem za pomocą wykresu fali dźwiękowej</sync>. Zapisz gotowy plik na swoim urządzeniu lub <convert>przekonwertuj go z SRT na WebVTT albo odwrotnie</convert>. Pliki pozostają w przeglądarce."
-  },
   "narrowScreen": {
     "title": "Użyj szerszego ekranu",
     "description": "Ten edytor został zaprojektowany z myślą o ekranach desktopowych. Możesz kontynuować, ale interfejs może być ciasny lub mniej wygodny w użyciu.",
